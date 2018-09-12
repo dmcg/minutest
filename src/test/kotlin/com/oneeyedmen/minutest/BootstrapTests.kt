@@ -35,8 +35,6 @@ object BootstrapTests : Minutests {
 
     @Minutest fun `Minutests can return a function that requires state`() = ::`Minutests are passed state`
 
-//    @Minutest val `Minutests can be vals` = ::`Minutests are passed state`
-
     @AfterAll @JvmStatic fun checkTestCount() {
         assertEquals(7, testCount)
     }
