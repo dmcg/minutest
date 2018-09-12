@@ -19,23 +19,28 @@ annotation class Minutest
 
 interface Minutests {
 
-    @TestFactory fun test() = this::class.testMethods().map { callable: KCallable<*> ->
+    @TestFactory fun minutests() = this::class.testMethods().map { callable: KCallable<*> ->
         dynamicNodeFor(callable)
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun dynamicNodeFor(method: KCallable<*>): DynamicNode {
-        val returnType = method.returnType
+        val returnType: KType = method.returnType
         return when {
             returnType.isSubtypeOf(Function::class.starProjectedType) ->
                 dynamicContainerFor(returnType, method)
-            returnType.isSubtypeOf(Iterable::class.starProjectedType) -> // TODO - not good enough
+            returnType.isA<Iterable<*>>(of = KCallable::class) ->
                 dynamicContainer(method.name, (method.call(this) as Iterable<KCallable<*>>).map { dynamicNodeFor(it) } )
-            returnType.isSubtypeOf(Sequence::class.starProjectedType) -> // TODO - not good enough
+            returnType.isA<Sequence<*>>(of = KCallable::class) ->
                 dynamicContainer(method.name, (method.call(this) as Sequence<KCallable<*>>).map { dynamicNodeFor(it) }.asStream() )
+            returnType.isA<Iterable<*>>(of = NamedFunction::class) ->
+                dynamicContainer(method.name, (method.call(this) as Iterable<NamedFunction>).map { dynamicNodeFor(it) } )
+            returnType.isA<Sequence<*>>(of = NamedFunction::class) ->
+                dynamicContainer(method.name, (method.call(this) as Sequence<NamedFunction>).map { dynamicNodeFor(it) }.asStream() )
             else -> dynamicTestFor(method)
         }
     }
+
 
     @Suppress("UNCHECKED_CAST")
     private fun dynamicContainerFor(returnType: KType, method: KCallable<*>) = when {
@@ -44,6 +49,10 @@ interface Minutests {
         returnType.isSubtypeOf(Function0::class.starProjectedType) ->
             dynamicContainer(method.name, listOf(dynamicTestFor(method.call(this) as () -> Function0<*>)))
         else -> error("Hmmm, still thinking about this")
+    }
+
+    private fun dynamicNodeFor(namedFunction: NamedFunction) = dynamicTest(namedFunction.name) {
+        namedFunction.f()
     }
 
     private fun dynamicTestFor(callable: KCallable<*>) = dynamicTest(callable.name) {
@@ -64,4 +73,10 @@ interface Minutests {
     private fun KClass<*>.testMethods(): List<KCallable<*>> = this.memberFunctions.filter { it.findAnnotation<Minutest>() != null }
 
 }
+
+inline fun <reified T> KType.isA(of: KClass<*>) =
+    isSubtypeOf(T::class.starProjectedType) && arguments[0].type!!.isSubtypeOf(of.starProjectedType)
+
+
+data class NamedFunction(val name: String, val f: () -> Any)
 

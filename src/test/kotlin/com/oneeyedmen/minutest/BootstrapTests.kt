@@ -27,25 +27,33 @@ object BootstrapTests : Minutests {
         return s
     }
 
-    @Minutest fun `can return a lambda`(): () -> Int = {
+    @Minutest fun `will invoke a returned lambda`(): () -> Int = {
         testCount++
     }
 
-    @Minutest fun `can return a function`() = ::`plain old Test annotation`
+    @Minutest fun `will invoke a returned function`() = ::`plain old Test annotation`
 
-    @Minutest fun `can return a function that requires state`() = ::`will be passed state`
+    @Minutest fun `will invoke a returned function that requires state`() = ::`will be passed state`
 
-    @Minutest
-    val `can use a val` = ::`plain old Test annotation`
-
-    @Minutest fun `can return a list of functions`() =
+    @Minutest fun `will invoke a list list of method references`() =
         listOf(::`plain old Test annotation`, ::`will be passed state`)
 
-    @Minutest fun `can return a sequence of functions`() =
+    @Minutest fun `will invoke a sequence of method references`() =
         sequenceOf(::`plain old Test annotation`, ::`will be passed state`)
 
+    @Minutest fun `will invoke a list of named lambdas`() = listOf(
+        NamedFunction("do a thing") { testCount ++ },
+        NamedFunction("do another thing") { testCount ++ }
+    )
+
+    @Minutest fun `will invoke a sequence of named lambdas`() = sequenceOf(
+        NamedFunction("do a thing") { testCount ++ },
+        NamedFunction("do another thing") { testCount ++ }
+    )
+
+
     @AfterAll @JvmStatic fun checkTestCount() {
-        assertEquals(11, testCount)
+        assertEquals(15, testCount)
     }
 }
 

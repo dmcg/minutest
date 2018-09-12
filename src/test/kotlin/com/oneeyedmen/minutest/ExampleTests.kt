@@ -1,25 +1,37 @@
 package com.oneeyedmen.minutest
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import com.oneeyedmen.minutest.LList.Cons
+import com.oneeyedmen.minutest.LList.Nil
+import org.junit.jupiter.api.Assertions.assertEquals
 
-data class Result(val value: Int) {
-    constructor(): this(0)
 
-    fun add(i: Int) = Result(value + i)
+sealed class LList<out T> {
+    object Nil : LList<Nothing>()
+    data class Cons<T>(val car: T, val cdr: LList<T> = Nil) : LList<T>()
 }
+
+fun LList<*>.size(): Int = when (this) {
+    Nil -> 0
+    is Cons -> 1 + cdr.size()
+}
+
+fun <T> LList<T>.prepend(item: T): LList<T> = Cons(item, this)
 
 object ExampleTests : Minutests {
 
-    @Test fun `plain old Test annotation`() {}
-
-    @Minutest fun `defaults to 0`(result: Result): Result {
-        Assertions.assertEquals(0, result.value)
-        return result
-    }
-
-    @Minutest fun `adds another value`(result: Result) {
-        Assertions.assertEquals(2, `defaults to 0`(result).add(2).value)
+    @Minutest fun `empty list`(): List<NamedFunction> {
+        val emptyList = Nil
+        return listOf(
+            NamedFunction("has size 0") {
+                assertEquals(0, emptyList.size())
+            },
+            NamedFunction("is Nil") {
+                assertEquals(Nil, emptyList)
+            },
+            NamedFunction("can be added to") {
+                assertEquals(Cons("fred"), emptyList.prepend("fred"))
+            }
+        )
     }
 }
 
