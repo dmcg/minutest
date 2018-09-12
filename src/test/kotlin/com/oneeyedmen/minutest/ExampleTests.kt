@@ -22,13 +22,13 @@ object ExampleTests : Minutests {
     @Minutest fun `empty list`(): List<NamedFunction> {
         val emptyList = Nil
         return listOf(
-            NamedFunction("has size 0") {
+            "has size 0" {
                 assertEquals(0, emptyList.size())
             },
-            NamedFunction("is Nil") {
+            "is Nil" {
                 assertEquals(Nil, emptyList)
             },
-            NamedFunction("can be added to") {
+            "can be added to" {
                 assertEquals(Cons("fred"), emptyList.prepend("fred"))
             }
         )

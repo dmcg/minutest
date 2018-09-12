@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
@@ -70,13 +71,16 @@ interface Minutests {
         f()
     }
 
-    private fun KClass<*>.testMethods(): List<KCallable<*>> = this.memberFunctions.filter { it.findAnnotation<Minutest>() != null }
+    private fun KClass<*>.testMethods(): List<KCallable<*>> = this.memberFunctions.filter {
+        it.findAnnotation<Minutest>() != null && it.findAnnotation<Disabled>() == null
+    }
 
 }
 
 inline fun <reified T> KType.isA(of: KClass<*>) =
     isSubtypeOf(T::class.starProjectedType) && arguments[0].type!!.isSubtypeOf(of.starProjectedType)
 
+operator fun String.invoke(f: () -> Any) = NamedFunction(this, f)
 
 data class NamedFunction(val name: String, val f: () -> Any)
 
