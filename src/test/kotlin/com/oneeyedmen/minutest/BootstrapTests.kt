@@ -35,7 +35,8 @@ object BootstrapTests : Minutests {
 
     @Minutest fun `can return a function that requires state`() = ::`will be passed state`
 
-    @Minutest val `can use a val` = ::`plain old Test annotation`
+    @Minutest
+    val `can use a val` = ::`plain old Test annotation`
 
     @Minutest fun `can return a list of functions`() =
         listOf(::`plain old Test annotation`, ::`will be passed state`)

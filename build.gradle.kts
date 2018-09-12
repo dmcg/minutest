@@ -35,9 +35,8 @@ tasks {
 }
 
 dependencies {
-    compile(kotlin("stdlib-jdk8"))
-    compile(kotlin("reflect"))
-    compile("org.junit.jupiter:junit-jupiter-api:5.3.1")
-    compile("org.junit.jupiter:junit-jupiter-params:5.3.1")
+    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("reflect"))
+    implementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.3.1")
 }
