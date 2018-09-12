@@ -17,26 +17,34 @@ object BootstrapTests : Minutests {
         testCount++
     }
 
-    @Minutest fun `Minutests are passed state`(s: State) {
+    @Minutest fun `will be passed state`(s: State) {
         testCount++
         assertEquals(42, s.a)
     }
 
-    @Minutest fun `Minutests can return state`(s: State): State {
+    @Minutest fun `can return state`(s: State): State {
         testCount++
         return s
     }
 
-    @Minutest fun `Minutests can return a lambda`(): () -> Int = {
+    @Minutest fun `can return a lambda`(): () -> Int = {
         testCount++
     }
 
-    @Minutest fun `Minutests can return a function`() = ::`plain old Test annotation`
+    @Minutest fun `can return a function`() = ::`plain old Test annotation`
 
-    @Minutest fun `Minutests can return a function that requires state`() = ::`Minutests are passed state`
+    @Minutest fun `can return a function that requires state`() = ::`will be passed state`
+
+    @Minutest val `can use a val` = ::`plain old Test annotation`
+
+    @Minutest fun `can return a list of functions`() =
+        listOf(::`plain old Test annotation`, ::`will be passed state`)
+
+    @Minutest fun `can return a sequence of functions`() =
+        sequenceOf(::`plain old Test annotation`, ::`will be passed state`)
 
     @AfterAll @JvmStatic fun checkTestCount() {
-        assertEquals(7, testCount)
+        assertEquals(11, testCount)
     }
 }
 
