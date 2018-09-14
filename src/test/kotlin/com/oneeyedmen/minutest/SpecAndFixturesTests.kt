@@ -40,8 +40,10 @@ object SpecAndFixturesTests {
         context("sub-context modifying fixture") {
             modifyFixture { thing += "s" }
 
+            modifyFixture { thing = "green $thing" }
+
             test("sees the modified fixture") {
-                assertEquals("bananas", thing)
+                assertEquals("green bananas", thing)
             }
         }
 
@@ -58,14 +60,18 @@ object SpecAndFixturesTests {
     @TestFactory fun wrappers() = context<Fixture> {
         fixture { Fixture("banana") }
 
-        fun repeatValue(t: MinuTest<Fixture>): MinuTest<Fixture> = SingleTest(t.name) {
-            t.f(Fixture(thing + thing))
-        }
-
         context("can decorate tests") {
-            wrapped(::repeatValue) {
-                test("decorated") {
-                    assertEquals("bananabanana", thing)
+            modifyFixture { thing = "tomato" }
+
+            transformedWith({ Fixture(thing + thing) }) {
+                test("applies transform to innermost fixture") {
+                    assertEquals("tomatotomato", thing)
+                }
+            }
+
+            wrappedWith(skipTest()) {
+                test("transform can ignore test") {
+                    fail("Shouldn't get here")
                 }
             }
         }

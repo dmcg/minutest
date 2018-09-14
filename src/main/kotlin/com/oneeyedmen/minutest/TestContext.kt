@@ -10,7 +10,7 @@ interface MinuTest<in F> {
     val f: F.() -> Any
 }
 
-typealias Decorator<F> = (t: MinuTest<F>) -> MinuTest<F>
+typealias TestDecorator<F> = (t: MinuTest<F>) -> MinuTest<F>
 
 class TestContext<F>(val name: String) {
 
@@ -41,8 +41,12 @@ class TestContext<F>(val name: String) {
             f()
         }.also { contexts.add(it) }
 
-    fun wrapped(decorator: Decorator<F>, f: WrapperScope.() -> Any) {
+    fun wrappedWith(decorator: TestDecorator<F>, f: WrapperScope.() -> Any) {
         WrapperScope(decorator).f()
+    }
+
+    fun transformedWith(transform: F.() -> F, f: WrapperScope.() -> Any) {
+        WrapperScope(transformFixture(transform)).f()
     }
 
     internal fun build(): DynamicContainer = dynamicContainer(
@@ -58,7 +62,7 @@ class TestContext<F>(val name: String) {
         } + contexts.map(TestContext<*>::build)
     )
 
-    inner class WrapperScope(private val decorator: Decorator<F>) {
+    inner class WrapperScope(private val decorator: TestDecorator<F>) {
         fun test(name: String, f: F.() -> Any): MinuTest<F> = decorator(SingleTest(name, f)).also { tests.add(it) }
     }
 }
@@ -67,6 +71,17 @@ class SingleTest<F>(
     override val name: String,
     override val f: F.() -> Any
 ) : MinuTest<F>
+
+fun <F> transformFixture(transform: F.() -> F) = fun (t: MinuTest<F>): MinuTest<F> = SingleTest(t.name) {
+    t.f(transform(this))
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <F> skipTest() = skipTest as TestDecorator<F>
+
+private val skipTest = object: TestDecorator<Any> {
+    override fun invoke(t: MinuTest<Any>): MinuTest<Any> = SingleTest(t.name) {}
+}
 
 fun <F> context(f: TestContext<F>.() -> Any): List<DynamicNode> = listOf(
     dynamicContainer(
