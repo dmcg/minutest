@@ -50,7 +50,10 @@ class TestContext<F>(val name: String) {
 
 }
 
-fun <F> context(f: TestContext<F>.() -> Any): List<DynamicNode> = listOf(dynamicContainer("root", f))
+fun <F> context(f: TestContext<F>.() -> Any): List<DynamicNode> = listOf(
+    dynamicContainer(
+        "root",
+        f))
 
 private fun <T> dynamicContainer(name: String, f: TestContext<T>.() -> Any): DynamicContainer =
     TestContext<T>(name).apply {
