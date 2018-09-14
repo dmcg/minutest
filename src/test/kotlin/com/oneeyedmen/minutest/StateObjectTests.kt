@@ -1,54 +1,62 @@
 package com.oneeyedmen.minutest
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.DynamicContainer
-import org.junit.jupiter.api.DynamicContainer.dynamicContainer
-import org.junit.jupiter.api.DynamicNode
-import org.junit.jupiter.api.DynamicTest.dynamicTest
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.TestFactory
 
 
-class System {
-    var thing = "banana"
-}
-
 object StateObjectTests {
 
-    @TestFactory fun fred() = listOf(
-        context<System>("context") {
-            subject { System() }
-            test("can mutate without affecting following tests") {
-                thing = "kumquat"
-                assertEquals("kumquat", thing)
-            }
-            test("previous test did not affect me") {
+    data class Fixture(var thing: String)
+
+    @TestFactory fun `with fixtures`() = context<Fixture> {
+
+        fixture { Fixture("banana") }
+
+        test("can mutate fixture without affecting following tests") {
+            thing = "kumquat"
+            assertEquals("kumquat", thing)
+        }
+
+        test("previous test did not affect me") {
+            assertEquals("banana", thing)
+        }
+
+        context("sub-context inheriting fixture") {
+            test("has the fixture from its parent") {
                 assertEquals("banana", thing)
             }
         }
-    )
-}
 
-class TestContext<T> {
-    private var subjectBuilder: (() -> T)? = null
-    private val tests = mutableListOf<Pair<String, T.() -> Any>>()
+        context("sub-context overriding fixture") {
+            fixture { Fixture("apple") }
 
-    fun subject(f: () -> T) {
-        subjectBuilder = f
-    }
-
-    fun test(name: String, f: T.() -> Any) = tests.add(name to f)
-
-    fun build(name: String): DynamicContainer = dynamicContainer(name,
-        tests.map { test ->
-            dynamicTest(test.first) {
-                test.second(subjectBuilder!!())
+            test("does not have the fixture from its parent") {
+                assertEquals("apple", thing)
             }
         }
-    )
 
+        context("sub-context modifying fixture") {
+            modifyFixture { thing += "s" }
+
+            test("sees the modified fixture") {
+                assertEquals("bananas", thing)
+            }
+        }
+
+        context("sub-context replacing fixture") {
+            replaceFixture { Fixture("green $thing") }
+
+            test("sees the replaced fixture") {
+                assertEquals("green banana", thing)
+            }
+        }
+    }
+
+
+    @TestFactory fun `no fixture`() = context<Unit> {
+        test("I need not have a context") {
+            assertNotNull("banana")
+        }
+    }
 }
-
-fun <T> context(name: String, f: TestContext<T>.() -> Any): DynamicNode =
-    TestContext<T>().apply {
-        f()
-    }.build(name)
