@@ -1,8 +1,9 @@
 package com.oneeyedmen.minutest
 
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.TestFactory
+import kotlin.streams.asSequence
 
 
 object StateObjectTests {
@@ -55,8 +56,19 @@ object StateObjectTests {
 
 
     @TestFactory fun `no fixture`() = context<Unit> {
-        test("I need not have a context") {
+        test("I need not have a fixture") {
             assertNotNull("banana")
+        }
+    }
+
+    @Test fun `no fixture when one is needed`() {
+        val tests: List<DynamicNode> = context<Fixture> {
+            test("I report not having a fixture") {
+                assertEquals("banana", thing)
+            }
+        }
+        assertThrows<IllegalStateException> {
+            ((tests.first() as DynamicContainer).children.asSequence().first() as DynamicTest).executable.execute()
         }
     }
 }
