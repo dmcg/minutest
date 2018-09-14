@@ -52,6 +52,23 @@ object SpecAndFixturesTests {
                 assertEquals("green banana", thing)
             }
         }
+
+    }
+
+    @TestFactory fun wrappers() = context<Fixture> {
+        fixture { Fixture("banana") }
+
+        fun repeatValue(t: MinuTest<Fixture>): MinuTest<Fixture> = SingleTest(t.name) {
+            t.f(Fixture(thing + thing))
+        }
+
+        context("can decorate tests") {
+            wrapped(::repeatValue) {
+                test("decorated") {
+                    assertEquals("bananabanana", thing)
+                }
+            }
+        }
     }
 
 

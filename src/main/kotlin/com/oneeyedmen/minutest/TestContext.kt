@@ -5,11 +5,18 @@ import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 
+interface MinuTest<in F> {
+    val name: String
+    val f: F.() -> Any
+}
+
+typealias Decorator<F> = (t: MinuTest<F>) -> MinuTest<F>
+
 class TestContext<F>(val name: String) {
 
     @Suppress("UNCHECKED_CAST")
     private var fixtureBuilder: (() -> F) = { Unit as F }
-    private val tests = mutableListOf<Pair<String, F.() -> Any>>()
+    private val tests = mutableListOf<MinuTest<F>>()
     private val contexts = mutableListOf<TestContext<F>>()
 
     fun fixture(f: () -> F) {
@@ -26,21 +33,24 @@ class TestContext<F>(val name: String) {
         fixtureBuilder = { inheritedFixtureBuilder().f() }
     }
 
-    fun test(name: String, f: F.() -> Any) = tests.add(name to f)
+    fun test(name: String, f: F.() -> Any): SingleTest<F> = SingleTest(name, f).also { tests.add(it) }
 
-    fun context(name: String, f: TestContext<F>.() -> Any) = contexts.add(
+    fun context(name: String, f: TestContext<F>.() -> Any): TestContext<F> =
         TestContext<F>(name).apply {
             fixtureBuilder = this@TestContext.fixtureBuilder
             f()
-        }
-    )
+        }.also { contexts.add(it) }
+
+    fun wrapped(decorator: Decorator<F>, f: WrapperScope.() -> Any) {
+        WrapperScope(decorator).f()
+    }
 
     internal fun build(): DynamicContainer = dynamicContainer(
         name,
         tests.map { test ->
-            dynamicTest(test.first) {
+            dynamicTest(test.name) {
                 try {
-                    test.second(fixtureBuilder())
+                    test.f(fixtureBuilder())
                 } catch (wrongFixture: ClassCastException) {
                     error("You need to set a fixture by calling fixture(...)")
                 }
@@ -48,7 +58,15 @@ class TestContext<F>(val name: String) {
         } + contexts.map(TestContext<*>::build)
     )
 
+    inner class WrapperScope(private val decorator: Decorator<F>) {
+        fun test(name: String, f: F.() -> Any): MinuTest<F> = decorator(SingleTest(name, f)).also { tests.add(it) }
+    }
 }
+
+class SingleTest<F>(
+    override val name: String,
+    override val f: F.() -> Any
+) : MinuTest<F>
 
 fun <F> context(f: TestContext<F>.() -> Any): List<DynamicNode> = listOf(
     dynamicContainer(
