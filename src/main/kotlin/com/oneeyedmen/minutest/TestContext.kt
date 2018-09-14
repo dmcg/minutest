@@ -29,11 +29,11 @@ class TestContext<F>(val name: String) {
     fun test(name: String, f: F.() -> Any) = tests.add(name to f)
 
     fun context(name: String, f: TestContext<F>.() -> Any) = contexts.add(
-        TestContext<F>(
-            name).apply {
-        fixtureBuilder = this@TestContext.fixtureBuilder
-        f()
-    })
+        TestContext<F>(name).apply {
+            fixtureBuilder = this@TestContext.fixtureBuilder
+            f()
+        }
+    )
 
     internal fun build(): DynamicContainer = dynamicContainer(
         name,
