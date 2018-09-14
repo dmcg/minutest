@@ -37,16 +37,6 @@ object SpecAndFixturesTests {
             }
         }
 
-        context("sub-context modifying fixture") {
-            modifyFixture { thing += "s" }
-
-            modifyFixture { thing = "green $thing" }
-
-            test("sees the modified fixture") {
-                assertEquals("green bananas", thing)
-            }
-        }
-
         context("sub-context replacing fixture") {
             replaceFixture { Fixture("green $thing") }
 
@@ -55,6 +45,29 @@ object SpecAndFixturesTests {
             }
         }
 
+        context("sub-context modifying fixture") {
+            modifyFixture { thing += "s" }
+
+            modifyFixture { thing = "green $thing" }
+
+            test("sees the modified fixture") {
+                assertEquals("green bananas", thing)
+            }
+
+            context("sub-contexts see parent mods") {
+                modifyFixture { thing = "we have no $thing" }
+
+                test("sees the modified fixture") {
+                    assertEquals("we have no green bananas", thing)
+                }
+            }
+        }
+
+        context("sanity check") {
+            test("still not changed my context") {
+                assertEquals("banana", thing)
+            }
+        }
     }
 
     @TestFactory fun wrappers() = context<Fixture> {

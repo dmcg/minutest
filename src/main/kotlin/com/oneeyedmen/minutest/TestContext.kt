@@ -14,30 +14,27 @@ typealias TestDecorator<F> = (t: MinuTest<F>) -> MinuTest<F>
 
 class TestContext<F>(val name: String) {
 
-    @Suppress("UNCHECKED_CAST")
-    private var fixtureBuilder: (() -> F) = { Unit as F }
+    private var initialFixtureBuilder: (() -> F)? = null
+    private val fixtureTransforms = mutableListOf<(F) -> F>()
     private val tests = mutableListOf<MinuTest<F>>()
     private val contexts = mutableListOf<TestContext<F>>()
 
     fun fixture(f: () -> F) {
-        fixtureBuilder = f
+        initialFixtureBuilder = f
     }
 
     fun modifyFixture(f: F.() -> Unit) {
-        val inheritedFixtureBuilder = fixtureBuilder
-        fixtureBuilder = { inheritedFixtureBuilder().apply(f) }
+        fixtureTransforms.add { it.apply(f) }
     }
 
     fun replaceFixture(f: F.() -> F) {
-        val inheritedFixtureBuilder = fixtureBuilder
-        fixtureBuilder = { inheritedFixtureBuilder().f() }
+        fixtureTransforms.add { it.f() }
     }
 
     fun test(name: String, f: F.() -> Any): SingleTest<F> = SingleTest(name, f).also { tests.add(it) }
 
     fun context(name: String, f: TestContext<F>.() -> Any): TestContext<F> =
         TestContext<F>(name).apply {
-            fixtureBuilder = this@TestContext.fixtureBuilder
             f()
         }.also { contexts.add(it) }
 
@@ -49,18 +46,27 @@ class TestContext<F>(val name: String) {
         WrapperScope(transformFixture(transform)).f()
     }
 
-    internal fun build(): DynamicContainer = dynamicContainer(
-        name,
-        tests.map { test ->
-            dynamicTest(test.name) {
-                try {
-                    test.f(fixtureBuilder())
-                } catch (wrongFixture: ClassCastException) {
-                    error("You need to set a fixture by calling fixture(...)")
+    internal fun build(fixtureBuilder: (() -> F)? = null): DynamicContainer =
+        dynamicContainer(name,
+            tests.map { test ->
+                dynamicTest(test.name) {
+                    try {
+                        test.f(transformedFeature(fixtureBuilder))
+                    } catch (x: ClassCastException) {
+                        error("You need to set a fixture by calling fixture(...)")
+                    }
                 }
-            }
-        } + contexts.map(TestContext<*>::build)
-    )
+            } + contexts.map { it.build { transformedFeature(fixtureBuilder) } }
+        )
+
+
+    @Suppress("UNCHECKED_CAST")
+    private fun transformedFeature(initial: (() -> F)?): F {
+        val initialFixture = initialFixtureBuilder?.invoke()
+            ?: initial?.invoke()
+            ?: Unit as F // failures of this case aren't revealed here, but when you actually invoke the test
+        return fixtureTransforms.fold(initialFixture) { fixture, transform -> transform(fixture) }
+    }
 
     inner class WrapperScope(private val decorator: TestDecorator<F>) {
         fun test(name: String, f: F.() -> Any): MinuTest<F> = decorator(SingleTest(name, f)).also { tests.add(it) }
@@ -72,23 +78,15 @@ class SingleTest<F>(
     override val f: F.() -> Any
 ) : MinuTest<F>
 
-fun <F> transformFixture(transform: F.() -> F) = fun (t: MinuTest<F>): MinuTest<F> = SingleTest(t.name) {
+fun <F> transformFixture(transform: F.() -> F) = fun(t: MinuTest<F>): MinuTest<F> = SingleTest(t.name) {
     t.f(transform(this))
 }
 
 @Suppress("UNCHECKED_CAST")
 fun <F> skipTest() = skipTest as TestDecorator<F>
 
-private val skipTest = object: TestDecorator<Any> {
+private val skipTest = object : TestDecorator<Any> {
     override fun invoke(t: MinuTest<Any>): MinuTest<Any> = SingleTest(t.name) {}
 }
 
-fun <F> context(f: TestContext<F>.() -> Any): List<DynamicNode> = listOf(
-    dynamicContainer(
-        "root",
-        f))
-
-private fun <T> dynamicContainer(name: String, f: TestContext<T>.() -> Any): DynamicContainer =
-    TestContext<T>(name).apply {
-        f()
-    }.build()
+fun <F> context(f: TestContext<F>.() -> Any): List<DynamicNode> = listOf(TestContext<F>("root").apply { f() }.build())
