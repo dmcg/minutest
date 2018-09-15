@@ -22,6 +22,7 @@ class TestContext<F>(override val name: String, builder: TestContext<F>.() -> An
     private var initialFixtureBuilder: (() -> F)? = null
     private val fixtureTransforms = mutableListOf<(F) -> F>()
     private val children = mutableListOf<TestNode<F>>()
+    private val childTransforms = mutableListOf<(TestNode<F>) -> TestNode<F>>()
 
     init {
         this.builder()
@@ -44,16 +45,10 @@ class TestContext<F>(override val name: String, builder: TestContext<F>.() -> An
     fun context(name: String, builder: TestContext<F>.() -> Any): TestContext<F> =
         TestContext<F>(name, builder).also { children.add(it) }
 
-    fun wrappedWith(decorator: TestDecorator<F>, f: WrapperScope.() -> Any) {
-        WrapperScope(decorator).f()
-    }
+    fun modifyTests(transform: (TestNode<F>) -> TestNode<F>) { childTransforms.add(transform) }
 
-    fun transformedWith(transform: F.() -> F, f: WrapperScope.() -> Any) {
-        WrapperScope(transformFixture(transform)).f()
-    }
-
-    internal fun build(fixtureBuilder: (() -> F)? = null): DynamicContainer =
-        dynamicContainer(name, children.asSequence().map { dynamicNodeFor(it, fixtureBuilder) }.asStream())
+    internal fun build(fixtureBuilder: (() -> F)? = null): DynamicContainer = dynamicContainer(name,
+        children.asSequence().map { dynamicNodeFor(applyTransforms(it), fixtureBuilder) }.asStream())
 
     private fun dynamicNodeFor(node: TestNode<F>, fixtureBuilder: (() -> F)?) = when (node) {
         is MinuTest<*> -> dynamicNodeFor(node as MinuTest<F>, fixtureBuilder)
@@ -72,6 +67,10 @@ class TestContext<F>(override val name: String, builder: TestContext<F>.() -> An
         }
     }
 
+    private fun applyTransforms(baseNode: TestNode<F>): TestNode<F> = childTransforms.fold(baseNode) { acc, transform ->
+        transform(acc)
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun transformedFeature(initial: (() -> F)?): F {
         val initialFixture = initialFixtureBuilder?.invoke()
@@ -79,27 +78,12 @@ class TestContext<F>(override val name: String, builder: TestContext<F>.() -> An
             ?: Unit as F // failures of this case aren't revealed here, but when you actually invoke the test
         return fixtureTransforms.fold(initialFixture) { fixture, transform -> transform(fixture) }
     }
-
-    inner class WrapperScope(private val decorator: TestDecorator<F>) {
-        fun test(name: String, f: F.() -> Any): MinuTest<F> = decorator(SingleTest(name, f)).also { children.add(it) }
-    }
 }
 
 class SingleTest<F>(
     override val name: String,
     override val f: F.() -> Any
 ) : MinuTest<F>
-
-fun <F> transformFixture(transform: F.() -> F) = fun(t: MinuTest<F>): MinuTest<F> = SingleTest(t.name) {
-    t.f(transform(this))
-}
-
-@Suppress("UNCHECKED_CAST")
-fun <F> skipTest() = skipTest as TestDecorator<F>
-
-private val skipTest = object : TestDecorator<Any> {
-    override fun invoke(t: MinuTest<Any>): MinuTest<Any> = SingleTest(t.name) {}
-}
 
 fun <F> context(builder: TestContext<F>.() -> Any): List<DynamicNode> = listOf(TestContext("root", builder).build())
 

@@ -70,26 +70,42 @@ object SpecAndFixturesTests {
         }
     }
 
-    @TestFactory fun wrappers() = context<Fixture> {
+    @TestFactory fun `dynamic generation`() = context<Fixture> {
         fixture { Fixture("banana") }
 
-        context("can decorate tests") {
-            modifyFixture { thing = "tomato" }
-
-            transformedWith({ Fixture(thing + thing) }) {
-                test("applies transform to innermost fixture") {
-                    assertEquals("tomatotomato", thing)
-                }
+        context("same fixture for each") {
+            (1..3).forEach { i ->
+                test("test for $i") {}
             }
+        }
 
-            wrappedWith(skipTest()) {
-                test("transform can ignore test") {
-                    fail("Shouldn't get here")
+        context("modify fixture for each test") {
+            (1..3).forEach { i ->
+                context("banana count $i") {
+                    replaceFixture{ Fixture("$i $thing") }
+                    test("test for $i") {
+                        assertEquals("$i banana", thing)
+                    }
                 }
             }
         }
     }
 
+    @TestFactory fun `test transforms`() = context<Fixture> {
+        fixture { Fixture("banana") }
+
+        context("transform actual node") {
+            modifyTests {
+                when (it) {
+                    is MinuTest -> SingleTest(it.name) {}
+                    else -> it
+                }
+            }
+            test("transform can ignore test") {
+                fail("Shouldn't get here")
+            }
+        }
+    }
 
     @TestFactory fun `no fixture`() = context<Unit> {
         test("I need not have a fixture") {
