@@ -4,20 +4,24 @@ import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
+import kotlin.streams.asStream
 
-interface MinuTest<in F> {
+interface TestNode<in F> {
     val name: String
+}
+
+interface MinuTest<in F> : TestNode<F> {
+    override val name: String
     val f: F.() -> Any
 }
 
 typealias TestDecorator<F> = (t: MinuTest<F>) -> MinuTest<F>
 
-class TestContext<F>(val name: String, builder: TestContext<F>.() -> Any) {
+class TestContext<F>(override val name: String, builder: TestContext<F>.() -> Any) : TestNode<F>{
 
     private var initialFixtureBuilder: (() -> F)? = null
     private val fixtureTransforms = mutableListOf<(F) -> F>()
-    private val tests = mutableListOf<MinuTest<F>>()
-    private val contexts = mutableListOf<TestContext<F>>()
+    private val children = mutableListOf<TestNode<F>>()
 
     init {
         this.builder()
@@ -35,10 +39,10 @@ class TestContext<F>(val name: String, builder: TestContext<F>.() -> Any) {
         fixtureTransforms.add { it.f() }
     }
 
-    fun test(name: String, f: F.() -> Any): MinuTest<F> = tests.addAndReturn(SingleTest(name, f))
+    fun test(name: String, f: F.() -> Any): MinuTest<F> = SingleTest(name, f).also { children.add(it) }
 
     fun context(name: String, builder: TestContext<F>.() -> Any): TestContext<F> =
-        contexts.addAndReturn(TestContext<F>(name, builder))
+        TestContext<F>(name, builder).also { children.add(it) }
 
     fun wrappedWith(decorator: TestDecorator<F>, f: WrapperScope.() -> Any) {
         WrapperScope(decorator).f()
@@ -49,18 +53,24 @@ class TestContext<F>(val name: String, builder: TestContext<F>.() -> Any) {
     }
 
     internal fun build(fixtureBuilder: (() -> F)? = null): DynamicContainer =
-        dynamicContainer(name,
-            tests.map { test ->
-                dynamicTest(test.name) {
-                    try {
-                        test.f(transformedFeature(fixtureBuilder))
-                    } catch (x: ClassCastException) {
-                        error("You need to set a fixture by calling fixture(...)")
-                    }
-                }
-            } + contexts.map { it.build { transformedFeature(fixtureBuilder) } }
-        )
+        dynamicContainer(name, children.asSequence().map { dynamicNodeFor(it, fixtureBuilder) }.asStream())
 
+    private fun dynamicNodeFor(node: TestNode<F>, fixtureBuilder: (() -> F)?) = when (node) {
+        is MinuTest<*> -> dynamicNodeFor(node as MinuTest<F>, fixtureBuilder)
+        is TestContext<*> -> dynamicNodeFor(node as TestContext<F>, fixtureBuilder)
+        else -> error("Unexpected node type")
+    }
+
+    private fun dynamicNodeFor(testContext: TestContext<F>, fixtureBuilder: (() -> F)?) =
+        testContext.build { transformedFeature(fixtureBuilder) }
+
+    private fun dynamicNodeFor(test: MinuTest<F>, fixtureBuilder: (() -> F)?) = dynamicTest(test.name) {
+        try {
+            test.f(transformedFeature(fixtureBuilder))
+        } catch (x: ClassCastException) {
+            error("You need to set a fixture by calling fixture(...)")
+        }
+    }
 
     @Suppress("UNCHECKED_CAST")
     private fun transformedFeature(initial: (() -> F)?): F {
@@ -71,7 +81,7 @@ class TestContext<F>(val name: String, builder: TestContext<F>.() -> Any) {
     }
 
     inner class WrapperScope(private val decorator: TestDecorator<F>) {
-        fun test(name: String, f: F.() -> Any): MinuTest<F> = decorator(SingleTest(name, f)).also { tests.add(it) }
+        fun test(name: String, f: F.() -> Any): MinuTest<F> = decorator(SingleTest(name, f)).also { children.add(it) }
     }
 }
 
@@ -93,4 +103,3 @@ private val skipTest = object : TestDecorator<Any> {
 
 fun <F> context(builder: TestContext<F>.() -> Any): List<DynamicNode> = listOf(TestContext("root", builder).build())
 
-private fun <T> MutableList<T>.addAndReturn(item: T): T = item.also { add(it) }
