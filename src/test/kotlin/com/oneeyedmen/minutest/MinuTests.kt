@@ -8,7 +8,7 @@ import kotlin.streams.asSequence
 object MinuTests {
 
     data class Fixture(
-        var thing: String,
+        var fruit: String,
         val log: MutableList<String> = mutableListOf()
     )
 
@@ -17,17 +17,17 @@ object MinuTests {
         fixture { Fixture("banana") }
 
         test("can mutate fixture without affecting following tests") {
-            thing = "kumquat"
-            assertEquals("kumquat", thing)
+            fruit = "kumquat"
+            assertEquals("kumquat", fruit)
         }
 
         test("previous test did not affect me") {
-            assertEquals("banana", thing)
+            assertEquals("banana", fruit)
         }
 
         context("sub-context inheriting fixture") {
             test("has the fixture from its parent") {
-                assertEquals("banana", thing)
+                assertEquals("banana", fruit)
             }
         }
 
@@ -35,37 +35,37 @@ object MinuTests {
             fixture { Fixture("apple") }
 
             test("does not have the fixture from its parent") {
-                assertEquals("apple", thing)
+                assertEquals("apple", fruit)
             }
         }
 
         context("sub-context replacing fixture") {
-            replaceFixture { Fixture("green $thing") }
+            replaceFixture { Fixture("green $fruit") }
 
             test("sees the replaced fixture") {
-                assertEquals("green banana", thing)
+                assertEquals("green banana", fruit)
             }
         }
 
         context("sub-context modifying fixture") {
-            modifyFixture { thing = "green ${thing}s" }
+            modifyFixture { fruit = "green ${fruit}s" }
 
             test("sees the modified fixture") {
-                assertEquals("green bananas", thing)
+                assertEquals("green bananas", fruit)
             }
 
             context("sub-contexts see parent mods") {
-                modifyFixture { thing = "we have no $thing" }
+                modifyFixture { fruit = "we have no $fruit" }
 
                 test("sees the modified fixture") {
-                    assertEquals("we have no green bananas", thing)
+                    assertEquals("we have no green bananas", fruit)
                 }
             }
         }
 
         context("sanity check") {
             test("still not changed my context") {
-                assertEquals("banana", thing)
+                assertEquals("banana", fruit)
             }
         }
     }
@@ -82,9 +82,9 @@ object MinuTests {
         context("modify fixture for each test") {
             (1..3).forEach { i ->
                 context("banana count $i") {
-                    replaceFixture { Fixture("$i $thing") }
+                    replaceFixture { Fixture("$i $fruit") }
                     test("test for $i") {
-                        assertEquals("$i banana", thing)
+                        assertEquals("$i banana", fruit)
                     }
                 }
             }
@@ -140,7 +140,7 @@ object MinuTests {
     @Test fun `no fixture when one is needed`() {
         val tests: List<DynamicNode> = context<Fixture> {
             test("I report not having a fixture") {
-                assertEquals("banana", thing)
+                assertEquals("banana", fruit)
             }
         }
         assertThrows<IllegalStateException> {
