@@ -15,29 +15,28 @@ interface MinuTest<in F> : TestNode<F> {
     val f: F.() -> Any
 }
 
-typealias TestDecorator<F> = (t: MinuTest<F>) -> MinuTest<F>
-
 class TestContext<F>(override val name: String, builder: TestContext<F>.() -> Any) : TestNode<F>{
 
     private var initialFixtureBuilder: (() -> F)? = null
-    private val fixtureTransforms = mutableListOf<(F) -> F>()
+    private var fixtureTransform: ((F) -> F)? = null
     private val children = mutableListOf<TestNode<F>>()
     private val childTransforms = mutableListOf<(TestNode<F>) -> TestNode<F>>()
 
-    init {
-        this.builder()
-    }
+    init { this.builder() }
 
     fun fixture(f: () -> F) {
+        checkOnlyOneFeatureMod()
         initialFixtureBuilder = f
     }
 
     fun modifyFixture(f: F.() -> Unit) {
-        fixtureTransforms.add { it.apply(f) }
+        checkOnlyOneFeatureMod()
+        fixtureTransform = { it.apply(f) }
     }
 
     fun replaceFixture(f: F.() -> F) {
-        fixtureTransforms.add { it.f() }
+        checkOnlyOneFeatureMod()
+        fixtureTransform = { it.f() }
     }
 
     fun test(name: String, f: F.() -> Any): MinuTest<F> = SingleTest(name, f).also { children.add(it) }
@@ -76,8 +75,14 @@ class TestContext<F>(override val name: String, builder: TestContext<F>.() -> An
         val initialFixture = initialFixtureBuilder?.invoke()
             ?: initial?.invoke()
             ?: Unit as F // failures of this case aren't revealed here, but when you actually invoke the test
-        return fixtureTransforms.fold(initialFixture) { fixture, transform -> transform(fixture) }
+        return fixtureTransform?.let { it(initialFixture) } ?: initialFixture
     }
+
+    private fun checkOnlyOneFeatureMod() {
+        if (initialFixtureBuilder != null || fixtureTransform != null)
+            error("This context already has its fixture set")
+    }
+
 }
 
 class SingleTest<F>(

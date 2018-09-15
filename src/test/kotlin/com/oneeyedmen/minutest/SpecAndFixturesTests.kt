@@ -46,9 +46,7 @@ object SpecAndFixturesTests {
         }
 
         context("sub-context modifying fixture") {
-            modifyFixture { thing += "s" }
-
-            modifyFixture { thing = "green $thing" }
+            modifyFixture { thing = "green ${thing}s" }
 
             test("sees the modified fixture") {
                 assertEquals("green bananas", thing)
@@ -108,7 +106,7 @@ object SpecAndFixturesTests {
     }
 
     @TestFactory fun `no fixture`() = context<Unit> {
-        test("I need not have a fixture") {
+        test("I need not specify Unit fixture") {
             assertNotNull("banana")
         }
     }
