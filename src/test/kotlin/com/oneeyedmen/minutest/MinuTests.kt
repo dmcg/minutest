@@ -9,7 +9,7 @@ object MinuTests {
 
     data class Fixture(
         var thing: String,
-        val log: MutableList<String> = mutableListOf<String>()
+        val log: MutableList<String> = mutableListOf()
     )
 
     @TestFactory fun `with fixtures`() = context<Fixture> {
