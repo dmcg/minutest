@@ -14,14 +14,21 @@ abstract class MinuTest<in F>(name: String) : Node<F>(name) {
 
 class SingleTest<F>(name: String, override val f: F.() -> Any) : MinuTest<F>(name)
 
-class Context<F>(name: String, builder: Context<F>.() -> Any) : Node<F>(name){
+class Context<F>(
+    name: String,
+    childTransforms: List<(Node<F>) -> Node<F>> = emptyList(),
+    builder: Context<F>.() -> Any
+) : Node<F>(name){
 
     private var initialFixtureBuilder: (() -> F)? = null
     private var fixtureTransform: ((F) -> F)? = null
     private val children = mutableListOf<Node<F>>()
     private val childTransforms = mutableListOf<(Node<F>) -> Node<F>>()
 
-    init { this.builder() }
+    init {
+        this.childTransforms.addAll(childTransforms)
+        this.builder()
+    }
 
     fun fixture(f: () -> F) {
         checkOnlyOneFeatureMod()
@@ -41,7 +48,7 @@ class Context<F>(name: String, builder: Context<F>.() -> Any) : Node<F>(name){
     fun test(name: String, f: F.() -> Any): MinuTest<F> = SingleTest(name, f).also { children.add(it) }
 
     fun context(name: String, builder: Context<F>.() -> Any): Context<F> =
-        Context(name, builder).also { children.add(it) }
+        Context(name, childTransforms, builder).also { children.add(it) }
 
     fun modifyTests(transform: (Node<F>) -> Node<F>) { childTransforms.add(transform) }
 
@@ -80,8 +87,27 @@ class Context<F>(name: String, builder: Context<F>.() -> Any) : Node<F>(name){
         if (initialFixtureBuilder != null || fixtureTransform != null)
             error("This context already has its fixture set")
     }
-
 }
 
-fun <F> context(builder: Context<F>.() -> Any): List<DynamicNode> = listOf(Context("root", builder).build())
+fun <F> Context<F>.before(transform: F.() -> Any) = modifyTests { node ->
+    when (node) {
+        is MinuTest<F> -> aroundTest(node, before = transform)
+        is Context<F> -> node
+    }
+}
+
+fun <F> Context<F>.after(transform: F.() -> Any) = modifyTests { node ->
+    when (node) {
+        is MinuTest<F> -> aroundTest(node, after = transform)
+        is Context<F> -> node
+    }
+}
+fun <F> aroundTest(test: MinuTest<F>, before: F.() -> Any = {}, after: F.() -> Any = {}) = SingleTest<F>(test.name) {
+    before(this)
+    test.f(this)
+    after(this)
+}
+
+
+fun <F> context(builder: Context<F>.() -> Any): List<DynamicNode> = listOf(Context("root", builder = builder).build())
 

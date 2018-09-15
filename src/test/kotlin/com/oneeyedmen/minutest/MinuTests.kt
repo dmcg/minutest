@@ -1,14 +1,16 @@
 package com.oneeyedmen.minutest
 
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.*
 import kotlin.streams.asSequence
 
 
 object MinuTests {
 
-    data class Fixture(var thing: String)
+    data class Fixture(
+        var thing: String,
+        val log: MutableList<String> = mutableListOf<String>()
+    )
 
     @TestFactory fun `with fixtures`() = context<Fixture> {
 
@@ -101,6 +103,30 @@ object MinuTests {
             }
             test("transform can ignore test") {
                 fail("Shouldn't get here")
+            }
+        }
+
+        context("before and after") {
+            before {
+                assertTrue(log.isEmpty())
+                log.add("before")
+            }
+
+            after {
+                assertEquals(listOf("before", "during"), log)
+                log.add("after")
+            }
+
+            test("before has been called") {
+                assertEquals(listOf("before"), log)
+                log.add("during")
+            }
+
+            context("also applies to contexts") {
+                test("before is called") {
+                    assertEquals(listOf("before"), log)
+                    log.add("during")
+                }
             }
         }
     }
