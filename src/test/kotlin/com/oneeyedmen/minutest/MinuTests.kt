@@ -82,7 +82,7 @@ object MinuTests {
         context("modify fixture for each test") {
             (1..3).forEach { i ->
                 context("banana count $i") {
-                    replaceFixture{ Fixture("$i $thing") }
+                    replaceFixture { Fixture("$i $thing") }
                     test("test for $i") {
                         assertEquals("$i banana", thing)
                     }
@@ -91,43 +91,43 @@ object MinuTests {
         }
     }
 
-    @TestFactory fun `test transforms`() = context<Fixture> {
+    @TestFactory fun `before and after`() = context<Fixture> {
         fixture { Fixture("banana") }
 
-        context("transform actual node") {
-            modifyTests {
-                when (it) {
-                    is MinuTest -> SingleTest(it.name) {}
-                    else -> it
-                }
-            }
-            test("transform can ignore test") {
-                fail("Shouldn't get here")
-            }
+        before {
+            assertTrue(log.isEmpty())
+            log.add("before")
         }
 
-        context("before and after") {
-            before {
-                assertTrue(log.isEmpty())
-                log.add("before")
-            }
+        after {
+            assertEquals(listOf("before", "during"), log)
+            log.add("after")
+        }
 
-            after {
-                assertEquals(listOf("before", "during"), log)
-                log.add("after")
-            }
+        test("before has been called") {
+            assertEquals(listOf("before"), log)
+            log.add("during")
+        }
 
-            test("before has been called") {
+        context("also applies to contexts") {
+            test("before is called") {
                 assertEquals(listOf("before"), log)
                 log.add("during")
             }
+        }
+    }
 
-            context("also applies to contexts") {
-                test("before is called") {
-                    assertEquals(listOf("before"), log)
-                    log.add("during")
-                }
+    @TestFactory fun `test transform`() = context<Fixture> {
+        fixture { Fixture("banana") }
+
+        modifyTests { test ->
+            MinuTest(test.name) {
+                // don't run
             }
+        }
+
+        test("transform can ignore test") {
+            fail("Shouldn't get here")
         }
     }
 
