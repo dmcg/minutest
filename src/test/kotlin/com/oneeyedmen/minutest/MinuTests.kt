@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import kotlin.streams.asSequence
 
 
-object SpecAndFixturesTests {
+object MinuTests {
 
     data class Fixture(var thing: String)
 

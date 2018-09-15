@@ -6,21 +6,20 @@ import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import kotlin.streams.asStream
 
-interface TestNode<in F> {
-    val name: String
+sealed class Node<in F>(val name: String)
+
+abstract class MinuTest<in F>(name: String) : Node<F>(name) {
+    abstract val f: F.() -> Any
 }
 
-interface MinuTest<in F> : TestNode<F> {
-    override val name: String
-    val f: F.() -> Any
-}
+class SingleTest<F>(name: String, override val f: F.() -> Any) : MinuTest<F>(name)
 
-class TestContext<F>(override val name: String, builder: TestContext<F>.() -> Any) : TestNode<F>{
+class Context<F>(name: String, builder: Context<F>.() -> Any) : Node<F>(name){
 
     private var initialFixtureBuilder: (() -> F)? = null
     private var fixtureTransform: ((F) -> F)? = null
-    private val children = mutableListOf<TestNode<F>>()
-    private val childTransforms = mutableListOf<(TestNode<F>) -> TestNode<F>>()
+    private val children = mutableListOf<Node<F>>()
+    private val childTransforms = mutableListOf<(Node<F>) -> Node<F>>()
 
     init { this.builder() }
 
@@ -41,22 +40,21 @@ class TestContext<F>(override val name: String, builder: TestContext<F>.() -> An
 
     fun test(name: String, f: F.() -> Any): MinuTest<F> = SingleTest(name, f).also { children.add(it) }
 
-    fun context(name: String, builder: TestContext<F>.() -> Any): TestContext<F> =
-        TestContext<F>(name, builder).also { children.add(it) }
+    fun context(name: String, builder: Context<F>.() -> Any): Context<F> =
+        Context(name, builder).also { children.add(it) }
 
-    fun modifyTests(transform: (TestNode<F>) -> TestNode<F>) { childTransforms.add(transform) }
+    fun modifyTests(transform: (Node<F>) -> Node<F>) { childTransforms.add(transform) }
 
     internal fun build(fixtureBuilder: (() -> F)? = null): DynamicContainer = dynamicContainer(name,
         children.asSequence().map { dynamicNodeFor(applyTransforms(it), fixtureBuilder) }.asStream())
 
-    private fun dynamicNodeFor(node: TestNode<F>, fixtureBuilder: (() -> F)?) = when (node) {
+    private fun dynamicNodeFor(node: Node<F>, fixtureBuilder: (() -> F)?) = when (node) {
         is MinuTest<*> -> dynamicNodeFor(node as MinuTest<F>, fixtureBuilder)
-        is TestContext<*> -> dynamicNodeFor(node as TestContext<F>, fixtureBuilder)
-        else -> error("Unexpected node type")
+        is Context<*> -> dynamicNodeFor(node as Context<F>, fixtureBuilder)
     }
 
-    private fun dynamicNodeFor(testContext: TestContext<F>, fixtureBuilder: (() -> F)?) =
-        testContext.build { transformedFeature(fixtureBuilder) }
+    private fun dynamicNodeFor(context: Context<F>, fixtureBuilder: (() -> F)?) =
+        context.build { transformedFeature(fixtureBuilder) }
 
     private fun dynamicNodeFor(test: MinuTest<F>, fixtureBuilder: (() -> F)?) = dynamicTest(test.name) {
         try {
@@ -66,7 +64,7 @@ class TestContext<F>(override val name: String, builder: TestContext<F>.() -> An
         }
     }
 
-    private fun applyTransforms(baseNode: TestNode<F>): TestNode<F> = childTransforms.fold(baseNode) { acc, transform ->
+    private fun applyTransforms(baseNode: Node<F>): Node<F> = childTransforms.fold(baseNode) { acc, transform ->
         transform(acc)
     }
 
@@ -85,10 +83,5 @@ class TestContext<F>(override val name: String, builder: TestContext<F>.() -> An
 
 }
 
-class SingleTest<F>(
-    override val name: String,
-    override val f: F.() -> Any
-) : MinuTest<F>
-
-fun <F> context(builder: TestContext<F>.() -> Any): List<DynamicNode> = listOf(TestContext("root", builder).build())
+fun <F> context(builder: Context<F>.() -> Any): List<DynamicNode> = listOf(Context("root", builder).build())
 
