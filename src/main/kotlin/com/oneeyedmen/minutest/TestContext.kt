@@ -12,12 +12,16 @@ interface MinuTest<in F> {
 
 typealias TestDecorator<F> = (t: MinuTest<F>) -> MinuTest<F>
 
-class TestContext<F>(val name: String) {
+class TestContext<F>(val name: String, builder: TestContext<F>.() -> Any) {
 
     private var initialFixtureBuilder: (() -> F)? = null
     private val fixtureTransforms = mutableListOf<(F) -> F>()
     private val tests = mutableListOf<MinuTest<F>>()
     private val contexts = mutableListOf<TestContext<F>>()
+
+    init {
+        this.builder()
+    }
 
     fun fixture(f: () -> F) {
         initialFixtureBuilder = f
@@ -31,12 +35,10 @@ class TestContext<F>(val name: String) {
         fixtureTransforms.add { it.f() }
     }
 
-    fun test(name: String, f: F.() -> Any): SingleTest<F> = SingleTest(name, f).also { tests.add(it) }
+    fun test(name: String, f: F.() -> Any): MinuTest<F> = tests.addAndReturn(SingleTest(name, f))
 
-    fun context(name: String, f: TestContext<F>.() -> Any): TestContext<F> =
-        TestContext<F>(name).apply {
-            f()
-        }.also { contexts.add(it) }
+    fun context(name: String, builder: TestContext<F>.() -> Any): TestContext<F> =
+        contexts.addAndReturn(TestContext<F>(name, builder))
 
     fun wrappedWith(decorator: TestDecorator<F>, f: WrapperScope.() -> Any) {
         WrapperScope(decorator).f()
@@ -89,4 +91,6 @@ private val skipTest = object : TestDecorator<Any> {
     override fun invoke(t: MinuTest<Any>): MinuTest<Any> = SingleTest(t.name) {}
 }
 
-fun <F> context(f: TestContext<F>.() -> Any): List<DynamicNode> = listOf(TestContext<F>("root").apply { f() }.build())
+fun <F> context(builder: TestContext<F>.() -> Any): List<DynamicNode> = listOf(TestContext("root", builder).build())
+
+private fun <T> MutableList<T>.addAndReturn(item: T): T = item.also { add(it) }
