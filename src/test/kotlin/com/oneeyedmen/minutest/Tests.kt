@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.*
 import kotlin.streams.asSequence
 
 
-object MinuTests {
+object Tests {
 
     data class Fixture(
         var fruit: String,

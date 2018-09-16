@@ -14,8 +14,8 @@ abstract class TestContext<F>(name: String): Node<F>(name) {
     abstract fun fixture(f: () -> F)
     abstract fun modifyFixture(f: F.() -> Unit)
     abstract fun replaceFixture(f: F.() -> F)
-    abstract fun test(name: String, f: F.() -> Any)
-    abstract fun context(name: String, builder: TestContext<F>.() -> Any)
+    abstract fun test(name: String, f: F.() -> Any): MinuTest<F>
+    abstract fun context(name: String, builder: TestContext<F>.() -> Any): TestContext<F>
     abstract fun modifyTests(transform: (MinuTest<F>) -> MinuTest<F>)
 }
 
