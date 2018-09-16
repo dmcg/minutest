@@ -49,7 +49,7 @@ object ExampleTests {
         // We can define functions that return tests for later injection
 
         fun TestContext<Stack<String>>.canPush() = {
-            test("can have an item pushed") {
+            test("can push") {
                 val initialSize = size
                 val item = "*".repeat(initialSize + 1)
                 push(item)
@@ -59,7 +59,7 @@ object ExampleTests {
         }
 
         fun TestContext<Stack<String>>.canPop() = {
-            test("can have an item popped") {
+            test("can pop") {
                 val initialSize = size
                 val top = peek()
                 assertEquals(top, pop())
