@@ -15,13 +15,22 @@ object ImmutableTests {
             this + "before"
         }
 
+        beforeF {
+            assertEquals(listOf("before"), this)
+            this + "before too"
+        }
+
+        after {
+            assertEquals(listOf("before", "before too", "during", "after"), this)
+        }
+
         afterF {
-            assertEquals(listOf("before", "during"), this)
-            this
+            assertEquals(listOf("before", "before too", "during"), this)
+            this + "after"
         }
 
         testF("before has been called") {
-            assertEquals(listOf("before"), this)
+            assertEquals(listOf("before", "before too"), this)
             this + "during"
         }
     }

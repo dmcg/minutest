@@ -67,7 +67,7 @@ internal class MiContext<F>(
         }
     }
 
-    private fun applyTransforms(baseNode: Node<F>): Node<F> = childTransforms.fold(baseNode) { node, transform ->
+    private fun applyTransforms(baseNode: Node<F>): Node<F> = childTransforms.reversed().fold(baseNode) { node, transform ->
         when (node) {
             is MinuTest<F> -> transform(node)
             else -> node

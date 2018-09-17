@@ -29,14 +29,14 @@ fun <F> TestContext<F>.beforeF(transform: F.() -> F) = modifyTests {
 }
 
 fun <F> TestContext<F>.after(transform: F.() -> Unit) = afterF { apply(transform) }
-fun <F> TestContext<F>.afterF(transform: F.() -> F) = modifyTests { aroundTest(it, after = transform) }
+fun <F> TestContext<F>.afterF(transform: F.() -> F) = modifyTests {
+    aroundTest(it, after = transform)
+}
 
 fun <F> aroundTest(
     test: MinuTest<F>,
     before: F.() -> F = { this },
     after: F.() -> F = { this }
 ) = MinuTest<F>(test.name) {
-    test.f(before(this)).apply {
-        after(this)
-    }
+    test.f(this.before()).after()
 }

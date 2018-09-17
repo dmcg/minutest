@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.TestFactory
 
 
@@ -14,23 +15,33 @@ object TransformTests {
     @TestFactory fun `before and after`() = context<Fixture> {
         fixture { Fixture("banana") }
 
+        // befores in order
         before {
-            assertTrue(log.isEmpty())
             log.add("before")
         }
 
+        before {
+            log.add("before too")
+        }
+
+        // afters in reverse order
         after {
-            assertEquals(listOf("before", "during"), log)
+            assertEquals(listOf("before", "before too", "during", "after"), log)
+        }
+
+        after {
+            assertEquals(listOf("before", "before too", "during"), log)
+            log.add("after")
         }
 
         test("before has been called") {
-            assertEquals(listOf("before"), log)
+            assertEquals(listOf("before", "before too"), log)
             log.add("during")
         }
 
-        context("also applies to contexts") {
+        context("also applies to sub-contexts") {
             test("before is called") {
-                assertEquals(listOf("before"), log)
+                assertEquals(listOf("before", "before too"), log)
                 log.add("during")
             }
         }
