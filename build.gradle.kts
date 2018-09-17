@@ -34,6 +34,16 @@ tasks {
         classifier = "sources"
         from(java.sourceSets["main"].allSource)
     }
+
+    val readme = create("readme") {
+        doFirst {
+            generateReadme()
+        }
+    }
+
+    "publish" {
+        dependsOn(readme)
+    }
 }
 
 artifacts {
@@ -53,6 +63,7 @@ publishing {
     }
 }
 
+// use ./gradlew clean publish bintrayUpload
 bintray {
     user = "dmcg"
     key = "FIX ME"
@@ -65,4 +76,13 @@ bintray {
             name = project.version as String
         })
     })
+}
+
+fun generateReadme() {
+    val newReadmeLines = File("README.template.md").readLines().map { line ->
+        "```insert-kotlin (.*)$".toRegex().find(line)?.groups?.get(1)?.value?.let { filename ->
+            (listOf("```kotlin") + File(filename).readLines()).joinToString("\n")
+        } ?: line
+    }
+    File("README.md").writeText(newReadmeLines.joinToString("\n"))
 }
