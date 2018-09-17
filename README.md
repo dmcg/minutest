@@ -114,7 +114,7 @@ object ExampleTests {
     @TestFactory fun `immutable fixture`() = context<List<String>> {
         fixture { emptyList() }
 
-        // testF allows you to return the fixture
+        // test_ allows you to return the fixture
         test_("add an item and return the fixture") {
             val newList = this + "item"
             assertEquals("item", newList.first())
@@ -127,7 +127,7 @@ object ExampleTests {
             assertEquals("item", first())
         }
 
-        // there is also beforeF and afterF which return new fixtures
+        // there is also before_ and after_ which return new fixtures
     }
 }
 
@@ -152,6 +152,6 @@ repositories {
 
 dependencies {
     ...
-    testCompile("com.oneeyedmen:minutest:0.2.0")
+    testCompile("com.oneeyedmen:minutest:0.3.0")
 }
 ```
