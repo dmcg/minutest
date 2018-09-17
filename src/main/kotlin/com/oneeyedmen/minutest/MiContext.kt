@@ -7,7 +7,7 @@ import kotlin.streams.asStream
 internal class MiContext<F>(
     name: String,
     childTransforms: List<(MinuTest<F>) -> MinuTest<F>> = emptyList(),
-    builder: MiContext<F>.() -> Any
+    builder: MiContext<F>.() -> Unit
 ) : TestContext<F>(name){
 
     private var initialFixtureBuilder: (() -> F)? = null
@@ -35,9 +35,9 @@ internal class MiContext<F>(
         fixtureTransform = { it.transform() }
     }
 
-    override fun test(name: String, f: F.() -> Any) = MinuTest(name, f).also { children.add(it) }
+    override fun test(name: String, f: F.() -> Unit) = MinuTest(name, f).also { children.add(it) }
 
-    override fun context(name: String, builder: TestContext<F>.() -> Any) =
+    override fun context(name: String, builder: TestContext<F>.() -> Unit) =
         MiContext(name, childTransforms, builder).also { children.add(it) }
 
 
