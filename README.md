@@ -146,6 +146,6 @@ repositories {
 
 dependencies {
     ...
-    testCompile("com.oneeyedmen:minutest:0.1.0")
+    testCompile("com.oneeyedmen:minutest:0.2.0")
 }
 ```
