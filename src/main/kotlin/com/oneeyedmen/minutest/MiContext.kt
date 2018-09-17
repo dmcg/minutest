@@ -20,19 +20,19 @@ internal class MiContext<F>(
         this.builder()
     }
 
-    override fun fixture(f: () -> F) {
+    override fun fixture(factory: () -> F) {
         checkOnlyOneFeatureMod()
-        initialFixtureBuilder = f
+        initialFixtureBuilder = factory
     }
 
-    override fun modifyFixture(f: F.() -> Unit) {
+    override fun modifyFixture(transform: F.() -> Unit) {
         checkOnlyOneFeatureMod()
-        fixtureTransform = { it.apply(f) }
+        fixtureTransform = { it.apply(transform) }
     }
 
-    override fun replaceFixture(f: F.() -> F) {
+    override fun replaceFixture(transform: F.() -> F) {
         checkOnlyOneFeatureMod()
-        fixtureTransform = { it.f() }
+        fixtureTransform = { it.transform() }
     }
 
     override fun test(name: String, f: F.() -> Any) = MinuTest(name, f).also { children.add(it) }
