@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 project.group = "com.oneeyedmen"
-project.version = "0.1.1-SNAPSHOT"
+project.version = "0.2.0"
 
 repositories {
     mavenCentral()
@@ -66,7 +66,7 @@ publishing {
 // use ./gradlew clean publish bintrayUpload
 bintray {
     user = "dmcg"
-    key = "FIX ME"
+    key = System.getenv("BINTRAY_API_KEY")
     publish = true
     setPublications("mavenJava")
     pkg(delegateClosureOf<BintrayExtension.PackageConfig> {

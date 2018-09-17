@@ -54,12 +54,12 @@ object ExampleTests {
     }
 
     // If you have more state, make a separate fixture class
-
     class Fixture {
         val stack1 = Stack<String>()
         val stack2 = Stack<String>()
     }
 
+    // and then use it in your tests
     @TestFactory fun `separate fixture class`() = context<Fixture> {
 
         fixture { Fixture() }
@@ -86,8 +86,7 @@ object ExampleTests {
         }
     }
 
-    // you can modify the fixture before, and inspect it after
-
+    // You can modify the fixture before, and inspect it after
     @TestFactory fun `before and after`() = context<Fixture> {
         fixture { Fixture() }
 
@@ -103,6 +102,26 @@ object ExampleTests {
         test("before was called") {
             assertEquals("item", stack1.peek())
         }
+    }
+
+    // You can also work with an immutable fixture
+    @TestFactory fun `immutable fixture`() = context<List<String>> {
+        fixture { emptyList() }
+
+        // testF allows you to return the fixture
+        testF("add an item and return the fixture") {
+            val newList = this + "item"
+            assertEquals("item", newList.first())
+            newList
+        }
+
+        // which will be available for inspection in after
+        after {
+            println("in after")
+            assertEquals("item", first())
+        }
+
+        // there is also beforeF and afterF which return new fixtures
     }
 }
 
