@@ -35,13 +35,17 @@ internal class MiContext<F>(
         fixtureTransform = { it.transform() }
     }
 
-    override fun test(name: String, f: F.() -> Unit) = MinuTest(name, f).also { children.add(it) }
+    override fun test(name: String, f: F.() -> Unit) = testF(name) {
+        apply { f(this) }
+    }
+
+    override fun testF(name: String, f: F.() -> F) = MinuTest(name, f).also { children.add(it) }
 
     override fun context(name: String, builder: TestContext<F>.() -> Unit) =
         MiContext(name, childTransforms, builder).also { children.add(it) }
 
 
-    override fun modifyTests(transform: (MinuTest<F>) -> MinuTest<F>) { childTransforms.add(transform) }
+    override fun modifyTests(testTransform: (MinuTest<F>) -> MinuTest<F>) { childTransforms.add(testTransform) }
 
     internal fun build(fixtureBuilder: (() -> F)? = null): DynamicContainer = DynamicContainer.dynamicContainer(
         name,

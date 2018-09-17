@@ -1,11 +1,12 @@
 package com.oneeyedmen.minutest
 
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import kotlin.streams.asSequence
 
 
-object Tests {
+object FixtureTests {
 
     data class Fixture(
         var fruit: String,
@@ -67,67 +68,6 @@ object Tests {
             test("still not changed my context") {
                 assertEquals("banana", fruit)
             }
-        }
-    }
-
-    @TestFactory fun `dynamic generation`() = context<Fixture> {
-        fixture { Fixture("banana") }
-
-        context("same fixture for each") {
-            (1..3).forEach { i ->
-                test("test for $i") {}
-            }
-        }
-
-        context("modify fixture for each test") {
-            (1..3).forEach { i ->
-                context("banana count $i") {
-                    replaceFixture { Fixture("$i $fruit") }
-                    test("test for $i") {
-                        assertEquals("$i banana", fruit)
-                    }
-                }
-            }
-        }
-    }
-
-    @TestFactory fun `before and after`() = context<Fixture> {
-        fixture { Fixture("banana") }
-
-        before {
-            assertTrue(log.isEmpty())
-            log.add("before")
-        }
-
-        after {
-            assertEquals(listOf("before", "during"), log)
-            log.add("after")
-        }
-
-        test("before has been called") {
-            assertEquals(listOf("before"), log)
-            log.add("during")
-        }
-
-        context("also applies to contexts") {
-            test("before is called") {
-                assertEquals(listOf("before"), log)
-                log.add("during")
-            }
-        }
-    }
-
-    @TestFactory fun `test transform`() = context<Fixture> {
-        fixture { Fixture("banana") }
-
-        modifyTests { test ->
-            MinuTest(test.name) {
-                // don't run
-            }
-        }
-
-        test("transform can ignore test") {
-            fail("Shouldn't get here")
         }
     }
 
