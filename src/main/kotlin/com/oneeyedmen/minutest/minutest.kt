@@ -17,19 +17,19 @@ abstract class TestContext<F>(name: String): Node<F>(name) {
     abstract fun modifyFixture(transform: F.() -> Unit)
     abstract fun replaceFixture(transform: F.() -> F)
     abstract fun test(name: String, f: F.() -> Unit): MinuTest<F>
-    abstract fun testF(name: String, f: F.() -> F): MinuTest<F>
+    abstract fun test_(name: String, f: F.() -> F): MinuTest<F>
     abstract fun context(name: String, builder: TestContext<F>.() -> Unit): TestContext<F>
     abstract fun modifyTests(testTransform: (MinuTest<F>) -> MinuTest<F>)
 }
 
-fun <F> TestContext<F>.before(transform: F.() -> Unit) = beforeF { apply(transform) }
+fun <F> TestContext<F>.before(transform: F.() -> Unit) = before_ { apply(transform) }
 
-fun <F> TestContext<F>.beforeF(transform: F.() -> F) = modifyTests {
+fun <F> TestContext<F>.before_(transform: F.() -> F) = modifyTests {
     aroundTest(it, before = transform)
 }
 
-fun <F> TestContext<F>.after(transform: F.() -> Unit) = afterF { apply(transform) }
-fun <F> TestContext<F>.afterF(transform: F.() -> F) = modifyTests {
+fun <F> TestContext<F>.after(transform: F.() -> Unit) = after_ { apply(transform) }
+fun <F> TestContext<F>.after_(transform: F.() -> F) = modifyTests {
     aroundTest(it, after = transform)
 }
 

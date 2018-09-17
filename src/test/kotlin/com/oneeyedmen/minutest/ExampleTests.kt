@@ -108,7 +108,7 @@ object ExampleTests {
         fixture { emptyList() }
 
         // testF allows you to return the fixture
-        testF("add an item and return the fixture") {
+        test_("add an item and return the fixture") {
             val newList = this + "item"
             assertEquals("item", newList.first())
             newList

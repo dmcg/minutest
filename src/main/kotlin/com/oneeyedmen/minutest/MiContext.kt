@@ -35,11 +35,11 @@ internal class MiContext<F>(
         fixtureTransform = { it.transform() }
     }
 
-    override fun test(name: String, f: F.() -> Unit) = testF(name) {
+    override fun test(name: String, f: F.() -> Unit) = test_(name) {
         apply { f(this) }
     }
 
-    override fun testF(name: String, f: F.() -> F) = MinuTest(name, f).also { children.add(it) }
+    override fun test_(name: String, f: F.() -> F) = MinuTest(name, f).also { children.add(it) }
 
     override fun context(name: String, builder: TestContext<F>.() -> Unit) =
         MiContext(name, childTransforms, builder).also { children.add(it) }

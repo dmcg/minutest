@@ -10,26 +10,27 @@ object ImmutableTests {
     @TestFactory fun `before and after`() = context<List<String>> {
         fixture { emptyList() }
 
-        beforeF {
+        before_ {
             assertTrue(isEmpty())
             this + "before"
         }
 
-        beforeF {
+        before_ {
             assertEquals(listOf("before"), this)
             this + "before too"
         }
 
+        // afters in reverse order
         after {
             assertEquals(listOf("before", "before too", "during", "after"), this)
         }
 
-        afterF {
+        after_ {
             assertEquals(listOf("before", "before too", "during"), this)
             this + "after"
         }
 
-        testF("before has been called") {
+        test_("before has been called") {
             assertEquals(listOf("before", "before too"), this)
             this + "during"
         }
