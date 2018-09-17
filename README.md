@@ -91,16 +91,22 @@ object ExampleTests {
         fixture { Fixture() }
 
         before {
-            stack1.push("item")
+            stack1.push("on 1")
+        }
+
+        before {
+            stack2.push("on 2")
         }
 
         after {
             println("in after")
-            assertTrue(stack2.isEmpty())
+            assertTrue(stack1.isEmpty())
         }
 
         test("before was called") {
-            assertEquals("item", stack1.peek())
+            assertEquals("on 1", stack1.peek())
+            assertEquals("on 2", stack2.peek())
+            stack1.pop()
         }
     }
 
@@ -109,7 +115,7 @@ object ExampleTests {
         fixture { emptyList() }
 
         // testF allows you to return the fixture
-        testF("add an item and return the fixture") {
+        test_("add an item and return the fixture") {
             val newList = this + "item"
             assertEquals("item", newList.first())
             newList
