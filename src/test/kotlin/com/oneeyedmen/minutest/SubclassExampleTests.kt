@@ -9,7 +9,7 @@ import java.util.*
 
 object SubclassExampleTests {
 
-    @TestFactory fun `generate contexts to test with multiple values`() = context<MutableCollection<String>> {
+    @TestFactory fun `pass factories into a context builder`() = context<MutableCollection<String>> {
 
         val factories = listOf<() -> MutableCollection<String>>(::ArrayList, ::LinkedList)
 
@@ -28,5 +28,31 @@ object SubclassExampleTests {
                 }
             }
         }
+    }
+
+    // or define a reusable spec in one place
+    fun TestContext<MutableCollection<String>>.collectionTests(factory: () -> MutableCollection<String>) {
+        context("check $factory") {
+
+            fixture { factory() }
+
+            test("is empty") {
+                assertTrue(isEmpty())
+            }
+
+            test("can add") {
+                add("item")
+                assertEquals("item", first())
+            }
+        }
+    }
+
+    // and use it in others
+    @TestFactory fun `use predefined spec for ArrayList`() = context<MutableCollection<String>> {
+        collectionTests { ArrayList() }
+    }
+
+    @TestFactory fun `use predefined spec for LinkedList`() = context<MutableCollection<String>> {
+        collectionTests { LinkedList() }
     }
 }
