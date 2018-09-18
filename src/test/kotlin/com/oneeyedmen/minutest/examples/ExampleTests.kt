@@ -1,5 +1,8 @@
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.examples
 
+import com.oneeyedmen.minutest.after
+import com.oneeyedmen.minutest.before
+import com.oneeyedmen.minutest.context
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestFactory
@@ -101,26 +104,6 @@ object ExampleTests {
             assertEquals("on 2", stack2.peek())
             stack1.pop()
         }
-    }
-
-    // You can also work with an immutable fixture
-    @TestFactory fun `immutable fixture`() = context<List<String>> {
-        fixture { emptyList() }
-
-        // test_ allows you to return the fixture
-        test_("add an item and return the fixture") {
-            val newList = this + "item"
-            assertEquals("item", newList.first())
-            newList
-        }
-
-        // which will be available for inspection in after
-        after {
-            println("in after")
-            assertEquals("item", first())
-        }
-
-        // there is also before_ and after_ which return new fixtures
     }
 }
 

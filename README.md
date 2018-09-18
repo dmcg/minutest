@@ -5,15 +5,21 @@
 Minutest brings Spec-style testing to JUnit 5 and Kotlin.
 
 ## Installation
-Life is too short to jump through the hoops to Maven Central, but you can pick up builds on [JCenter](https://bintray.com/dmcg/oneeyedmen-mvn/minutest)
+You can find the latest binaries and source in a Maven-compatible format on [JCenter](https://bintray.com/dmcg/oneeyedmen-mvn/minutest)
+
+You will need to include JUnit 5 on your test classpath. If you can work out what to do based on the 
+[JUnit 5 docs](https://junit.org/junit5/docs/current/user-guide/#installation) then you're probably worthy to use minutest.
 
 ## Usage
 
-minutest See [ExampleTests](src/test/kotlin/com/oneeyedmen/minutest/ExampleTests.kt), viz:
+minutest can be used to define tests in a nested Spec style, with contexts and tests inside those contexts. 
 
 ```kotlin
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.examples
 
+import com.oneeyedmen.minutest.after
+import com.oneeyedmen.minutest.before
+import com.oneeyedmen.minutest.context
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestFactory
@@ -116,26 +122,6 @@ object ExampleTests {
             stack1.pop()
         }
     }
-
-    // You can also work with an immutable fixture
-    @TestFactory fun `immutable fixture`() = context<List<String>> {
-        fixture { emptyList() }
-
-        // test_ allows you to return the fixture
-        test_("add an item and return the fixture") {
-            val newList = this + "item"
-            assertEquals("item", newList.first())
-            newList
-        }
-
-        // which will be available for inspection in after
-        after {
-            println("in after")
-            assertEquals("item", first())
-        }
-
-        // there is also before_ and after_ which return new fixtures
-    }
 }
 
 private fun <E> Stack<E>.swapTop(otherStack: Stack<E>) {
@@ -152,8 +138,10 @@ The key to minutest is that by separating the fixture from the test code, both a
 So if you want to reuse the same test for different concrete implementations, define the test with a function and call it for subclasses.
 
 ```kotlin
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.examples
 
+import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.context
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestFactory
@@ -196,11 +184,13 @@ object LinkedListTets{
 }
 ```
 
-Unleash the power of Kotlin to generate your tests on the fly.
+Unleash the `Power of Kotlin` to generate your tests on the fly.
 
 ```kotlin
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.examples
 
+import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.context
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
@@ -288,6 +278,42 @@ object GeneratingExampleTests {
                 canPop(itemCount > 0)
             }
         }
+    }
+}
+```
+
+Are you a died-in-the-wool functional programmer? If so, what are you doing slumming it with Kotlin? But at least minutest allows immutable fixtures.
+
+```kotlin
+package com.oneeyedmen.minutest.examples
+
+import com.oneeyedmen.minutest.after
+import com.oneeyedmen.minutest.context
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.TestFactory
+
+
+object ImmutableExampleTests {
+
+    // If you like this FP stuff, you may want to test an immutable fixture.
+
+    @TestFactory fun `immutable fixture`() = context<List<String>> {
+        fixture { emptyList() }
+
+        // test_ allows you to return the fixture
+        test_("add an item and return the fixture") {
+            val newList = this + "item"
+            assertEquals("item", newList.first())
+            newList
+        }
+
+        // which will be available for inspection in after
+        after {
+            println("in after")
+            assertEquals("item", first())
+        }
+
+        // there are also before_ and after_ which return new fixtures
     }
 }
 ```

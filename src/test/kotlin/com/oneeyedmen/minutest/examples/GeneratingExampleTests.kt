@@ -1,5 +1,7 @@
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.examples
 
+import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.context
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
