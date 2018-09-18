@@ -12,17 +12,16 @@ object GeneratingExampleTests {
 
     // We can define functions that return tests for later injection
 
-    private fun TestContext<StringStack>.isEmpty(condition: Boolean): () -> MinuTest<StringStack> = {
-        test("is empty is $condition") {
-            assertEquals(condition, size == 0)
-            if (condition)
+    private fun TestContext<StringStack>.isEmpty(isEmpty: Boolean) =
+        test("is " + (if (isEmpty) "" else "not ") + "empty") {
+            assertEquals(isEmpty, size == 0)
+            if (isEmpty)
                 assertThrows<EmptyStackException> { peek() }
             else
                 assertNotNull(peek())
         }
-    }
 
-    private fun TestContext<StringStack>.canPush() = {
+    private fun TestContext<StringStack>.canPush() =
         test("can push") {
             val initialSize = size
             val item = "*".repeat(initialSize + 1)
@@ -30,9 +29,8 @@ object GeneratingExampleTests {
             assertEquals(item, peek())
             assertEquals(initialSize + 1, size)
         }
-    }
 
-    private fun TestContext<StringStack>.canPop() = {
+    private fun TestContext<StringStack>.canPop() =
         test("can pop") {
             val initialSize = size
             val top = peek()
@@ -41,22 +39,27 @@ object GeneratingExampleTests {
             if (size > 0)
                 assertNotEquals(top, peek())
         }
-    }
+
+    private fun TestContext<StringStack>.cantPop() =
+        test("cant pop") {
+            assertThrows<EmptyStackException> { pop() }
+        }
 
     @TestFactory fun `invoke functions to inject tests`() = context<StringStack> {
 
         fixture { StringStack() }
 
         context("an empty stack") {
-            isEmpty(true)()
+            isEmpty(true)
             canPush()
+            cantPop()
         }
 
         context("a stack with one item") {
             modifyFixture { push("one") }
 
-            isEmpty(false)()
-            canPush()()
+            isEmpty(false)
+            canPush()
 
             test("has the item on top") {
                 assertEquals("one", pop())
@@ -68,7 +71,9 @@ object GeneratingExampleTests {
 
     @TestFactory fun `generate contexts to test with multiple values`() = context<StringStack> {
 
-        (1..3).forEach { itemCount ->
+        fun TestContext<StringStack>.canPop(canPop: Boolean) = if (canPop) canPop() else cantPop()
+
+        (0..3).forEach { itemCount ->
             context("stack with $itemCount items") {
 
                 fixture {
@@ -77,9 +82,9 @@ object GeneratingExampleTests {
                     }
                 }
 
-                isEmpty(false)()
-                canPush()()
-                canPop()()
+                isEmpty(itemCount == 0)
+                canPush()
+                canPop(itemCount > 0)
             }
         }
     }

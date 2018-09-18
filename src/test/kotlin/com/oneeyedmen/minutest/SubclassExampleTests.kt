@@ -6,53 +6,37 @@ import org.junit.jupiter.api.TestFactory
 import java.util.*
 
 
+// To run the same tests against different implementations, first define a function taking the implementation and
+// returning a TestContext
+fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
+    collectionName: String,
+    factory: () -> MutableCollection<String>
+) {
+    context("check $collectionName") {
 
-object SubclassExampleTests {
+        fixture { factory() }
 
-    @TestFactory fun `pass factories into a context builder`() = context<MutableCollection<String>> {
+        test("is empty") {
+            assertTrue(isEmpty())
+        }
 
-        val factories = listOf<() -> MutableCollection<String>>(::ArrayList, ::LinkedList)
-
-        factories.forEach { factory ->
-            context("check $factory") {
-
-                fixture { factory() }
-
-                test("is empty") {
-                    assertTrue(isEmpty())
-                }
-
-                test("can add") {
-                    add("item")
-                    assertEquals("item", first())
-                }
-            }
+        test("can add") {
+            add("item")
+            assertEquals("item", first())
         }
     }
+}
 
-    // or define a reusable spec in one place
-    fun TestContext<MutableCollection<String>>.collectionTests(factory: () -> MutableCollection<String>) {
-        context("check $factory") {
+// Now tests can invoke the function to define a context to be run
 
-            fixture { factory() }
-
-            test("is empty") {
-                assertTrue(isEmpty())
-            }
-
-            test("can add") {
-                add("item")
-                assertEquals("item", first())
-            }
-        }
+object ArrayListTests {
+    @TestFactory fun tests() = context<MutableCollection<String>> {
+        behavesAsMutableCollection("ArrayList") { ArrayList() }
     }
+}
 
-    // and use it in others
-    @TestFactory fun `use predefined spec for ArrayList`() = context<MutableCollection<String>> {
-        collectionTests { ArrayList() }
-    }
-
-    @TestFactory fun `use predefined spec for LinkedList`() = context<MutableCollection<String>> {
-        collectionTests { LinkedList() }
+object LinkedListTets{
+    @TestFactory fun tests() = context<MutableCollection<String>> {
+        behavesAsMutableCollection("LinkedList") { LinkedList() }
     }
 }
