@@ -62,12 +62,11 @@ object GeneratingExampleTests {
 
             isEmpty(false)
             canPush()
+            canPop()
 
             test("has the item on top") {
-                assertEquals("one", pop())
+                assertEquals("one", peek())
             }
-
-            canPop()
         }
     }
 
