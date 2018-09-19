@@ -7,53 +7,45 @@ import org.junit.jupiter.api.TestFactory
 
 object TransformTests {
 
-    data class Fixture(
-        var fruit: String,
-        val log: MutableList<String> = mutableListOf()
-    )
-
-    @TestFactory fun `before and after`() = context<Fixture> {
-        fixture { Fixture("banana") }
+    @TestFactory fun `before and after`() = context<MutableList<String>> {
+        fixture { mutableListOf() }
 
         // befores in order
         before {
-            log.add("before")
+            add("before")
         }
 
         before {
-            log.add("before too")
+            add("before too")
         }
 
         // afters in reverse order
         after {
-            assertEquals(listOf("before", "before too", "during", "after"), log)
+            assertEquals(listOf("before", "before too", "during", "after"), this)
         }
 
         after {
-            assertEquals(listOf("before", "before too", "during"), log)
-            log.add("after")
+            assertEquals(listOf("before", "before too", "during"), this)
+            add("after")
         }
 
         test("before has been called") {
-            assertEquals(listOf("before", "before too"), log)
-            log.add("during")
+            assertEquals(listOf("before", "before too"), this)
+            add("during")
         }
 
         context("also applies to sub-contexts") {
             test("before is called") {
-                assertEquals(listOf("before", "before too"), log)
-                log.add("during")
+                assertEquals(listOf("before", "before too"), this)
+                add("during")
             }
         }
     }
 
-    @TestFactory fun `test transform`() = context<Fixture> {
-        fixture { Fixture("banana") }
+    @TestFactory fun `test transform`() = context<Unit> {
 
         modifyTests { test ->
-            MinuTest(test.name) {
-                this
-            }
+            MinuTest(test.name) {}
         }
 
         test("transform can ignore test") {
