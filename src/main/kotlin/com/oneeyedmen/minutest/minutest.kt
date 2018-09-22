@@ -1,10 +1,7 @@
 package com.oneeyedmen.minutest
 
-import org.junit.jupiter.api.DynamicNode
-
-fun <F> context(builder: TestContext<F>.() -> Unit): List<DynamicNode> = listOf(
-    MiContext("root", builder = builder).build()
-)
+fun <F> context(builder: TestContext<F>.() -> Unit) =
+    MiContext("ignored", builder = builder).build().children
 
 sealed class Node<in F>(val name: String)
 
