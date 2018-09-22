@@ -35,3 +35,8 @@ Are you a died-in-the-wool functional programmer? If so, what are you doing slum
 
 ```insert-kotlin src/test/kotlin/com/oneeyedmen/minutest/examples/ImmutableExampleTests.kt
 ```
+
+Power JUnit 4 user? minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
+
+```insert-kotlin src/test/kotlin/com/oneeyedmen/minutest/examples/JUnitRulesExampleTests.kt
+```

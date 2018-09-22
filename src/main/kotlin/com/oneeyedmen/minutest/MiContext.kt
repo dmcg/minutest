@@ -41,7 +41,7 @@ internal class MiContext<F>(
     override fun context(name: String, builder: TestContext<F>.() -> Unit) =
         MiContext(name, childTransforms, builder).also { children.add(it) }
 
-    override fun modifyTests(testTransform: (MinuTest<F>) -> MinuTest<F>) { childTransforms.add(testTransform) }
+    override fun addTransform(testTransform: (MinuTest<F>) -> MinuTest<F>) { childTransforms.add(testTransform) }
 
     internal fun build(): DynamicContainer = dynamicContainer(name,
         children.asSequence().map { dynamicNodeFor(applyTransforms(it)) }.asStream())

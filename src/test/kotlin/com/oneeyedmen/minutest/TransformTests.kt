@@ -44,7 +44,7 @@ object TransformTests {
 
     @TestFactory fun `test transform`() = context<Unit> {
 
-        modifyTests { test ->
+        addTransform { test ->
             MinuTest(test.name) {}
         }
 
