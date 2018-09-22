@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 project.group = "com.oneeyedmen"
-project.version = "0.5.0-SNAPSHOT"
+project.version = "0.5.0"
 
 repositories {
     mavenCentral()
@@ -21,7 +21,8 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
     implementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.3.1")
+    implementation("org.junit.vintage:junit-vintage-engine:5.3.1")
+    implementation("junit:junit:4.12")
 }
 
 tasks {
