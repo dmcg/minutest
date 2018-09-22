@@ -154,7 +154,7 @@ fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
     collectionName: String,
     factory: () -> MutableCollection<String>
 ) {
-    context("check $collectionName") {
+    context("$collectionName behaves as MutableCollection") {
 
         fixture { factory() }
 
@@ -177,7 +177,7 @@ object ArrayListTests {
     }
 }
 
-object LinkedListTets{
+object LinkedListTests{
     @TestFactory fun tests() = context<MutableCollection<String>> {
         behavesAsMutableCollection("LinkedList") { LinkedList() }
     }
