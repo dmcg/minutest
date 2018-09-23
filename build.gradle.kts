@@ -23,13 +23,22 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
     implementation("org.junit.vintage:junit-vintage-engine:5.3.1")
     implementation("junit:junit:4.12")
+
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:+")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:+") {
+        because("enables running in IntelliJ using JUnit runner")
+    }
 }
 
 tasks {
     "compileKotlin"(KotlinJvmCompile::class) { kotlinOptions.jvmTarget = "1.8" }
     "compileTestKotlin"(KotlinJvmCompile::class) { kotlinOptions.jvmTarget = "1.8" }
 
-    withType<Test> { useJUnitPlatform() }
+    withType<Test> {
+        useJUnitPlatform {
+            includeEngines("junit-jupiter", "junit-vintage")
+        }
+    }
 
     create<Jar>("sourceJar") {
         classifier = "sources"
