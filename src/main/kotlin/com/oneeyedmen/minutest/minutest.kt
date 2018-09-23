@@ -35,9 +35,31 @@ fun <F> aroundTest(
     before: F.() -> F = { this },
     after: F.() -> F = { this }
 ) = MinuTest<F>(test.name) {
-    try {
-        test.f(this.before())
-    } finally {
-        after()
+    // We need to pass the current fixture from to before, then test, then after.
+    // TODO - pretty much untested
+    var currentFixture: F = this
+    var thrown: Throwable? = null
+    currentFixture = try {
+        this.before()
+    } catch (x: Throwable) {
+        thrown = x
+        currentFixture
     }
+    currentFixture = if (thrown == null) {
+        try {
+            test.f(currentFixture)
+        } catch (x: Throwable) {
+            thrown = x
+            currentFixture
+        }
+    } else currentFixture
+
+    currentFixture = try {
+        currentFixture.after()
+    } catch (x: Throwable) {
+        currentFixture
+    }
+    if (thrown != null)
+        throw thrown
+    else currentFixture
 }
