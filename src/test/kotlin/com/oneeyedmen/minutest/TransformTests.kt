@@ -2,7 +2,11 @@ package com.oneeyedmen.minutest
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.DynamicTest
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.assertThrows
+import kotlin.streams.asSequence
 
 
 object TransformTests {
@@ -40,6 +44,25 @@ object TransformTests {
                 add("during")
             }
         }
+    }
+
+    @Test fun `afters run even on exception`() {
+        val list = mutableListOf<String>()
+
+        val tests = context<Unit> {
+            after {
+                list.add("after")
+            }
+            test("I fail") {
+                throw Throwable("banana")
+            }
+        }.asSequence()
+
+        assertThrows<Throwable> {
+            ((tests.first() as DynamicTest)).executable.execute()
+        }
+
+        assertEquals(listOf("after"), list)
     }
 
     @TestFactory fun `test transform`() = context<Unit> {
