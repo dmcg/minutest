@@ -1,5 +1,6 @@
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.junit
 
+import com.oneeyedmen.minutest.before
 import org.junit.jupiter.api.TestFactory
 import org.junit.rules.ExpectedException
 
@@ -11,7 +12,7 @@ object JunitRulesExampleTests {
     }
 
     // theory here is that ExpectedException works, everything will!
-    @TestFactory fun test() = context<Fixture>() {
+    @TestFactory fun test() = junitTests<Fixture>() {
         fixture {
             Fixture()
         }

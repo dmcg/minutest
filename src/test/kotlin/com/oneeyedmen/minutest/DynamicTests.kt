@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.TestFactory
 
@@ -11,7 +12,7 @@ object DynamicTests {
         val log: MutableList<String> = mutableListOf()
     )
 
-    @TestFactory fun `dynamic generation`() = context<Fixture> {
+    @TestFactory fun `dynamic generation`() = junitTests<Fixture> {
         fixture { Fixture("banana") }
 
         context("same fixture for each") {

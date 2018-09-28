@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.DynamicTest
@@ -11,7 +12,7 @@ import kotlin.streams.asSequence
 
 object TransformTests {
 
-    @TestFactory fun `before and after`() = context<MutableList<String>> {
+    @TestFactory fun `before and after`() = junitTests<MutableList<String>> {
         fixture { mutableListOf() }
 
         // befores in order
@@ -49,7 +50,7 @@ object TransformTests {
     @Test fun `afters run even on exception`() {
         val list = mutableListOf<String>()
 
-        val tests = context<Unit> {
+        val tests = junitTests<Unit> {
             after {
                 list.add("after")
             }
@@ -65,7 +66,7 @@ object TransformTests {
         assertEquals(listOf("after"), list)
     }
 
-    @TestFactory fun `test transform`() = context<Unit> {
+    @TestFactory fun `test transform`() = junitTests<Unit> {
 
         addTransform { test ->
             MinuTest(test.name) {}

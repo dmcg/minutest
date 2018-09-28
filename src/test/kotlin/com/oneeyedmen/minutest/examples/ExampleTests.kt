@@ -2,7 +2,7 @@ package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.after
 import com.oneeyedmen.minutest.before
-import com.oneeyedmen.minutest.context
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestFactory
@@ -13,7 +13,7 @@ import java.util.*
 object ExampleTests {
 
     // In the simplest case, make the fixture the thing that you are testing
-    @TestFactory fun `stack is our fixture`() = context<Stack<String>> {
+    @TestFactory fun `stack is our fixture`() = junitTests<Stack<String>> {
 
         // define the fixture for enclosed scopes
         fixture { Stack() }
@@ -56,7 +56,7 @@ object ExampleTests {
     }
 
     // and then use it in your tests
-    @TestFactory fun `separate fixture class`() = context<Fixture> {
+    @TestFactory fun `separate fixture class`() = junitTests<Fixture> {
 
         fixture { Fixture() }
 
@@ -83,7 +83,7 @@ object ExampleTests {
     }
 
     // You can modify the fixture before, and inspect it after
-    @TestFactory fun `before and after`() = context<Fixture> {
+    @TestFactory fun `before and after`() = junitTests<Fixture> {
         fixture { Fixture() }
 
         before {

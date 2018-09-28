@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestFactory
@@ -7,7 +8,7 @@ import org.junit.jupiter.api.TestFactory
 
 object ImmutableTests {
 
-    @TestFactory fun `before and after`() = context<List<String>> {
+    @TestFactory fun `before and after`() = junitTests<List<String>> {
         fixture { emptyList() }
 
         before_ {

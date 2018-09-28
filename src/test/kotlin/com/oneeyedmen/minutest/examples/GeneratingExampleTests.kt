@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.context
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
@@ -47,7 +47,7 @@ object GeneratingExampleTests {
             assertThrows<EmptyStackException> { pop() }
         }
 
-    @TestFactory fun `invoke functions to inject tests`() = context<StringStack> {
+    @TestFactory fun `invoke functions to inject tests`() = junitTests<StringStack> {
 
         fixture { StringStack() }
 
@@ -70,7 +70,7 @@ object GeneratingExampleTests {
         }
     }
 
-    @TestFactory fun `generate contexts to test with multiple values`() = context<StringStack> {
+    @TestFactory fun `generate contexts to test with multiple values`() = junitTests<StringStack> {
 
         fun TestContext<StringStack>.canPop(canPop: Boolean) = if (canPop) canPop() else cantPop()
 

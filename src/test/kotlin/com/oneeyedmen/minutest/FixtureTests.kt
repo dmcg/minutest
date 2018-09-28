@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.DynamicTest
@@ -16,7 +17,7 @@ object FixtureTests {
         val log: MutableList<String> = mutableListOf()
     )
 
-    @TestFactory fun `with fixtures`() = context<Fixture> {
+    @TestFactory fun `with fixtures`() = junitTests<Fixture> {
 
         fixture { Fixture("banana") }
 
@@ -74,14 +75,14 @@ object FixtureTests {
         }
     }
 
-    @TestFactory fun `no fixture`() = context<Unit> {
+    @TestFactory fun `no fixture`() = junitTests<Unit> {
         test("I need not specify Unit fixture") {
             assertNotNull("banana")
         }
     }
 
     @Test fun `throws IllegalStateException if no fixture specified when one is needed`() {
-        val tests = context<Fixture> {
+        val tests = junitTests<Fixture> {
             test("I report not having a fixture") {
                 assertEquals("banana", fruit)
             }

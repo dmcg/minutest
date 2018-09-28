@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.applyRule
-import com.oneeyedmen.minutest.context
+import com.oneeyedmen.minutest.junit.applyRule
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestFactory
 import org.junit.rules.TemporaryFolder
@@ -14,7 +14,7 @@ object JunitRulesExampleTests {
         val testFolder = TemporaryFolder()
     }
 
-    @TestFactory fun `temporary folder rule`() = context<Fixture>() {
+    @TestFactory fun `temporary folder rule`() = junitTests<Fixture>() {
 
         fixture { Fixture() }
 

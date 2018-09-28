@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.after
-import com.oneeyedmen.minutest.context
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.TestFactory
 
@@ -10,7 +10,7 @@ object ImmutableExampleTests {
 
     // If you like this FP stuff, you may want to test an immutable fixture.
 
-    @TestFactory fun `immutable fixture`() = context<List<String>> {
+    @TestFactory fun `immutable fixture`() = junitTests<List<String>> {
         fixture { emptyList() }
 
         // test_ allows you to return the fixture

@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest
 
-fun <F> context(builder: TestContext<F>.() -> Unit) =
-    MiContext("ignored", builder = builder).build().children
+fun <F> rootContext(builder: TestContext<F>.() -> Unit): TestContext<F> =
+    MiContext("ignored", builder = builder)
 
 sealed class Node<in F>(val name: String)
 

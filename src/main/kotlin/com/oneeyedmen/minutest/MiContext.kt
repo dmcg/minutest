@@ -1,17 +1,12 @@
 package com.oneeyedmen.minutest
 
-import org.junit.jupiter.api.DynamicContainer
-import org.junit.jupiter.api.DynamicContainer.dynamicContainer
-import org.junit.jupiter.api.DynamicTest.dynamicTest
-import kotlin.streams.asStream
-
 internal class MiContext<F>(
     name: String,
     childTransforms: List<(MinuTest<F>) -> MinuTest<F>> = emptyList(),
     builder: MiContext<F>.() -> Unit
 ) : TestContext<F>(name){
 
-    private val children = mutableListOf<Node<F>>()
+    internal val children = mutableListOf<Node<F>>()
     private val childTransforms = childTransforms.toMutableList()
 
     init {
@@ -43,17 +38,8 @@ internal class MiContext<F>(
 
     override fun addTransform(testTransform: (MinuTest<F>) -> MinuTest<F>) { childTransforms.add(testTransform) }
 
-    internal fun build(): DynamicContainer = dynamicContainer(name,
-        children.asSequence().map { dynamicNodeFor(applyTransforms(it)) }.asStream())
-
-    private fun dynamicNodeFor(node: Node<F>) = when (node) {
-        is MinuTest<*> -> dynamicNodeFor(node as MinuTest<F>)
-        is MiContext<*> -> node.build()
-        else -> error("Unexpected test node type")
-    }
-
     @Suppress("UNCHECKED_CAST")
-    private fun dynamicNodeFor(test: MinuTest<F>) = dynamicTest(test.name) {
+    fun runTest(test: MinuTest<F>) {
         try {
             test.f(Unit as F)
         } catch (x: ClassCastException) {
@@ -63,7 +49,7 @@ internal class MiContext<F>(
         }
     }
 
-    private fun applyTransforms(baseNode: Node<F>): Node<F> = childTransforms.reversed().fold(baseNode) { node, transform ->
+    fun applyTransformsTo(baseNode: Node<F>): Node<F> = childTransforms.reversed().fold(baseNode) { node, transform ->
         when (node) {
             is MinuTest<F> -> transform(node)
             else -> node
