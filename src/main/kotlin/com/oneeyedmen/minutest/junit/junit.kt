@@ -3,6 +3,7 @@ package com.oneeyedmen.minutest.junit
 import com.oneeyedmen.minutest.*
 import com.oneeyedmen.minutest.internal.MiContext
 import com.oneeyedmen.minutest.internal.MinuTest
+import com.oneeyedmen.minutest.internal.MutableOperations
 import com.oneeyedmen.minutest.internal.Operations
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
@@ -16,7 +17,7 @@ import kotlin.reflect.KProperty1
 import kotlin.streams.asStream
 
 fun <F> junitTests(builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
-    (rootContext("ignored", builder) as MiContext<F>).build(Operations<F>()).children
+    (rootContext("ignored", builder) as MiContext<F>).build(MutableOperations<F>()).children
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 

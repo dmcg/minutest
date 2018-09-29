@@ -11,7 +11,7 @@ internal class MiContext<F>(
 ) : TestContext<F> {
 
     internal val children = mutableListOf<Node<F>>()
-    internal val operations = Operations<F>()
+    internal val operations = MutableOperations<F>()
 
     init {
         this.builder()
