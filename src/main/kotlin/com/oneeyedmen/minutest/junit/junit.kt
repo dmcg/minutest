@@ -17,16 +17,12 @@ fun <F> junitTests(builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
 private fun <F> MiContext<F>.build(): DynamicContainer = DynamicContainer.dynamicContainer(name,
-    children.asSequence().map { dynamicNodeFor(applyTransformsTo(it)) }.asStream())
+    children.asSequence().map { dynamicNodeFor(it) }.asStream())
 
 private fun <F> MiContext<F>.dynamicNodeFor(node: Node<F>) = when (node) {
-    is MinuTest<*> -> dynamicNodeFor(node as MinuTest<F>)
-    is MiContext<*> -> node.build()
+    is MinuTest<F> -> DynamicTest.dynamicTest(node.name) { runTest(node) }
+    is MiContext<F> -> node.build()
     else -> error("Unexpected test node type")
-}
-
-private fun <F> MiContext<F>.dynamicNodeFor(test: MinuTest<F>) = DynamicTest.dynamicTest(test.name) {
-    runTest(test)
 }
 
 fun <T, R: TestRule> TestContext<T>.applyRule(property: KProperty1<T, R>) {
