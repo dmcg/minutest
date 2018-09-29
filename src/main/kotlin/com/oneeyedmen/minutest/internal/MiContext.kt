@@ -61,6 +61,7 @@ internal class MiContext<F>(
                 throw t
             }
         } catch (x: ClassCastException) {
+            // TODO - this could be thrown in test code and reach here
             // Provided a fixture has been set, the Unit never makes it as far as any functions that cast it to F, so
             // this works. And if the type of F is Unit, you don't need to set a fixture, as the Unit will do. Simples.
             error("You need to set a fixture by calling fixture(...)")
