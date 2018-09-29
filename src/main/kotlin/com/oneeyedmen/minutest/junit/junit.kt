@@ -13,19 +13,19 @@ import kotlin.reflect.KProperty1
 import kotlin.streams.asStream
 
 fun <F> junitTests(builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
-    (rootContext(builder) as MiContext<F>).build(emptyList()).children
+    (rootContext(builder) as MiContext<F>).build(Operations<F>()).children
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-private fun <F> MiContext<F>.build(parentTestTransforms: List<TestTransform<F>>): DynamicContainer = dynamicContainer(name,
-    children.asSequence().map { dynamicNodeFor(it, parentTestTransforms) }.asStream())
+private fun <F> MiContext<F>.build(parentOperations: Operations<F>): DynamicContainer = dynamicContainer(name,
+    children.asSequence().map { dynamicNodeFor(it, parentOperations) }.asStream())
 
 private fun <F> MiContext<F>.dynamicNodeFor(
     node: Node<F>,
-    parentTestTransforms: List<TestTransform<F>>
+    parentOperations: Operations<F>
 ) = when (node) {
-    is MinuTest<F> -> DynamicTest.dynamicTest(node.name) { runTest(node, parentTestTransforms) }
-    is MiContext<F> -> node.build(parentTestTransforms + testTransforms)
+    is MinuTest<F> -> DynamicTest.dynamicTest(node.name) { runTest(node, parentOperations) }
+    is MiContext<F> -> node.build(parentOperations + operations)
     else -> error("Unexpected test node type")
 }
 

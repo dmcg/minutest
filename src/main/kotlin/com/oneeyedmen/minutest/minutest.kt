@@ -16,17 +16,25 @@ abstract class TestContext<F>(name: String) : Node<F>(name) {
     abstract fun test_(name: String, f: F.() -> F): MinuTest<F>
     abstract fun context(name: String, builder: TestContext<F>.() -> Unit): TestContext<F>
     abstract fun addTransform(testTransform: (MinuTest<F>) -> MinuTest<F>)
+    internal abstract val operations: Operations<F>
 }
 
 fun <F> TestContext<F>.before(transform: F.() -> Unit) = before_ { this.apply(transform) }
 
-fun <F> TestContext<F>.before_(transform: F.() -> F) = addTransform {
-    aroundTest(it, before = transform)
+fun <F> TestContext<F>.before_(transform: F.() -> F) {
+    addTransform {
+        aroundTest(it, before = transform)
+    }
+    operations.befores.add(transform)
 }
 
 fun <F> TestContext<F>.after(transform: F.() -> Unit) = after_ { this.apply(transform) }
-fun <F> TestContext<F>.after_(transform: F.() -> F) = addTransform {
-    aroundTest(it, after = transform)
+
+fun <F> TestContext<F>.after_(transform: F.() -> F) {
+    addTransform {
+        aroundTest(it, after = transform)
+    }
+    operations.afters.add(transform)
 }
 
 fun <F> aroundTest(

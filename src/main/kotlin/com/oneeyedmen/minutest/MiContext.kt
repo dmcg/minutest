@@ -8,7 +8,7 @@ internal class MiContext<F>(
 ) : TestContext<F>(name) {
 
     internal val children = mutableListOf<Node<F>>()
-    internal val testTransforms = mutableListOf<TestTransform<F>>()
+    override val operations = Operations<F>()
 
     init {
         this.builder()
@@ -38,13 +38,13 @@ internal class MiContext<F>(
         MiContext(name, builder).also { children.add(it) }
 
     override fun addTransform(testTransform: TestTransform<F>) {
-        testTransforms.add(testTransform)
+        operations.transforms.add(testTransform)
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun runTest(myTest: MinuTest<F>, parentTestTransforms: List<TestTransform<F>>) {
+    fun runTest(myTest: MinuTest<F>, parentOperations: Operations<F>) {
         try {
-            applyTransformsTo(myTest, parentTestTransforms + testTransforms).f(Unit as F)
+            applyTransformsTo(myTest, parentOperations + operations).f(Unit as F)
         } catch (x: ClassCastException) {
             // Provided a fixture has been set, the Unit never makes it as far as any functions that cast it to F, so
             // this works. And if the type of F is Unit, you don't need to set a fixture, as the Unit will do. Simples.
@@ -53,8 +53,22 @@ internal class MiContext<F>(
     }
 }
 
-private fun <F> applyTransformsTo(test: MinuTest<F>, testTransforms: List<TestTransform<F>>) = testTransforms
+private fun <F> applyTransformsTo(test: MinuTest<F>, operations: Operations<F>) = operations.transforms
     .reversed()
     .fold(test) { node, transform ->
         transform(node)
     }
+
+internal class Operations<F>(
+    val befores: MutableList<(F) -> F> = mutableListOf(),
+    val transforms: MutableList<TestTransform<F>> = mutableListOf(),
+    val afters: MutableList<(F) -> F> = mutableListOf()
+) {
+    operator fun plus(operations: Operations<F>): Operations<F> {
+        val list: List<TestTransform<F>> = this.transforms + operations.transforms
+        return Operations(transforms = list.toMutableList())
+    }
+
+
+
+}
