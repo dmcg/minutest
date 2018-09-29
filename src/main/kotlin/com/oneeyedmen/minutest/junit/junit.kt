@@ -1,10 +1,13 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.Node
+import com.oneeyedmen.minutest.Test
+import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.internal.MiContext
 import com.oneeyedmen.minutest.internal.MinuTest
 import com.oneeyedmen.minutest.internal.MutableOperations
 import com.oneeyedmen.minutest.internal.Operations
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
@@ -16,6 +19,9 @@ import java.util.stream.Stream
 import kotlin.reflect.KProperty1
 import kotlin.streams.asStream
 
+/**
+ * Define a [TestContext] and map it to be used as a JUnit [TestFactory].
+ */
 fun <F> junitTests(builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
     (rootContext("ignored", builder) as MiContext<F>).build(MutableOperations<F>()).children
 
@@ -33,6 +39,9 @@ private fun <F> MiContext<F>.dynamicNodeFor(
     else -> error("Unexpected test node type")
 }
 
+/**
+ * Apply a JUnit test rule in a fixture.
+ */
 fun <T, R: TestRule> TestContext<T>.applyRule(property: KProperty1<T, R>) {
     addTransform { test ->
         MinuTest(test.name) {
