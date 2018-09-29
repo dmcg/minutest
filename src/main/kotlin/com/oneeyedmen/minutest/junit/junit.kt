@@ -2,6 +2,7 @@ package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.*
 import org.junit.jupiter.api.DynamicContainer
+import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest
 import org.junit.rules.TestRule
@@ -12,16 +13,19 @@ import kotlin.reflect.KProperty1
 import kotlin.streams.asStream
 
 fun <F> junitTests(builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
-    (rootContext(builder) as MiContext<F>).build().children
+    (rootContext(builder) as MiContext<F>).build(emptyList()).children
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-private fun <F> MiContext<F>.build(): DynamicContainer = DynamicContainer.dynamicContainer(name,
-    children.asSequence().map { dynamicNodeFor(it) }.asStream())
+private fun <F> MiContext<F>.build(parentTestTransforms: List<TestTransform<F>>): DynamicContainer = dynamicContainer(name,
+    children.asSequence().map { dynamicNodeFor(it, parentTestTransforms) }.asStream())
 
-private fun <F> MiContext<F>.dynamicNodeFor(node: Node<F>) = when (node) {
-    is MinuTest<F> -> DynamicTest.dynamicTest(node.name) { runTest(node) }
-    is MiContext<F> -> node.build()
+private fun <F> MiContext<F>.dynamicNodeFor(
+    node: Node<F>,
+    parentTestTransforms: List<TestTransform<F>>
+) = when (node) {
+    is MinuTest<F> -> DynamicTest.dynamicTest(node.name) { runTest(node, parentTestTransforms) }
+    is MiContext<F> -> node.build(parentTestTransforms + testTransforms)
     else -> error("Unexpected test node type")
 }
 
