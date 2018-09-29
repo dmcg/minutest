@@ -1,7 +1,5 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.after
-import com.oneeyedmen.minutest.before
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

@@ -8,28 +8,18 @@ internal class MiContext<F>(
 ) : TestContext<F>(name) {
 
     internal val children = mutableListOf<Node<F>>()
-    override val operations = Operations<F>()
+    internal val operations = Operations<F>()
 
     init {
         this.builder()
     }
 
-    override fun fixture(factory: () -> F) {
-        before_ {
-            factory()
-        }
+    override fun before_(transform: F.() -> F) {
+        operations.befores.add(transform)
     }
 
-    override fun modifyFixture(transform: F.() -> Unit) {
-        before(transform)
-    }
-
-    override fun replaceFixture(transform: F.() -> F) {
-        before_(transform)
-    }
-
-    override fun test(name: String, f: F.() -> Unit) = test_(name) {
-        apply { f(this) }
+    override fun after_(transform: F.() -> F) {
+        operations.afters.add(transform)
     }
 
     override fun test_(name: String, f: F.() -> F) = MinuTest(name, f).also { children.add(it) }

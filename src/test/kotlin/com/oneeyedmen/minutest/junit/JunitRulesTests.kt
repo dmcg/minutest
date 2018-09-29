@@ -1,6 +1,5 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.before
 import org.junit.jupiter.api.TestFactory
 import org.junit.rules.ExpectedException
 

@@ -13,7 +13,7 @@ import kotlin.reflect.KProperty1
 import kotlin.streams.asStream
 
 fun <F> junitTests(builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
-    (rootContext(builder) as MiContext<F>).build(Operations<F>()).children
+    (rootContext("ignored", builder) as MiContext<F>).build(Operations<F>()).children
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
