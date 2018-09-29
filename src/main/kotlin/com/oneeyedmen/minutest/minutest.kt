@@ -3,19 +3,19 @@ package com.oneeyedmen.minutest
 import com.oneeyedmen.minutest.internal.MiContext
 
 /**
- * Define a root context to contain tests and other sub-contexts
+ * Define a root context to contain [Test]s and other sub-[TestContext]s
  */
 fun <F> rootContext(name: String, builder: TestContext<F>.() -> Unit): TestContext<F> = MiContext(
     name,
     builder = builder)
 
 /**
- * Represents a test with a name that can be invoked on a fixture.
+ * A test with a name that can be invoked on a fixture.
  */
 interface Test<F> : (F) -> F, Node<F>
 
 /**
- * Represents a collection of tests and contexts.
+ * A collection of [Test]s and [TestContext]s.
  */
 @Suppress("FunctionName")
 interface TestContext<F> : Node<F> {
