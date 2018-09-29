@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 project.group = "com.oneeyedmen"
-project.version = "0.8.0-SNAPSHOT"
+project.version = "0.8.0"
 
 repositories {
     mavenCentral()

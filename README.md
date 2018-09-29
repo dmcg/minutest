@@ -17,9 +17,7 @@ minutest can be used to define tests in a nested Spec style, with contexts and t
 ```kotlin
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.after
-import com.oneeyedmen.minutest.before
-import com.oneeyedmen.minutest.context
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestFactory
@@ -30,7 +28,7 @@ import java.util.*
 object ExampleTests {
 
     // In the simplest case, make the fixture the thing that you are testing
-    @TestFactory fun `stack is our fixture`() = context<Stack<String>> {
+    @TestFactory fun `stack is our fixture`() = junitTests<Stack<String>> {
 
         // define the fixture for enclosed scopes
         fixture { Stack() }
@@ -73,7 +71,7 @@ object ExampleTests {
     }
 
     // and then use it in your tests
-    @TestFactory fun `separate fixture class`() = context<Fixture> {
+    @TestFactory fun `separate fixture class`() = junitTests<Fixture> {
 
         fixture { Fixture() }
 
@@ -100,7 +98,7 @@ object ExampleTests {
     }
 
     // You can modify the fixture before, and inspect it after
-    @TestFactory fun `before and after`() = context<Fixture> {
+    @TestFactory fun `before and after`() = junitTests<Fixture> {
         fixture { Fixture() }
 
         before {
@@ -141,7 +139,7 @@ So if you want to reuse the same test for different concrete implementations, de
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.context
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestFactory
@@ -172,13 +170,13 @@ fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
 // Now tests can invoke the function to define a context to be run
 
 object ArrayListTests {
-    @TestFactory fun tests() = context<MutableCollection<String>> {
+    @TestFactory fun tests() = junitTests<MutableCollection<String>> {
         behavesAsMutableCollection("ArrayList") { ArrayList() }
     }
 }
 
 object LinkedListTests{
-    @TestFactory fun tests() = context<MutableCollection<String>> {
+    @TestFactory fun tests() = junitTests<MutableCollection<String>> {
         behavesAsMutableCollection("LinkedList") { LinkedList() }
     }
 }
@@ -190,7 +188,7 @@ Unleash the `Power of Kotlin` to generate your tests on the fly.
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.context
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
@@ -236,7 +234,7 @@ object GeneratingExampleTests {
             assertThrows<EmptyStackException> { pop() }
         }
 
-    @TestFactory fun `invoke functions to inject tests`() = context<StringStack> {
+    @TestFactory fun `invoke functions to inject tests`() = junitTests<StringStack> {
 
         fixture { StringStack() }
 
@@ -259,7 +257,7 @@ object GeneratingExampleTests {
         }
     }
 
-    @TestFactory fun `generate contexts to test with multiple values`() = context<StringStack> {
+    @TestFactory fun `generate contexts to test with multiple values`() = junitTests<StringStack> {
 
         fun TestContext<StringStack>.canPop(canPop: Boolean) = if (canPop) canPop() else cantPop()
 
@@ -286,8 +284,7 @@ Are you a died-in-the-wool functional programmer? If so, what are you doing slum
 ```kotlin
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.after
-import com.oneeyedmen.minutest.context
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.TestFactory
 
@@ -296,7 +293,7 @@ object ImmutableExampleTests {
 
     // If you like this FP stuff, you may want to test an immutable fixture.
 
-    @TestFactory fun `immutable fixture`() = context<List<String>> {
+    @TestFactory fun `immutable fixture`() = junitTests<List<String>> {
         fixture { emptyList() }
 
         // test_ allows you to return the fixture
@@ -322,8 +319,8 @@ Power JUnit 4 user? minutest supports JUnit 4 TestRules. As far as I can tell, i
 ```kotlin
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.applyRule
-import com.oneeyedmen.minutest.context
+import com.oneeyedmen.minutest.junit.applyRule
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestFactory
 import org.junit.rules.TemporaryFolder
@@ -336,7 +333,7 @@ object JunitRulesExampleTests {
         val testFolder = TemporaryFolder()
     }
 
-    @TestFactory fun `temporary folder rule`() = context<Fixture>() {
+    @TestFactory fun `temporary folder rule`() = junitTests<Fixture>() {
 
         fixture { Fixture() }
 
