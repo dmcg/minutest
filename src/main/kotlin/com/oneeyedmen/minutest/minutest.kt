@@ -1,22 +1,26 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.internal.MiContext
+
 /**
  * Define a root context to contain tests and other sub-contexts
  */
-fun <F> rootContext(name: String, builder: TestContext<F>.() -> Unit): TestContext<F> = MiContext(name, builder = builder)
+fun <F> rootContext(name: String, builder: TestContext<F>.() -> Unit): TestContext<F> = MiContext(
+    name,
+    builder = builder)
 
 /**
  * Represents a test with a name that can be invoked on a fixture.
  */
-class MinuTest<F>(name: String, val f: F.() -> F) : (F) -> F, Node<F>(name) {
-    override fun invoke(fixture: F): F = f(fixture)
-}
+interface Test<F> : (F) -> F, Node<F>
 
 /**
  * Represents a collection of tests and contexts.
  */
 @Suppress("FunctionName")
-abstract class TestContext<F>(name: String) : Node<F>(name) {
+interface TestContext<F> : Node<F> {
+
+    override val name: String
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
@@ -37,24 +41,24 @@ abstract class TestContext<F>(name: String) : Node<F>(name) {
      */
     fun replaceFixture(transform: F.() -> F) = before_(transform)
 
-    abstract fun before_(transform: F.() -> F)
-    fun before(transform: F.() -> Unit) = before_ { this.apply(transform) }
+    fun before_(transform: F.() -> F)
+    fun before(transform: F.() -> Unit)
 
-    abstract fun after_(transform: F.() -> F)
-    fun after(transform: F.() -> Unit) = after_ { this.apply(transform) }
+    fun after_(transform: F.() -> F)
+    fun after(transform: F.() -> Unit)
 
-    abstract fun test_(name: String, f: F.() -> F): MinuTest<F>
-    fun test(name: String, f: F.() -> Unit) = test_(name) {
-        apply { f(this) }
-    }
+    fun test_(name: String, f: F.() -> F)
+    fun test(name: String, f: F.() -> Unit)
 
-    abstract fun context(name: String, builder: TestContext<F>.() -> Unit): TestContext<F>
+    fun context(name: String, builder: TestContext<F>.() -> Unit): TestContext<F>
 
-    abstract fun addTransform(testTransform: (MinuTest<F>) -> MinuTest<F>)
+    fun addTransform(testTransform: (Test<F>) -> Test<F>)
 }
 
 /**
  * Implementation detail.
  */
 @Suppress("unused")
-sealed class Node<in F>(val name: String)
+interface Node<in F> {
+    val name: String
+}

@@ -1,11 +1,14 @@
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.internal
 
-typealias TestTransform<F> = (MinuTest<F>) -> MinuTest<F>
+import com.oneeyedmen.minutest.Node
+import com.oneeyedmen.minutest.Test
+import com.oneeyedmen.minutest.TestContext
+
 
 internal class MiContext<F>(
-    name: String,
+    override val name: String,
     builder: MiContext<F>.() -> Unit
-) : TestContext<F>(name) {
+) : TestContext<F> {
 
     internal val children = mutableListOf<Node<F>>()
     internal val operations = Operations<F>()
@@ -18,27 +21,39 @@ internal class MiContext<F>(
         operations.befores.add(transform)
     }
 
+    override fun before(transform: F.() -> Unit) = before_ { this.apply(transform) }
+
+    override fun after(transform: F.() -> Unit) = after_ { this.apply(transform) }
+
     override fun after_(transform: F.() -> F) {
         operations.afters.add(transform)
     }
 
-    override fun test_(name: String, f: F.() -> F) = MinuTest(name, f).also { children.add(it) }
+    override fun test_(name: String, f: F.() -> F) { MinuTest(
+        name,
+        f).also { children.add(it) } }
+
+    override fun test(name: String, f: F.() -> Unit) {
+        test_(name) {
+            apply { f(this) }
+        }
+    }
 
     override fun context(name: String, builder: TestContext<F>.() -> Unit) =
         MiContext(name, builder).also { children.add(it) }
 
-    override fun addTransform(testTransform: TestTransform<F>) {
+    override fun addTransform(testTransform: (Test<F>) -> Test<F>) {
         operations.transforms.add(testTransform)
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun runTest(myTest: MinuTest<F>, parentOperations: Operations<F>) {
+    fun runTest(myTest: Test<F>, parentOperations: Operations<F>) {
         try {
             val combinedOperations = parentOperations + operations
             val transformedFixture = combinedOperations.applyBeforesTo(Unit as F)
             val transformedTest = combinedOperations.applyTransformsTo(myTest)
             try {
-                val resultFixture = transformedTest.f(transformedFixture)
+                val resultFixture = transformedTest.invoke(transformedFixture)
                 combinedOperations.applyAftersTo(resultFixture)
             } catch (t: Throwable) {
                 // TODO - this may result in double afters
@@ -51,24 +66,4 @@ internal class MiContext<F>(
             error("You need to set a fixture by calling fixture(...)")
         }
     }
-}
-
-
-
-internal class Operations<F>(
-    val befores: MutableList<(F) -> F> = mutableListOf(),
-    val transforms: MutableList<TestTransform<F>> = mutableListOf(),
-    val afters: MutableList<(F) -> F> = mutableListOf()
-) {
-    operator fun plus(subordinate: Operations<F>) = Operations(
-        befores = (befores + subordinate.befores).toMutableList(),
-        transforms = (transforms + subordinate.transforms).toMutableList(),
-        afters = (subordinate.afters + afters).toMutableList() // we apply parent afters after child
-    )
-
-    fun applyBeforesTo(fixture: F) = befores.fold(fixture) { acc, transform -> transform(acc) }
-
-    fun applyTransformsTo(test: MinuTest<F>) = transforms.fold(test) { acc, transform -> transform(acc) }
-
-    fun applyAftersTo(fixture: F) = afters.fold(fixture) { acc, transform -> transform(acc) }
 }

@@ -1,6 +1,9 @@
 package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.internal.MiContext
+import com.oneeyedmen.minutest.internal.MinuTest
+import com.oneeyedmen.minutest.internal.Operations
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
@@ -24,7 +27,7 @@ private fun <F> MiContext<F>.dynamicNodeFor(
     node: Node<F>,
     parentOperations: Operations<F>
 ) = when (node) {
-    is MinuTest<F> -> DynamicTest.dynamicTest(node.name) { runTest(node, parentOperations) }
+    is Test<F> -> DynamicTest.dynamicTest(node.name) { runTest(node, parentOperations) }
     is MiContext<F> -> node.build(parentOperations + operations)
     else -> error("Unexpected test node type")
 }
