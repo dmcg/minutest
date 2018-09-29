@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package com.oneeyedmen.minutest
 
 fun <F> rootContext(builder: TestContext<F>.() -> Unit): TestContext<F> =
