@@ -49,15 +49,16 @@ internal class MiContext<F>(
     @Suppress("UNCHECKED_CAST")
     fun runTest(myTest: Test<F>, parentOperations: Operations<F>) {
         try {
+            var currentFixture = parentOperations.applyBeforesTo(Unit as F)
             val combinedOperations = parentOperations + operations
-            val transformedFixture = combinedOperations.applyBeforesTo(Unit as F)
-            val transformedTest = combinedOperations.applyTransformsTo(myTest)
             try {
-                val resultFixture = transformedTest.invoke(transformedFixture)
-                combinedOperations.applyAftersTo(resultFixture)
+                currentFixture = operations.applyBeforesTo(currentFixture)
+                val transformedTests = combinedOperations.applyTransformsTo(myTest)
+                currentFixture = transformedTests.invoke(currentFixture)
+                combinedOperations.applyAftersTo(currentFixture)
             } catch (t: Throwable) {
                 // TODO - this may result in double afters
-                combinedOperations.applyAftersTo(transformedFixture)
+                combinedOperations.applyAftersTo(currentFixture)
                 throw t
             }
         } catch (x: ClassCastException) {
