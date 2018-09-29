@@ -24,14 +24,13 @@ object TransformTests {
             add("before too")
         }
 
-        // afters in reverse order
-        after {
-            assertEquals(listOf("before", "before too", "during", "after"), this)
-        }
-
         after {
             assertEquals(listOf("before", "before too", "during"), this)
             add("after")
+        }
+
+        after {
+            assertEquals(listOf("before", "before too", "during", "after"), this)
         }
 
         test("before has been called") {

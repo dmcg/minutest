@@ -21,14 +21,13 @@ object ImmutableTests {
             this + "before too"
         }
 
-        // afters in reverse order
-        after {
-            assertEquals(listOf("before", "before too", "during", "after"), this)
-        }
-
         after_ {
             assertEquals(listOf("before", "before too", "during"), this)
             this + "after"
+        }
+
+        after {
+            assertEquals(listOf("before", "before too", "during", "after"), this)
         }
 
         test_("before has been called") {

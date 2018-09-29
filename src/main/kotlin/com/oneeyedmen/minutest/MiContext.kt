@@ -44,7 +44,17 @@ internal class MiContext<F>(
     @Suppress("UNCHECKED_CAST")
     fun runTest(myTest: MinuTest<F>, parentOperations: Operations<F>) {
         try {
-            applyTransformsTo(myTest, parentOperations + operations).f(Unit as F)
+            val combinedOperations = parentOperations + operations
+            val transformedFixture = combinedOperations.applyBeforesTo(Unit as F)
+            val transformedTest = combinedOperations.applyTransformsTo(myTest)
+            try {
+                val resultFixture = transformedTest.f(transformedFixture)
+                combinedOperations.applyAftersTo(resultFixture)
+            } catch (t: Throwable) {
+                // TODO - this may result in double afters
+                combinedOperations.applyAftersTo(transformedFixture)
+                throw t
+            }
         } catch (x: ClassCastException) {
             // Provided a fixture has been set, the Unit never makes it as far as any functions that cast it to F, so
             // this works. And if the type of F is Unit, you don't need to set a fixture, as the Unit will do. Simples.
@@ -53,22 +63,22 @@ internal class MiContext<F>(
     }
 }
 
-private fun <F> applyTransformsTo(test: MinuTest<F>, operations: Operations<F>) = operations.transforms
-    .reversed()
-    .fold(test) { node, transform ->
-        transform(node)
-    }
+
 
 internal class Operations<F>(
     val befores: MutableList<(F) -> F> = mutableListOf(),
     val transforms: MutableList<TestTransform<F>> = mutableListOf(),
     val afters: MutableList<(F) -> F> = mutableListOf()
 ) {
-    operator fun plus(operations: Operations<F>): Operations<F> {
-        val list: List<TestTransform<F>> = this.transforms + operations.transforms
-        return Operations(transforms = list.toMutableList())
-    }
+    operator fun plus(subordinate: Operations<F>) = Operations(
+        befores = (befores + subordinate.befores).toMutableList(),
+        transforms = (transforms + subordinate.transforms).toMutableList(),
+        afters = (subordinate.afters + afters).toMutableList() // we apply parent afters after child
+    )
 
+    fun applyBeforesTo(fixture: F) = befores.fold(fixture) { acc, transform -> transform(acc) }
 
+    fun applyTransformsTo(test: MinuTest<F>) = transforms.fold(test) { acc, transform -> transform(acc) }
 
+    fun applyAftersTo(fixture: F) = afters.fold(fixture) { acc, transform -> transform(acc) }
 }
