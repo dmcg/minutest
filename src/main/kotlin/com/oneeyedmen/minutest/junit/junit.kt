@@ -5,7 +5,6 @@ import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.internal.MiContext
 import com.oneeyedmen.minutest.internal.MinuTest
-import com.oneeyedmen.minutest.internal.MutableOperations
 import com.oneeyedmen.minutest.internal.Operations
 import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.DynamicContainer
@@ -23,7 +22,7 @@ import kotlin.streams.asStream
  * Define a [TestContext] and map it to be used as a JUnit [TestFactory].
  */
 fun <F> junitTests(builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
-    (rootContext("ignored", builder) as MiContext<F>).build(MutableOperations<F>()).children
+    (rootContext("ignored", builder) as MiContext<F>).build(Operations.empty()).children
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 

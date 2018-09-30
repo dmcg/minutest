@@ -18,6 +18,10 @@ interface Operations<F> {
         transforms = (transforms + subordinate.transforms),
         afters = (subordinate.afters + afters) // we apply parent afters after child
     )
+
+    companion object {
+        fun <F> empty(): Operations<F> = ImmutableOperations<F>(emptyList(), emptyList(), emptyList())
+    }
 }
 
 internal class MutableOperations<F>(
