@@ -12,7 +12,7 @@ repositories {
 }
 
 plugins {
-    kotlin("jvm") version "1.2.70"
+    kotlin("jvm") version "1.2.71"
     `maven-publish`
     id("com.jfrog.bintray") version "1.8.1"
 }
