@@ -8,13 +8,18 @@ Minutest brings Spec-style testing to JUnit 5 and Kotlin.
 You can find the latest binaries and source in a Maven-compatible format on [JCenter](https://bintray.com/dmcg/oneeyedmen-mvn/minutest)
 
 You will need to include JUnit 5 on your test classpath. If you can work out what to do based on the 
-[JUnit 5 docs](https://junit.org/junit5/docs/current/user-guide/#installation) then you're probably worthy to use minutest.
+[JUnit 5 docs](https://junit.org/junit5/docs/current/user-guide/#installation) then you're ready to use minutest.
 
 ## Usage
 
-minutest can be used to define tests in a nested Spec style, with contexts and tests inside those contexts. 
+Minutests are defined in a Spec style, with contexts and tests inside those contexts. 
 
-```insert-kotlin src/test/kotlin/com/oneeyedmen/minutest/examples/ExampleTests.kt
+```insert-kotlin src/test/kotlin/com/oneeyedmen/minutest/examples/StackExampleTests.kt
+```
+
+The key difference between Minutest and XUnit tests is the location of the test fixture - the thing being tested and the supporting cast. In XUnit the fixture is the fields of the test class, with tests being defined in special methods of that class. Minutest separates the tests, which are defined by calling the `test(name)` method, from the fixture, which is usually a separate class. 
+
+```insert-kotlin src/test/kotlin/com/oneeyedmen/minutest/examples/FixtureExampleTests.kt
 ```
 
 ## More Advanced Use

@@ -8,27 +8,26 @@ Minutest brings Spec-style testing to JUnit 5 and Kotlin.
 You can find the latest binaries and source in a Maven-compatible format on [JCenter](https://bintray.com/dmcg/oneeyedmen-mvn/minutest)
 
 You will need to include JUnit 5 on your test classpath. If you can work out what to do based on the 
-[JUnit 5 docs](https://junit.org/junit5/docs/current/user-guide/#installation) then you're probably worthy to use minutest.
+[JUnit 5 docs](https://junit.org/junit5/docs/current/user-guide/#installation) then you're ready to use minutest.
 
 ## Usage
 
-minutest can be used to define tests in a nested Spec style, with contexts and tests inside those contexts. 
+Minutests are defined in a Spec style, with contexts and tests inside those contexts. 
 
 ```kotlin
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 
-object ExampleTests {
+object StackExampleTests {
 
-    // In the simplest case, make the fixture the thing that you are testing
-    @TestFactory fun `stack is our fixture`() = junitTests<Stack<String>> {
+    // The @TestFactory annotation tells JUnit 5 that the call of junitTests will return tests that should be run
+    @TestFactory fun `a stack`() = junitTests<Stack<String>> {
 
         // define the fixture for enclosed scopes
         fixture { Stack() }
@@ -36,15 +35,12 @@ object ExampleTests {
         context("an empty stack") {
 
             test("is empty") {
-                assertEquals(0, size) // note that the fixture is 'this'
+                // In a test, 'this' is our fixture, the stack in this case
+                assertEquals(0, size)
                 assertThrows<EmptyStackException> { peek() }
             }
 
-            test("can have an item pushed") {
-                push("one")
-                assertEquals("one", peek())
-                assertEquals(1, size)
-            }
+            // .. other tests
         }
 
         context("a stack with one item") {
@@ -57,12 +53,25 @@ object ExampleTests {
                 assertEquals("one", peek())
             }
 
-            test("removes and returns item on pop") {
-                assertEquals("one", pop())
-                assertEquals(0, size)
-            }
+            // .. other tests
         }
     }
+}
+```
+
+The key difference between Minutest and XUnit tests is the location of the test fixture - the thing being tested and the supporting cast. In XUnit the fixture is the fields of the test class, with tests being defined in special methods of that class. Minutest separates the tests, which are defined by calling the `test(name)` method, from the fixture, which is usually a separate class. 
+
+```kotlin
+package com.oneeyedmen.minutest.examples
+
+import com.oneeyedmen.minutest.junit.junitTests
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.assertThrows
+import java.util.*
+
+
+object FixtureExampleTests {
 
     // If you have more state, make a separate fixture class
     class Fixture {
@@ -94,30 +103,6 @@ object ExampleTests {
                 assertEquals("on 2", stack1.peek())
                 assertEquals("on 1", stack2.peek())
             }
-        }
-    }
-
-    // You can modify the fixture before, and inspect it after
-    @TestFactory fun `before and after`() = junitTests<Fixture> {
-        fixture { Fixture() }
-
-        before {
-            stack1.push("on 1")
-        }
-
-        before {
-            stack2.push("on 2")
-        }
-
-        after {
-            println("in after")
-            assertTrue(stack1.isEmpty())
-        }
-
-        test("before was called") {
-            assertEquals("on 1", stack1.peek())
-            assertEquals("on 2", stack2.peek())
-            stack1.pop()
         }
     }
 }
@@ -197,44 +182,41 @@ import java.util.*
 
 private typealias StringStack = Stack<String>
 
+// We can define functions that return tests for later injection
+
+private fun TestContext<StringStack>.isEmpty(isEmpty: Boolean) =
+    test("is " + (if (isEmpty) "" else "not ") + "empty") {
+        assertEquals(isEmpty, size == 0)
+        if (isEmpty)
+            assertThrows<EmptyStackException> { peek() }
+        else
+            assertNotNull(peek())
+    }
+
+private fun TestContext<StringStack>.canPush() = test("can push") {
+    val initialSize = size
+    val item = "*".repeat(initialSize + 1)
+    push(item)
+    assertEquals(item, peek())
+    assertEquals(initialSize + 1, size)
+}
+
+private fun TestContext<StringStack>.canPop() = test("can pop") {
+    val initialSize = size
+    val top = peek()
+    assertEquals(top, pop())
+    assertEquals(initialSize - 1, size)
+    if (size > 0)
+        assertNotEquals(top, peek())
+}
+
+private fun TestContext<StringStack>.cantPop() = test("cant pop") {
+    assertThrows<EmptyStackException> { pop() }
+}
+
 object GeneratingExampleTests {
 
-    // We can define functions that return tests for later injection
-
-    private fun TestContext<StringStack>.isEmpty(isEmpty: Boolean) =
-        test("is " + (if (isEmpty) "" else "not ") + "empty") {
-            assertEquals(isEmpty, size == 0)
-            if (isEmpty)
-                assertThrows<EmptyStackException> { peek() }
-            else
-                assertNotNull(peek())
-        }
-
-    private fun TestContext<StringStack>.canPush() =
-        test("can push") {
-            val initialSize = size
-            val item = "*".repeat(initialSize + 1)
-            push(item)
-            assertEquals(item, peek())
-            assertEquals(initialSize + 1, size)
-        }
-
-    private fun TestContext<StringStack>.canPop() =
-        test("can pop") {
-            val initialSize = size
-            val top = peek()
-            assertEquals(top, pop())
-            assertEquals(initialSize - 1, size)
-            if (size > 0)
-                assertNotEquals(top, peek())
-        }
-
-    private fun TestContext<StringStack>.cantPop() =
-        test("cant pop") {
-            assertThrows<EmptyStackException> { pop() }
-        }
-
-    @TestFactory fun `invoke functions to inject tests`() = junitTests<StringStack> {
+    @TestFactory fun `invoke the functions to define tests`() = junitTests<StringStack> {
 
         fixture { StringStack() }
 
