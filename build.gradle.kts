@@ -89,10 +89,16 @@ bintray {
 }
 
 fun generateReadme() {
-    val newReadmeLines = File("README.template.md").readLines().map { line ->
+    val newReadmeLines = linesFrom("README.template.md").map { line ->
         "```insert-kotlin (.*)$".toRegex().find(line)?.groups?.get(1)?.value?.let { filename ->
-            (listOf("```kotlin") + File(filename).readLines()).joinToString("\n")
+            (listOf("```kotlin") + linesFrom(filename).filtered()).joinToString("\n")
         } ?: line
     }
     File("README.md").writeText(newReadmeLines.joinToString("\n"))
 }
+
+fun Iterable<String>.filtered(): List<String> = this
+    .filter { ! it.startsWith("import") && ! it.startsWith("package") }
+    .dropWhile { it.isEmpty() }
+
+fun linesFrom(filename: String) = File(filename).readLines()

@@ -15,25 +15,21 @@ You will need to include JUnit 5 on your test classpath. If you can work out wha
 Minutests are defined in a Spec style, with contexts and tests inside those contexts. 
 
 ```kotlin
-package com.oneeyedmen.minutest.examples
-
-import com.oneeyedmen.minutest.junit.junitTests
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.assertThrows
-import java.util.*
-
-
+// Tests are usually defined in a object
 object StackExampleTests {
 
-    // The @TestFactory annotation tells JUnit 5 that the call of junitTests will return tests that should be run
+    // junitTests() returns a stream of tests. JUnit 5 will run them for us.
     @TestFactory fun `a stack`() = junitTests<Stack<String>> {
 
-        // define the fixture for enclosed scopes
+        // in this case the test fixture is just the stack we are testing
         fixture { Stack() }
 
+        // a context groups tests with the same fixture
         context("an empty stack") {
 
+            // this context inherits the empty stack from its parent
+
+            // define tests like this
             test("is empty") {
                 // In a test, 'this' is our fixture, the stack in this case
                 assertEquals(0, size)
@@ -43,9 +39,10 @@ object StackExampleTests {
             // .. other tests
         }
 
+        // another context
         context("a stack with one item") {
 
-            // we can modify the outer fixture
+            // this context modifies the fixture from its parent
             modifyFixture { push("one") }
 
             test("is not empty") {
@@ -62,15 +59,6 @@ object StackExampleTests {
 The key difference between Minutest and XUnit tests is the location of the test fixture - the thing being tested and the supporting cast. In XUnit the fixture is the fields of the test class, with tests being defined in special methods of that class. Minutest separates the tests, which are defined by calling the `test(name)` method, from the fixture, which is usually a separate class. 
 
 ```kotlin
-package com.oneeyedmen.minutest.examples
-
-import com.oneeyedmen.minutest.junit.junitTests
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.assertThrows
-import java.util.*
-
-
 object FixtureExampleTests {
 
     // If you have more state, make a separate fixture class
@@ -121,16 +109,6 @@ The key to minutest is that by separating the fixture from the test code, both a
 So if you want to reuse the same test for different concrete implementations, define the test with a function and call it for subclasses.
 
 ```kotlin
-package com.oneeyedmen.minutest.examples
-
-import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.junit.junitTests
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.TestFactory
-import java.util.*
-
-
 // To run the same tests against different implementations, first define a function taking the implementation and
 // returning a TestContext
 fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
@@ -170,16 +148,6 @@ object LinkedListTests{
 Unleash the `Power of Kotlin` to generate your tests on the fly.
 
 ```kotlin
-package com.oneeyedmen.minutest.examples
-
-import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.junit.junitTests
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.TestFactory
-import org.junit.jupiter.api.assertThrows
-import java.util.*
-
-
 private typealias StringStack = Stack<String>
 
 // We can define functions that return tests for later injection
@@ -264,13 +232,6 @@ object GeneratingExampleTests {
 Are you a died-in-the-wool functional programmer? If so, what are you doing slumming it with Kotlin? But at least minutest allows immutable fixtures.
 
 ```kotlin
-package com.oneeyedmen.minutest.examples
-
-import com.oneeyedmen.minutest.junit.junitTests
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.TestFactory
-
-
 object ImmutableExampleTests {
 
     // If you like this FP stuff, you may want to test an immutable fixture.
@@ -299,15 +260,6 @@ object ImmutableExampleTests {
 Power JUnit 4 user? minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
 
 ```kotlin
-package com.oneeyedmen.minutest.examples
-
-import com.oneeyedmen.minutest.junit.applyRule
-import com.oneeyedmen.minutest.junit.junitTests
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.TestFactory
-import org.junit.rules.TemporaryFolder
-
-
 object JunitRulesExampleTests {
 
     class Fixture {
