@@ -8,9 +8,10 @@ import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 
-private typealias StringStack = Stack<String>
 
 // We can define functions that return tests for later injection
+
+private typealias StringStack = Stack<String>
 
 private fun TestContext<StringStack>.isEmpty(isEmpty: Boolean) =
     test("is " + (if (isEmpty) "" else "not ") + "empty") {
@@ -44,11 +45,12 @@ private fun TestContext<StringStack>.cantPop() = test("cant pop") {
 
 object GeneratingExampleTests {
 
-    @TestFactory fun `invoke the functions to define tests`() = junitTests<StringStack> {
+    @TestFactory fun `stack tests`() = junitTests<StringStack> {
 
         fixture { StringStack() }
 
         context("an empty stack") {
+            // invoke the functions to create tests
             isEmpty(true)
             canPush()
             cantPop()
@@ -67,10 +69,9 @@ object GeneratingExampleTests {
         }
     }
 
-    @TestFactory fun `generate contexts to test with multiple values`() = junitTests<StringStack> {
+    @TestFactory fun `multiple tests on multiple stacks`() = junitTests<StringStack> {
 
-        fun TestContext<StringStack>.canPop(canPop: Boolean) = if (canPop) canPop() else cantPop()
-
+        // here we generate a context with 3 tests for each of 4 stacks
         (0..3).forEach { itemCount ->
             context("stack with $itemCount items") {
 
@@ -87,3 +88,5 @@ object GeneratingExampleTests {
         }
     }
 }
+
+private fun TestContext<StringStack>.canPop(canPop: Boolean) = if (canPop) canPop() else cantPop()

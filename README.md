@@ -1,4 +1,4 @@
-# minutest
+# Minutest
 
 [ ![Download](https://api.bintray.com/packages/dmcg/oneeyedmen-mvn/minutest/images/download.svg) ](https://bintray.com/dmcg/oneeyedmen-mvn/minutest/_latestVersion)
 
@@ -8,7 +8,7 @@ Minutest brings Spec-style testing to JUnit 5 and Kotlin.
 You can find the latest binaries and source in a Maven-compatible format on [JCenter](https://bintray.com/dmcg/oneeyedmen-mvn/minutest)
 
 You will need to include JUnit 5 on your test classpath. If you can work out what to do based on the 
-[JUnit 5 docs](https://junit.org/junit5/docs/current/user-guide/#installation) then you're ready to use minutest.
+[JUnit 5 docs](https://junit.org/junit5/docs/current/user-guide/#installation) then you're ready to use Minutest.
 
 ## Usage
 
@@ -104,13 +104,43 @@ private fun <E> Stack<E>.swapTop(otherStack: Stack<E>) {
 
 ## More Advanced Use
 
-The key to minutest is that by separating the fixture from the test code, both are made available to manipulate as data. 
+The key to Minutest is that by separating the fixture from the test code, both are made available to manipulate as data. 
 
-So if you want to reuse the same test for different concrete implementations, define the test with a function and call it for subclasses.
+For example, parameterised tests require [special handling](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests) in JUnit, but not in Minutest.
 
 ```kotlin
-// To run the same tests against different implementations, first define a function taking the implementation and
-// returning a TestContext
+// Running the same tests for multiple parameters is as easy as calling `test()` for each one.
+object ParameterisedTests {
+
+    // Here we don't bother with a fixture, hence <Unit>
+    @TestFactory fun palindromeTests() = junitTests<Unit> {
+
+        listOf("a", "oo", "racecar", "radar", "able was I ere I saw elba").forEach { candidate ->
+            test("$candidate is a palindrome") {
+                assertTrue(candidate.isPalindrome());
+            }
+        }
+
+        listOf("", "ab", "a man a plan a canal suez").forEach { candidate ->
+            test("$candidate is not a palindrome") {
+                assertFalse(candidate.isPalindrome());
+            }
+        }
+    }
+}
+
+fun String.isPalindrome(): Boolean =
+    if (length == 0) false
+    else (0 until length / 2).find { index -> this[index] != this[length - index - 1] } == null
+```
+
+More complicated scenarios can be approached by writing your own function that returns a test or a context.
+ 
+If you want to reuse the same tests for different concrete implementations, define a context with a function and call it for subclasses.
+
+```kotlin
+// To run the same tests against different implementations, first define a function
+// taking the implementation and returning a TestContext
 fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
     collectionName: String,
     factory: () -> MutableCollection<String>
@@ -145,12 +175,12 @@ object LinkedListTests{
 }
 ```
 
-Unleash the `Power of Kotlin` to generate your tests on the fly.
+Go crazy and unleash the `Power of Kotlin` to generate your tests on the fly.
 
 ```kotlin
-private typealias StringStack = Stack<String>
-
 // We can define functions that return tests for later injection
+
+private typealias StringStack = Stack<String>
 
 private fun TestContext<StringStack>.isEmpty(isEmpty: Boolean) =
     test("is " + (if (isEmpty) "" else "not ") + "empty") {
@@ -184,11 +214,12 @@ private fun TestContext<StringStack>.cantPop() = test("cant pop") {
 
 object GeneratingExampleTests {
 
-    @TestFactory fun `invoke the functions to define tests`() = junitTests<StringStack> {
+    @TestFactory fun `stack tests`() = junitTests<StringStack> {
 
         fixture { StringStack() }
 
         context("an empty stack") {
+            // invoke the functions to create tests
             isEmpty(true)
             canPush()
             cantPop()
@@ -207,10 +238,9 @@ object GeneratingExampleTests {
         }
     }
 
-    @TestFactory fun `generate contexts to test with multiple values`() = junitTests<StringStack> {
+    @TestFactory fun `multiple tests on multiple stacks`() = junitTests<StringStack> {
 
-        fun TestContext<StringStack>.canPop(canPop: Boolean) = if (canPop) canPop() else cantPop()
-
+        // here we generate a context with 3 tests for each of 4 stacks
         (0..3).forEach { itemCount ->
             context("stack with $itemCount items") {
 
@@ -227,9 +257,11 @@ object GeneratingExampleTests {
         }
     }
 }
+
+private fun TestContext<StringStack>.canPop(canPop: Boolean) = if (canPop) canPop() else cantPop()
 ```
 
-Are you a died-in-the-wool functional programmer? If so, what are you doing slumming it with Kotlin? But at least minutest allows immutable fixtures.
+Are you a functional programmer slumming it with Kotlin? Minutest allows immutable fixtures.
 
 ```kotlin
 object ImmutableExampleTests {
@@ -257,7 +289,7 @@ object ImmutableExampleTests {
 }
 ```
 
-Power JUnit 4 user? minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
+Power JUnit 4 user? Minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
 
 ```kotlin
 object JunitRulesExampleTests {
