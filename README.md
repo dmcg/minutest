@@ -114,7 +114,7 @@ private fun <E> Stack<E>.swapTop(otherStack: Stack<E>) {
 }
 ```
 
-## More Advanced Use
+## Parameterised Tests
 
 The key to Minutest is that by separating the fixture from the test code, both are made available to manipulate as data. 
 
@@ -149,6 +149,8 @@ fun String.isPalindrome(): Boolean =
 ![ParameterisedTests](docs/images/ParameterisedTests.png)
 
 More complicated scenarios can be approached by writing your own function that returns a test or a context.
+
+## Reusing Tests
  
 If you want to reuse the same tests for different concrete implementations, define a context with a function and call it for subclasses.
 
@@ -188,6 +190,8 @@ object LinkedListTests{
     }
 }
 ```
+
+## Generate Tests
 
 Go crazy and unleash the `Power of Kotlin` to generate your tests on the fly.
 
@@ -279,6 +283,7 @@ The last of these generates the following tests
 
 ![MultipleStackExamples](docs/images/MultipleStackExamples.png)
 
+## Immutable Fixtures
 
 Are you a functional programmer slumming it with Kotlin? Minutest allows immutable fixtures.
 
@@ -307,6 +312,8 @@ object ImmutableExampleTests {
     }
 }
 ```
+
+## JUnit Rules
 
 Power JUnit 4 user? Minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
 
