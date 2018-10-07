@@ -4,15 +4,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-project.group = "com.oneeyedmen"
-project.version = "0.9.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
 }
 
 plugins {
-    kotlin("jvm") version "1.2.71"
+    kotlin("jvm")
     `maven-publish`
     id("com.jfrog.bintray") version "1.8.1"
 }
@@ -20,6 +18,7 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
+
     implementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
     implementation("org.junit.vintage:junit-vintage-engine:5.3.1")
     implementation("junit:junit:4.12")
@@ -43,16 +42,6 @@ tasks {
     create<Jar>("sourceJar") {
         classifier = "sources"
         from(java.sourceSets["main"].allSource)
-    }
-
-    val readme = create("readme") {
-        doFirst {
-            generateReadme()
-        }
-    }
-
-    "publish" {
-        dependsOn(readme)
     }
 }
 
@@ -87,18 +76,3 @@ bintray {
         })
     })
 }
-
-fun generateReadme() {
-    val newReadmeLines = linesFrom("README.template.md").map { line ->
-        "```insert-kotlin (.*)$".toRegex().find(line)?.groups?.get(1)?.value?.let { filename ->
-            (listOf("```kotlin") + linesFrom(filename).filtered()).joinToString("\n")
-        } ?: line
-    }
-    File("README.md").writeText(newReadmeLines.joinToString("\n"))
-}
-
-fun Iterable<String>.filtered(): List<String> = this
-    .filter { ! it.startsWith("import") && ! it.startsWith("package") }
-    .dropWhile { it.isEmpty() }
-
-fun linesFrom(filename: String) = File(filename).readLines()
