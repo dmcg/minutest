@@ -17,6 +17,11 @@ Minutests are defined in a Spec style, with nested contexts and tests. The JUnit
 ```insert-kotlin src/test/kotlin/com/oneeyedmen/minutest/examples/StackExampleTests.kt
 ```
 
+This runs the following tests
+
+![StackExampleTests](docs/images/StackExampleTests.png)
+
+
 The key difference between Minutest and XUnit tests is the location of the test fixture - the thing being tested and the supporting cast. In XUnit the fixture is the fields of the test class, with tests being defined in special methods of that class. Minutest separates the tests, which are defined by calling the `test(name)` method, from the fixture, which is usually a separate class. 
 
 ```insert-kotlin src/test/kotlin/com/oneeyedmen/minutest/examples/FixtureExampleTests.kt
@@ -31,6 +36,8 @@ For example, parameterised tests require [special handling](https://junit.org/ju
 ```insert-kotlin src/test/kotlin/com/oneeyedmen/minutest/examples/ParameterisedTests.kt
 ```
 
+![ParameterisedTests](docs/images/ParameterisedTests.png)
+
 More complicated scenarios can be approached by writing your own function that returns a test or a context.
  
 If you want to reuse the same tests for different concrete implementations, define a context with a function and call it for subclasses.
@@ -42,6 +49,11 @@ Go crazy and unleash the `Power of Kotlin` to generate your tests on the fly.
 
 ```insert-kotlin src/test/kotlin/com/oneeyedmen/minutest/examples/GeneratingExampleTests.kt
 ```
+
+The last of these generates the following tests
+
+![MultipleStackExamples](docs/images/MultipleStackExamples.png)
+
 
 Are you a functional programmer slumming it with Kotlin? Minutest allows immutable fixtures.
 

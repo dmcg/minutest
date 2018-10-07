@@ -63,6 +63,11 @@ object StackExampleTests {
 
 ```
 
+This runs the following tests
+
+![StackExampleTests](docs/images/StackExampleTests.png)
+
+
 The key difference between Minutest and XUnit tests is the location of the test fixture - the thing being tested and the supporting cast. In XUnit the fixture is the fields of the test class, with tests being defined in special methods of that class. Minutest separates the tests, which are defined by calling the `test(name)` method, from the fixture, which is usually a separate class. 
 
 ```kotlin
@@ -140,6 +145,8 @@ fun String.isPalindrome(): Boolean =
     if (length == 0) false
     else (0 until length / 2).find { index -> this[index] != this[length - index - 1] } == null
 ```
+
+![ParameterisedTests](docs/images/ParameterisedTests.png)
 
 More complicated scenarios can be approached by writing your own function that returns a test or a context.
  
@@ -267,6 +274,11 @@ object GeneratingExampleTests {
 
 private fun TestContext<StringStack>.canPop(canPop: Boolean) = if (canPop) canPop() else cantPop()
 ```
+
+The last of these generates the following tests
+
+![MultipleStackExamples](docs/images/MultipleStackExamples.png)
+
 
 Are you a functional programmer slumming it with Kotlin? Minutest allows immutable fixtures.
 
