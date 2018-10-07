@@ -12,48 +12,55 @@ You will need to include JUnit 5 on your test classpath. If you can work out wha
 
 ## Usage
 
-Minutests are defined in a Spec style, with contexts and tests inside those contexts. 
+Minutests are defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
 
 ```kotlin
-// Tests are usually defined in a object
+// Minutests are usually defined in a object
 object StackExampleTests {
 
-    // junitTests() returns a stream of tests. JUnit 5 will run them for us.
-    @TestFactory fun `a stack`() = junitTests<Stack<String>> {
+    @TestFactory // junitTests() returns a stream of tests. JUnit 5 will run them for us.
+    fun `when new`() = junitTests<Stack<String>> {
 
         // in this case the test fixture is just the stack we are testing
         fixture { Stack() }
 
-        // a context groups tests with the same fixture
-        context("an empty stack") {
-
-            // this context inherits the empty stack from its parent
-
-            // define tests like this
-            test("is empty") {
-                // In a test, 'this' is our fixture, the stack in this case
-                assertEquals(0, size)
-                assertThrows<EmptyStackException> { peek() }
-            }
-
-            // .. other tests
+        // define tests like this
+        test("is empty") {
+            // In a test, 'this' is our fixture, the stack in this case
+            assertTrue(this.isEmpty())
         }
 
-        // another context
-        context("a stack with one item") {
+        test("throws EmptyStackException when popped") {
+            assertThrows<EmptyStackException> { pop() }
+        }
+
+        test("throws EmptyStackException when peeked") {
+            assertThrows<EmptyStackException> { peek() }
+        }
+
+        // nested context
+        context("after pushing an element") {
 
             // this context modifies the fixture from its parent
             modifyFixture { push("one") }
 
             test("is not empty") {
-                assertEquals(1, size)
-                assertEquals("one", peek())
+                assertFalse(isEmpty())
             }
 
-            // .. other tests
+            test("returns the element when popped and is empty") {
+                assertEquals("one", pop());
+                assertTrue(isEmpty());
+            }
+
+            test("returns the element when peeked but remains not empty") {
+                assertEquals("one", peek());
+                assertFalse(isEmpty());
+            }
         }
     }
 }
+
 ```
 
 The key difference between Minutest and XUnit tests is the location of the test fixture - the thing being tested and the supporting cast. In XUnit the fixture is the fields of the test class, with tests being defined in special methods of that class. Minutest separates the tests, which are defined by calling the `test(name)` method, from the fixture, which is usually a separate class. 

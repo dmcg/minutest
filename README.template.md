@@ -12,7 +12,7 @@ You will need to include JUnit 5 on your test classpath. If you can work out wha
 
 ## Usage
 
-Minutests are defined in a Spec style, with contexts and tests inside those contexts. 
+Minutests are defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
 
 ```insert-kotlin src/test/kotlin/com/oneeyedmen/minutest/examples/StackExampleTests.kt
 ```

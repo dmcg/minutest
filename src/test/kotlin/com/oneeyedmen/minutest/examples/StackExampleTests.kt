@@ -1,47 +1,55 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.junitTests
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
 import java.util.*
 
-// Tests are usually defined in a object
+
+// Minutests are usually defined in a object
 object StackExampleTests {
 
-    // junitTests() returns a stream of tests. JUnit 5 will run them for us.
-    @TestFactory fun `a stack`() = junitTests<Stack<String>> {
+    @TestFactory // junitTests() returns a stream of tests. JUnit 5 will run them for us.
+    fun `when new`() = junitTests<Stack<String>> {
 
         // in this case the test fixture is just the stack we are testing
         fixture { Stack() }
 
-        // a context groups tests with the same fixture
-        context("an empty stack") {
-
-            // this context inherits the empty stack from its parent
-
-            // define tests like this
-            test("is empty") {
-                // In a test, 'this' is our fixture, the stack in this case
-                assertEquals(0, size)
-                assertThrows<EmptyStackException> { peek() }
-            }
-
-            // .. other tests
+        // define tests like this
+        test("is empty") {
+            // In a test, 'this' is our fixture, the stack in this case
+            assertTrue(this.isEmpty())
         }
 
-        // another context
-        context("a stack with one item") {
+        test("throws EmptyStackException when popped") {
+            assertThrows<EmptyStackException> { pop() }
+        }
+
+        test("throws EmptyStackException when peeked") {
+            assertThrows<EmptyStackException> { peek() }
+        }
+
+        // nested context
+        context("after pushing an element") {
 
             // this context modifies the fixture from its parent
             modifyFixture { push("one") }
 
             test("is not empty") {
-                assertEquals(1, size)
-                assertEquals("one", peek())
+                assertFalse(isEmpty())
             }
 
-            // .. other tests
+            test("returns the element when popped and is empty") {
+                assertEquals("one", pop());
+                assertTrue(isEmpty());
+            }
+
+            test("returns the element when peeked but remains not empty") {
+                assertEquals("one", peek());
+                assertFalse(isEmpty());
+            }
         }
     }
 }
+
