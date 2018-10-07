@@ -13,13 +13,13 @@ object ParameterisedTests {
 
         listOf("a", "oo", "racecar", "radar", "able was I ere I saw elba").forEach { candidate ->
             test("$candidate is a palindrome") {
-                assertTrue(candidate.isPalindrome());
+                assertTrue(candidate.isPalindrome())
             }
         }
 
         listOf("", "ab", "a man a plan a canal suez").forEach { candidate ->
             test("$candidate is not a palindrome") {
-                assertFalse(candidate.isPalindrome());
+                assertFalse(candidate.isPalindrome())
             }
         }
     }

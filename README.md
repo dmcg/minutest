@@ -49,13 +49,13 @@ object StackExampleTests {
             }
 
             test("returns the element when popped and is empty") {
-                assertEquals("one", pop());
-                assertTrue(isEmpty());
+                assertEquals("one", pop())
+                assertTrue(isEmpty())
             }
 
             test("returns the element when peeked but remains not empty") {
-                assertEquals("one", peek());
-                assertFalse(isEmpty());
+                assertEquals("one", peek())
+                assertFalse(isEmpty())
             }
         }
     }
@@ -129,13 +129,13 @@ object ParameterisedTests {
 
         listOf("a", "oo", "racecar", "radar", "able was I ere I saw elba").forEach { candidate ->
             test("$candidate is a palindrome") {
-                assertTrue(candidate.isPalindrome());
+                assertTrue(candidate.isPalindrome())
             }
         }
 
         listOf("", "ab", "a man a plan a canal suez").forEach { candidate ->
             test("$candidate is not a palindrome") {
-                assertFalse(candidate.isPalindrome());
+                assertFalse(candidate.isPalindrome())
             }
         }
     }
