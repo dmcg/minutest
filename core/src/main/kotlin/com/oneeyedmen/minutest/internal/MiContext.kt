@@ -29,9 +29,11 @@ internal class MiContext<F>(
         operations.afters.add(transform)
     }
 
-    override fun test_(name: String, f: F.() -> F) { MinuTest(
-        name,
-        f).also { children.add(it) } }
+    override fun test_(name: String, f: F.() -> F) {
+        MinuTest(
+            name,
+            f).also { children.add(it) }
+    }
 
     override fun test(name: String, f: F.() -> Unit) {
         test_(name) {
@@ -49,18 +51,18 @@ internal class MiContext<F>(
     @Suppress("UNCHECKED_CAST")
     fun runTest(myTest: Test<F>, parentOperations: Operations<F>) {
         try {
-            var currentFixture = parentOperations.applyBeforesTo(Unit as F)
             val combinedOperations = parentOperations + operations
-            try {
-                currentFixture = operations.applyBeforesTo(currentFixture)
-                val transformedTests = combinedOperations.applyTransformsTo(myTest)
-                currentFixture = transformedTests.invoke(currentFixture)
-                combinedOperations.applyAftersTo(currentFixture)
-            } catch (t: Throwable) {
-                // TODO - this may result in double afters
-                combinedOperations.applyAftersTo(currentFixture)
-                throw t
+            val beforeResult = combinedOperations.applyBeforesTo(Unit as F)
+            val nextResult = beforeResult.flatMap { fixture ->
+                try {
+                    val transformedTests = combinedOperations.applyTransformsTo(myTest)
+                    OpResult(null, transformedTests.invoke(fixture))
+                } catch (t: Throwable) {
+                    OpResult(t, fixture)
+                }
             }
+            combinedOperations.applyAftersTo(nextResult.lastValue)
+            nextResult.orThrow()
         } catch (x: ClassCastException) {
             // TODO - this could be thrown in test code and reach here
             // Provided a fixture has been set, the Unit never makes it as far as any functions that cast it to F, so

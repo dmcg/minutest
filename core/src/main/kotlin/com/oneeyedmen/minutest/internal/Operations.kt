@@ -2,12 +2,31 @@ package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Test
 
-interface Operations<F> {
+internal data class OpResult<F>(val t: Throwable?, val lastValue: F) {
+    fun orThrow() = t?.let { throw it } ?: lastValue
+
+    fun flatMap(f: (F) -> OpResult<F>): OpResult<F> =
+        if (t != null) this
+        else f(this.lastValue)
+}
+
+internal interface Operations<F> {
     val befores: List<(F) -> F>
     val transforms: List<(Test<F>) -> Test<F>>
     val afters: List<(F) -> F>
 
-    fun applyBeforesTo(fixture: F) = befores.fold(fixture) { acc, transform -> transform(acc) }
+    // apply befores in order - if anything is thrown return it and the last successful value
+    fun applyBeforesTo(fixture: F): OpResult<F> {
+        var f = fixture
+        befores.forEach {
+            f = try {
+                it(f)
+            } catch (t: Throwable) {
+                return OpResult(t, f)
+            }
+        }
+        return OpResult(null, f)
+    }
 
     fun applyTransformsTo(test: Test<F>) = transforms.fold(test) { acc, transform -> transform(acc) }
 
