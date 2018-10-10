@@ -12,15 +12,17 @@ fun <F> rootContext(name: String, builder: TestContext<F>.() -> Unit): TestConte
 /**
  * A test with a name that can be invoked on a fixture.
  */
-interface Test<F> : (F) -> F, Node<F>
+interface Test<F> : (F) -> F {
+    val name: String
+}
 
 /**
  * A collection of [Test]s and [TestContext]s.
  */
 @Suppress("FunctionName")
-interface TestContext<F> : Node<F> {
+interface TestContext<F> {
 
-    override val name: String
+    val name: String
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
@@ -53,12 +55,4 @@ interface TestContext<F> : Node<F> {
     fun context(name: String, builder: TestContext<F>.() -> Unit): TestContext<F>
 
     fun addTransform(testTransform: (Test<F>) -> Test<F>)
-}
-
-/**
- * Implementation detail.
- */
-@Suppress("unused")
-interface Node<in F> {
-    val name: String
 }

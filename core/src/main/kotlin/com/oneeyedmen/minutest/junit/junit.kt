@@ -1,10 +1,10 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.Node
 import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.internal.MiContext
 import com.oneeyedmen.minutest.internal.MinuTest
+import com.oneeyedmen.minutest.internal.Node
 import com.oneeyedmen.minutest.internal.Operations
 import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.DynamicContainer
@@ -33,16 +33,15 @@ private fun <F> MiContext<F>.dynamicNodeFor(
     node: Node<F>,
     parentOperations: Operations<F>
 ) = when (node) {
-    is Test<F> -> DynamicTest.dynamicTest(node.name) { runTest(node, parentOperations) }
+    is MinuTest<F> -> DynamicTest.dynamicTest(node.name) { runTest(node, parentOperations) }
     is MiContext<F> -> node.build(parentOperations + operations)
-    else -> error("Unexpected test node type")
 }
 
 /**
  * Apply a JUnit test rule in a fixture.
  */
 fun <T, R: TestRule> TestContext<T>.applyRule(property: KProperty1<T, R>) {
-    addTransform { test ->
+    addTransform { test: Test<T> ->
         MinuTest(test.name) {
             this.also { fixture ->
                 val statement = object : Statement() {

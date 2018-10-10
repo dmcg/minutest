@@ -1,14 +1,22 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Node
 import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestContext
 
+@Suppress("unused")
+internal sealed class Node<in F>(val name: String)
+
+internal class MinuTest<F>(
+    name: String,
+    val f: F.() -> F
+) : Test<F>, Node<F>(name) {
+    override fun invoke(fixture: F): F = f(fixture)
+}
 
 internal class MiContext<F>(
-    override val name: String,
+    name: String,
     builder: MiContext<F>.() -> Unit
-) : TestContext<F> {
+) : TestContext<F>, Node<F>(name) {
 
     internal val children = mutableListOf<Node<F>>()
     internal val operations = MutableOperations<F>()
