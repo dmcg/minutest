@@ -2,6 +2,7 @@ package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.TestContext2
 import com.oneeyedmen.minutest.internal.MiContext
 import com.oneeyedmen.minutest.internal.MinuTest
 import com.oneeyedmen.minutest.internal.Node
@@ -22,25 +23,25 @@ import kotlin.streams.asStream
  * Define a [TestContext] and map it to be used as a JUnit [TestFactory].
  */
 fun <F> junitTests(builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
-    (rootContext("ignored", builder) as MiContext<F>).build(Operations.empty()).children
+    (rootContext("ignored", builder) as MiContext<Unit, F>).build(Operations.empty()).children
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-private fun <F> MiContext<F>.build(parentOperations: Operations<F>): DynamicContainer = dynamicContainer(name,
+private fun <PF, F> MiContext<PF, F>.build(parentOperations: Operations<F>): DynamicContainer = dynamicContainer(name,
     children.asSequence().map { dynamicNodeFor(it, parentOperations) }.asStream())
 
-private fun <F> MiContext<F>.dynamicNodeFor(
+private fun <PF, F> MiContext<PF, F>.dynamicNodeFor(
     node: Node<F>,
     parentOperations: Operations<F>
 ) = when (node) {
     is MinuTest<F> -> DynamicTest.dynamicTest(node.name) { runTest(node, parentOperations) }
-    is MiContext<F> -> node.build(parentOperations + operations)
+    is MiContext<*, *> -> (node as MiContext<PF, F>).build(parentOperations + operations)
 }
 
 /**
  * Apply a JUnit test rule in a fixture.
  */
-fun <T, R: TestRule> TestContext<T>.applyRule(property: KProperty1<T, R>) {
+fun <T, R: TestRule> TestContext2<*, T>.applyRule(property: KProperty1<T, R>) {
     addTransform { test: Test<T> ->
         MinuTest(test.name) {
             this.also { fixture ->

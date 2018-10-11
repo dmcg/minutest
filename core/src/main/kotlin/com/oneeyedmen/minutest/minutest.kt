@@ -16,11 +16,13 @@ interface Test<F> : (F) -> F {
     val name: String
 }
 
+typealias TestContext<F> = TestContext2<F, F>
+
 /**
  * A collection of [Test]s and [TestContext]s.
  */
 @Suppress("FunctionName")
-interface TestContext<F> {
+interface TestContext2<PF, F> {
 
     val name: String
 
@@ -52,7 +54,8 @@ interface TestContext<F> {
     fun test_(name: String, f: F.() -> F)
     fun test(name: String, f: F.() -> Unit)
 
-    fun context(name: String, builder: TestContext<F>.() -> Unit): TestContext<F>
+    fun context(name: String, builder: TestContext2<PF, F>.() -> Unit): TestContext2<PF, F>
 
     fun addTransform(testTransform: (Test<F>) -> Test<F>)
 }
+

@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Test
-import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.TestContext2
 
 @Suppress("unused")
 internal sealed class Node<in F>(val name: String)
@@ -13,10 +13,10 @@ internal class MinuTest<F>(
     override fun invoke(fixture: F): F = f(fixture)
 }
 
-internal class MiContext<F>(
+internal class MiContext<PF, F>(
     name: String,
-    builder: MiContext<F>.() -> Unit
-) : TestContext<F>, Node<F>(name) {
+    builder: MiContext<PF, F>.() -> Unit
+) : TestContext2<PF, F>, Node<F>(name) {
 
     internal val children = mutableListOf<Node<F>>()
     internal val operations = MutableOperations<F>()
@@ -49,7 +49,7 @@ internal class MiContext<F>(
         }
     }
 
-    override fun context(name: String, builder: TestContext<F>.() -> Unit) =
+    override fun context(name: String, builder: TestContext2<PF, F>.() -> Unit) =
         MiContext(name, builder).also { children.add(it) }
 
     override fun addTransform(testTransform: (Test<F>) -> Test<F>) {
