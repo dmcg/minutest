@@ -1,31 +1,50 @@
 package com.oneeyedmen.minutest.junit
 
+import org.junit.Assert.assertEquals
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.TestFactory
-import org.junit.rules.ExpectedException
+import org.junit.rules.TestWatcher
+import org.junit.runner.Description
 
 
-object JunitRulesExampleTests {
+class JunitRulesTests {
+
+    private val log = mutableListOf<String>()
 
     class Fixture {
-        val expectedException = ExpectedException.none()
+        val rule = TestRule()
     }
 
-    // theory here is that ExpectedException works, everything will!
-    @TestFactory fun test() = junitTests<Fixture>() {
+    @TestFactory fun test() = junitTests<Fixture> {
         fixture {
             Fixture()
         }
 
-        context("ExpectedException works") {
-            before {
-                expectedException.expectMessage("banana")
-            }
+        context("apply rule") {
+            applyRule(Fixture::rule)
 
-            applyRule(Fixture::expectedException)
-
-            test("exception is expected") {
-                throw(RuntimeException("banana"))
+            test("test") {
+                log.add("test")
             }
         }
+
+        after {
+            log.add(rule.testDescription.toString())
+        }
+    }
+
+    @AfterEach fun checkTestIsRun() {
+        assertEquals(listOf("test", "apply rule/test(Minutest)"), log)
     }
 }
+
+class TestRule : TestWatcher() {
+
+    var testDescription: String? = null
+
+    override fun succeeded(description: Description) {
+        testDescription = description.displayName
+    }
+}
+
+

@@ -40,17 +40,20 @@ private fun <F> MiContext<F>.dynamicNodeFor(
 /**
  * Apply a JUnit test rule in a fixture.
  */
-fun <T, R: TestRule> TestContext<T>.applyRule(property: KProperty1<T, R>) {
-    addTransform { test: Test<T> ->
+fun <F, R: TestRule> TestContext<F>.applyRule(ruleAsFixtureProperty: KProperty1<F, R>) {
+    addTransform { test: Test<F> ->
         MinuTest(test.name) {
             this.also { fixture ->
-                val statement = object : Statement() {
-                    override fun evaluate() {
-                        test(this@MinuTest)
-                    }
-                }
-                property.get(fixture).apply(statement, Description.createTestDescription("GENERATED TEST", name))
+                val rule = ruleAsFixtureProperty.get(fixture)
+                val wrappedTestAsStatement = test.asJUnitStatement(fixture)
+                rule.apply(wrappedTestAsStatement, Description.createTestDescription("Minutest", "${this@applyRule.name}/${test.name}")).evaluate()
             }
         }
+    }
+}
+
+private fun <F> Test<F>.asJUnitStatement(fixture: F) = object : Statement() {
+    override fun evaluate() {
+        this@asJUnitStatement(fixture)
     }
 }

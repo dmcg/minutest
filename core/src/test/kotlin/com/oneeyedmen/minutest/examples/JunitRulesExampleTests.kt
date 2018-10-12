@@ -10,7 +10,7 @@ import org.junit.rules.TemporaryFolder
 object JunitRulesExampleTests {
 
     class Fixture {
-        // make rules part of the fixture
+        // make rules part of the fixture, no need for an annotation
         val testFolder = TemporaryFolder()
     }
 
@@ -18,7 +18,7 @@ object JunitRulesExampleTests {
 
         fixture { Fixture() }
 
-        // tell the context to use the rule
+        // tell the context to use the rule for each test in it and its children
         applyRule(Fixture::testFolder)
 
         // and it will apply in this and sub-contexts
