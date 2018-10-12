@@ -43,6 +43,10 @@ tasks {
         classifier = "sources"
         from(java.sourceSets["main"].allSource)
     }
+
+    withType<Jar> {
+        baseName = "minutest"
+    }
 }
 
 artifacts {
@@ -56,7 +60,7 @@ publishing {
             from(components["java"])
             artifact(tasks["sourceJar"])
             groupId = project.group as String
-            artifactId = project.name
+            artifactId = "minutest"
             version = project.version as String
         }
     }
@@ -70,7 +74,7 @@ bintray {
     setPublications("mavenJava")
     pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
         repo = "oneeyedmen-mvn"
-        name = project.name
+        name = "minutest"
         version(delegateClosureOf<BintrayExtension.VersionConfig> {
             name = project.version as String
         })
