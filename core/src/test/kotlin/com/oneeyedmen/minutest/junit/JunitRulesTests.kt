@@ -34,7 +34,7 @@ class JunitRulesTests {
     }
 
     @AfterEach fun checkTestIsRun() {
-        assertEquals(listOf("test", "apply rule/test(Minutest)"), log)
+        assertEquals(listOf("test", "apply rule->test(com.oneeyedmen.minutest.junit.JunitRulesTests\$Fixture)"), log)
     }
 }
 

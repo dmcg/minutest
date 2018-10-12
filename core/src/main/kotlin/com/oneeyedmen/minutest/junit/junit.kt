@@ -15,6 +15,7 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import java.util.stream.Stream
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.streams.asStream
 
@@ -40,15 +41,24 @@ private fun <F> MiContext<F>.dynamicNodeFor(
 /**
  * Apply a JUnit test rule in a fixture.
  */
-fun <F, R: TestRule> TestContext<F>.applyRule(ruleAsFixtureProperty: KProperty1<F, R>) {
+inline fun <reified F, R: TestRule> TestContext<F>.applyRule(ruleAsFixtureProperty: KProperty1<F, R>) {
     addTransform { test: Test<F> ->
-        MinuTest(test.name) {
-            this.also { fixture ->
-                val rule = ruleAsFixtureProperty.get(fixture)
-                val wrappedTestAsStatement = test.asJUnitStatement(fixture)
-                rule.apply(wrappedTestAsStatement, Description.createTestDescription("Minutest", "${this@applyRule.name}/${test.name}")).evaluate()
-            }
-        }
+        wrappedTest(test, ruleAsFixtureProperty, name, F::class)
+    }
+}
+
+fun <F, R : TestRule> wrappedTest(
+    test: Test<F>,
+    ruleAsFixtureProperty: KProperty1<F, R>,
+    contextName: String,
+    fixtureClass: KClass<*>
+): Test<F> = MinuTest(test.name) {
+    this.also { fixture ->
+        val rule = ruleAsFixtureProperty.get(fixture)
+        val wrappedTestAsStatement = test.asJUnitStatement(fixture)
+        rule.apply(
+            wrappedTestAsStatement,
+            Description.createTestDescription(fixtureClass.java, "$contextName->${test.name}")).evaluate()
     }
 }
 
