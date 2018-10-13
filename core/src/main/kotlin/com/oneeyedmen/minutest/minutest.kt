@@ -1,8 +1,5 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.internal.MiContext
-import kotlin.reflect.KClass
-
 /**
  * A test with a name that can be invoked on a fixture.
  */
