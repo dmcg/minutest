@@ -6,7 +6,7 @@ import com.oneeyedmen.minutest.internal.MiContext
 import com.oneeyedmen.minutest.internal.MinuTest
 import com.oneeyedmen.minutest.internal.Node
 import com.oneeyedmen.minutest.internal.Operations
-import com.oneeyedmen.minutest.rootContext
+import com.oneeyedmen.minutest.miContext
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
@@ -22,15 +22,18 @@ import kotlin.streams.asStream
 /**
  * Define a [TestContext] and map it to be used as a JUnit [TestFactory].
  */
-fun <F> junitTests(builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
-    (rootContext("ignored", builder) as MiContext<F>).build(Operations.empty()).children
+inline fun <reified F: Any> junitTests(noinline builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
+    junitTests(F::class, builder)
+
+fun <F : Any> junitTests(fixtureType: KClass<F>, builder: TestContext<F>.() -> Unit) =
+    (miContext("ignored", fixtureType, builder) as MiContext<F>).build(Operations.empty()).children
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-private fun <F> MiContext<F>.build(parentOperations: Operations<F>): DynamicContainer = dynamicContainer(name,
+private fun <F: Any> MiContext<F>.build(parentOperations: Operations<F>): DynamicContainer = dynamicContainer(name,
     children.asSequence().map { dynamicNodeFor(it, parentOperations) }.asStream())
 
-private fun <F> MiContext<F>.dynamicNodeFor(
+private fun <F: Any> MiContext<F>.dynamicNodeFor(
     node: Node<F>,
     parentOperations: Operations<F>
 ) = when (node) {
@@ -41,18 +44,18 @@ private fun <F> MiContext<F>.dynamicNodeFor(
 /**
  * Apply a JUnit test rule in a fixture.
  */
-inline fun <reified F, R: TestRule> TestContext<F>.applyRule(ruleAsFixtureProperty: KProperty1<F, R>) {
+inline fun <reified F: Any, R: TestRule> TestContext<F>.applyRule(ruleAsFixtureProperty: KProperty1<F, R>) {
     addTransform { test: Test<F> ->
         wrappedTest(test, ruleAsFixtureProperty, name, F::class)
     }
 }
 
-fun <F, R : TestRule> wrappedTest(
+fun <F: Any, R : TestRule> wrappedTest(
     test: Test<F>,
     ruleAsFixtureProperty: KProperty1<F, R>,
     contextName: String,
     fixtureClass: KClass<*>
-): Test<F> = MinuTest(test.name) {
+): Test<F> = MinuTest(test.name, test.fixtureType) {
     this.also { fixture ->
         val rule = ruleAsFixtureProperty.get(fixture)
         val wrappedTestAsStatement = test.asJUnitStatement(fixture)
@@ -62,7 +65,7 @@ fun <F, R : TestRule> wrappedTest(
     }
 }
 
-private fun <F> Test<F>.asJUnitStatement(fixture: F) = object : Statement() {
+private fun <F: Any> Test<F>.asJUnitStatement(fixture: F) = object : Statement() {
     override fun evaluate() {
         this@asJUnitStatement(fixture)
     }

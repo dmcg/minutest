@@ -2,21 +2,24 @@ package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestContext
+import kotlin.reflect.KClass
 
 @Suppress("unused")
-internal sealed class Node<in F>(val name: String)
+internal sealed class Node<F: Any>(val name: String, val fixtureType: KClass<F>)
 
-internal class MinuTest<F>(
+internal class MinuTest<F: Any>(
     name: String,
+    fixtureType: KClass<F>,
     val f: F.() -> F
-) : Test<F>, Node<F>(name) {
+) : Test<F>, Node<F>(name, fixtureType) {
     override fun invoke(fixture: F): F = f(fixture)
 }
 
-internal class MiContext<F>(
+internal class MiContext<F: Any>(
     name: String,
+    fixtureType: KClass<F>,
     builder: MiContext<F>.() -> Unit
-) : TestContext<F>, Node<F>(name) {
+) : TestContext<F>, Node<F>(name, fixtureType) {
 
     internal val children = mutableListOf<Node<F>>()
     internal val operations = MutableOperations<F>()
@@ -38,9 +41,7 @@ internal class MiContext<F>(
     }
 
     override fun test_(name: String, f: F.() -> F) {
-        MinuTest(
-            name,
-            f).also { children.add(it) }
+        MinuTest(name, fixtureType, f).also { children.add(it) }
     }
 
     override fun test(name: String, f: F.() -> Unit) {
@@ -50,7 +51,7 @@ internal class MiContext<F>(
     }
 
     override fun context(name: String, builder: TestContext<F>.() -> Unit) =
-        MiContext(name, builder).also { children.add(it) }
+        MiContext(name, fixtureType, builder).also { children.add(it) }
 
     override fun addTransform(testTransform: (Test<F>) -> Test<F>) {
         operations.transforms.add(testTransform)

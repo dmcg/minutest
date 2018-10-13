@@ -1,28 +1,36 @@
 package com.oneeyedmen.minutest
 
 import com.oneeyedmen.minutest.internal.MiContext
+import kotlin.reflect.KClass
 
 /**
  * Define a root context to contain [Test]s and other sub-[TestContext]s
  */
-fun <F> rootContext(name: String, builder: TestContext<F>.() -> Unit): TestContext<F> = MiContext(
-    name,
-    builder = builder)
+inline fun <reified F: Any> rootContext(name: String, noinline builder: TestContext<F>.() -> Unit): TestContext<F> =
+    miContext(name, F::class, builder)
+
+fun <F : Any> miContext(
+    name: String,
+    fixtureType: KClass<F>,
+    builder: TestContext<F>.() -> Unit
+): TestContext<F> = MiContext(name, fixtureType, builder = builder)
 
 /**
  * A test with a name that can be invoked on a fixture.
  */
-interface Test<F> : (F) -> F {
+interface Test<F: Any> : (F) -> F {
     val name: String
+    val fixtureType: KClass<F>
 }
 
 /**
  * A collection of [Test]s and [TestContext]s.
  */
 @Suppress("FunctionName")
-interface TestContext<F> {
+interface TestContext<F: Any> {
 
     val name: String
+    val fixtureType: KClass<F>
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
