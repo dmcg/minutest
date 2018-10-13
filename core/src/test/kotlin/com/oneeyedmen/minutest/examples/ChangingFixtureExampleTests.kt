@@ -23,7 +23,11 @@ object ChangingFixtureExampleTests {
             assertEquals("banana", fruit)
         }
 
-        context("inner", converter = { Fixture2(fruit, "smoothie") } ) {
+        translatingContext<Fixture1, Fixture2>("inner") {
+
+            translateFixture<Fixture1, Fixture2> {
+                Fixture2(fruit, "smoothie")
+            }
 
             test("takes Fixture 2") {
                 assertEquals("banana", fruit)
@@ -33,18 +37,20 @@ object ChangingFixtureExampleTests {
     }
 }
 
-inline fun <F: Any, reified F2 : Any> TestContext<F>.context(
+inline fun <F: Any, reified F2 : Any> TestContext<F>.translatingContext(
     name: String,
-    noinline converter: F.() -> F2,
     noinline builder: TestContext<F2>.() -> Unit
-) = this.translatingContext(name, F2::class, converter, builder)
+) = this.translatingContext(name, F2::class, builder)
 
 @Suppress("UNCHECKED_CAST")
-fun <F: Any, F2 : Any> TestContext<F>.translatingContext(name: String, newFixtureType: KClass<F2>, converter: F.() -> F2, builder: TestContext<F2>.() -> Unit): TestContext<F2> {
+fun <F: Any, F2 : Any> TestContext<F>.translatingContext(name: String, newFixtureType: KClass<F2>, builder: TestContext<F2>.() -> Unit): TestContext<F2> {
     val parent = this as MiContext<F>
-    val translatingContext: MiContext<F2> = MiContext(name, newFixtureType, builder)
-    translatingContext.replaceFixture { converter(this as F) }
-    parent.children.add(translatingContext as Node<F>)
-    return translatingContext
+    return MiContext(name, newFixtureType, builder).also {
+        parent.children.add(it as Node<F>)
+    }
 }
 
+@Suppress("UNCHECKED_CAST")
+fun <F: Any, F2: Any> TestContext<F2>.translateFixture(converter: F.() -> F2) {
+    this.replaceFixture { converter(this as F) }
+}
