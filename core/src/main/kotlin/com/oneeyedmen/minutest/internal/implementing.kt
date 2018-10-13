@@ -50,11 +50,8 @@ internal class MiContext<F : Any>(
         MinuTest(name, f).also { children.add(it) }
     }
 
-    override fun test(name: String, f: F.() -> Unit) {
-        test_(name) {
-            apply { f(this) }
-        }
-    }
+    override fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
+
 
     override fun context(name: String, builder: TestContext<F>.() -> Unit) =
         MiContext(name, fixtureType, builder).also { children.add(it) }
