@@ -5,13 +5,20 @@ import com.oneeyedmen.minutest.TestContext
 import kotlin.reflect.KClass
 
 @Suppress("unused")
-internal sealed class Node<F : Any>(val name: String)
+internal sealed class Node<F : Any>(val name: String) {
+    abstract fun toRuntimeNode(parent: MiContext<F>?, parentOperations: Operations<F>): RuntimeNode
+}
 
 internal class MinuTest<F : Any>(
     name: String,
     val f: F.() -> F
 ) : Test<F>, Node<F>(name) {
     override fun invoke(fixture: F): F = f(fixture)
+
+    override fun toRuntimeNode(parent: MiContext<F>?, parentOperations: Operations<F>) =
+        RuntimeTest(this.name) {
+            parent?.runTest(this, parentOperations) ?: error("Test $name has no parent context")
+        }
 }
 
 internal class MiContext<F : Any>(
@@ -21,7 +28,7 @@ internal class MiContext<F : Any>(
 ) : TestContext<F>, Node<F>(name) {
 
     internal val children = mutableListOf<Node<F>>()
-    internal val operations = MutableOperations<F>()
+    private val operations = MutableOperations<F>()
 
     init {
         this.builder()
@@ -81,5 +88,12 @@ internal class MiContext<F : Any>(
             if (!(fixtureType.isInstance(it.lastValue)))
                 error("You need to set a fixture by calling fixture(...)")
         }
+
+    override fun toRuntimeNode(parent: MiContext<F>?, parentOperations: Operations<F>): RuntimeContext = RuntimeContext(
+        this.name,
+        this.children.asSequence().map {
+            it.toRuntimeNode(this, parentOperations + (parent?.operations ?: Operations.empty()))
+        }
+    )
 }
 
