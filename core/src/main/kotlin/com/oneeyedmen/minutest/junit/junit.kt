@@ -55,7 +55,7 @@ fun <F: Any, R : TestRule> wrappedTest(
     ruleAsFixtureProperty: KProperty1<F, R>,
     contextName: String,
     fixtureClass: KClass<*>
-): Test<F> = MinuTest(test.name, test.fixtureType) {
+): Test<F> = MinuTest(test.name) {
     this.also { fixture ->
         val rule = ruleAsFixtureProperty.get(fixture)
         val wrappedTestAsStatement = test.asJUnitStatement(fixture)

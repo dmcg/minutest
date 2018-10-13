@@ -5,21 +5,20 @@ import com.oneeyedmen.minutest.TestContext
 import kotlin.reflect.KClass
 
 @Suppress("unused")
-internal sealed class Node<F : Any>(val name: String, val fixtureType: KClass<F>)
+internal sealed class Node<F : Any>(val name: String)
 
 internal class MinuTest<F : Any>(
     name: String,
-    fixtureType: KClass<F>,
     val f: F.() -> F
-) : Test<F>, Node<F>(name, fixtureType) {
+) : Test<F>, Node<F>(name) {
     override fun invoke(fixture: F): F = f(fixture)
 }
 
 internal class MiContext<F : Any>(
     name: String,
-    fixtureType: KClass<F>,
+    private val fixtureType: KClass<F>,
     builder: MiContext<F>.() -> Unit
-) : TestContext<F>, Node<F>(name, fixtureType) {
+) : TestContext<F>, Node<F>(name) {
 
     internal val children = mutableListOf<Node<F>>()
     internal val operations = MutableOperations<F>()
@@ -41,7 +40,7 @@ internal class MiContext<F : Any>(
     }
 
     override fun test_(name: String, f: F.() -> F) {
-        MinuTest(name, fixtureType, f).also { children.add(it) }
+        MinuTest(name, f).also { children.add(it) }
     }
 
     override fun test(name: String, f: F.() -> Unit) {

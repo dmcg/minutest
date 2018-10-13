@@ -20,7 +20,6 @@ fun <F : Any> miContext(
  */
 interface Test<F: Any> : (F) -> F {
     val name: String
-    val fixtureType: KClass<F>
 }
 
 /**
@@ -30,7 +29,6 @@ interface Test<F: Any> : (F) -> F {
 interface TestContext<F: Any> {
 
     val name: String
-    val fixtureType: KClass<F>
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.

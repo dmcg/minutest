@@ -69,7 +69,7 @@ object TransformTests {
     @TestFactory fun `test transform`() = junitTests<Unit> {
 
         addTransform { test ->
-            MinuTest(test.name, Unit::class) {}
+            MinuTest(test.name) {}
         }
 
         test("transform can ignore test") {
