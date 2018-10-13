@@ -81,7 +81,7 @@ object FixtureTests {
         }
     }
 
-    @Test fun `throws IllegalStateException if no fixture specified when one is needed`() {
+    @Test fun `throws IllegalStateException if no fixture specified when one is needed by a test`() {
         val tests = junitTests<Fixture> {
             test("I report not having a fixture") {
                 assertEquals("banana", fruit)
@@ -91,4 +91,19 @@ object FixtureTests {
             ((tests.first() as DynamicTest)).executable.execute()
         }
     }
+
+    @Test fun `throws IllegalStateException if no fixture specified when one is needed by a fixture`() {
+        val tests = junitTests<Fixture> {
+            modifyFixture {
+                this.fruit
+            }
+            test("I report not having a fixture") {
+                assertEquals("banana", fruit)
+            }
+        }.asSequence()
+        assertThrows<IllegalStateException> {
+            ((tests.first() as DynamicTest)).executable.execute()
+        }
+    }
+
 }

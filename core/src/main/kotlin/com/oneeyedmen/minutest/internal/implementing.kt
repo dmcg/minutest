@@ -5,9 +5,9 @@ import com.oneeyedmen.minutest.TestContext
 import kotlin.reflect.KClass
 
 @Suppress("unused")
-internal sealed class Node<F: Any>(val name: String, val fixtureType: KClass<F>)
+internal sealed class Node<F : Any>(val name: String, val fixtureType: KClass<F>)
 
-internal class MinuTest<F: Any>(
+internal class MinuTest<F : Any>(
     name: String,
     fixtureType: KClass<F>,
     val f: F.() -> F
@@ -15,7 +15,7 @@ internal class MinuTest<F: Any>(
     override fun invoke(fixture: F): F = f(fixture)
 }
 
-internal class MiContext<F: Any>(
+internal class MiContext<F : Any>(
     name: String,
     fixtureType: KClass<F>,
     builder: MiContext<F>.() -> Unit
@@ -57,26 +57,30 @@ internal class MiContext<F: Any>(
         operations.transforms.add(testTransform)
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun runTest(myTest: Test<F>, parentOperations: Operations<F>) {
-        try {
-            val combinedOperations = parentOperations + operations
-            val beforeResult = combinedOperations.applyBeforesTo(Unit as F)
-            val nextResult = beforeResult.flatMap { fixture ->
-                try {
-                    val transformedTests = combinedOperations.applyTransformsTo(myTest)
-                    OpResult(null, transformedTests.invoke(fixture))
-                } catch (t: Throwable) {
-                    OpResult(t, fixture)
-                }
+        val combinedOperations = parentOperations + operations
+        val beforeResult = beforeResultOrThrow(combinedOperations)
+        val nextResult = beforeResult.flatMap { fixture ->
+            try {
+                val transformedTests = combinedOperations.applyTransformsTo(myTest)
+                OpResult(null, transformedTests.invoke(fixture))
+            } catch (t: Throwable) {
+                OpResult(t, fixture)
             }
-            combinedOperations.applyAftersTo(nextResult.lastValue)
-            nextResult.orThrow()
-        } catch (x: ClassCastException) {
-            // TODO - this could be thrown in test code and reach here
-            // Provided a fixture has been set, the Unit never makes it as far as any functions that cast it to F, so
-            // this works. And if the type of F is Unit, you don't need to set a fixture, as the Unit will do. Simples.
-            error("You need to set a fixture by calling fixture(...)")
         }
+        combinedOperations.applyAftersTo(nextResult.lastValue)
+        nextResult.orThrow()
     }
+
+    @Suppress("UNCHECKED_CAST")
+    /**
+     * Applies all the befores to Unit and sees whether the result is they type we want. This checks if the combination of
+     * the fixture calls works out at runtime.
+     */
+    private fun beforeResultOrThrow(combinedOperations: Operations<F>): OpResult<F> =
+        combinedOperations.applyBeforesTo(Unit as F).also {
+            if (!(fixtureType.isInstance(it.lastValue)))
+                error("You need to set a fixture by calling fixture(...)")
+        }
 }
+
