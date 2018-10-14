@@ -45,7 +45,8 @@ inline fun <F: Any, reified F2 : Any> TestContext<F>.translatingContext(
 @Suppress("UNCHECKED_CAST")
 fun <F: Any, F2 : Any> TestContext<F>.translatingContext(name: String, newFixtureType: KClass<F2>, builder: TestContext<F2>.() -> Unit): TestContext<F2> {
     val parent = this as MiContext<F>
-    return MiContext(name, newFixtureType, builder).also {
+    return MiContext(name, newFixtureType).also {
+        it.builder()
         parent.children.add(it as Node<F>)
     }
 }

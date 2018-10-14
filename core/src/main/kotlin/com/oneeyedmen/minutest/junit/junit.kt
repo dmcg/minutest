@@ -18,7 +18,7 @@ inline fun <reified F : Any> junitTests(noinline builder: TestContext<F>.() -> U
     junitTests(F::class, builder)
 
 fun <F : Any> junitTests(fixtureType: KClass<F>, builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
-    MiContext("ignored", fixtureType, builder = builder)
+    MiContext("ignored", fixtureType).apply { builder() }
         .toRuntimeNode(null, Operations.empty())
         .toDynamicContainer()
         .children

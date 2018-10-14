@@ -23,16 +23,11 @@ internal class MinuTest<F : Any>(
 
 internal class MiContext<F : Any>(
     name: String,
-    private val fixtureType: KClass<F>,
-    builder: MiContext<F>.() -> Unit
+    private val fixtureType: KClass<F>
 ) : TestContext<F>, Node<F>(name) {
 
     internal val children = mutableListOf<Node<F>>()
     private val operations = MutableOperations<F>()
-
-    init {
-        this.builder()
-    }
 
     override fun before_(transform: F.() -> F) {
         operations.befores.add(transform)
@@ -54,7 +49,10 @@ internal class MiContext<F : Any>(
 
 
     override fun context(name: String, builder: TestContext<F>.() -> Unit) =
-        MiContext(name, fixtureType, builder).also { children.add(it) }
+        MiContext(name, fixtureType).also {
+            it.builder()
+            children.add(it)
+        }
 
     override fun addTransform(testTransform: (Test<F>) -> Test<F>) {
         operations.transforms.add(testTransform)
