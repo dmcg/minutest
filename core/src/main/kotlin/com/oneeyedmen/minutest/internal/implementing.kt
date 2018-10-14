@@ -1,12 +1,13 @@
 package com.oneeyedmen.minutest.internal
 
+import com.oneeyedmen.minutest.DerivedContext
 import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestContext
 import kotlin.reflect.KClass
 
 @Suppress("unused")
 internal sealed class Node<F : Any>(val name: String) {
-    abstract fun toRuntimeNode(parent: MiContext<F>?, parentOperations: Operations<F>): RuntimeNode
+    abstract fun toRuntimeNode(parent: MiContext<*, F>?, parentOperations: Operations<F>): RuntimeNode
 }
 
 internal class MinuTest<F : Any>(
@@ -15,16 +16,16 @@ internal class MinuTest<F : Any>(
 ) : Test<F>, Node<F>(name) {
     override fun invoke(fixture: F): F = f(fixture)
 
-    override fun toRuntimeNode(parent: MiContext<F>?, parentOperations: Operations<F>) =
+    override fun toRuntimeNode(parent: MiContext<*, F>?, parentOperations: Operations<F>) =
         RuntimeTest(this.name) {
             parent?.runTest(this, parentOperations) ?: error("Test $name has no parent context")
         }
 }
 
-internal class MiContext<F : Any>(
+internal class MiContext<PF: Any, F : Any>(
     name: String,
     private val fixtureType: KClass<F>
-) : TestContext<F>, Node<F>(name) {
+) : TestContext<F>, DerivedContext<PF, F>, Node<F>(name) {
 
     internal val children = mutableListOf<Node<F>>()
     private val operations = MutableOperations<F>()
@@ -49,9 +50,19 @@ internal class MiContext<F : Any>(
 
 
     override fun context(name: String, builder: TestContext<F>.() -> Unit) =
-        MiContext(name, fixtureType).also {
+        MiContext<F, F>(name, fixtureType).also {
             it.builder()
             children.add(it)
+        }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <F2: Any> derivedContext(
+        name: String,
+        fixtureType: KClass<F2>,
+        builder: DerivedContext<F, F2>.() -> Unit) =
+        MiContext<F, F2>(name, fixtureType).also {
+            it.builder()
+            children.add(it as Node<F>)
         }
 
     override fun addTransform(testTransform: (Test<F>) -> Test<F>) {
@@ -84,7 +95,7 @@ internal class MiContext<F : Any>(
                 error("You need to set a fixture by calling fixture(...)")
         }
 
-    override fun toRuntimeNode(parent: MiContext<F>?, parentOperations: Operations<F>): RuntimeContext = RuntimeContext(
+    override fun toRuntimeNode(parent: MiContext<*, F>?, parentOperations: Operations<F>): RuntimeContext = RuntimeContext(
         this.name,
         this.children.asSequence().map {
             it.toRuntimeNode(this, parentOperations + (parent?.operations ?: Operations.empty()))
