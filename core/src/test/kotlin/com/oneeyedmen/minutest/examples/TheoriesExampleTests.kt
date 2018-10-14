@@ -8,6 +8,9 @@ import org.junit.jupiter.api.TestFactory
 
 object TheoriesExampleTests {
 
+    // A translation of FizzBuzz tested with JUnit theories -
+    // http://www.oneeyedmen.com/tdd-v-testing-part2.html
+
     @TestFactory fun fizzBuzzTests() = junitTests<Unit> {
 
         (1..31).forEach { i ->
