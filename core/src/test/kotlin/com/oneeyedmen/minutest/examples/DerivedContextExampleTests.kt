@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.TestFactory
 
 
-object DerivingFixtureExampleTests {
+object DerivedContextExampleTests {
 
     data class Fixture(val fruit: String)
 
