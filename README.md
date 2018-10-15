@@ -158,13 +158,13 @@ object ParameterisedTests {
     // Here we don't bother with a fixture, hence <Unit>
     @TestFactory fun palindromeTests() = junitTests<Unit> {
 
-        listOf("a", "oo", "racecar", "radar", "able was I ere I saw elba").forEach { candidate ->
+        listOf("a", "oo", "racecar", "able was I ere I saw elba").forEach { candidate ->
             test("$candidate is a palindrome") {
                 assertTrue(candidate.isPalindrome())
             }
         }
 
-        listOf("", "ab", "a man a plan a canal suez").forEach { candidate ->
+        listOf("", "ab", "a man a plan a canal pananma").forEach { candidate ->
             test("$candidate is not a palindrome") {
                 assertFalse(candidate.isPalindrome())
             }
