@@ -15,7 +15,11 @@ abstract class JUnitTests<F : Any>(private val block: TestContext<F>.() -> Unit)
     private fun myGenericFixtureType(): KClass<F> {
         val parameterizedType = this::class.java.genericSuperclass as ParameterizedType
         val genericType = parameterizedType.actualTypeArguments[0]
-        return (genericType as ParameterizedTypeImpl).rawType.kotlin as KClass<F>
+        return when (genericType) {
+            is Class<*> -> genericType.kotlin as KClass<F>
+            is ParameterizedTypeImpl -> genericType.rawType.kotlin as KClass<F>
+            else -> error("Unexpected fixture type")
+        }
     }
 
     @TestFactory
