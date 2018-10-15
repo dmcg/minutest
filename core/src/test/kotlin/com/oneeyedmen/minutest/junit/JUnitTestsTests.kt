@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
 
 
-object JUnitTestsTests : JUnitTests<String>({
+object JUnitTestsTestsWithPlainFixture : JUnitTests<String>({
 
     fixture { "banana" }
 
@@ -14,7 +14,7 @@ object JUnitTestsTests : JUnitTests<String>({
     }
 })
 
-object JUnitTestsTests2 : JUnitTests<Stack<String>>({
+object JUnitTestsTestsWithGenericFixture : JUnitTests<Stack<String>>({
 
     fixture { Stack() }
 
