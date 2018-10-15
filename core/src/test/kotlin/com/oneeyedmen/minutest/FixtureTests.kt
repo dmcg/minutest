@@ -7,6 +7,8 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
+import java.io.FileNotFoundException
+import java.io.IOException
 import kotlin.streams.asSequence
 
 
@@ -106,4 +108,42 @@ object FixtureTests {
         }
     }
 
+    @Test fun `throws first exception thrown from fixture`() {
+        val tests = junitTests<Fixture> {
+            fixture {
+                throw FileNotFoundException()
+            }
+
+            fixture {
+                throw IOException()
+            }
+
+            test("won't be run") {
+                assertEquals("banana", fruit)
+            }
+        }.asSequence()
+        assertThrows<FileNotFoundException> {
+            ((tests.first() as DynamicTest)).executable.execute()
+        }
+    }
+
+    @Test fun `throws first exception thrown from fixture even if it is ClassCastException`() {
+        // torture test of the logic
+        val tests = junitTests<Fixture> {
+            fixture {
+                throw ClassCastException()
+            }
+
+            fixture {
+                throw IOException()
+            }
+
+            test("won't be run") {
+                assertEquals("banana", fruit)
+            }
+        }.asSequence()
+        assertThrows<ClassCastException> {
+            ((tests.first() as DynamicTest)).executable.execute()
+        }
+    }
 }

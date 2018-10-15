@@ -91,8 +91,11 @@ internal class MiContext<PF: Any, F : Any>(
      */
     private fun beforeResultOrThrow(combinedOperations: Operations<F>): OpResult<F> =
         combinedOperations.applyBeforesTo(Unit as F).also {
-            if (!(fixtureType.isInstance(it.lastValue)))
+            if (!fixtureType.isInstance(it.lastValue) && (exceptionWasProbablyNotThrownByCodeInBefores(it.t))) {
                 error("You need to set a fixture by calling fixture(...)")
+            } else {
+                // either we have a correct fixture type, or we don't but it is because of a
+            }
         }
 
     override fun toRuntimeNode(parent: MiContext<*, F>?, parentOperations: Operations<F>): RuntimeContext = RuntimeContext(
@@ -102,4 +105,8 @@ internal class MiContext<PF: Any, F : Any>(
         }
     )
 }
+
+private fun exceptionWasProbablyNotThrownByCodeInBefores(throwable: Throwable?) =
+    throwable == null || (throwable is ClassCastException && (throwable.message?.contains("Unit") == true))
+
 
