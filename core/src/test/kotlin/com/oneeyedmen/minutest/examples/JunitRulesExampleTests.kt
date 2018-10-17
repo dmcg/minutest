@@ -19,7 +19,7 @@ object JunitRulesExampleTests {
         fixture { Fixture() }
 
         // tell the context to use the rule for each test in it and its children
-        applyRule(Fixture::testFolder)
+        applyRule { this.testFolder }
 
         // and it will apply in this and sub-contexts
         test("test folder is present") {

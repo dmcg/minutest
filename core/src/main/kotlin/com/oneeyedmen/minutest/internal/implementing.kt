@@ -24,6 +24,7 @@ internal class MinuTest<F : Any>(
 
 internal class MiContext<PF: Any, F : Any>(
     name: String,
+    override val parent: TestContext<*>?,
     private val fixtureType: KClass<F>
 ) : TestContext<F>, DerivedContext<PF, F>, Node<F>(name) {
 
@@ -50,7 +51,7 @@ internal class MiContext<PF: Any, F : Any>(
 
 
     override fun context(name: String, builder: TestContext<F>.() -> Unit) =
-        MiContext<F, F>(name, fixtureType).also {
+        MiContext<F, F>(name, this, fixtureType).also {
             it.builder()
             children.add(it)
         }
@@ -60,7 +61,7 @@ internal class MiContext<PF: Any, F : Any>(
         name: String,
         fixtureType: KClass<F2>,
         builder: DerivedContext<F, F2>.() -> Unit) =
-        MiContext<F, F2>(name, fixtureType).also {
+        MiContext<F, F2>(name, this, fixtureType).also {
             it.builder()
             children.add(it as Node<F>)
         }

@@ -18,7 +18,9 @@ inline fun <reified F : Any> junitTests(noinline builder: TestContext<F>.() -> U
     junitTests(F::class, builder)
 
 fun <F : Any> junitTests(fixtureType: KClass<F>, builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
-    MiContext<Unit, F>("ignored", fixtureType).apply { builder() }
+    // Note that we take the children of the root context to remove an unnecessary layer. Hence the rootContextName
+    // is not shown in the test runner. But see ruling.kt - ruleApplyingTest
+    MiContext<Unit, F>(rootContextName, null, fixtureType).apply { builder() }
         .toRuntimeNode(null, Operations.empty())
         .toDynamicContainer()
         .children
@@ -37,3 +39,4 @@ private fun RuntimeContext.toDynamicContainer(): DynamicContainer = dynamicConta
     children.map { it.toDynamicNode() }.asStream()
 )
 
+internal const val rootContextName = "ignored"

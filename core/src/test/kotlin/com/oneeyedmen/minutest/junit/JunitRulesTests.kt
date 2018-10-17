@@ -1,15 +1,15 @@
 package com.oneeyedmen.minutest.junit
 
 import org.junit.Assert.assertEquals
-import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.TestFactory
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
+private val log = mutableListOf<String>()
 
-class JunitRulesTests {
+object JunitRulesTests {
 
-    private val log = mutableListOf<String>()
 
     class Fixture {
         val rule = TestRule()
@@ -20,11 +20,22 @@ class JunitRulesTests {
             Fixture()
         }
 
-        context("apply rule") {
-            applyRule(Fixture::rule)
+        context("outer") {
 
-            test("test") {
-                log.add("test")
+            context("apply rule fixture class") {
+                applyRule { this.rule }
+
+                test("test 1") {
+                    log.add("test 1")
+                }
+            }
+
+            context("apply rule test class") {
+                applyRule(this@JunitRulesTests::class, Fixture::rule)
+
+                test("test 2") {
+                    log.add("test 2")
+                }
             }
         }
 
@@ -33,8 +44,15 @@ class JunitRulesTests {
         }
     }
 
-    @AfterEach fun checkTestIsRun() {
-        assertEquals(listOf("test", "apply rule->test(com.oneeyedmen.minutest.junit.JunitRulesTests\$Fixture)"), log)
+    @JvmStatic @AfterAll fun checkTestIsRun() {
+        assertEquals(
+            listOf(
+                "test 1",
+                "outer->apply rule fixture class->test 1(com.oneeyedmen.minutest.junit.JunitRulesTests\$Fixture)",
+                "test 2",
+                "outer->apply rule test class->test 2(com.oneeyedmen.minutest.junit.JunitRulesTests)"
+            ),
+            log)
     }
 }
 

@@ -14,6 +14,7 @@ interface Test<F : Any> : (F) -> F {
 interface BaseContext<F : Any> {
 
     val name: String
+    val parent: BaseContext<*>?
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
