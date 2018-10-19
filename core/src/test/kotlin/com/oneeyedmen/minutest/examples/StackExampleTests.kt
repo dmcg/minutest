@@ -6,19 +6,15 @@ import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
 import java.util.*
 
-
-// Minutests are usually defined in a object
 object StackExampleTests {
 
-    @TestFactory // junitTests() returns a stream of tests. JUnit 5 will run them for us.
+    @TestFactory
     fun `when new`() = junitTests<Stack<String>> {
 
         // in this case the test fixture is just the stack we are testing
         fixture { Stack() }
 
-        // define tests like this
         test("is empty") {
-            // In a test, 'this' is our fixture, the stack in this case
             assertTrue(this.isEmpty())
         }
 

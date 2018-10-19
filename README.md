@@ -43,21 +43,102 @@ My apologies to the Mavenites. If you are one then please try to work out what t
 
 ## Usage
 
-Minutests are defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
+To just test simple functions, define your tests in a subclass of JUnitTests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
 
 ```kotlin
-// Minutests are usually defined in a object
+// Minutests are usually defined in a object.
+// Extend JUnitTests to have them run by JUnit 5
+object FirstMinutests : JUnitTests<Unit>({
+
+    // define a test by calling test
+    test("my first test") {
+        // Minutest doesn't have any built-in assertions.
+        // Here I'm using JUnit assertEquals
+        assertEquals(2, 1 + 1)
+    }
+})
+```
+
+Most tests require access to some state. The collection of state required by the tests is called the test fixture. If you are testing a class, at simplest the fixture might be an instance of the class.
+
+```kotlin
+// The fixture type is the generic type of the test, here Stack<String>
+object SimpleStackExampleTests : JUnitTests<Stack<String>>({
+
+    // Instead of defining the fixture as a field of the test like JUnit,
+    // in Minutest you call 'fixture' to initialise it for every test.
+    fixture { Stack() }
+
+    // In a test, 'this' is the fixture created above
+    test("run first") {
+        assertTrue(this.isEmpty())
+
+        // you can leave out 'this'
+        add("item")
+        assertFalse(isEmpty())
+    }
+
+    // another test will use a new fixture instance
+    test("run second") {
+        assertTrue(this.isEmpty())
+    }
+})
+
+
+```
+
+More complicated tests will have more than one piece of state. 
+
+```kotlin
+// This time we're not going to extend JUnitTests.
+// This lets us define the Fixture type inside the test object
+object FixtureExampleTests {
+
+    // We have multiple state, so make a separate fixture class
+    class Fixture {
+        // these would be the fields of your JUnit test
+        val stack1 = Stack<String>()
+        val stack2 = Stack<String>()
+    }
+
+    // Instead of extending JUnitTests, we declare a @TestFactory method.
+    // JUnit will run the tests returned
+    @TestFactory fun test() = junitTests<Fixture> {
+
+        // Again the fixture is created once for each test
+        fixture { Fixture() }
+
+        // and access it in tests
+        test("swap top") {
+            stack1.push("on one")
+            stack2.push("on two")
+            stack1.swapTop(stack2)
+            assertEquals("on two", stack1.peek())
+            assertEquals("on one", stack2.peek())
+        }
+    }
+}
+
+
+private fun <E> Stack<E>.swapTop(otherStack: Stack<E>) {
+    val myTop = pop()
+    push(otherStack.pop())
+    otherStack.push(myTop)
+}
+```
+
+Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
+
+```kotlin
 object StackExampleTests {
 
-    @TestFactory // junitTests() returns a stream of tests. JUnit 5 will run them for us.
+    @TestFactory
     fun `when new`() = junitTests<Stack<String>> {
 
         // in this case the test fixture is just the stack we are testing
         fixture { Stack() }
 
-        // define tests like this
         test("is empty") {
-            // In a test, 'this' is our fixture, the stack in this case
             assertTrue(this.isEmpty())
         }
 
@@ -98,53 +179,6 @@ This runs the following tests
 
 ![StackExampleTests](docs/images/StackExampleTests.png)
 
-
-The key difference between Minutest and XUnit tests is the location of the test fixture - the thing being tested and the supporting cast. In XUnit the fixture is the fields of the test class, with tests being defined in special methods of that class. Minutest separates the tests, which are defined by calling the `test(name)` method, from the fixture, which is usually a separate class. 
-
-```kotlin
-object FixtureExampleTests {
-
-    // If you have more state, make a separate fixture class
-    class Fixture {
-        val stack1 = Stack<String>()
-        val stack2 = Stack<String>()
-    }
-
-    // and then use it in your tests
-    @TestFactory fun `separate fixture class`() = junitTests<Fixture> {
-
-        fixture { Fixture() }
-
-        context("stacks with no items") {
-            test("error to try to swap") {
-                assertThrows<EmptyStackException> {
-                    stack1.swapTop(stack2)
-                }
-            }
-        }
-
-        context("stacks with items") {
-            modifyFixture {
-                stack1.push("on 1")
-                stack2.push("on 2")
-            }
-
-            test("swap top items") {
-                stack1.swapTop(stack2)
-                assertEquals("on 2", stack1.peek())
-                assertEquals("on 1", stack2.peek())
-            }
-        }
-    }
-}
-
-private fun <E> Stack<E>.swapTop(otherStack: Stack<E>) {
-    val myTop = pop()
-    push(otherStack.pop())
-    otherStack.push(myTop)
-}
-```
-
 ## Parameterised Tests
 
 The key to Minutest is that by separating the fixture from the test code, both are made available to manipulate as data. 
@@ -152,12 +186,12 @@ The key to Minutest is that by separating the fixture from the test code, both a
 For example, parameterised tests require [special handling](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests) in JUnit, but not in Minutest.
 
 ```kotlin
-// Running the same tests for multiple parameters is as easy as calling `test()` for each one.
 object ParameterisedTests {
 
     // Here we don't bother with a fixture, hence <Unit>
     @TestFactory fun palindromeTests() = junitTests<Unit> {
 
+        // Running the same tests for multiple parameters is as easy as calling `test()` for each one.
         listOf("a", "oo", "racecar", "able was I ere I saw elba").forEach { candidate ->
             test("$candidate is a palindrome") {
                 assertTrue(candidate.isPalindrome())
@@ -361,7 +395,7 @@ object JunitRulesExampleTests {
         fixture { Fixture() }
 
         // tell the context to use the rule for each test in it and its children
-        applyRule(Fixture::testFolder)
+        applyRule { this.testFolder }
 
         // and it will apply in this and sub-contexts
         test("test folder is present") {

@@ -43,7 +43,22 @@ My apologies to the Mavenites. If you are one then please try to work out what t
 
 ## Usage
 
-Minutests are defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
+To just test simple functions, define your tests in a subclass of JUnitTests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
+
+```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/FirstMinutests.kt
+```
+
+Most tests require access to some state. The collection of state required by the tests is called the test fixture. If you are testing a class, at simplest the fixture might be an instance of the class.
+
+```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/SimpleStackExampleTests.kt
+```
+
+More complicated tests will have more than one piece of state. 
+
+```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/FixtureExampleTests.kt
+```
+
+Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
 
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/StackExampleTests.kt
 ```
@@ -51,12 +66,6 @@ Minutests are defined in a Spec style, with nested contexts and tests. The JUnit
 This runs the following tests
 
 ![StackExampleTests](docs/images/StackExampleTests.png)
-
-
-The key difference between Minutest and XUnit tests is the location of the test fixture - the thing being tested and the supporting cast. In XUnit the fixture is the fields of the test class, with tests being defined in special methods of that class. Minutest separates the tests, which are defined by calling the `test(name)` method, from the fixture, which is usually a separate class. 
-
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/FixtureExampleTests.kt
-```
 
 ## Parameterised Tests
 

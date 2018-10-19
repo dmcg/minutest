@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestFactory
 
-// Running the same tests for multiple parameters is as easy as calling `test()` for each one.
 object ParameterisedTests {
 
     // Here we don't bother with a fixture, hence <Unit>
     @TestFactory fun palindromeTests() = junitTests<Unit> {
 
+        // Running the same tests for multiple parameters is as easy as calling `test()` for each one.
         listOf("a", "oo", "racecar", "able was I ere I saw elba").forEach { candidate ->
             test("$candidate is a palindrome") {
                 assertTrue(candidate.isPalindrome())
