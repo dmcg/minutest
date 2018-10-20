@@ -1,14 +1,12 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.junit.junitTests
+import com.oneeyedmen.minutest.examples.FixtureExampleTests.Fixture
+import com.oneeyedmen.minutest.junit.JUnitFixtureTests
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.TestFactory
 import java.util.*
 
-
-// This time we're not going to extend JUnitTests.
-// This lets us define the Fixture type inside the test object
-object FixtureExampleTests {
+// here we use JUnitFixtureTests instead of JUnitTests
+object FixtureExampleTests : JUnitFixtureTests<Fixture>() {
 
     // We have multiple state, so make a separate fixture class
     class Fixture {
@@ -17,10 +15,8 @@ object FixtureExampleTests {
         val stack2 = Stack<String>()
     }
 
-    // Instead of extending JUnitTests, we declare a @TestFactory method.
-    // JUnit will run the tests returned
-    @TestFactory fun test() = junitTests<Fixture> {
-
+    // the tests are defined here
+    override val tests = tests {
         // Again the fixture is created once for each test
         fixture { Fixture() }
 
@@ -34,7 +30,6 @@ object FixtureExampleTests {
         }
     }
 }
-
 
 private fun <E> Stack<E>.swapTop(otherStack: Stack<E>) {
     val myTop = pop()

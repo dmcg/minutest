@@ -13,9 +13,21 @@ import kotlin.reflect.KClass
  * EXPERIMENTAL Base class for tests that you want run with JUnit 5
  */
 abstract class JUnitTests<F>(
-    private val block: TestContext<F>.() -> Unit,
-    private val fixtureIsNullable: Boolean = false
-) {
+    override val tests: TestContext<F>.() -> Unit,
+    override val fixtureIsNullable: Boolean = false
+) : IRunTestsInJUnit5<F>
+
+abstract class JUnitFixtureTests<F>(
+    override val fixtureIsNullable: Boolean = false
+) : IRunTestsInJUnit5<F> {
+
+    // little thunk to prevent having to specify the type of the tests val
+    protected fun tests(context: TestContext<F>.() -> Unit) = context
+}
+
+interface IRunTestsInJUnit5<F> {
+    val tests: TestContext<F>.() -> Unit
+    val fixtureIsNullable: Boolean
 
     @Suppress("UNCHECKED_CAST")
     private fun myGenericFixtureType(): KClass<*> {
@@ -29,5 +41,5 @@ abstract class JUnitTests<F>(
     }
 
     @TestFactory
-    fun tests(): Stream<out DynamicNode> = junitTests(myGenericFixtureType().asKType(fixtureIsNullable), block)
+    fun tests(): Stream<out DynamicNode> = junitTests(myGenericFixtureType().asKType(fixtureIsNullable), tests)
 }
