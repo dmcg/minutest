@@ -23,6 +23,10 @@ dependencies {
     implementation("org.junit.vintage:junit-vintage-engine:5.3.1")
     implementation("junit:junit:4.12")
 
+  testImplementation("org.springframework.boot:spring-boot-starter-test:2.0.6.RELEASE")
+  testImplementation("org.springframework.boot:spring-boot-starter-web:2.0.6.RELEASE")
+  testImplementation("com.nhaarman:mockito-kotlin:1.6.0")
+
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:+")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:+") {
         because("enables running in IntelliJ using JUnit runner")
