@@ -8,16 +8,16 @@ import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import java.util.stream.Stream
-import kotlin.reflect.KClass
+import kotlin.reflect.KType
 import kotlin.streams.asStream
 
 /**
  * Define a [TestContext] and map it to be used as a JUnit [org.junit.jupiter.api.TestFactory].
  */
-inline fun <reified F : Any> junitTests(noinline builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
-    junitTests(F::class, builder)
+inline fun <reified F> junitTests(noinline builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
+    junitTests(F::class.asKType(null is F), builder)
 
-fun <F : Any> junitTests(fixtureType: KClass<F>, builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
+fun <F> junitTests(fixtureType: KType, builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
     // Note that we take the children of the root context to remove an unnecessary layer. Hence the rootContextName
     // is not shown in the test runner. But see ruling.kt - ruleApplyingTest
     MiContext<Unit, F>(rootContextName, null, fixtureType).apply { builder() }
@@ -40,3 +40,4 @@ private fun RuntimeContext.toDynamicContainer(): DynamicContainer = dynamicConta
 )
 
 internal const val rootContextName = "ignored"
+

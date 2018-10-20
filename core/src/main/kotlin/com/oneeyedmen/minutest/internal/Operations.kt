@@ -10,7 +10,7 @@ internal data class OpResult<F>(val t: Throwable?, val lastValue: F) {
         else f(this.lastValue)
 }
 
-internal interface Operations<F: Any> {
+internal interface Operations<F> {
     val befores: List<(F) -> F>
     val transforms: List<(Test<F>) -> Test<F>>
     val afters: List<(F) -> F>
@@ -39,17 +39,17 @@ internal interface Operations<F: Any> {
     )
 
     companion object {
-        fun <F: Any> empty(): Operations<F> = ImmutableOperations<F>(emptyList(), emptyList(), emptyList())
+        fun <F> empty(): Operations<F> = ImmutableOperations(emptyList(), emptyList(), emptyList())
     }
 }
 
-internal class MutableOperations<F: Any>(
+internal class MutableOperations<F>(
     override val befores: MutableList<(F) -> F> = mutableListOf(),
     override val transforms: MutableList<(Test<F>) -> Test<F>> = mutableListOf(),
     override val afters: MutableList<(F) -> F> = mutableListOf()
 ) : Operations<F>
 
-internal class ImmutableOperations<F: Any>(
+internal class ImmutableOperations<F>(
     override val befores: List<(F) -> F>,
     override val transforms: List<(Test<F>) -> Test<F>>,
     override val afters: List<(F) -> F>

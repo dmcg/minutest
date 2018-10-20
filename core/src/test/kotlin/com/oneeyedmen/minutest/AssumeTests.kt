@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.TestFactory
 
 
-object MiscTests {
+object AssumeTests {
 
     @TestFactory fun `assume works`() = junitTests<Unit> {
 

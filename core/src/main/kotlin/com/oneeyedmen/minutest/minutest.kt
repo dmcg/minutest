@@ -1,17 +1,18 @@
 package com.oneeyedmen.minutest
 
-import kotlin.reflect.KClass
+import com.oneeyedmen.minutest.internal.asKType
+import kotlin.reflect.KType
 
 /**
  * A test with a name that can be invoked on a fixture.
  */
-interface Test<F : Any> : (F) -> F {
+interface Test<F> : (F) -> F {
     val name: String
 }
 
 @Suppress("FunctionName")
 @MinutestMarker
-interface BaseContext<F : Any> {
+interface BaseContext<F> {
 
     val name: String
     val parent: BaseContext<*>?
@@ -42,9 +43,9 @@ interface BaseContext<F : Any> {
     /**
      * Define a sub-context with a different fixture type.
      */
-    fun <F2: Any> derivedContext(
+    fun <F2> derivedContext(
         name: String,
-        fixtureType: KClass<F2>,
+        fixtureType: KType,
         builder: DerivedContext<F, F2>.() -> Unit
     ): DerivedContext<F, F2>
 
@@ -55,7 +56,7 @@ interface BaseContext<F : Any> {
  * A collection of [Test]s and [TestContext]s.
  */
 @Suppress("FunctionName")
-interface TestContext<F : Any> : BaseContext<F> {
+interface TestContext<F> : BaseContext<F> {
 
     /**
      * Modify the parent-context's fixture for use in this context's tests and sub-contexts.
@@ -69,7 +70,7 @@ interface TestContext<F : Any> : BaseContext<F> {
 }
 
 @Suppress("FunctionName")
-interface DerivedContext<PF : Any, F : Any> : BaseContext<F> {
+interface DerivedContext<PF, F> : BaseContext<F> {
 
     /**
      * Replace the parent-context's fixture for use in this context's tests and sub-contexts.
@@ -81,10 +82,10 @@ interface DerivedContext<PF : Any, F : Any> : BaseContext<F> {
 /**
  * Define a sub-context with a different fixture type.
  */
-inline fun <F: Any, reified F2: Any> TestContext<F>.derivedContext(
+inline fun <F, reified F2> TestContext<F>.derivedContext(
     name: String,
     noinline builder: DerivedContext<F, F2>.() -> Unit) {
-    this.derivedContext(name, F2::class, builder)
+    this.derivedContext(name, F2::class.asKType(null is F2), builder)
 }
 
 

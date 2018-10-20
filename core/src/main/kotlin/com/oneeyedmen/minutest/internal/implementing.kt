@@ -4,13 +4,16 @@ import com.oneeyedmen.minutest.DerivedContext
 import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestContext
 import kotlin.reflect.KClass
+import kotlin.reflect.KClassifier
+import kotlin.reflect.KType
+import kotlin.reflect.KTypeProjection
 
 @Suppress("unused")
-internal sealed class Node<F : Any>(val name: String) {
+internal sealed class Node<F>(val name: String) {
     abstract fun toRuntimeNode(parent: MiContext<*, F>?, parentOperations: Operations<F>): RuntimeNode
 }
 
-internal class MinuTest<F : Any>(
+internal class MinuTest<F>(
     name: String,
     val f: F.() -> F
 ) : Test<F>, Node<F>(name) {
@@ -22,13 +25,13 @@ internal class MinuTest<F : Any>(
         }
 }
 
-internal class MiContext<PF: Any, F : Any>(
+internal class MiContext<PF, F>(
     name: String,
     override val parent: TestContext<*>?,
-    private val fixtureType: KClass<F>
+    private val fixtureType: KType
 ) : TestContext<F>, DerivedContext<PF, F>, Node<F>(name) {
 
-    internal val children = mutableListOf<Node<F>>()
+    private val children = mutableListOf<Node<F>>()
     private val operations = MutableOperations<F>()
 
     override fun before_(transform: F.() -> F) {
@@ -57,9 +60,9 @@ internal class MiContext<PF: Any, F : Any>(
         }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <F2: Any> derivedContext(
+    override fun <F2> derivedContext(
         name: String,
-        fixtureType: KClass<F2>,
+        fixtureType: KType,
         builder: DerivedContext<F, F2>.() -> Unit) =
         MiContext<F, F2>(name, this, fixtureType).also {
             it.builder()
@@ -92,12 +95,13 @@ internal class MiContext<PF: Any, F : Any>(
      */
     private fun beforeResultOrThrow(combinedOperations: Operations<F>): OpResult<F> =
         combinedOperations.applyBeforesTo(Unit as F).also {
-            if (!fixtureType.isInstance(it.lastValue) && (exceptionWasProbablyNotThrownByCodeInBefores(it.t))) {
+            if (!fixtureType.isCompatibleWith(it.lastValue) && (exceptionWasProbablyNotThrownByCodeInBefores(it.t))) {
                 error("You need to set a fixture by calling fixture(...)")
             } else {
                 // either we have a correct fixture type, or we don't but it is because of a
             }
         }
+
 
     override fun toRuntimeNode(parent: MiContext<*, F>?, parentOperations: Operations<F>): RuntimeContext = RuntimeContext(
         this.name,
@@ -107,7 +111,18 @@ internal class MiContext<PF: Any, F : Any>(
     )
 }
 
+private fun <F> KType.isCompatibleWith(fixtureValue: F): Boolean {
+    return when {
+        this.isMarkedNullable && fixtureValue == null -> true
+        else -> (classifier as? KClass<*>)?.isInstance(fixtureValue) == true
+    }
+}
+
 private fun exceptionWasProbablyNotThrownByCodeInBefores(throwable: Throwable?) =
     throwable == null || (throwable is ClassCastException && (throwable.message?.contains("Unit") == true))
 
-
+fun KClass<*>.asKType(isNullable: Boolean) =  object : KType {
+    override val arguments: List<KTypeProjection> = emptyList()
+    override val classifier: KClassifier = this@asKType
+    override val isMarkedNullable = isNullable
+}
