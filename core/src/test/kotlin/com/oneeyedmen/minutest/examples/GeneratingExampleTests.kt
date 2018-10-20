@@ -7,8 +7,6 @@ import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
 import java.util.*
 
-
-
 // We can define functions that return tests for later injection
 
 private typealias StringStack = Stack<String>
@@ -43,8 +41,10 @@ private fun TestContext<StringStack>.cantPop() = test("cant pop") {
     assertThrows<EmptyStackException> { pop() }
 }
 
+// In order to give multiple sets of tests, in this example we are using JUnit @TestFactory functions
 object GeneratingExampleTests {
 
+    // JUnit will run the tests from annotated functions
     @TestFactory fun `stack tests`() = junitTests<StringStack> {
 
         fixture { StringStack() }

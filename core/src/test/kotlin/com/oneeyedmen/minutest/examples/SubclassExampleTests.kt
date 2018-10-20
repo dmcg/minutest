@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.junit.JUnitTests
+import com.oneeyedmen.minutest.junit.JupiterTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
@@ -30,10 +30,14 @@ fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
 
 // Now tests can invoke the function to define a context to be run
 
-object ArrayListTests : JUnitTests<MutableCollection<String>>({
-    behavesAsMutableCollection("ArrayList") { ArrayList() }
-})
+object ArrayListTests : JupiterTests<MutableCollection<String>>() {
+    override val tests = context {
+        behavesAsMutableCollection("ArrayList") { ArrayList() }
+    }
+}
 
-object LinkedListTests : JUnitTests<MutableCollection<String>>({
-    behavesAsMutableCollection("LinkedList") { LinkedList() }
-})
+object LinkedListTests : JupiterTests<MutableCollection<String>>() {
+    override val tests = context {
+        behavesAsMutableCollection("LinkedList") { LinkedList() }
+    }
+}

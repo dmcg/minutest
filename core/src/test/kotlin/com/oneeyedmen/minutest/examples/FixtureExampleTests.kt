@@ -1,12 +1,11 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.examples.FixtureExampleTests.Fixture
-import com.oneeyedmen.minutest.junit.JUnitFixtureTests
+import com.oneeyedmen.minutest.junit.JupiterTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.util.*
 
-// here we use JUnitFixtureTests instead of JUnitTests
-object FixtureExampleTests : JUnitFixtureTests<Fixture>() {
+object FixtureExampleTests : JupiterTests<Fixture>() {
 
     // We have multiple state, so make a separate fixture class
     class Fixture {
@@ -16,7 +15,7 @@ object FixtureExampleTests : JUnitFixtureTests<Fixture>() {
     }
 
     // the tests are defined here
-    override val tests = tests {
+    override val tests = context {
         // Again the fixture is created once for each test
         fixture { Fixture() }
 

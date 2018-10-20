@@ -10,7 +10,6 @@ private val log = mutableListOf<String>()
 
 object JunitRulesTests {
 
-
     class Fixture {
         val rule = TestRule()
     }

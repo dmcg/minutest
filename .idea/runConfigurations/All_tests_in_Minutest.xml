@@ -1,7 +1,13 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="All in minutest_test" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
-    <module name="minutest_test" />
-    <option name="PACKAGE_NAME" value="" />
+  <configuration default="false" name="All tests in Minutest" type="JUnit" factoryName="JUnit">
+    <module name="core_test" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.oneeyedmen.minutest.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="PACKAGE_NAME" value="com.oneeyedmen.minutest" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="package" />

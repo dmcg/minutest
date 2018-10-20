@@ -17,11 +17,14 @@ import kotlin.streams.asStream
 inline fun <reified F> junitTests(noinline builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
     junitTests(F::class.asKType(null is F), builder)
 
-fun <F> junitTests(fixtureType: KType, builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
-    // Note that we take the children of the root context to remove an unnecessary layer. Hence the rootContextName
-    // is not shown in the test runner. But see ruling.kt - ruleApplyingTest
-    MiContext<Unit, F>(rootContextName, null, fixtureType).apply { builder() }
-        .toRuntimeNode(null, Operations.empty())
+fun <F> junitTests(fixtureType: KType, builder: TestContext<F>.() -> Unit): Stream<out DynamicNode>
+    = MiContext<Unit, F>(rootContextName, null, fixtureType).apply { builder() }.toDynamicNodes()
+
+
+// Note that we take the children of the root context to remove an unnecessary layer. Hence the rootContextName
+// is not shown in the test runner. But see ruling.kt - ruleApplyingTest
+internal fun <F> MiContext<*, F>.toDynamicNodes(): Stream<out DynamicNode> =
+    toRuntimeNode(null, Operations.empty())
         .toDynamicContainer()
         .children
 

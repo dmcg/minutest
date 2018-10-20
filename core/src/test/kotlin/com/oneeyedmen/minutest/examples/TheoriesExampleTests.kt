@@ -1,42 +1,42 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.junit.JUnitTests
+import com.oneeyedmen.minutest.junit.JupiterTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 
 // A translation of FizzBuzz tested with JUnit theories -
 // http://www.oneeyedmen.com/tdd-v-testing-part2.html
-object TheoriesExampleTests : JUnitTests<Unit>({
+object TheoriesExampleTests : JupiterTests<Unit>() {
 
+    override val tests = context {
+        (1..31).forEach { i ->
 
-    (1..31).forEach { i ->
+            // These theories will be checked, but no tests are actually created
 
-        // These theories will be checked, but no tests are actually created
+            theory(i, "starts with Fizz", Condition("divisible by 3") { this % 3 == 0 }) {
+                assertTrue(fizzBuzz(i).startsWith("Fizz"))
+            }
 
-        theory(i, "starts with Fizz", Condition("divisible by 3") { this % 3 == 0 }) {
-            assertTrue(fizzBuzz(i).startsWith("Fizz"))
-        }
+            theory(i, "ends with Buzz", Condition("divisible by 5") { this % 5 == 0 }) {
+                assertTrue(fizzBuzz(i).endsWith("Buzz"))
+            }
 
-        theory(i, "ends with Buzz", Condition("divisible by 5") { this % 5 == 0 }) {
-            assertTrue(fizzBuzz(i).endsWith("Buzz"))
-        }
+            theory(i, "is string", Condition("other numbers") { this % 3 != 0 && this % 5 != 0 }) {
+                assertEquals(i.toString(), fizzBuzz(i))
+            }
 
-        theory(i, "is string", Condition("other numbers") { this % 3 != 0 && this % 5 != 0 }) {
-            assertEquals(i.toString(), fizzBuzz(i))
-        }
-
-        // When uncommented 2 failing tests are created -
-        // is Fizz when divisible by 3 failed for value [15]
-        // is Fizz when divisible by 3 failed for value [30]
-        ignore {
-            theory(i, "is Fizz", Condition("divisible by 3") { this % 3 == 0 }) {
-                assertEquals("Fizz", fizzBuzz(i))
+            // When uncommented 2 failing tests are created -
+            // is Fizz when divisible by 3 failed for value [15]
+            // is Fizz when divisible by 3 failed for value [30]
+            ignore {
+                theory(i, "is Fizz", Condition("divisible by 3") { this % 3 == 0 }) {
+                    assertEquals("Fizz", fizzBuzz(i))
+                }
             }
         }
     }
-})
-
+}
 
 fun fizzBuzz(i: Int): String = when {
     i % 15 == 0 -> "FizzBuzz"
