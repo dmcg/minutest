@@ -12,18 +12,18 @@ import kotlin.reflect.KClass
 /**
  * EXPERIMENTAL Base class for tests that you want run with JUnit 5
  */
-abstract class JUnitTests<F : Any>(
+abstract class JUnitTests<F>(
     private val block: TestContext<F>.() -> Unit,
     private val fixtureIsNullable: Boolean = false
 ) {
 
     @Suppress("UNCHECKED_CAST")
-    private fun myGenericFixtureType(): KClass<F> {
+    private fun myGenericFixtureType(): KClass<*> {
         val parameterizedType = this::class.java.genericSuperclass as ParameterizedType
         val genericType = parameterizedType.actualTypeArguments[0]
         return when (genericType) {
-            is Class<*> -> genericType.kotlin as KClass<F>
-            is ParameterizedTypeImpl -> genericType.rawType.kotlin as KClass<F>
+            is Class<*> -> genericType.kotlin
+            is ParameterizedTypeImpl -> genericType.rawType.kotlin
             else -> error("Unexpected fixture type")
         }
     }
