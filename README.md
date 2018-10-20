@@ -126,48 +126,44 @@ private fun <E> Stack<E>.swapTop(otherStack: Stack<E>) {
 Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
 
 ```kotlin
-object StackExampleTests {
+object StackExampleTests : JUnitTests<Stack<String>>({
 
-    @TestFactory
-    fun `when new`() = junitTests<Stack<String>> {
+    // in this case the test fixture is just the stack we are testing
+    fixture { Stack() }
 
-        // in this case the test fixture is just the stack we are testing
-        fixture { Stack() }
+    test("is empty") {
+        assertTrue(this.isEmpty())
+    }
 
-        test("is empty") {
-            assertTrue(this.isEmpty())
+    test("throws EmptyStackException when popped") {
+        assertThrows<EmptyStackException> { pop() }
+    }
+
+    test("throws EmptyStackException when peeked") {
+        assertThrows<EmptyStackException> { peek() }
+    }
+
+    // nested context
+    context("after pushing an element") {
+
+        // this context modifies the fixture from its parent
+        modifyFixture { push("one") }
+
+        test("is not empty") {
+            assertFalse(isEmpty())
         }
 
-        test("throws EmptyStackException when popped") {
-            assertThrows<EmptyStackException> { pop() }
+        test("returns the element when popped and is empty") {
+            assertEquals("one", pop())
+            assertTrue(isEmpty())
         }
 
-        test("throws EmptyStackException when peeked") {
-            assertThrows<EmptyStackException> { peek() }
-        }
-
-        // nested context
-        context("after pushing an element") {
-
-            // this context modifies the fixture from its parent
-            modifyFixture { push("one") }
-
-            test("is not empty") {
-                assertFalse(isEmpty())
-            }
-
-            test("returns the element when popped and is empty") {
-                assertEquals("one", pop())
-                assertTrue(isEmpty())
-            }
-
-            test("returns the element when peeked but remains not empty") {
-                assertEquals("one", peek())
-                assertFalse(isEmpty())
-            }
+        test("returns the element when peeked but remains not empty") {
+            assertEquals("one", peek())
+            assertFalse(isEmpty())
         }
     }
-}
+})
 
 ```
 
@@ -182,25 +178,21 @@ The key to Minutest is that by separating the fixture from the test code, both a
 For example, parameterised tests require [special handling](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests) in JUnit, but not in Minutest.
 
 ```kotlin
-object ParameterisedTests {
+object ParameterisedTests : JUnitTests<Unit>({
 
-    // Here we don't bother with a fixture, hence <Unit>
-    @TestFactory fun palindromeTests() = junitTests<Unit> {
-
-        // Running the same tests for multiple parameters is as easy as calling `test()` for each one.
-        listOf("a", "oo", "racecar", "able was I ere I saw elba").forEach { candidate ->
-            test("$candidate is a palindrome") {
-                assertTrue(candidate.isPalindrome())
-            }
-        }
-
-        listOf("", "ab", "a man a plan a canal pananma").forEach { candidate ->
-            test("$candidate is not a palindrome") {
-                assertFalse(candidate.isPalindrome())
-            }
+    // Running the same tests for multiple parameters is as easy as calling `test()` for each one.
+    listOf("a", "oo", "racecar", "able was I ere I saw elba").forEach { candidate ->
+        test("$candidate is a palindrome") {
+            assertTrue(candidate.isPalindrome())
         }
     }
-}
+
+    listOf("", "ab", "a man a plan a canal pananma").forEach { candidate ->
+        test("$candidate is not a palindrome") {
+            assertFalse(candidate.isPalindrome())
+        }
+    }
+})
 
 fun String.isPalindrome(): Boolean =
     if (length == 0) false
@@ -239,17 +231,13 @@ fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
 
 // Now tests can invoke the function to define a context to be run
 
-object ArrayListTests {
-    @TestFactory fun tests() = junitTests<MutableCollection<String>> {
-        behavesAsMutableCollection("ArrayList") { ArrayList() }
-    }
-}
+object ArrayListTests : JUnitTests<MutableCollection<String>>({
+    behavesAsMutableCollection("ArrayList") { ArrayList() }
+})
 
-object LinkedListTests{
-    @TestFactory fun tests() = junitTests<MutableCollection<String>> {
-        behavesAsMutableCollection("LinkedList") { LinkedList() }
-    }
-}
+object LinkedListTests : JUnitTests<MutableCollection<String>>({
+    behavesAsMutableCollection("LinkedList") { LinkedList() }
+})
 ```
 
 ## Generate Tests
@@ -349,29 +337,26 @@ The last of these generates the following tests
 Are you a functional programmer slumming it with Kotlin? Minutest allows immutable fixtures.
 
 ```kotlin
-object ImmutableExampleTests {
+object ImmutableExampleTests : JUnitTests<List<String>>({
 
     // If you like this FP stuff, you may want to test an immutable fixture.
+    fixture { emptyList() }
 
-    @TestFactory fun `immutable fixture`() = junitTests<List<String>> {
-        fixture { emptyList() }
-
-        // test_ allows you to return the fixture
-        test_("add an item and return the fixture") {
-            val newList = this + "item"
-            assertEquals("item", newList.first())
-            newList
-        }
-
-        // which will be available for inspection in after
-        after {
-            println("in after")
-            assertEquals("item", first())
-        }
-
-        // there are also before_ and after_ which return new fixtures
+    // test_ allows you to return the fixture
+    test_("add an item and return the fixture") {
+        val newList = this + "item"
+        assertEquals("item", newList.first())
+        newList
     }
-}
+
+    // which will be available for inspection in after
+    after {
+        println("in after")
+        assertEquals("item", first())
+    }
+
+    // there are also before_ and after_ which return new fixtures
+})
 ```
 
 ## JUnit Rules
@@ -379,14 +364,14 @@ object ImmutableExampleTests {
 Power JUnit 4 user? Minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
 
 ```kotlin
-object JunitRulesExampleTests {
+object JunitRulesExampleTests : JUnitFixtureTests<Fixture>() {
 
     class Fixture {
         // make rules part of the fixture, no need for an annotation
         val testFolder = TemporaryFolder()
     }
 
-    @TestFactory fun `temporary folder rule`() = junitTests<Fixture>() {
+    override val tests = tests {
 
         fixture { Fixture() }
 
