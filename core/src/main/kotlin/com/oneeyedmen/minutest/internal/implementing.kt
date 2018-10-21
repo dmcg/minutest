@@ -34,13 +34,30 @@ internal class MiContext<PF, F>(
     private val children = mutableListOf<Node<F>>()
     private val operations = MutableOperations<F>()
 
-    override fun before_(transform: F.() -> F) {
+    override fun fixture(factory: () -> F) {
+        operations.befores.add {
+            factory()
+        }
+    }
+
+    override fun modifyFixture(block: F.() -> Unit) {
+        operations.befores.add { it.apply(block) }
+    }
+
+    override fun replaceFixture(transform: F.() -> F) {
         operations.befores.add(transform)
     }
 
-    override fun before(transform: F.() -> Unit) = before_ { this.apply(transform) }
+    @Suppress("UNCHECKED_CAST")
+    override fun deriveFixture(transform: PF.() -> F) {
+        operations.befores.add(transform as F.() -> F)
+    }
 
-    override fun after(transform: F.() -> Unit) = after_ { this.apply(transform) }
+    override fun before(block: F.() -> Unit) {
+        operations.befores.add { it.apply(block) }
+    }
+
+    override fun after(block: F.() -> Unit) = after_ { this.apply(block) }
 
     override fun after_(transform: F.() -> F) {
         operations.afters.add(transform)
@@ -51,7 +68,6 @@ internal class MiContext<PF, F>(
     }
 
     override fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
-
 
     override fun context(name: String, builder: TestContext<F>.() -> Unit) =
         MiContext<F, F>(name, this, fixtureType).also {

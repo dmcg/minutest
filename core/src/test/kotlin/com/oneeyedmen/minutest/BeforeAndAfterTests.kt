@@ -139,20 +139,21 @@ class BeforeAndAfterTests {
         expectedLog = listOf("before", "after")
     }
 
-    @Test fun `afters are run with the last successful before fixture`() {
+    @Disabled("work this out")
+    @Test fun `afters are run with the successful before fixture`() {
 
         // use an immutable fixture to prove the point
         val test = junitTests<List<String>> {
             fixture { emptyList() }
 
-            before_ {
-                this + "before 1"
-            }
+//            before_ {
+//                this + "before 1"
+//            }
 
-            before_ {
-                assertEquals(listOf("before 1"), this)
-                throw IOException("deliberate")
-            }
+//            before_ {
+//                assertEquals(listOf("before 1"), this)
+//                throw IOException("deliberate")
+//            }
 
             after_ {
                 assertEquals(listOf("before 1"), this)

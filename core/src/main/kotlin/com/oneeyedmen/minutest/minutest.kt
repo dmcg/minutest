@@ -20,17 +20,12 @@ interface BaseContext<F> {
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
      */
-    fun fixture(factory: () -> F) {
-        before_ {
-            factory()
-        }
-    }
+    fun fixture(factory: () -> F)
 
-    fun before_(transform: F.() -> F)
-    fun before(transform: F.() -> Unit)
+    fun before(block: F.() -> Unit)
 
     fun after_(transform: F.() -> F)
-    fun after(transform: F.() -> Unit)
+    fun after(block: F.() -> Unit)
 
     fun test_(name: String, f: F.() -> F)
     fun test(name: String, f: F.() -> Unit)
@@ -61,12 +56,12 @@ interface TestContext<F> : BaseContext<F> {
     /**
      * Modify the parent-context's fixture for use in this context's tests and sub-contexts.
      */
-    fun modifyFixture(transform: F.() -> Unit) = before(transform)
+    fun modifyFixture(block: F.() -> Unit)
 
     /**
      * Replace the parent-context's fixture for use in this context's tests and sub-contexts.
      */
-    fun replaceFixture(transform: F.() -> F) = before_(transform)
+    fun replaceFixture(transform: F.() -> F)
 }
 
 @Suppress("FunctionName")
@@ -76,7 +71,7 @@ interface DerivedContext<PF, F> : BaseContext<F> {
      * Replace the parent-context's fixture for use in this context's tests and sub-contexts.
      */
     @Suppress("UNCHECKED_CAST")
-    fun deriveFixture(transform: PF.() -> F) = before_(transform as F.() -> F)
+    fun deriveFixture(transform: PF.() -> F)
 }
 
 /**
