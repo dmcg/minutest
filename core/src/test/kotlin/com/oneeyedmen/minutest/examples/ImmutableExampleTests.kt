@@ -1,13 +1,16 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
-object ImmutableExampleTests : JupiterTests<List<String>>() {
+object ImmutableExampleTests : JupiterTests {
 
-    override val tests = context {
-        // If you like this FP stuff, you may want to test an immutable fixture.
+    // If you like this FP stuff, you may want to test an immutable fixture.
+    override val tests = context<List<String>> {
+
+        // List<String> is immutable
         fixture { emptyList() }
 
         // test_ allows you to return the fixture
@@ -23,6 +26,6 @@ object ImmutableExampleTests : JupiterTests<List<String>>() {
             assertEquals("item", first())
         }
 
-        // there are also before_ and after_ which return new fixtures
+        // see also before_ and after_ which return new fixtures
     }
 }

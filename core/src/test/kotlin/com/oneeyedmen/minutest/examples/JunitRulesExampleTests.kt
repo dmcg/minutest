@@ -1,20 +1,20 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.examples.JunitRulesExampleTests.Fixture
 import com.oneeyedmen.minutest.junit.JupiterTests
 import com.oneeyedmen.minutest.junit.applyRule
+import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.rules.TemporaryFolder
 
 
-object JunitRulesExampleTests : JupiterTests<Fixture>() {
+object JunitRulesExampleTests : JupiterTests {
 
     class Fixture {
         // make rules part of the fixture, no need for an annotation
         val testFolder = TemporaryFolder()
     }
 
-    override val tests = context {
+    override val tests = context<Fixture> {
 
         fixture { Fixture() }
 

@@ -1,18 +1,18 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.derivedContext
-import com.oneeyedmen.minutest.junit.junitTests
+import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.TestFactory
 
 
-object DerivedContextExampleTests {
+object DerivedContextExampleTests : JupiterTests {
 
     data class Fixture(val fruit: String)
 
     data class DerivedFixture(val fixture: Fixture, val thing: String)
 
-    @TestFactory fun test() = junitTests<Fixture> {
+    override val tests = context<Fixture> {
 
         fixture { Fixture("banana") }
 

@@ -1,15 +1,16 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 
 // Minutests are usually defined in a object.
-// Extend JupiterTests to have them run by JUnit 5
-object FirstMinutests : JupiterTests<Unit>() {
+// Implement JupiterTests to have them run by JUnit 5
+object FirstMinutests : JupiterTests {
 
     // tests are grouped in a context
-    override val tests = context {
+    override val tests = context<Unit> {
 
         // define a test by calling test
         test("my first test") {

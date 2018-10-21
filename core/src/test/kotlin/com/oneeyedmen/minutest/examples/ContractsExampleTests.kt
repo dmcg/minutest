@@ -1,7 +1,9 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.junit.InlineJupiterTests
 import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
@@ -28,16 +30,20 @@ fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
     }
 }
 
-// Now tests can invoke the function to define a context to be run
+// Now tests can invoke the function to verify the contract in a context
 
-object ArrayListTests : JupiterTests<MutableCollection<String>>() {
-    override val tests = context {
+object ArrayListTests : JupiterTests {
+
+    override val tests = context<MutableCollection<String>> {
         behavesAsMutableCollection("ArrayList") { ArrayList() }
     }
 }
 
-object LinkedListTests : JupiterTests<MutableCollection<String>>() {
-    override val tests = context {
-        behavesAsMutableCollection("LinkedList") { LinkedList() }
-    }
-}
+// We can reuse the contract for different collections.
+
+// Here we use the convenience InlineJupiterTests to reduce boilerplate
+object LinkedListTests : InlineJupiterTests<MutableCollection<String>>({
+
+    behavesAsMutableCollection("LinkedList") { LinkedList() }
+
+})

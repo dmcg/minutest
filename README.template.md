@@ -84,7 +84,7 @@ More complicated scenarios can be approached by writing your own function that r
  
 If you want to reuse the same tests for different concrete implementations, define a context with a function and call it for subclasses. Some people call this a contract.
 
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/SubclassExampleTests.kt
+```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/ContractsExampleTests.kt
 ```
 
 ## Generate Tests

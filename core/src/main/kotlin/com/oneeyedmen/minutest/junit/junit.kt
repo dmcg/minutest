@@ -2,6 +2,7 @@ package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.internal.*
+import com.oneeyedmen.minutest.testContext
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
@@ -18,7 +19,7 @@ inline fun <reified F> junitTests(noinline builder: TestContext<F>.() -> Unit): 
     junitTests(F::class.asKType(null is F), builder)
 
 fun <F> junitTests(fixtureType: KType, builder: TestContext<F>.() -> Unit): Stream<out DynamicNode>
-    = MiContext<Unit, F>(rootContextName, null, fixtureType).apply { builder() }.toDynamicNodes()
+    = (testContext(rootContextName, fixtureType, builder) as MiContext<*, *>).toDynamicNodes()
 
 
 // Note that we take the children of the root context to remove an unnecessary layer. Hence the rootContextName
@@ -42,5 +43,5 @@ private fun RuntimeContext.toDynamicContainer(): DynamicContainer = dynamicConta
     children.map { it.toDynamicNode() }.asStream()
 )
 
-internal const val rootContextName = "ignored"
+const val rootContextName = "ignored"
 

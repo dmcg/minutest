@@ -47,11 +47,11 @@ To just test simple functions, define your tests in a subclass of JUnitTests. Th
 
 ```kotlin
 // Minutests are usually defined in a object.
-// Extend JupiterTests to have them run by JUnit 5
-object FirstMinutests : JupiterTests<Unit>() {
+// Implement JupiterTests to have them run by JUnit 5
+object FirstMinutests : JupiterTests {
 
     // tests are grouped in a context
-    override val tests = context {
+    override val tests = context<Unit> {
 
         // define a test by calling test
         test("my first test") {
@@ -71,10 +71,10 @@ object FirstMinutests : JupiterTests<Unit>() {
 Most tests require access to some state. The collection of state required by the tests is called the test fixture. If you are testing a class, at simplest the fixture might be an instance of the class.
 
 ```kotlin
-// The fixture type is the generic type of the test, here Stack<String>
-object SimpleStackExampleTests : JupiterTests<Stack<String>>() {
+object SimpleStackExampleTests : JupiterTests {
 
-    override val tests = context {
+    // The fixture type is the generic type of the test, here Stack<String>
+    override val tests = context<Stack<String>> {
 
         // Instead of defining the fixture as a field of the test like JUnit,
         // in Minutest you call 'fixture' to initialise it for every test.
@@ -100,7 +100,7 @@ object SimpleStackExampleTests : JupiterTests<Stack<String>>() {
 More complicated tests will have more than one piece of state. 
 
 ```kotlin
-object FixtureExampleTests : JupiterTests<Fixture>() {
+object FixtureExampleTests : JupiterTests {
 
     // We have multiple state, so make a separate fixture class
     class Fixture {
@@ -109,8 +109,8 @@ object FixtureExampleTests : JupiterTests<Fixture>() {
         val stack2 = Stack<String>()
     }
 
-    // the tests are defined here
-    override val tests = context {
+    // now our context type is Fixture
+    override val tests = context<Fixture> {
         // Again the fixture is created once for each test
         fixture { Fixture() }
 
@@ -135,9 +135,9 @@ private fun <E> Stack<E>.swapTop(otherStack: Stack<E>) {
 Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
 
 ```kotlin
-object StackExampleTests : JupiterTests<Stack<String>>() {
+object StackExampleTests : JupiterTests {
 
-    override val tests = context {
+    override val tests = context<Stack<String>> {
 
         fixture { Stack() }
 
@@ -192,9 +192,9 @@ The key to Minutest is that by separating the fixture from the test code, both a
 For example, parameterised tests require [special handling](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests) in JUnit, but not in Minutest.
 
 ```kotlin
-object ParameterisedTests : JupiterTests<Unit>() {
+object ParameterisedTests : JupiterTests {
 
-    override val tests = context {
+    override val tests = context<Unit> {
 
         // Once we are in a context, running the same tests for multiple parameters is
         // as easy as calling `test()` for each one.
@@ -247,19 +247,23 @@ fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
     }
 }
 
-// Now tests can invoke the function to define a context to be run
+// Now tests can invoke the function to verify the contract in a context
 
-object ArrayListTests : JupiterTests<MutableCollection<String>>() {
-    override val tests = context {
+object ArrayListTests : JupiterTests {
+
+    override val tests = context<MutableCollection<String>> {
         behavesAsMutableCollection("ArrayList") { ArrayList() }
     }
 }
 
-object LinkedListTests : JupiterTests<MutableCollection<String>>() {
-    override val tests = context {
-        behavesAsMutableCollection("LinkedList") { LinkedList() }
-    }
-}
+// We can reuse the contract for different collections.
+
+// Here we use the convenience InlineJupiterTests to reduce boilerplate
+object LinkedListTests : InlineJupiterTests<MutableCollection<String>>({
+
+    behavesAsMutableCollection("LinkedList") { LinkedList() }
+
+})
 ```
 
 ## Generate Tests
@@ -361,10 +365,12 @@ The last of these generates the following tests
 Are you a functional programmer slumming it with Kotlin? Minutest allows immutable fixtures.
 
 ```kotlin
-object ImmutableExampleTests : JupiterTests<List<String>>() {
+object ImmutableExampleTests : JupiterTests {
 
-    override val tests = context {
-        // If you like this FP stuff, you may want to test an immutable fixture.
+    // If you like this FP stuff, you may want to test an immutable fixture.
+    override val tests = context<List<String>> {
+
+        // List<String> is immutable
         fixture { emptyList() }
 
         // test_ allows you to return the fixture
@@ -380,7 +386,7 @@ object ImmutableExampleTests : JupiterTests<List<String>>() {
             assertEquals("item", first())
         }
 
-        // there are also before_ and after_ which return new fixtures
+        // see also before_ and after_ which return new fixtures
     }
 }
 ```
@@ -390,14 +396,14 @@ object ImmutableExampleTests : JupiterTests<List<String>>() {
 Power JUnit 4 user? Minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
 
 ```kotlin
-object JunitRulesExampleTests : JupiterTests<Fixture>() {
+object JunitRulesExampleTests : JupiterTests {
 
     class Fixture {
         // make rules part of the fixture, no need for an annotation
         val testFolder = TemporaryFolder()
     }
 
-    override val tests = context {
+    override val tests = context<Fixture> {
 
         fixture { Fixture() }
 
