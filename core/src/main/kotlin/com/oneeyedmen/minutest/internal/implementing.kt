@@ -31,25 +31,35 @@ internal class MiContext<PF, F>(
     private val fixtureType: KType
 ) : TestContext<F>, DerivedContext<PF, F>, Node<F>(name) {
 
+    private var fixtureOp: ((F) -> F)? = null
+        set(value) {
+            if (field != null) error("You can't set a fixture twice")
+            field = value
+        }
+
     private val children = mutableListOf<Node<F>>()
     private val operations = MutableOperations<F>()
 
     override fun fixture(factory: () -> F) {
+        fixtureOp = { factory() }
         operations.befores.add {
             factory()
         }
     }
 
     override fun modifyFixture(block: F.() -> Unit) {
+        fixtureOp = { it.apply(block) }
         operations.befores.add { it.apply(block) }
     }
 
     override fun replaceFixture(transform: F.() -> F) {
+        fixtureOp = transform
         operations.befores.add(transform)
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun deriveFixture(transform: PF.() -> F) {
+        fixtureOp = transform as F.() -> F
         operations.befores.add(transform as F.() -> F)
     }
 
