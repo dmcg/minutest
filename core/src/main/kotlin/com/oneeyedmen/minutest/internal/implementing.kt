@@ -42,35 +42,35 @@ internal class MiContext<PF, F>(
 
     override fun fixture(factory: () -> F) {
         fixtureOp = { factory() }
-        operations.befores.add {
+        operations.addBefore {
             factory()
         }
     }
 
     override fun modifyFixture(block: F.() -> Unit) {
         fixtureOp = { it.apply(block) }
-        operations.befores.add { it.apply(block) }
+        operations.addBefore { it.apply(block) }
     }
 
     override fun replaceFixture(transform: F.() -> F) {
         fixtureOp = transform
-        operations.befores.add(transform)
+        operations.addBefore(transform)
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun deriveFixture(transform: PF.() -> F) {
         fixtureOp = transform as F.() -> F
-        operations.befores.add(transform as F.() -> F)
+        operations.addBefore(transform as F.() -> F)
     }
 
     override fun before(block: F.() -> Unit) {
-        operations.befores.add { it.apply(block) }
+        operations.addBefore { it.apply(block) }
     }
 
     override fun after(block: F.() -> Unit) = after_ { this.apply(block) }
 
     override fun after_(transform: F.() -> F) {
-        operations.afters.add(transform)
+        operations.addAfter(transform)
     }
 
     override fun test_(name: String, f: F.() -> F) {
@@ -96,7 +96,7 @@ internal class MiContext<PF, F>(
         }
 
     override fun addTransform(testTransform: (Test<F>) -> Test<F>) {
-        operations.transforms.add(testTransform)
+        operations.addTransform(testTransform)
     }
 
     fun runTest(myTest: Test<F>, parentOperations: Operations<F>) {
@@ -119,7 +119,7 @@ internal class MiContext<PF, F>(
      * Applies all the befores to Unit and sees whether the result is they type we want. This checks if the combination of
      * the fixture calls works out at runtime.
      */
-    private fun beforeResultOrThrow(combinedOperations: Operations<F>): OpResult<F> =
+    private fun beforeResultOrThrow(combinedOperations: ImmutableOperations<F>): OpResult<F> =
         combinedOperations.applyBeforesTo(Unit as F).also {
             if (!fixtureType.isCompatibleWith(it.lastValue) && (exceptionWasProbablyNotThrownByCodeInBefores(it.t))) {
                 error("You need to set a fixture by calling fixture(...)")
