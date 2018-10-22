@@ -32,8 +32,18 @@ internal class MutableOperations<F>(
     override val afters: MutableList<(F) -> F> = mutableListOf()
 ) : Operations<F> {
 
-    fun addBefore(op: (F) -> F) {
-        befores.add(op)
+    private var fixtureSet = false
+
+    fun setFixture(op: (F) -> F) {
+        if (fixtureSet)
+            error("Fixture has already been set in this context")
+        else
+            befores.add(op)
+        fixtureSet = true
+    }
+
+    fun addBefore(block: (F) -> Unit) {
+        befores.add { it.apply(block) }
     }
 
     fun addTransform(op: (Test<F>) -> Test<F>) {

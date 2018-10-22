@@ -107,6 +107,15 @@ object FixtureTests {
         }
     }
 
+    @Test fun `throws IllegalStateException if fixture is specified twice in a context`() {
+        assertThrows<IllegalStateException> {
+            junitTests<Fixture> {
+                fixture { Fixture("banana") }
+                fixture { Fixture("banana") }
+            }
+        }
+    }
+
     @Test fun `throws exception thrown from fixture`() {
         val tests = junitTests<Fixture> {
             fixture {
