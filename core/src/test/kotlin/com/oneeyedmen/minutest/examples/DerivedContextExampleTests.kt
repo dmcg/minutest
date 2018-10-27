@@ -1,6 +1,5 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.derivedContext
 import com.oneeyedmen.minutest.junit.JupiterTests
 import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -20,13 +19,9 @@ object DerivedContextExampleTests : JupiterTests {
             assertEquals("banana", fruit)
         }
 
-        derivedContext<Fixture, DerivedFixture>("inner") {
+        derivedContext<DerivedFixture>("inner") {
 
-            // Not valid as we need to supply a DerivedFixture
-            // modifyFixture {}
-            // replaceFixture {}
-
-            deriveFixture {
+            fixture {
                 // here `this` is Fixture
                 DerivedFixture(this, "smoothie")
             }

@@ -25,7 +25,5 @@ object ImmutableExampleTests : JupiterTests {
             println("in after")
             assertEquals("item", first())
         }
-
-        // see also before_ and after_ which return new fixtures
     }
 }

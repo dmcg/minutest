@@ -2,34 +2,41 @@ package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.internal.*
-import com.oneeyedmen.minutest.testContext
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import java.util.stream.Stream
-import kotlin.reflect.KType
 import kotlin.streams.asStream
 
 /**
  * Define a [TestContext] and map it to be used as a JUnit [org.junit.jupiter.api.TestFactory].
  */
-inline fun <reified F> junitTests(noinline builder: TestContext<F>.() -> Unit): Stream<out DynamicNode> =
-    junitTests(F::class.asKType(null is F), builder)
+fun <F> Any.junitTests(builder: TestContext<Unit, F>.() -> Unit): Stream<out DynamicNode> =
+    junitTestsNamed(javaClass.canonicalName, null, builder)
 
-fun <F> junitTests(fixtureType: KType, builder: TestContext<F>.() -> Unit): Stream<out DynamicNode>
-    = (testContext(rootContextName, fixtureType, builder) as MiContext<*, *>).toDynamicNodes()
+fun Any.fixturelessJunitTests(builder: TestContext<Unit, Unit>.() -> Unit) =
+    junitTestsNamed(javaClass.canonicalName, { Unit }, builder)
 
-
-// Note that we take the children of the root context to remove an unnecessary layer. Hence the rootContextName
-// is not shown in the test runner. But see ruling.kt - ruleApplyingTest
-internal fun <F> MiContext<*, F>.toDynamicNodes(): Stream<out DynamicNode> =
-    toRuntimeNode(null, Operations.empty())
+fun <F> junitTestsNamed(
+    parentContextName: String,
+    fixtureFn: (Unit.() -> F)? = null,
+    builder: TestContext<Unit, F>.() -> Unit
+): Stream<out DynamicNode> =
+    topContext(parentContextName, fixtureFn, builder)
+        .toRuntimeNode()
         .toDynamicContainer()
         .children
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
+
+// Note that we take the children of the root context to remove an unnecessary layer. Hence the rootContextName
+// is not shown in the test runner. But see ruling.kt - ruleApplyingTest
+internal fun <F> MiContext<*, F>.toDynamicNodes(): Stream<out DynamicNode> =
+    toRuntimeNode()
+        .toDynamicContainer()
+        .children
 
 private fun RuntimeNode.toDynamicNode(): DynamicNode = when (this) {
     is RuntimeTest -> this.toDynamicTest()
@@ -42,6 +49,3 @@ private fun RuntimeContext.toDynamicContainer(): DynamicContainer = dynamicConta
     name,
     children.map { it.toDynamicNode() }.asStream()
 )
-
-const val rootContextName = "ignored"
-

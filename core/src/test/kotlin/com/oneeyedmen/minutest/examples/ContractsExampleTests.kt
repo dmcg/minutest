@@ -1,7 +1,6 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.junit.InlineJupiterTests
 import com.oneeyedmen.minutest.junit.JupiterTests
 import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -11,13 +10,14 @@ import java.util.*
 
 // To run the same tests against different implementations, first define a function
 // taking the implementation and returning a TestContext
-fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
+private fun TestContext<*, MutableCollection<String>>.behavesAsMutableCollection(
     collectionName: String,
     factory: () -> MutableCollection<String>
 ) {
-    context("$collectionName behaves as MutableCollection") {
 
-        fixture { factory() }
+    fixture { factory() }
+
+    context("$collectionName behaves as MutableCollection") {
 
         test("is empty") {
             assertTrue(isEmpty())
@@ -41,9 +41,9 @@ object ArrayListTests : JupiterTests {
 
 // We can reuse the contract for different collections.
 
-// Here we use the convenience InlineJupiterTests to reduce boilerplate
-object LinkedListTests : InlineJupiterTests<MutableCollection<String>>({
+object LinkedListTests : JupiterTests {
 
-    behavesAsMutableCollection("LinkedList") { LinkedList() }
-
-})
+    override val tests = context<MutableCollection<String>> {
+        behavesAsMutableCollection("ArrayList") { LinkedList() }
+    }
+}

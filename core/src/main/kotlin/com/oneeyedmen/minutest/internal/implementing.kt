@@ -1,144 +1,105 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.DerivedContext
 import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestContext
-import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeProjection
 
-@Suppress("unused")
-internal sealed class Node<F>(val name: String) {
-    abstract fun toRuntimeNode(parent: MiContext<*, F>?, parentOperations: Operations<F>): RuntimeNode
+internal interface Node {
+    val name: String
+    fun toRuntimeNode(): RuntimeNode
 }
 
 internal class MinuTest<F>(
-    name: String,
+    override val name: String,
+    val context: ParentContext<F>,
     val f: F.() -> F
-) : Test<F>, Node<F>(name) {
-    override fun invoke(fixture: F): F = f(fixture)
+) : Test<F>, Node {
+    
+    override fun invoke(fixture: F): F =
+        f(fixture)
+    
+    override fun toRuntimeNode() =
+        RuntimeTest(this.name) { context.runTest(f) }
+}
 
-    override fun toRuntimeNode(parent: MiContext<*, F>?, parentOperations: Operations<F>) =
-        RuntimeTest(this.name) {
-            parent?.runTest(this, parentOperations) ?: error("Test $name has no parent context")
-        }
+interface ParentContext<F> {
+    val name: String
+    fun runTest(test: F.() -> F)
+}
+
+object RootContext : ParentContext<Unit> {
+    override val name: String = ""
+    override fun runTest(test: Unit.() -> Unit) = test(Unit)
 }
 
 internal class MiContext<PF, F>(
-    name: String,
-    override val parent: TestContext<*>?,
-    private val fixtureType: KType
-) : TestContext<F>, DerivedContext<PF, F>, Node<F>(name) {
-
-    private val children = mutableListOf<Node<F>>()
+    override val name: String,
+    private val parent: ParentContext<PF>,
+    private var fixtureFn: (PF.() -> F)? = null
+) : TestContext<PF, F>, ParentContext<F>, Node {
+    
+    private var fixtureExplicitySet = false
+    private val children = mutableListOf<Node>()
     private val operations = MutableOperations<F>()
-
-    override fun fixture(factory: () -> F) {
-        operations.setFixture {
-            factory()
+    
+    override fun fixture(factory: PF.() -> F) {
+        if (fixtureExplicitySet) {
+            throw IllegalStateException("fixture already set in context \"$name\"")
         }
+        fixtureFn = factory
+        fixtureExplicitySet = true
     }
-
-    override fun modifyFixture(block: F.() -> Unit) {
-        operations.setFixture { it.apply(block) }
+    
+    override fun before(transform: F.() -> Unit) {
+        operations.befores.add(transform)
     }
-
-    override fun replaceFixture(transform: F.() -> F) {
-        operations.setFixture(transform)
+    
+    override fun after(transform: F.() -> Unit) {
+        operations.afters.add(transform)
     }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun deriveFixture(transform: PF.() -> F) {
-        operations.setFixture(transform as F.() -> F)
-    }
-
-    override fun before(block: F.() -> Unit) {
-        operations.addBefore(block)
-    }
-
-    override fun after(block: F.() -> Unit) = after_ { this.apply(block) }
-
-    override fun after_(transform: F.() -> F) {
-        operations.addAfter(transform)
-    }
-
+    
     override fun test_(name: String, f: F.() -> F) {
-        MinuTest(name, f).also { children.add(it) }
+        MinuTest(name, this, f).also { children.add(it) }
     }
-
+    
     override fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
-
-    override fun context(name: String, builder: TestContext<F>.() -> Unit) =
-        MiContext<F, F>(name, this, fixtureType).also {
+    
+    override fun <G> derivedContext(name: String, fixtureFn: (F.() -> G)?, builder: TestContext<F, G>.() -> Unit) {
+        val subContext = MiContext(name, this, fixtureFn)
+        subContext.also {
             it.builder()
             children.add(it)
         }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <F2> derivedContext(
-        name: String,
-        fixtureType: KType,
-        builder: DerivedContext<F, F2>.() -> Unit) =
-        MiContext<F, F2>(name, this, fixtureType).also {
-            it.builder()
-            children.add(it as Node<F>)
-        }
-
-    override fun addTransform(testTransform: (Test<F>) -> Test<F>) {
-        operations.addTransform(testTransform)
     }
 
-    fun runTest(myTest: Test<F>, parentOperations: Operations<F>) {
-        val combinedOperations = parentOperations + operations
-        val beforeResult = beforeResultOrThrow(combinedOperations)
-        val nextResult = beforeResult.flatMap { fixture ->
-            try {
-                val transformedTests = combinedOperations.applyTransformsTo(myTest)
-                OpResult(null, transformedTests.invoke(fixture))
-            } catch (t: Throwable) {
-                OpResult(t, fixture)
+    override fun runTest(test: F.() -> F) {
+        fun decoratedTest(parentFixture: PF): PF =
+            parentFixture.also {
+                operations.applyBeforesTo(createFixtureFrom(parentFixture))
+                    .tryMap(test)
+                    .also { result ->
+                        operations.applyAftersTo(result.lastValue)
+                        result.maybeThrow()
+                    }
             }
-        }
-        combinedOperations.applyAftersTo(nextResult.lastValue)
-        nextResult.orThrow()
+        parent.runTest(::decoratedTest)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    /**
-     * Applies all the befores to Unit and sees whether the result is they type we want. This checks if the combination of
-     * the fixture calls works out at runtime.
-     */
-    private fun beforeResultOrThrow(combinedOperations: ImmutableOperations<F>): OpResult<F> =
-        combinedOperations.applyBeforesTo(Unit as F).also {
-            if (!fixtureType.isCompatibleWith(it.lastValue) && (exceptionWasProbablyNotThrownByCodeInBefores(it.t))) {
-                error("You need to set a fixture by calling fixture(...)")
-            } else {
-                // either we have a correct fixture type, or we don't but it is because of a
-            }
-        }
+    private fun createFixtureFrom(parentFixture: PF): F {
+        val fixtureFactory = fixtureFn
+            ?: throw IllegalStateException("fixture has not been set in context \"$name\"")
+        return fixtureFactory(parentFixture)
+    }
 
-
-    override fun toRuntimeNode(parent: MiContext<*, F>?, parentOperations: Operations<F>): RuntimeContext = RuntimeContext(
+    override fun toRuntimeNode(): RuntimeContext = RuntimeContext(
         this.name,
-        this.children.asSequence().map {
-            it.toRuntimeNode(this, parentOperations + (parent?.operations ?: Operations.empty()))
-        }
+        this.children.asSequence().map { it.toRuntimeNode() }
     )
+
+    internal fun path(): List<MiContext<*, *>> = generateSequence(this as MiContext<*, *>) { it.parent as? MiContext<*, *> }.toList().reversed()
 }
 
-private fun <F> KType.isCompatibleWith(fixtureValue: F): Boolean {
-    return when {
-        this.isMarkedNullable && fixtureValue == null -> true
-        else -> (classifier as? KClass<*>)?.isInstance(fixtureValue) == true
-    }
-}
-
-private fun exceptionWasProbablyNotThrownByCodeInBefores(throwable: Throwable?) =
-    throwable == null || (throwable is ClassCastException && (throwable.message?.contains("Unit") == true))
-
-fun KClass<*>.asKType(isNullable: Boolean) =  object : KType {
-    override val arguments: List<KTypeProjection> = emptyList()
-    override val classifier: KClassifier = this@asKType
-    override val isMarkedNullable = isNullable
-}
+/**
+ * Build a test context out of context.
+ */
+internal fun <F> topContext(name: String, fixtureFn: (Unit.() -> F)? = null, builder: TestContext<Unit, F>.() -> Unit) =
+    MiContext(name, RootContext, fixtureFn).apply { builder() }

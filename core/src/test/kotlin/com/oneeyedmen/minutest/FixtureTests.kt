@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.junit.fixturelessJunitTests
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -46,7 +47,7 @@ object FixtureTests {
         }
 
         context("sub-context replacing fixture") {
-            replaceFixture { Fixture("green $fruit") }
+            fixture { Fixture("green $fruit") }
 
             test("sees the replaced fixture") {
                 assertEquals("green banana", fruit)
@@ -76,7 +77,7 @@ object FixtureTests {
         }
     }
 
-    @TestFactory fun `no fixture`() = junitTests<Unit> {
+    @TestFactory fun `no fixture`() = fixturelessJunitTests() {
         test("I need not specify Unit fixture") {
             assertNotNull("banana")
         }
@@ -127,22 +128,6 @@ object FixtureTests {
             }
         }.asSequence()
         assertThrows<FileNotFoundException> {
-            ((tests.first() as DynamicTest)).executable.execute()
-        }
-    }
-
-    @Test fun `throws exception thrown from fixture even if it is ClassCastException`() {
-        // torture test of the logic
-        val tests = junitTests<Fixture> {
-            fixture {
-                throw ClassCastException()
-            }
-
-            test("won't be run") {
-                assertEquals("banana", fruit)
-            }
-        }.asSequence()
-        assertThrows<ClassCastException> {
             ((tests.first() as DynamicTest)).executable.execute()
         }
     }

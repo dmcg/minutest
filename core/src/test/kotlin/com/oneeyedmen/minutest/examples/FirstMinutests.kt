@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JupiterTests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.junit.fixturelessContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions.assertNotEquals
 object FirstMinutests : JupiterTests {
 
     // tests are grouped in a context
-    override val tests = context<Unit> {
+    override val tests = fixturelessContext() {
 
         // define a test by calling test
         test("my first test") {

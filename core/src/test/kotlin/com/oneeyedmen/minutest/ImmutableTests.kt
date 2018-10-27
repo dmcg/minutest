@@ -10,13 +10,8 @@ object ImmutableTests {
     @TestFactory fun `before and after`() = junitTests<List<String>> {
         fixture { emptyList() }
 
-        after_ {
-            assertEquals(listOf("during"), this)
-            this + "after"
-        }
-
         after {
-            assertEquals(listOf("during", "after"), this)
+            assertEquals(listOf("during"), this)
         }
 
         test_("before has been called") {

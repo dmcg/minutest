@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.junit.fixturelessJunitTests
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.TestFactory
@@ -11,7 +12,7 @@ import java.util.*
 
 private typealias StringStack = Stack<String>
 
-private fun TestContext<StringStack>.isEmpty(isEmpty: Boolean) =
+private fun TestContext<*, StringStack>.isEmpty(isEmpty: Boolean) =
     test("is " + (if (isEmpty) "" else "not ") + "empty") {
         assertEquals(isEmpty, size == 0)
         if (isEmpty)
@@ -20,7 +21,7 @@ private fun TestContext<StringStack>.isEmpty(isEmpty: Boolean) =
             assertNotNull(peek())
     }
 
-private fun TestContext<StringStack>.canPush() = test("can push") {
+private fun TestContext<*, StringStack>.canPush() = test("can push") {
     val initialSize = size
     val item = "*".repeat(initialSize + 1)
     push(item)
@@ -28,7 +29,7 @@ private fun TestContext<StringStack>.canPush() = test("can push") {
     assertEquals(initialSize + 1, size)
 }
 
-private fun TestContext<StringStack>.canPop() = test("can pop") {
+private fun TestContext<*, StringStack>.canPop() = test("can pop") {
     val initialSize = size
     val top = peek()
     assertEquals(top, pop())
@@ -37,7 +38,7 @@ private fun TestContext<StringStack>.canPop() = test("can pop") {
         assertNotEquals(top, peek())
 }
 
-private fun TestContext<StringStack>.cantPop() = test("cant pop") {
+private fun TestContext<*, StringStack>.cantPop() = test("cant pop") {
     assertThrows<EmptyStackException> { pop() }
 }
 
@@ -69,11 +70,11 @@ object GeneratingExampleTests {
         }
     }
 
-    @TestFactory fun `multiple tests on multiple stacks`() = junitTests<StringStack> {
+    @TestFactory fun `multiple tests on multiple stacks`() = fixturelessJunitTests {
 
         // here we generate a context with 3 tests for each of 4 stacks
         (0..3).forEach { itemCount ->
-            context("stack with $itemCount items") {
+            derivedContext<StringStack>("stack with $itemCount items") {
 
                 fixture {
                     StringStack().apply {
@@ -89,4 +90,4 @@ object GeneratingExampleTests {
     }
 }
 
-private fun TestContext<StringStack>.canPop(canPop: Boolean) = if (canPop) canPop() else cantPop()
+private fun TestContext<*, StringStack>.canPop(canPop: Boolean) = if (canPop) canPop() else cantPop()

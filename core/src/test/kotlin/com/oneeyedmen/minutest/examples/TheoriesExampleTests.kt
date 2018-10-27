@@ -2,7 +2,7 @@ package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.junit.JupiterTests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.junit.fixturelessContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 // http://www.oneeyedmen.com/tdd-v-testing-part2.html
 object TheoriesExampleTests : JupiterTests {
 
-    override val tests = context<Unit> {
+    override val tests = fixturelessContext {
         (1..31).forEach { i ->
 
             // These theories will be checked, but no tests are actually created
@@ -46,7 +46,7 @@ fun fizzBuzz(i: Int): String = when {
     else -> i.toString()
 }
 
-fun <F> TestContext<*>.theory(fixture: F, name: String, condition: Condition<F>, check: (F) -> Unit) {
+fun <F> TestContext<*, *>.theory(fixture: F, name: String, condition: Condition<F>, check: (F) -> Unit) {
     if (condition.appliesTo(fixture))
         try {
             check(fixture)

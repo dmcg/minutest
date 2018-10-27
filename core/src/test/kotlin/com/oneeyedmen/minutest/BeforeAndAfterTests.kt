@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.junit.fixturelessJunitTests
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -14,7 +15,7 @@ class BeforeAndAfterTests {
 
     // this is a very special case for testing testing - don't do this normally
     val log = mutableListOf<String>()
-    lateinit var expectedLog: List<String>
+    private lateinit var expectedLog: List<String>
 
     @AfterEach fun checkLog() {
         assertEquals(expectedLog, log)
@@ -155,17 +156,17 @@ class BeforeAndAfterTests {
 //                throw IOException("deliberate")
 //            }
 
-            after_ {
-                assertEquals(listOf("before 1"), this)
-                this + "after 1"
-            }
-
-            after_ {
-                assertEquals(listOf("before 1", "after 1"), this)
-                (this + "after 2").also {
-                    log.addAll(it)
-                }
-            }
+//            after_ {
+//                assertEquals(listOf("before 1"), this)
+//                this + "after 1"
+//            }
+//
+//            after_ {
+//                assertEquals(listOf("before 1", "after 1"), this)
+//                (this + "after 2").also {
+//                    log.addAll(it)
+//                }
+//            }
 
             test_("not run") {
                 this + "test"
@@ -181,27 +182,23 @@ class BeforeAndAfterTests {
 
     @Test fun `afters abort if they throw`() {
 
-        // use an immutable fixture to prove the point
-        val test = junitTests<List<String>> {
-            fixture { emptyList() }
+        val test = fixturelessJunitTests {
 
-            test_("test") {
-                this + "test".also { log.add(it) }
+            test("test") {
+                log.add("test")
             }
 
-            after_ {
-                assertEquals(listOf("test"), this)
-                this + "after 1".also { log.add(it) }
+            after {
+                log.add("after 1")
             }
 
-            after_ {
-                assertEquals(listOf("test", "after 1"), this)
+            after {
                 log.add("after 2")
                 throw IOException("deliberate")
             }
 
-            after_ {
-                this + "after 2".also { log.add(it) }
+            after {
+                log.add("after 3")
             }
         }
 
@@ -214,13 +211,14 @@ class BeforeAndAfterTests {
     @Test fun `fails with the last exception`() {
 
         // use an immutable fixture to prove the point
-        val test = junitTests<Unit> {
+        val test = fixturelessJunitTests {
 
             test_("test") {
+                log.add("test")
                 throw IOException("deliberate")
             }
 
-            after_ {
+            after {
                 throw FileNotFoundException("deliberate")
             }
 
@@ -229,7 +227,7 @@ class BeforeAndAfterTests {
         assertThrows<FileNotFoundException>("in after") {
             executeTest(test)
         }
-        expectedLog = emptyList()
+        expectedLog = listOf("test")
     }
 }
 
