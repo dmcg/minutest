@@ -1,67 +1,38 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestContext
-
-internal interface Node {
-    val name: String
-    fun toRuntimeNode(): RuntimeNode
-}
-
-internal class MinuTest<F>(
-    override val name: String,
-    val context: ParentContext<F>,
-    val f: F.() -> F
-) : Test<F>, Node {
-    
-    override fun invoke(fixture: F): F =
-        f(fixture)
-    
-    override fun toRuntimeNode() =
-        RuntimeTest(this.name) { context.runTest(f) }
-}
-
-interface ParentContext<F> {
-    val name: String
-    fun runTest(test: F.() -> F)
-}
-
-object RootContext : ParentContext<Unit> {
-    override val name: String = ""
-    override fun runTest(test: Unit.() -> Unit) = test(Unit)
-}
 
 internal class MiContext<PF, F>(
     override val name: String,
     private val parent: ParentContext<PF>,
     private var fixtureFn: (PF.() -> F)? = null
 ) : TestContext<PF, F>, ParentContext<F>, Node {
-    
+
     private var fixtureCalled = false
     private val children = mutableListOf<Node>()
     private val operations = Operations<F>()
-    
+
     override fun fixture(factory: PF.() -> F) {
         if (fixtureCalled)
             throw IllegalStateException("fixture already set in context \"$name\"")
         fixtureFn = factory
         fixtureCalled = true
     }
-    
+
     override fun before(transform: F.() -> Unit) {
         operations.befores.add(transform)
     }
-    
+
     override fun after(transform: F.() -> Unit) {
         operations.afters.add(transform)
     }
-    
+
     override fun test_(name: String, f: F.() -> F) {
         MinuTest(name, this, f).also { children.add(it) }
     }
-    
+
     override fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
-    
+
     override fun <G> derivedContext(name: String, fixtureFn: (F.() -> G)?, builder: TestContext<F, G>.() -> Unit) {
         val subContext = MiContext(name, this, fixtureFn)
         subContext.also {
@@ -94,11 +65,10 @@ internal class MiContext<PF, F>(
         this.children.asSequence().map { it.toRuntimeNode() }
     )
 
-    internal fun path(): List<ParentContext<*>> = generateSequence(this as MiContext<*, *>) { it.parent as? MiContext<*, *> }.toList().reversed()
+    // for debugging
+    @Suppress("unused")
+    fun path(): List<ParentContext<*>> =
+        generateSequence(this as MiContext<*, *>) {
+            it.parent as? MiContext<*, *>
+        }.toList().reversed()
 }
-
-/**
- * Build a test context out of context.
- */
-internal fun <F> topContext(name: String, fixtureFn: (Unit.() -> F)? = null, builder: TestContext<Unit, F>.() -> Unit) =
-    MiContext(name, RootContext, fixtureFn).apply { builder() }
