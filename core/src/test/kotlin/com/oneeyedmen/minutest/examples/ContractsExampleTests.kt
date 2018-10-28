@@ -11,7 +11,7 @@ import java.util.*
 
 // To run the same tests against different implementations, first define a function
 // taking the implementation and returning a TestContext
-private fun TestContext<*, MutableCollection<String>>.behavesAsMutableCollection(
+private fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
     collectionName: String,
     factory: () -> MutableCollection<String>
 ) {
@@ -44,5 +44,7 @@ object ArrayListTests : JupiterTests {
 
 // Here we use the convenience InlineJupiterTests to reduce boilerplate
 object LinkedListTests : InlineJupiterTests<MutableCollection<String>>({
+
     behavesAsMutableCollection("LinkedList") { LinkedList() }
+
 })

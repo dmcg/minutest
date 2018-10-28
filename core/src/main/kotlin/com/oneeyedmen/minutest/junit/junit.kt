@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.internal.*
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
@@ -11,15 +11,15 @@ import java.util.stream.Stream
 import kotlin.streams.asStream
 
 /**
- * Define a [TestContext] and map it to be used as a JUnit [org.junit.jupiter.api.TestFactory].
+ * Define a [Context] and map it to be used as a JUnit [org.junit.jupiter.api.TestFactory].
  */
-inline fun <reified F> Any.junitTests(noinline builder: TestContext<Unit, F>.() -> Unit): Stream<out DynamicNode> =
+inline fun <reified F> Any.junitTests(noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
     junitTestsNamed(javaClass.canonicalName, deduceFixtureFn(), builder)
 
 fun <F> junitTestsNamed(
     parentContextName: String,
     fixtureFn: (Unit.() -> F)? = null,
-    builder: TestContext<Unit, F>.() -> Unit
+    builder: Context<Unit, F>.() -> Unit
 ): Stream<out DynamicNode> =
     topContext(parentContextName, fixtureFn, builder)
         .toRuntimeNode()

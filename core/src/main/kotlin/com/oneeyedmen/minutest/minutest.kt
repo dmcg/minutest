@@ -9,7 +9,7 @@ interface Test<F> : (F) -> F {
 
 @Suppress("FunctionName")
 @MinutestMarker
-interface TestContext<ParentF, F> {
+interface Context<ParentF, F> {
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
      */
@@ -27,7 +27,7 @@ interface TestContext<ParentF, F> {
     /**
      * Define a sub-context, inheriting the fixture from this.
      */
-    fun context(name: String, builder: TestContext<F, F>.() -> Unit) {
+    fun context(name: String, builder: Context<F, F>.() -> Unit) {
         derivedContext(name, { this }) {
             builder()
         }
@@ -36,7 +36,8 @@ interface TestContext<ParentF, F> {
     /**
      * Define a sub-context with a different fixture type.
      */
-    fun <G> derivedContext(name: String, fixtureFn: (F.() -> G)? = null, builder: TestContext<F, G>.() -> Unit)
+    fun <G> derivedContext(name: String, fixtureFn: (F.() -> G)? = null, builder: Context<F, G>.() -> Unit)
 }
 
+typealias TestContext<F> = Context<*, F>
 

@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.internal.top
 import kotlin.reflect.KClass
 
@@ -8,7 +8,7 @@ import kotlin.reflect.KClass
  * Convenience class to reduce boilerplate
  */
 abstract class InlineJupiterTests<F>(
-    builder: TestContext<Unit, F>.() -> Unit
+    builder: Context<Unit, F>.() -> Unit
 ) : JupiterTests, IKnowMyGenericClass<F> {
 
     @Suppress("LeakingThis")

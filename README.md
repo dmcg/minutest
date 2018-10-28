@@ -228,13 +228,14 @@ If you want to reuse the same tests for different concrete implementations, defi
 ```kotlin
 // To run the same tests against different implementations, first define a function
 // taking the implementation and returning a TestContext
-fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
+private fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
     collectionName: String,
     factory: () -> MutableCollection<String>
 ) {
-    context("$collectionName behaves as MutableCollection") {
 
-        fixture { factory() }
+    fixture { factory() }
+
+    context("$collectionName behaves as MutableCollection") {
 
         test("is empty") {
             assertTrue(isEmpty())
@@ -333,11 +334,11 @@ object GeneratingExampleTests {
         }
     }
 
-    @TestFactory fun `multiple tests on multiple stacks`() = junitTests<StringStack> {
+    @TestFactory fun `multiple tests on multiple stacks`() = junitTests<Unit> {
 
         // here we generate a context with 3 tests for each of 4 stacks
         (0..3).forEach { itemCount ->
-            context("stack with $itemCount items") {
+            derivedContext<StringStack>("stack with $itemCount items") {
 
                 fixture {
                     StringStack().apply {
@@ -385,35 +386,10 @@ object ImmutableExampleTests : JupiterTests {
             println("in after")
             assertEquals("item", first())
         }
-
-        // see also before_ and after_ which return new fixtures
     }
 }
 ```
 
 ## JUnit Rules
 
-Power JUnit 4 user? Minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
-
-```kotlin
-object JunitRulesExampleTests : JupiterTests {
-
-    class Fixture {
-        // make rules part of the fixture, no need for an annotation
-        val testFolder = TemporaryFolder()
-    }
-
-    override val tests = context<Fixture> {
-
-        fixture { Fixture() }
-
-        // tell the context to use the rule for each test in it and its children
-        applyRule { this.testFolder }
-
-        // and it will apply in this and sub-contexts
-        test("test folder is present") {
-            assertTrue(testFolder.newFile().isFile)
-        }
-    }
-}
-```
+Power JUnit 4 user? Minutest supports JUnit 4 TestRules is returning soon.

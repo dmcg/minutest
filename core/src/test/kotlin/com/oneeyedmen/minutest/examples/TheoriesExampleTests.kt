@@ -46,7 +46,7 @@ fun fizzBuzz(i: Int): String = when {
     else -> i.toString()
 }
 
-fun <F> TestContext<*, *>.theory(fixture: F, name: String, condition: Condition<F>, check: (F) -> Unit) {
+fun <F> TestContext<*>.theory(fixture: F, name: String, condition: Condition<F>, check: (F) -> Unit) {
     if (condition.appliesTo(fixture))
         try {
             check(fixture)

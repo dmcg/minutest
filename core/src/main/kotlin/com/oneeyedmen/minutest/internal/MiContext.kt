@@ -1,12 +1,12 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.Context
 
 internal class MiContext<PF, F>(
     override val name: String,
     private val parent: ParentContext<PF>,
     private var fixtureFn: (PF.() -> F)? = null
-) : TestContext<PF, F>, ParentContext<F>, Node {
+) : Context<PF, F>, ParentContext<F>, Node {
 
     private var fixtureCalled = false
     private val children = mutableListOf<Node>()
@@ -33,7 +33,7 @@ internal class MiContext<PF, F>(
 
     override fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
 
-    override fun <G> derivedContext(name: String, fixtureFn: (F.() -> G)?, builder: TestContext<F, G>.() -> Unit) {
+    override fun <G> derivedContext(name: String, fixtureFn: (F.() -> G)?, builder: Context<F, G>.() -> Unit) {
         val subContext = MiContext(name, this, fixtureFn)
         subContext.also {
             it.builder()

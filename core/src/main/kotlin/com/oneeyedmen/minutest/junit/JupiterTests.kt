@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.internal.MiContext
 import com.oneeyedmen.minutest.internal.top
 import org.junit.jupiter.api.DynamicNode
@@ -9,7 +9,7 @@ import java.util.stream.Stream
 
 interface JupiterTests {
 
-    val tests: TestContext<Unit, *>
+    val tests: Context<Unit, *>
 
     /**
      * Provided so that JUnit will run the tests
@@ -21,6 +21,6 @@ interface JupiterTests {
 /**
  * Define a group of tests.
  */
-inline fun <reified F> JupiterTests.context(noinline builder: TestContext<Unit, F>.() -> Unit): TestContext<Unit, F> =
+inline fun <reified F> JupiterTests.context(noinline builder: Context<Unit, F>.() -> Unit): Context<Unit, F> =
     top(javaClass.canonicalName, builder)
 
