@@ -16,18 +16,16 @@ interface JupiterTests {
      */
     @TestFactory
     fun tests(): Stream<out DynamicNode> = (tests as MiContext<*, *>).toDynamicNodes()
+
+    /**
+     * Define a group of tests.
+     */
+    fun <F> context(builder: TestContext<Unit, F>.() -> Unit): TestContext<Unit, F> =
+        topContext(this.javaClass.canonicalName, builder = builder)
+
+    /**
+     * Define a group of tests.
+     */
+    fun fixturelessContext(builder: TestContext<Unit, Unit>.() -> Unit): TestContext<Unit, Unit> =
+        topContext(this.javaClass.canonicalName, fixtureFn = { Unit }, builder = builder)
 }
-
-/**
- * Define a group of tests.
- */
-@Suppress("unused") // keep receiver to scope this to JupiterTests
-fun <F> JupiterTests.context(builder: TestContext<Unit, F>.() -> Unit): TestContext<Unit, F> =
-    topContext(this.javaClass.canonicalName, builder = builder)
-
-/**
- * Define a group of tests.
- */
-@Suppress("unused") // keep receiver to scope this to JupiterTests
-fun JupiterTests.fixturelessContext(builder: TestContext<Unit, Unit>.() -> Unit): TestContext<Unit, Unit> =
-    topContext(this.javaClass.canonicalName, fixtureFn = { Unit }, builder = builder)

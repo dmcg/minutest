@@ -2,7 +2,6 @@ package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.junit.JupiterTests
-import com.oneeyedmen.minutest.junit.fixturelessContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 
