@@ -1,6 +1,5 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.fixturelessJunitTests
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -77,7 +76,7 @@ object FixtureTests {
         }
     }
 
-    @TestFactory fun `no fixture`() = fixturelessJunitTests() {
+    @TestFactory fun `no fixture`() = junitTests<Unit> {
         test("I need not specify Unit fixture") {
             assertNotNull("banana")
         }

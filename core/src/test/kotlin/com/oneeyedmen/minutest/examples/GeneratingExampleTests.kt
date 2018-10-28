@@ -1,7 +1,6 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.junit.fixturelessJunitTests
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.TestFactory
@@ -70,7 +69,7 @@ object GeneratingExampleTests {
         }
     }
 
-    @TestFactory fun `multiple tests on multiple stacks`() = fixturelessJunitTests {
+    @TestFactory fun `multiple tests on multiple stacks`() = junitTests<Unit> {
 
         // here we generate a context with 3 tests for each of 4 stacks
         (0..3).forEach { itemCount ->

@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.fixturelessJunitTests
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.TestFactory
@@ -8,7 +8,7 @@ import org.junit.jupiter.api.TestFactory
 
 object NullableFixtureTests {
 
-    @TestFactory fun nullableFixture() = fixturelessJunitTests() {
+    @TestFactory fun nullableFixture() = junitTests<Unit> {
 
         derivedContext<String?>("with null fixture") {
             fixture { null }

@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.fixturelessJunitTests
+import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.TestFactory
@@ -8,7 +8,7 @@ import org.junit.jupiter.api.TestFactory
 
 object AssumeTests {
 
-    @TestFactory fun `assume works`() = fixturelessJunitTests {
+    @TestFactory fun `assume works`() = junitTests<Unit> {
 
         test("try it") {
             @Suppress("SimplifyBooleanWithConstants")

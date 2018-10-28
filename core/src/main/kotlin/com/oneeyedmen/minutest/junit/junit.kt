@@ -13,11 +13,8 @@ import kotlin.streams.asStream
 /**
  * Define a [TestContext] and map it to be used as a JUnit [org.junit.jupiter.api.TestFactory].
  */
-fun <F> Any.junitTests(builder: TestContext<Unit, F>.() -> Unit): Stream<out DynamicNode> =
-    junitTestsNamed(javaClass.canonicalName, null, builder)
-
-fun Any.fixturelessJunitTests(builder: TestContext<Unit, Unit>.() -> Unit) =
-    junitTestsNamed(javaClass.canonicalName, { Unit }, builder)
+inline fun <reified F> Any.junitTests(noinline builder: TestContext<Unit, F>.() -> Unit): Stream<out DynamicNode> =
+    junitTestsNamed(javaClass.canonicalName, deduceFixtureFn(), builder)
 
 fun <F> junitTestsNamed(
     parentContextName: String,

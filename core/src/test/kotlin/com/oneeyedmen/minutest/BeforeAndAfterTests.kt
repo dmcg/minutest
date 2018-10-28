@@ -1,6 +1,5 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.fixturelessJunitTests
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -182,7 +181,7 @@ class BeforeAndAfterTests {
 
     @Test fun `afters abort if they throw`() {
 
-        val test = fixturelessJunitTests {
+        val test = junitTests<Unit> {
 
             test("test") {
                 log.add("test")
@@ -211,7 +210,7 @@ class BeforeAndAfterTests {
     @Test fun `fails with the last exception`() {
 
         // use an immutable fixture to prove the point
-        val test = fixturelessJunitTests {
+        val test = junitTests<Unit> {
 
             test_("test") {
                 log.add("test")

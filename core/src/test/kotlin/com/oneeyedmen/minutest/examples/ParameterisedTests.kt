@@ -1,12 +1,13 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
 object ParameterisedTests : JupiterTests {
 
-    override val tests = fixturelessContext {
+    override val tests = context<Unit> {
 
         // Once we are in a context, running the same tests for multiple parameters is
         // as easy as calling `test()` for each one.
