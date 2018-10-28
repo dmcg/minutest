@@ -22,10 +22,10 @@ internal data class OpResult<F>(val t: Throwable?, val lastValue: F) {
     }
 }
 
-internal class MutableOperations<F> {
+internal class Operations<F> {
     val befores = mutableListOf<(F) -> Unit>()
     val afters = mutableListOf<(F) -> Unit>()
-    
+
     // apply befores in order - if anything is thrown return it and the last successful value
     fun applyBeforesTo(fixture: F): OpResult<F> {
         befores.forEach { beforeFn ->

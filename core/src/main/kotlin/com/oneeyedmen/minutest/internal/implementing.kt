@@ -37,16 +37,15 @@ internal class MiContext<PF, F>(
     private var fixtureFn: (PF.() -> F)? = null
 ) : TestContext<PF, F>, ParentContext<F>, Node {
     
-    private var fixtureExplicitySet = false
+    private var fixtureCalled = false
     private val children = mutableListOf<Node>()
-    private val operations = MutableOperations<F>()
+    private val operations = Operations<F>()
     
     override fun fixture(factory: PF.() -> F) {
-        if (fixtureExplicitySet) {
+        if (fixtureCalled)
             throw IllegalStateException("fixture already set in context \"$name\"")
-        }
         fixtureFn = factory
-        fixtureExplicitySet = true
+        fixtureCalled = true
     }
     
     override fun before(transform: F.() -> Unit) {
@@ -95,7 +94,7 @@ internal class MiContext<PF, F>(
         this.children.asSequence().map { it.toRuntimeNode() }
     )
 
-    internal fun path(): List<MiContext<*, *>> = generateSequence(this as MiContext<*, *>) { it.parent as? MiContext<*, *> }.toList().reversed()
+    internal fun path(): List<ParentContext<*>> = generateSequence(this as MiContext<*, *>) { it.parent as? MiContext<*, *> }.toList().reversed()
 }
 
 /**
