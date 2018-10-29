@@ -55,8 +55,8 @@ internal class MiContext<PF, F>(
     }
 
     private fun createFixtureFrom(parentFixture: PF): F {
-        val fixtureFactory = fixtureFn
-            ?: throw IllegalStateException("fixture has not been set in context \"$name\"")
+        // have to explicitly check rather than elvis because invoking fixtureFn may return null
+        val fixtureFactory = fixtureFn ?: throw IllegalStateException("fixture has not been set in context \"$name\"")
         return fixtureFactory(parentFixture)
     }
 
