@@ -22,7 +22,6 @@ object ImmutableExampleTests : JupiterTests {
 
         // which will be available for inspection in after
         after {
-            println("in after")
             assertEquals("item", first())
         }
     }
