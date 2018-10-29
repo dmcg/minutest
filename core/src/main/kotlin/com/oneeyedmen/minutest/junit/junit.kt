@@ -14,24 +14,15 @@ import kotlin.streams.asStream
  * Define a [Context] and map it to be used as a JUnit [org.junit.jupiter.api.TestFactory].
  */
 inline fun <reified F> Any.junitTests(noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
-    junitTestsNamed(javaClass.canonicalName, deduceFixtureFn(), builder)
-
-fun <F> junitTestsNamed(
-    parentContextName: String,
-    fixtureFn: (Unit.() -> F)? = null,
-    builder: Context<Unit, F>.() -> Unit
-): Stream<out DynamicNode> =
-    topContext(parentContextName, fixtureFn, builder)
-        .toRuntimeNode()
-        .toDynamicContainer()
-        .children
+    topLevelContext(javaClass.canonicalName, F::class.isInstance(Unit), builder).toStreamOfDynamicNodes()
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
 // Note that we take the children of the root context to remove an unnecessary layer. Hence the rootContextName
 // is not shown in the test runner. But see ruling.kt - ruleApplyingTest
-internal fun <F> MiContext<*, F>.toDynamicNodes(): Stream<out DynamicNode> =
-    toRuntimeNode()
+fun <F> Context<*, F>.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
+    (this as MiContext<*, F>)
+        .toRuntimeNode()
         .toDynamicContainer()
         .children
 
