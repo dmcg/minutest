@@ -334,16 +334,16 @@ object GeneratingExampleTests {
         }
     }
 
-    @TestFactory fun `multiple tests on multiple stacks`() = junitTests<Unit> {
+    @TestFactory fun `multiple tests on multiple stacks`() = junitTests<StringStack> {
+
+        fixture { StringStack() }
 
         // here we generate a context with 3 tests for each of 4 stacks
         (0..3).forEach { itemCount ->
-            derivedContext<StringStack>("stack with $itemCount items") {
+            context("stack with $itemCount items") {
 
-                fixture {
-                    StringStack().apply {
-                        (1..itemCount).forEach { add(it.toString()) }
-                    }
+                modifyFixture {
+                    (1..itemCount).forEach { add(it.toString()) }
                 }
 
                 isEmpty(itemCount == 0)
@@ -383,7 +383,6 @@ object ImmutableExampleTests : JupiterTests {
 
         // which will be available for inspection in after
         after {
-            println("in after")
             assertEquals("item", first())
         }
     }
