@@ -1,10 +1,11 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.Test
 
 internal object RootContext : ParentContext<Unit> {
     override val name: String = ""
-    override fun runTest(test: Unit.() -> Unit) = test(Unit)
+    override fun runTest(test: Test<Unit>) = test(Unit)
 }
 
 fun <F> topLevelContext(

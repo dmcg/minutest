@@ -1,36 +1,37 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.Test
 
 internal class MiContext<PF, F>(
     override val name: String,
     private val parent: ParentContext<PF>,
     private var fixtureFn: (PF.() -> F)? = null
 ) : Context<PF, F>, ParentContext<F>, Node {
-
+    
     private var fixtureCalled = false
     private val children = mutableListOf<Node>()
     private val operations = Operations<F>()
-
+    
     override fun fixture(factory: PF.() -> F) {
         if (fixtureCalled)
             throw IllegalStateException("fixture already set in context \"$name\"")
         fixtureFn = factory
         fixtureCalled = true
     }
-
+    
     override fun before(operation: F.() -> Unit) {
         operations.befores.add(operation)
     }
-
+    
     override fun after(operation: F.() -> Unit) {
         operations.afters.add(operation)
     }
-
+    
     override fun test_(name: String, f: F.() -> F) {
         MinuTest(name, this, f).also { children.add(it) }
     }
-
+    
     override fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
     
     /**
@@ -52,17 +53,20 @@ internal class MiContext<PF, F>(
         }
     }
     
-    override fun runTest(test: (F) -> F) {
-        fun decoratedTest(parentFixture: PF): PF =
-            parentFixture.also {
-                operations.applyBeforesTo(createFixtureFrom(parentFixture))
-                    .tryMap(test)
-                    .also { result ->
-                        operations.applyAftersTo(result.lastValue)
-                        result.maybeThrow()
-                    }
-            }
-        parent.runTest(::decoratedTest)
+    override fun runTest(test: Test<F>) {
+        val decoratedTest = object : Test<PF> {
+            override val name: String = test.name
+            override fun invoke(parentFixture: PF) =
+                parentFixture.also {
+                    operations.applyBeforesTo(createFixtureFrom(parentFixture))
+                        .tryMap(test)
+                        .also { result ->
+                            operations.applyAftersTo(result.lastValue)
+                            result.maybeThrow()
+                        }
+                }
+        }
+        parent.runTest(decoratedTest)
     }
     
     private fun createFixtureFrom(parentFixture: PF): F {
