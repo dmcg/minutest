@@ -139,44 +139,50 @@ class BeforeAndAfterTests {
         expectedLog = listOf("before", "after")
     }
 
-    @Disabled("work this out")
-    @Test fun `afters are run with the successful before fixture`() {
+    @Test fun `afters are run with the last successful before fixture`() {
 
         // use an immutable fixture to prove the point
         val test = junitTests<List<String>> {
-            fixture { emptyList() }
-
-//            before_ {
-//                this + "before 1"
-//            }
-
-//            before_ {
-//                assertEquals(listOf("before 1"), this)
-//                throw IOException("deliberate")
-//            }
-
-//            after_ {
-//                assertEquals(listOf("before 1"), this)
-//                this + "after 1"
-//            }
-//
-//            after_ {
-//                assertEquals(listOf("before 1", "after 1"), this)
-//                (this + "after 2").also {
-//                    log.addAll(it)
-//                }
-//            }
-
-            test_("not run") {
-                this + "test"
+            fixture {
+                log.add("top")
+                listOf("top")
             }
 
+            context("outer") {
+
+                fixture {
+                    log.add("outer")
+                    this.plus("outer")
+                }
+
+                context("inner") {
+                    fixture {
+                        log.add("inner")
+                        error("deliberate")
+                    }
+
+                    test("wont run") {
+                        log.add("test")
+                    }
+
+                    // this isn't run because the fixture call didn't complete. TODO - Not sure whether it should
+                    after {
+                        log.add("after inner")
+                        fail("doesn't get here")
+                    }
+                }
+
+                after {
+                    log.add("after outer")
+                    assertEquals(listOf("top", "outer"), this)
+                }
+            }
         }
 
-        assertThrows<IOException>("in before") {
+        assertThrows<IllegalStateException>("in before") {
             executeTest(test)
         }
-        expectedLog = listOf("before 1", "after 1", "after 2")
+        expectedLog = listOf("top", "outer", "inner", "after outer")
     }
 
     @Test fun `afters abort if they throw`() {
@@ -231,5 +237,10 @@ class BeforeAndAfterTests {
 }
 
 private fun executeTest(tests: Stream<out DynamicNode>) {
-    (tests.asSequence().first() as DynamicTest).executable.execute()
+    tests.asSequence().forEach { dynamicNode ->
+        when (dynamicNode) {
+            is DynamicTest -> dynamicNode.executable.execute()
+            is DynamicContainer -> executeTest(dynamicNode.children)
+        }
+    }
 }
