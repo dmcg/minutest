@@ -12,5 +12,5 @@ internal class MinuTest<F>(
         f(fixture)
 
     override fun toRuntimeNode() =
-        RuntimeTest(this.name) { context.runTest(f) }
+        RuntimeTest(this.name) { context.runTest(this) }
 }
