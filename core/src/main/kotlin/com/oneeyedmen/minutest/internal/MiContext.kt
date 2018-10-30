@@ -32,7 +32,7 @@ internal class MiContext<PF, F>(
     }
 
     override fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
-
+    
     override fun <G> derivedContext(name: String, fixtureFn: (F.() -> G)?, builder: Context<F, G>.() -> Unit) {
         val subContext = MiContext(name, this, fixtureFn)
         subContext.also {
@@ -41,7 +41,7 @@ internal class MiContext<PF, F>(
         }
     }
 
-    override fun runTest(test: F.() -> F) {
+    override fun runTest(test: (F) -> F) {
         fun decoratedTest(parentFixture: PF): PF =
             parentFixture.also {
                 operations.applyBeforesTo(createFixtureFrom(parentFixture))
