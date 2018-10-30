@@ -12,9 +12,21 @@ import kotlin.streams.asStream
 
 /**
  * Define a [Context] and map it to be used as a JUnit [org.junit.jupiter.api.TestFactory].
+ *
+ * @see [Any.junitTests]
+ */
+inline fun <reified F> junitTestsNamed(name: String, noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
+    topLevelContext(name, F::class.isInstance(Unit), builder).toStreamOfDynamicNodes()
+
+
+/**
+ * Define a [Context] and map it to be used as a JUnit [org.junit.jupiter.api.TestFactory].
+ *
+ * Designed to be called inside a class and to use the name as the class as the name of the test.
  */
 inline fun <reified F> Any.junitTests(noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
-    topLevelContext(javaClass.canonicalName, F::class.isInstance(Unit), builder).toStreamOfDynamicNodes()
+    junitTestsNamed(javaClass.canonicalName, builder)
+
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
