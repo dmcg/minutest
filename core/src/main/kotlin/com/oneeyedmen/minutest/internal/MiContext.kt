@@ -33,14 +33,25 @@ internal class MiContext<PF, F>(
 
     override fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
     
-    override fun <G> derivedContext(name: String, fixtureFn: (F.() -> G)?, builder: Context<F, G>.() -> Unit) {
+    /**
+     * Define a sub-context, inheriting the fixture from this.
+     */
+    override fun context(name: String, builder: Context<F, F>.() -> Unit) {
+        createSubContext(name, { this }, builder)
+    }
+    
+    override fun <G> derivedContext(name: String, builder: Context<F, G>.() -> Unit) {
+        createSubContext(name, null, builder)
+    }
+    
+    private fun <G> createSubContext(name: String, fixtureFn: (F.() -> G)?, builder: Context<F, G>.() -> Unit) {
         val subContext = MiContext(name, this, fixtureFn)
         subContext.also {
             it.builder()
             children.add(it)
         }
     }
-
+    
     override fun runTest(test: (F) -> F) {
         fun decoratedTest(parentFixture: PF): PF =
             parentFixture.also {
@@ -53,7 +64,7 @@ internal class MiContext<PF, F>(
             }
         parent.runTest(::decoratedTest)
     }
-
+    
     private fun createFixtureFrom(parentFixture: PF): F {
         // have to explicitly check rather than elvis because invoking fixtureFn may return null
         val fixtureFactory = fixtureFn ?: {
@@ -61,12 +72,12 @@ internal class MiContext<PF, F>(
         }
         return fixtureFactory(parentFixture)
     }
-
+    
     override fun toRuntimeNode(): RuntimeContext = RuntimeContext(
         this.name,
         this.children.asSequence().map { it.toRuntimeNode() }
     )
-
+    
     // for debugging
     @Suppress("unused")
     fun path(): List<ParentContext<*>> =
