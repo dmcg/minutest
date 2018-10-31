@@ -74,6 +74,9 @@ interface Context<ParentF, F> {
      */
     fun <G> derivedContext(name: String, builder: Context<F, G>.() -> Unit)
     
+    /**
+     * Add a transform to be applied to the tests
+     */
     fun addTransform(transform: TestTransform<F>)
 }
 
