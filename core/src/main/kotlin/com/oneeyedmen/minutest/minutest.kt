@@ -1,11 +1,14 @@
 package com.oneeyedmen.minutest
 
+
+interface Named {
+    val name: String
+}
+
 /**
  * A test with a name that can be invoked on a fixture.
  */
-interface Test<F> : (F) -> F {
-    val name: String
-}
+interface Test<F> : Named, (F) -> F
 
 typealias TestTransform<F> = (Test<F>) -> Test<F>
 

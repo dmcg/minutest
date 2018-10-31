@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest.internal
 
-internal interface Node {
-    val name: String
+import com.oneeyedmen.minutest.Named
+
+internal interface Node : Named {
     fun toRuntimeNode(): RuntimeNode
 }
