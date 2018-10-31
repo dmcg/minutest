@@ -4,7 +4,8 @@ import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.Test
 
 internal object RootContext : ParentContext<Unit> {
-    override val name: String = ""
+    override val name = ""
+    override val parent = null
     override fun runTest(test: Test<Unit>) = test(Unit)
 }
 

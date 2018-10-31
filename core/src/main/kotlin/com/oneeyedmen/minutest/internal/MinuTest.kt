@@ -4,13 +4,10 @@ import com.oneeyedmen.minutest.Test
 
 internal class MinuTest<F>(
     override val name: String,
-    val context: ParentContext<F>,
-    val f: F.() -> F
-) : Test<F>, Node {
-    
-    override fun invoke(fixture: F): F =
-        f(fixture)
+    private val context: ParentContext<F>,
+    private val f: F.() -> F
 
-    override fun toRuntimeNode() =
-        RuntimeTest(this.name) { context.runTest(this) }
+) : Test<F>, Node, (F)->F by f {
+    override val parent = context
+    override fun toRuntimeNode() = RuntimeTest(this.name) { context.runTest(this) }
 }

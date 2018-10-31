@@ -1,10 +1,10 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Named
-
 // A runtime representation of the test tree
 
-sealed class RuntimeNode: Named
+sealed class RuntimeNode {
+    abstract val name: String
+}
 
 class RuntimeTest(override val name: String, val block: () -> Unit) : RuntimeNode()
 
