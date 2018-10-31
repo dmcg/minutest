@@ -7,6 +7,8 @@ interface Test<F> : (F) -> F {
     val name: String
 }
 
+typealias TestTransform<F> = (Test<F>) -> Test<F>
+
 @Suppress("FunctionName")
 @MinutestMarker
 interface Context<ParentF, F> {
@@ -58,6 +60,8 @@ interface Context<ParentF, F> {
      * You will have to call [fixture]' in the sub-context to convert from the parent to the child fixture type.
      */
     fun <G> derivedContext(name: String, builder: Context<F, G>.() -> Unit)
+    
+    fun addTransform(transform: TestTransform<F>)
 }
 
 typealias TestContext<F> = Context<*, F>
