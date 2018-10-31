@@ -25,4 +25,12 @@ internal data class OpResult<F>(val t: Throwable?, val lastValue: F) {
             throw t
         }
     }
+    
+    fun orThrow(): F {
+        maybeThrow()
+        return lastValue
+    }
+    
+    inline fun onLastValue(f: (F)->Unit) =
+        apply { f(lastValue) }
 }
