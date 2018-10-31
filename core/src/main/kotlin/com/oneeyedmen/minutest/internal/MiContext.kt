@@ -59,19 +59,28 @@ internal class MiContext<PF, F>(
     }
     
     override fun runTest(test: Test<F>) {
-        val decoratedTest = object : Test<PF> {
+        val testWithPreparedFixture = object : Test<F> {
             override val name: String = test.name
-            override fun invoke(parentFixture: PF) =
-                parentFixture.also {
-                    operations.applyBeforesTo(createFixtureFrom(parentFixture))
-                        .tryMap(operations.applyTransformsTo(test))
-                        .also { result ->
-                            operations.applyAftersTo(result.lastValue)
-                            result.maybeThrow()
-                        }
-                }
+            
+            override fun invoke(initialFixture: F) =
+                operations.applyBeforesTo(initialFixture)
+                    .tryMap(test)
+                    .onLastValue(operations::applyAftersTo)
+                    .orThrow()
         }
-        parent.runTest(decoratedTest)
+        
+        val testInParent = object : Test<PF> {
+            override val name: String = test.name
+            
+            override fun invoke(parentFixture: PF): PF {
+                val transformedTest = operations.applyTransformsTo(testWithPreparedFixture)
+                val initialFixture = createFixtureFrom(parentFixture)
+                transformedTest(initialFixture)
+                return parentFixture
+            }
+        }
+        
+        parent.runTest(testInParent)
     }
     
     private fun createFixtureFrom(parentFixture: PF): F {
