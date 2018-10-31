@@ -2,6 +2,7 @@ package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.Test
+import com.oneeyedmen.minutest.TestTransform
 
 internal class MiContext<PF, F>(
     override val name: String,
@@ -53,13 +54,17 @@ internal class MiContext<PF, F>(
         }
     }
     
+    override fun addTransform(transform: TestTransform<F>) {
+        operations.transforms += transform
+    }
+    
     override fun runTest(test: Test<F>) {
         val decoratedTest = object : Test<PF> {
             override val name: String = test.name
             override fun invoke(parentFixture: PF) =
                 parentFixture.also {
                     operations.applyBeforesTo(createFixtureFrom(parentFixture))
-                        .tryMap(test)
+                        .tryMap(operations.applyTransformsTo(test))
                         .also { result ->
                             operations.applyAftersTo(result.lastValue)
                             result.maybeThrow()
