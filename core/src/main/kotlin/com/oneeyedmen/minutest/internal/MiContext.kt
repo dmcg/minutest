@@ -1,14 +1,15 @@
 package com.oneeyedmen.minutest.internal
 
+import com.oneeyedmen.minutest.Named
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestTransform
 
 internal class MiContext<PF, F>(
     override val name: String,
-    private val parent: ParentContext<PF>,
+    override val parent: ParentContext<PF>,
     private var fixtureFn: (PF.() -> F)? = null
-) : Context<PF, F>, ParentContext<F>, Node {
+) : Context<PF, F>, ParentContext<F>, Node, Named {
     
     private var fixtureCalled = false
     private val children = mutableListOf<Node>()
@@ -59,9 +60,7 @@ internal class MiContext<PF, F>(
     }
     
     override fun runTest(test: Test<F>) {
-        val testWithPreparedFixture = object : Test<F> {
-            override val name: String = test.name
-            
+        val testWithPreparedFixture = object : Test<F>, Named by test {
             override fun invoke(initialFixture: F) =
                 operations.applyBeforesTo(initialFixture)
                     .tryMap(test)
@@ -69,9 +68,7 @@ internal class MiContext<PF, F>(
                     .orThrow()
         }
         
-        val testInParent = object : Test<PF> {
-            override val name: String = test.name
-            
+        val testInParent = object : Test<PF>, Named by test {
             override fun invoke(parentFixture: PF): PF {
                 val transformedTest = operations.applyTransformsTo(testWithPreparedFixture)
                 val initialFixture = createFixtureFrom(parentFixture)

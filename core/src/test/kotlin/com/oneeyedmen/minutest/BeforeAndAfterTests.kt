@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.FileNotFoundException
 import java.io.IOException
-import java.util.stream.Stream
-import kotlin.streams.asSequence
 
 
 class BeforeAndAfterTests {
@@ -236,11 +234,3 @@ class BeforeAndAfterTests {
     }
 }
 
-private fun executeTest(tests: Stream<out DynamicNode>) {
-    tests.asSequence().forEach { dynamicNode ->
-        when (dynamicNode) {
-            is DynamicTest -> dynamicNode.executable.execute()
-            is DynamicContainer -> executeTest(dynamicNode.children)
-        }
-    }
-}
