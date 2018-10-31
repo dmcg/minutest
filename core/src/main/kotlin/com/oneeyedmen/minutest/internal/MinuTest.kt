@@ -7,7 +7,7 @@ internal class MinuTest<F>(
     val context: ParentContext<F>,
     val f: F.() -> F
 ) : Test<F>, Node {
-
+    
     override fun invoke(fixture: F): F =
         f(fixture)
 
