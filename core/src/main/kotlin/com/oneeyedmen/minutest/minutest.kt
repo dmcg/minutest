@@ -22,6 +22,8 @@ interface Test<F> : Named, (F) -> F
 
 typealias TestTransform<F> = (Test<F>) -> Test<F>
 
+typealias TestContext<F> = Context<*, F>
+
 @MinutestMarker
 interface Context<ParentF, F> {
     
@@ -79,6 +81,4 @@ interface Context<ParentF, F> {
      */
     fun addTransform(transform: TestTransform<F>)
 }
-
-typealias TestContext<F> = Context<*, F>
 
