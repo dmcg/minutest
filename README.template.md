@@ -107,4 +107,7 @@ Are you a functional programmer slumming it with Kotlin? Minutest allows immutab
 
 ## JUnit Rules
 
-Power JUnit 4 user? Minutest supports JUnit 4 TestRules is returning soon.
+Power JUnit 4 user? Minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
+
+```insert-kotlin core/src/test/kotlin/com/oneeyedmen/Minutest/examples/JUnitRulesExampleTests.kt
+```
