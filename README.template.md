@@ -43,7 +43,7 @@ My apologies to the Mavenites. If you are one then please try to work out what t
 
 ## Usage
 
-To just test simple functions, define your tests in a subclass of JUnitTests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
+To just test simple functions, define your tests in a subclass of JupiterTests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
 
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/FirstMinutests.kt
 ```
