@@ -43,7 +43,7 @@ My apologies to the Mavenites. If you are one then please try to work out what t
 
 ## Usage
 
-To just test simple functions, define your tests in a subclass of JUnitTests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
+To just test simple functions, define your tests in a subclass of JupiterTests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
 
 ```kotlin
 // Minutests are usually defined in a object.
@@ -391,4 +391,27 @@ object ImmutableExampleTests : JupiterTests {
 
 ## JUnit Rules
 
-Power JUnit 4 user? Minutest supports JUnit 4 TestRules is returning soon.
+Power JUnit 4 user? Minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
+
+```kotlin
+object JunitRulesExampleTests : JupiterTests {
+
+    class Fixture {
+        // make rules part of the fixture, no need for an annotation
+        val testFolder = TemporaryFolder()
+    }
+
+    override val tests = context<Fixture> {
+
+        fixture { Fixture() }
+
+        // tell the context to use the rule for each test in it and its children
+        applyRule { this.testFolder }
+
+        // and it will apply in this and sub-contexts
+        test("test folder is present") {
+            assertTrue(testFolder.newFile().isFile)
+        }
+    }
+}
+```
