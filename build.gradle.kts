@@ -6,7 +6,7 @@ plugins {
 
 allprojects {
     group = "com.oneeyedmen"
-    version = "0.21.0-SNAPSHOT"
+    version = "0.21.0"
 
     repositories {
         mavenCentral()
