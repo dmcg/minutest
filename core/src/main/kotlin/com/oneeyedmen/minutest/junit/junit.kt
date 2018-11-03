@@ -33,8 +33,8 @@ inline fun <reified F> Any.junitTests(noinline builder: Context<Unit, F>.() -> U
 // Note that we take the children of the root context to remove an unnecessary layer. Hence the rootContextName
 // is not shown in the test runner. But see ruling.kt - ruleApplyingTest
 fun <F> Context<Unit, F>.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
-    (this as MiContext<Unit, F>)
-        .toMiContext2(RootContext)
+    (this as ContextBuilder<Unit, F>)
+        .toNode(RootContext)
         .toRuntimeNode()
         .toDynamicContainer()
         .children

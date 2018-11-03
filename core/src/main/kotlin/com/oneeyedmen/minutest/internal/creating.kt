@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.Test
 
 internal object RootContext : ParentContext<Unit> {
     override val name = ""
-    override val parent = null
+    override val parent: Nothing? = null
     override fun runTest(test: Test<Unit>) = test(Unit)
 }
 
@@ -14,7 +14,7 @@ fun <F> topLevelContext(
     isUnit: Boolean,
     builder: Context<Unit, F>.() -> Unit
 ): Context<Unit, F> =
-    MiContext(name, RootContext, fixtureFunFor<F>(isUnit)).apply(builder)
+    ContextBuilder(name, fixtureFunFor<F>(isUnit)).apply(builder)
 
 
 @Suppress("UNCHECKED_CAST")

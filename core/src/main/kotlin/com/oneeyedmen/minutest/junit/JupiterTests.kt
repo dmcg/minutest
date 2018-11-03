@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.internal.MiContext
+import com.oneeyedmen.minutest.internal.ContextBuilder
 import com.oneeyedmen.minutest.internal.topLevelContext
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.TestFactory
@@ -15,7 +15,7 @@ interface JupiterTests {
      * Provided so that JUnit will run the tests
      */
     @TestFactory
-    fun tests(): Stream<out DynamicNode> = (tests as MiContext<Unit, *>).toStreamOfDynamicNodes()
+    fun tests(): Stream<out DynamicNode> = (tests as ContextBuilder<Unit, *>).toStreamOfDynamicNodes()
 }
 
 /**
