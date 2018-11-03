@@ -5,10 +5,8 @@ import com.oneeyedmen.minutest.internal.*
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
-import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import java.util.stream.Stream
-import kotlin.streams.asStream
 
 /**
  * Define a [Context] and map it to be used as a JUnit [org.junit.jupiter.api.TestFactory].
@@ -35,18 +33,13 @@ inline fun <reified F> Any.junitTests(noinline builder: Context<Unit, F>.() -> U
 fun <F> Context<Unit, F>.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
     (this as ContextBuilder<Unit, F>)
         .toNode(RootContext)
-        .toRuntimeNode()
         .toDynamicContainer()
         .children
 
-private fun RuntimeNode.toDynamicNode(): DynamicNode = when (this) {
-    is RuntimeTest -> this.toDynamicTest()
-    is RuntimeContext -> this.toDynamicContainer()
+private fun TestNode.toDynamicNode(): DynamicNode = when (this) {
+    is MinuTest<*> -> dynamicTest(name) { this.run() }
+    is MiContext<*, *> -> this.toDynamicContainer()
 }
 
-private fun RuntimeTest.toDynamicTest(): DynamicTest = dynamicTest(name) { this.block() }
-
-private fun RuntimeContext.toDynamicContainer(): DynamicContainer = dynamicContainer(
-    name,
-    children.map { it.toDynamicNode() }.asStream()
-)
+private fun MiContext<*, *>.toDynamicContainer(): DynamicContainer =
+    dynamicContainer(name, children.map(TestNode::toDynamicNode))

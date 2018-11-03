@@ -4,7 +4,7 @@ import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.TestTransform
 
 internal sealed class NodeBuilder<F> {
-    abstract fun toNode(parent: ParentContext<F>): Node
+    abstract fun toNode(parent: ParentContext<F>): TestNode
 }
 
 internal class ContextBuilder<PF, F>(
@@ -61,7 +61,7 @@ internal class ContextBuilder<PF, F>(
 
     override fun toNode(parent: ParentContext<PF>): MiContext<PF, F> {
         val fixtureFactory = fixtureFn ?: error("Fixture has not been set in context \"$name\"")
-        return MiContext(name, parent, fixtureFactory, emptyList(), operations).let { context ->
+        return MiContext(name, parent, emptyList(), fixtureFactory, operations).let { context ->
             // nastiness to set up parent child in immutable nodes
             context.copy(children = this.children.map { child -> child.toNode(context) })
         }
