@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Named
 import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.Named
 import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestTransform
 
@@ -57,6 +57,24 @@ internal class MiContext<PF, F>(
     
     override fun addTransform(transform: TestTransform<F>) {
         operations.transforms += transform
+    }
+
+    fun toMiContext2(parent: ParentContext<PF>): MiContext2<PF, F> {
+        return MiContext2(
+            name,
+            parent,
+            fixtureFn ?: error("Fixture has not been set in context \"$name\""),
+            emptyList(),
+            operations
+        ).apply {
+            this.children = this@MiContext.children.map { child ->
+                when (child) {
+                    is MiContext<*, *> -> (child as MiContext<F, *>).toMiContext2(this) as Node
+                    is MinuTest<*> -> MinuTest(child.name, this, child as MinuTest<F>)
+                    else -> error("Unexpected child $child")
+                }
+            }
+        }
     }
     
     override fun runTest(test: Test<F>) {
