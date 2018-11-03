@@ -1,26 +1,6 @@
 package com.oneeyedmen.minutest
 
-/**
- * Something that is given a name, possibly within some named context.
- */
-interface Named {
-    val name: String
-    val parent: Named?
-}
-
-fun Named.fullName() =
-    generateSequence(this, Named::parent)
-        .map(Named::name)
-        .filterNot(String::isEmpty)
-        .toList()
-        .reversed()
-
-/**
- * A test that can be invoked on a fixture.  A test has a name and is defined within a nested tree of named things.
- */
-interface Test<F> : Named, (F) -> F
-
-typealias TestTransform<F> = (Test<F>) -> Test<F>
+import com.oneeyedmen.minutest.internal.MinutestMarker
 
 typealias TestContext<F> = Context<*, F>
 

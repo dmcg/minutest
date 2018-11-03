@@ -32,7 +32,7 @@ inline fun <reified F> Any.junitTests(noinline builder: Context<Unit, F>.() -> U
 // is not shown in the test runner. But see ruling.kt - ruleApplyingTest
 fun <F> Context<Unit, F>.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
     (this as ContextBuilder<Unit, F>)
-        .toNode(RootContext)
+        .toTestNode(RootContext)
         .toDynamicContainer()
         .children
 

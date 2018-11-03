@@ -1,4 +1,4 @@
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.internal
 
 
 @DslMarker
