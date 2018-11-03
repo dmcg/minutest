@@ -39,6 +39,16 @@ object JupiterTestsWithNullableFixture : JupiterTests {
     }
 }
 
+object JupiterTestsWithSuppliedFixture : JupiterTests {
+
+    override val tests = context("banana") {
+
+        test("test") {
+            assertEquals("banana", this)
+        }
+    }
+}
+
 object InlineJupiterTestsTests : InlineJupiterTests<String>({
     fixture { "banana" }
 

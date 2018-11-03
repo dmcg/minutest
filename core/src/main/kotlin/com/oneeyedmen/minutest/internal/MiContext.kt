@@ -9,7 +9,7 @@ internal data class MiContext<PF, F>(
     override val name: String,
     override val parent: ParentContext<PF>,
     val children: List<TestNode>,
-    private val fixtureFn: PF.() -> F,
+    private val fixtureFactory: PF.() -> F,
     private val operations: Operations<F>
 ) : ParentContext<F>, TestNode() {
 
@@ -25,7 +25,7 @@ internal data class MiContext<PF, F>(
         val testInParent = object : Test<PF>, Named by test {
             override fun invoke(parentFixture: PF): PF {
                 val transformedTest = operations.applyTransformsTo(testWithPreparedFixture)
-                val initialFixture = fixtureFn(parentFixture)
+                val initialFixture = fixtureFactory(parentFixture)
                 transformedTest(initialFixture)
                 return parentFixture
             }

@@ -13,8 +13,21 @@ fun <F> topLevelContext(
     name: String,
     isUnit: Boolean,
     builder: Context<Unit, F>.() -> Unit
+): Context<Unit, F> = ContextBuilder<Unit, F>(name, fixtureFunFor(isUnit), false).apply(builder)
+
+fun <F> topLevelContext(
+    name: String,
+    fixture: F,
+    builder: Context<Unit, F>.() -> Unit
 ): Context<Unit, F> =
-    ContextBuilder(name, fixtureFunFor<F>(isUnit)).apply(builder)
+    topLevelContext<F>(name, { fixture }, builder)
+
+fun <F> topLevelContext(
+    name: String,
+    fixtureBuilder: (Unit.() -> F)?,
+    builder: Context<Unit, F>.() -> Unit
+): Context<Unit, F> =
+    ContextBuilder(name, fixtureBuilder, true).apply(builder)
 
 
 @Suppress("UNCHECKED_CAST")

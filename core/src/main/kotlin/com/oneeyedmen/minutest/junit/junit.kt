@@ -16,6 +16,9 @@ import java.util.stream.Stream
 inline fun <reified F> junitTestsNamed(name: String, noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
     topLevelContext(name, F::class.isInstance(Unit), builder).toStreamOfDynamicNodes()
 
+inline fun <reified F> junitTestsNamed(name: String, fixture: F, noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
+    topLevelContext(name, fixture, builder).toStreamOfDynamicNodes()
+
 
 /**
  * Define a [Context] and map it to be used as a JUnit [org.junit.jupiter.api.TestFactory].
@@ -24,6 +27,10 @@ inline fun <reified F> junitTestsNamed(name: String, noinline builder: Context<U
  */
 inline fun <reified F> Any.junitTests(noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
     junitTestsNamed(javaClass.canonicalName, builder)
+
+inline fun <reified F> Any.junitTests(fixture: F, noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
+    junitTestsNamed(javaClass.canonicalName, fixture, builder)
+
 
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package

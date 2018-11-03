@@ -15,20 +15,30 @@ object DerivedContextExampleTests : JupiterTests {
 
         fixture { Fixture("banana") }
 
-        test("takes Fixture1") {
+        test("takes Fixture") {
             assertEquals("banana", fruit)
         }
 
-        derivedContext<DerivedFixture>("inner") {
-
+        derivedContext<DerivedFixture>("inner converting fixture later") {
             fixture {
                 // here `this` is Fixture
                 DerivedFixture(this, "smoothie")
             }
 
-            test("takes Fixture 2") {
-                assertEquals("banana", fixture.fruit)
-                assertEquals("smoothie", thing)
+            test("takes DerivedFixture") {
+                assertEquals(DerivedFixture(Fixture("banana"), "smoothie"), this)
+            }
+        }
+
+        derivedContext<DerivedFixture>("inner supplying converter", { DerivedFixture(this, "smoothie") }) {
+            test("takes DerivedFixture") {
+                assertEquals(DerivedFixture(Fixture("banana"), "smoothie"), this)
+            }
+        }
+
+        derivedContext("inner supplying fixture", DerivedFixture(Fixture("apple"), "pie")) {
+            test("takes DerivedFixture") {
+                assertEquals(DerivedFixture(Fixture("apple"), "pie"), this)
             }
         }
     }

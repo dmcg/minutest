@@ -24,3 +24,8 @@ interface JupiterTests {
 inline fun <reified F> JupiterTests.context(noinline builder: Context<Unit, F>.() -> Unit): Context<Unit, F> =
     topLevelContext(javaClass.canonicalName, F::class.isInstance(Unit), builder = builder)
 
+inline fun <reified F> JupiterTests.context(
+    fixture: F,
+    noinline builder: Context<Unit, F>.() -> Unit
+): Context<Unit, F> = topLevelContext(javaClass.canonicalName, fixture, builder = builder)
+

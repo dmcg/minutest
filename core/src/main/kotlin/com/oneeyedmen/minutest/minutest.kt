@@ -55,7 +55,17 @@ interface Context<ParentF, F> {
      * You will have to call [fixture]' in the sub-context to convert from the parent to the child fixture type.
      */
     fun <G> derivedContext(name: String, builder: Context<F, G>.() -> Unit)
-    
+
+    /**
+     * Define a sub-context with a different fixture type, supplying the new fixture value
+     */
+    fun <G> derivedContext(name: String, fixture: G, builder: Context<F, G>.() -> Unit)
+
+    /**
+     * Define a sub-context with a different fixture type, supplying a fixture converter.
+     */
+    fun <G> derivedContext(name: String, fixtureFactory: F.() -> G, builder: Context<F, G>.() -> Unit)
+
     /**
      * Add a transform to be applied to the tests
      */
