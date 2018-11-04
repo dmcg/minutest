@@ -3,15 +3,15 @@ package com.oneeyedmen.minutest.internal
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.TestTransform
 
-internal sealed class NodeBuilder<F> {
-    abstract fun toTestNode(parent: ParentContext<F>): TestNode
+internal interface NodeBuilder<F> {
+    fun toTestNode(parent: ParentContext<F>): TestNode
 }
 
 internal class ContextBuilder<PF, F>(
     private val name: String,
     private var fixtureFactory: (PF.() -> F)?,
     private var explicitFixtureFactory: Boolean
-) : Context<PF, F>, NodeBuilder<PF>() {
+) : Context<PF, F>(), NodeBuilder<PF> {
 
     private val children = mutableListOf<NodeBuilder<F>>()
     private val operations = Operations<F>()
@@ -34,8 +34,6 @@ internal class ContextBuilder<PF, F>(
     override fun test_(name: String, f: F.() -> F) {
         children.add(TestBuilder(name, f))
     }
-
-    override fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
 
     override fun context(name: String, builder: Context<F, F>.() -> Unit) {
         createSubContext(name, { this }, false, builder)
@@ -75,6 +73,6 @@ internal class ContextBuilder<PF, F>(
     }
 }
 
-internal data class TestBuilder<F>(val name: String, val f: F.() -> F) : NodeBuilder<F>() {
+internal data class TestBuilder<F>(val name: String, val f: F.() -> F) : NodeBuilder<F> {
     override fun toTestNode(parent: ParentContext<F>) = MinuTest(name, parent, f)
 }
