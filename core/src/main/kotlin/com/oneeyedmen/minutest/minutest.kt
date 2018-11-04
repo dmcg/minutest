@@ -1,6 +1,8 @@
 package com.oneeyedmen.minutest
 
 import com.oneeyedmen.minutest.internal.MinutestMarker
+import com.oneeyedmen.minutest.internal.asKType
+import kotlin.reflect.KType
 
 typealias TestContext<F> = Context<*, F>
 
@@ -54,21 +56,35 @@ abstract class Context<ParentF, F> {
      *
      * You will have to call [fixture]' in the sub-context to convert from the parent to the child fixture type.
      */
-    abstract fun <G> derivedContext(name: String, builder: Context<F, G>.() -> Unit)
+    inline fun <reified G> derivedContext(name: String, noinline builder: Context<F, G>.() -> Unit) {
+        createSubContext(name, asKType<G>(), null, false, builder)
+    }
 
     /**
      * Define a sub-context with a different fixture type, supplying the new fixture value
      */
-    abstract fun <G> derivedContext(name: String, fixture: G, builder: Context<F, G>.() -> Unit)
+    inline fun <reified G> derivedContext(name: String, fixture: G, noinline builder: Context<F, G>.() -> Unit) {
+        createSubContext(name, asKType<G>(), { fixture }, true, builder)
+    }
 
     /**
      * Define a sub-context with a different fixture type, supplying a fixture converter.
      */
-    abstract fun <G> derivedContext(name: String, fixtureFactory: F.() -> G, builder: Context<F, G>.() -> Unit)
+    inline fun <reified G> derivedContext(name: String, noinline fixtureFactory: F.() -> G, noinline builder: Context<F, G>.() -> Unit) {
+        createSubContext(name, asKType<G>(), fixtureFactory, true, builder)
+    }
 
     /**
      * Add a transform to be applied to the tests
      */
     abstract fun addTransform(transform: TestTransform<F>)
+
+    abstract fun <G> createSubContext(
+        name: String,
+        type: KType,
+        fixtureFactory: (F.() -> G)?,
+        explicitFixtureFactory: Boolean,
+        builder: Context<F, G>.() -> Unit
+    )
 }
 

@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.internal.asKType
 import com.oneeyedmen.minutest.internal.topLevelContext
 
 /**
@@ -13,6 +14,6 @@ abstract class InlineJupiterTests<F>(
     @Suppress("LeakingThis")
     override val tests = topLevelContext(
         javaClass.canonicalName,
-        myGenericClass().isInstance(Unit),
+        myGenericClass().asKType(false),
         builder)
 }

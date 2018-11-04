@@ -14,10 +14,10 @@ import java.util.stream.Stream
  * @see [Any.junitTests]
  */
 inline fun <reified F> junitTestsNamed(name: String, noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
-    topLevelContext(name, F::class.isInstance(Unit), builder).toStreamOfDynamicNodes()
+    topLevelContext(name, asKType<F>(), builder).toStreamOfDynamicNodes()
 
 inline fun <reified F> junitTestsNamed(name: String, fixture: F, noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
-    topLevelContext(name, fixture, builder).toStreamOfDynamicNodes()
+    topLevelContext(name, asKType<F>(), fixture, builder).toStreamOfDynamicNodes()
 
 
 /**
