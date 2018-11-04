@@ -22,4 +22,15 @@ object FixtureSupplyingTests {
             }
         }
     }
+
+    @TestFactory fun `copes with no fixture if context has no operations`() = junitTests<Pair<Int, String>> {
+        context("supplies the fixture") {
+            fixture {
+                42 to "the answer"
+            }
+            test("test") {
+                assertEquals(42, this.first)
+            }
+        }
+    }
 }

@@ -18,7 +18,7 @@ internal class ContextBuilder<PF, F>(
     private val children = mutableListOf<NodeBuilder<F>>()
     private val operations = Operations<F>()
 
-    override fun fixture(factory: PF.() -> F) {
+    override fun replaceFixture(factory: PF.() -> F) {
         if (explicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
         fixtureFactory = factory
@@ -56,12 +56,24 @@ internal class ContextBuilder<PF, F>(
     }
 
     override fun toTestNode(parent: ParentContext<PF>): MiContext<PF, F> {
-        val fixtureFactory = fixtureFactory ?: error("Fixture has not been set in context \"$name\"")
+        val fixtureFactory = fixtureFactoryOrError(fixtureFactory)
         return MiContext(name, parent, emptyList(), fixtureFactory, operations).let { context ->
             // nastiness to set up parent child in immutable nodes
             context.copy(children = this.children.map { child -> child.toTestNode(context) })
         }
     }
+
+    @Suppress("UNCHECKED_CAST", "unused")
+    private fun fixtureFactoryOrError(fieldValue: (PF.() -> F)?): PF.() -> F = when {
+        fieldValue != null -> fieldValue
+        contextHasNoOperations() -> fun PF.(): F = Unit as F
+            // this is safe provided there are only fixture not replaceFixture calls in sub-contexts,
+            // as we cannot provide a fixture here to act as receiver. TODO - check somehow
+        else -> error("Fixture has not been set in context \"$name\"")
+    }
+
+    private fun contextHasNoOperations() = operations.befores.isEmpty() && operations.afters.isEmpty() &&
+        children.filterIsInstance<TestBuilder<F>>().isEmpty()
 }
 
 internal data class TestBuilder<F>(val name: String, val f: F.() -> F) : NodeBuilder<F> {

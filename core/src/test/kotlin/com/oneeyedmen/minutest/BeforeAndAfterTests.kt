@@ -148,7 +148,7 @@ class BeforeAndAfterTests {
 
             context("outer") {
 
-                fixture {
+                replaceFixture {
                     log.add("outer")
                     this.plus("outer")
                 }
