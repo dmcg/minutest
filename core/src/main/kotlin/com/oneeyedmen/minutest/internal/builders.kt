@@ -66,10 +66,9 @@ internal class ContextBuilder<PF, F>(
 
     @Suppress("UNCHECKED_CAST", "unused")
     private fun KType.constructorAsFeatureFactory(): (PF.() -> F) {
-        val kClass = (this.classifier as? KClass<*>) ?: raiseNoFixtureError("the type was not a one I recognise")
-        val constructor = kClass.constructors.firstOrNull()
+        val constructors = (this.classifier as? KClass<*>)?.constructors ?: raiseNoFixtureError("type was not a subclass of Any")
+        val constructor = constructors.firstOrNull()
         return when {
-            kClass.objectInstance != null -> fun (PF).() : F { return kClass.objectInstance as F }
             constructor == null -> raiseNoFixtureError("there were no constructors of the fixture type")
             constructor.parameters.isNotEmpty() ->  raiseNoFixtureError("there was no default constructor of the fixture type")
             else -> fun (PF).() : F { return constructor.call() as F }
