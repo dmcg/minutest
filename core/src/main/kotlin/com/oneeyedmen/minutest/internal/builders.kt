@@ -2,7 +2,6 @@ package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.TestTransform
-import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 internal interface NodeBuilder<F> {
@@ -57,29 +56,13 @@ internal class ContextBuilder<PF, F>(
     }
 
     override fun toTestNode(parent: ParentContext<PF>): MiContext<PF, F> {
-        val fixtureFactory = fixtureFactory ?: type.constructorAsFeatureFactory()
+        val fixtureFactory = fixtureFactory ?: error("Fixture has not been set in context \"$name\"")
         return MiContext(name, parent, emptyList(), fixtureFactory, operations).let { context ->
             // nastiness to set up parent child in immutable nodes
             context.copy(children = this.children.map { child -> child.toTestNode(context) })
         }
     }
-
-    @Suppress("UNCHECKED_CAST", "unused")
-    private fun KType.constructorAsFeatureFactory(): (PF.() -> F) {
-        val constructors = (this.classifier as? KClass<*>)?.constructors ?: raiseNoFixtureError("type was not a subclass of Any")
-        val constructor = constructors.firstOrNull()
-        return when {
-            constructor == null -> raiseNoFixtureError("there were no constructors of the fixture type")
-            constructor.parameters.isNotEmpty() ->  raiseNoFixtureError("there was no default constructor of the fixture type")
-            else -> fun (PF).() : F { return constructor.call() as F }
-        }
-    }
-
-    private fun raiseNoFixtureError(reason: String): Nothing {
-        error("Fixture has not been set in context \"$name\" and $reason")
-    }
 }
-
 
 internal data class TestBuilder<F>(val name: String, val f: F.() -> F) : NodeBuilder<F> {
     override fun toTestNode(parent: ParentContext<F>) = MinuTest(name, parent, f)
