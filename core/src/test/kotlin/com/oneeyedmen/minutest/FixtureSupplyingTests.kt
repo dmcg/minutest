@@ -22,4 +22,21 @@ object FixtureSupplyingTests {
             }
         }
     }
+
+    @TestFactory fun `call no arg ctor when no fixture supplied`() = junitTests<String> {
+        context("will get default fixture") {
+            test("test") {
+                assertEquals("", this)
+            }
+        }
+        context("overrides default fixture") {
+            fixture {
+                assertEquals("", this)
+                "banana"
+            }
+            test("test") {
+                assertEquals("banana", this)
+            }
+        }
+    }
 }
