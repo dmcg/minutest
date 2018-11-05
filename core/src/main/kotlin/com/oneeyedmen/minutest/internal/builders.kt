@@ -11,17 +11,17 @@ internal interface NodeBuilder<F> {
 internal class ContextBuilder<PF, F>(
     private val name: String,
     private val type: KType,
-    private var fixtureFactory: (PF.() -> F)?,
+    private var fixtureFactory: ((PF) -> F)?,
     private var explicitFixtureFactory: Boolean
 ) : Context<PF, F>(), NodeBuilder<PF> {
 
     private val children = mutableListOf<NodeBuilder<F>>()
     private val operations = Operations<F>()
 
-    override fun replaceFixture(factory: PF.() -> F) {
+    override fun mapFixture(f: (PF) -> F) {
         if (explicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
-        fixtureFactory = factory
+        fixtureFactory = f
         explicitFixtureFactory = true
     }
 
@@ -64,9 +64,9 @@ internal class ContextBuilder<PF, F>(
     }
 
     @Suppress("UNCHECKED_CAST", "unused")
-    private fun fixtureFactoryOrError(fieldValue: (PF.() -> F)?): PF.() -> F = when {
+    private fun fixtureFactoryOrError(fieldValue: ((PF) -> F)?): (PF) -> F = when {
         fieldValue != null -> fieldValue
-        contextHasNoOperations() -> fun PF.(): F = Unit as F
+        contextHasNoOperations() -> { _ -> Unit as F }
             // this is safe provided there are only fixture not replaceFixture calls in sub-contexts,
             // as we cannot provide a fixture here to act as receiver. TODO - check somehow
         else -> error("Fixture has not been set in context \"$name\"")

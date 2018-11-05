@@ -14,9 +14,18 @@ abstract class Context<ParentF, F> {
      *
      * Has access to the parent context's fixture as 'this'
      */
-    abstract fun replaceFixture(factory: ParentF.() -> F)
+    @Suppress("FunctionName")
+    fun fixture_(factory: ParentF.() -> F) = mapFixture(factory)
 
-    fun fixture(factory: () -> F) = replaceFixture { factory() }
+    /**
+     * Define the fixture that will be used in this context's tests and sub-contexts by transforming the parent fixture.
+     */
+    abstract fun mapFixture(f: (ParentF) -> F)
+
+    /**
+     * Define the fixture that will be used in this context's tests and sub-contexts.
+     */
+    fun fixture(factory: () -> F) = fixture_ { factory() }
 
     /**
      * Apply an operation to the current fixture (accessible as 'this') before running tests or sub-contexts.

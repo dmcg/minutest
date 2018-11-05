@@ -46,7 +46,7 @@ object FixtureTests {
         }
 
         context("sub-context replacing fixture") {
-            replaceFixture { Fixture("green $fruit") }
+            fixture_ { Fixture("green $fruit") }
 
             test("sees the replaced fixture") {
                 assertEquals("green banana", fruit)
