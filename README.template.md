@@ -8,7 +8,7 @@ Minutest brings Spec-style testing to JUnit 5 and Kotlin.
 
 I don't think that Minutest is ready for Android or KotlinJS or KotlinNative projects yet. Sorry. If you prove me wrong please let me know.
 
-You can find the latest binaries and source in a Maven-compatible format on [JCenter](https://bintray.com/dmcg/oneeyedmen-mvn/minutest). So you need to reference that JCenter as a repository.
+You can find the latest binaries and source in a Maven-compatible format on [JCenter](https://bintray.com/dmcg/oneeyedmen-mvn/minutest). So you need to reference JCenter as a repository.
 
 ```groovy
 repositories {
