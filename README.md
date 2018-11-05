@@ -415,3 +415,9 @@ object JunitRulesExampleTests : JupiterTests {
     }
 }
 ```
+
+## Support
+
+Minutest is still feeling its way towards a humane API. Until we reach version 1 this is subject to change - we'll try not to break things but it's better to move fast. Please do let us know what is working and what isn't, either physically or conceptually.
+
+The best bet for feedback and help is the [#minutest channel on the Kotlin Slack](https://kotlinlang.slack.com/messages/CCYE00YM6). See you there.
