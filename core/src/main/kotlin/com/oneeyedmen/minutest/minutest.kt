@@ -6,6 +6,8 @@ import kotlin.reflect.KType
 
 typealias TestContext<F> = Context<*, F>
 
+typealias TestDescriptor = Named
+
 @MinutestMarker
 abstract class Context<ParentF, F> {
     
@@ -16,12 +18,14 @@ abstract class Context<ParentF, F> {
      */
     @Suppress("FunctionName")
     fun fixture_(factory: ParentF.() -> F) = mapFixture(factory)
-
+    
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts by transforming the parent fixture.
      */
-    abstract fun mapFixture(f: (ParentF) -> F)
-
+    fun mapFixture(f: (ParentF) -> F) = deriveFixture { f(this) }
+    
+    abstract fun deriveFixture(f: ParentF.(TestDescriptor)->F)
+    
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
      */
@@ -81,7 +85,7 @@ abstract class Context<ParentF, F> {
     /**
      * Define a sub-context with a different fixture type, supplying a fixture converter.
      */
-    inline fun <reified G> derivedContext(name: String, noinline fixtureFactory: F.() -> G, noinline builder: Context<F, G>.() -> Unit) {
+    inline fun <reified G> derivedContext(name: String, noinline fixtureFactory: F.(TestDescriptor) -> G, noinline builder: Context<F, G>.() -> Unit) {
         createSubContext(name, asKType<G>(), fixtureFactory, true, builder)
     }
 
@@ -93,7 +97,7 @@ abstract class Context<ParentF, F> {
     abstract fun <G> createSubContext(
         name: String,
         type: KType,
-        fixtureFactory: (F.() -> G)?,
+        fixtureFactory: (F.(TestDescriptor) -> G)?,
         explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit
     )

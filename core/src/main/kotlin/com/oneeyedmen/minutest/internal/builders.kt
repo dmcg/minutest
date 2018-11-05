@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.TestTransform
 import kotlin.reflect.KType
 
@@ -11,20 +12,20 @@ internal interface NodeBuilder<F> {
 internal class ContextBuilder<PF, F>(
     private val name: String,
     private val type: KType,
-    private var fixtureFactory: ((PF) -> F)?,
+    private var fixtureFactory: ((PF, TestDescriptor) -> F)?,
     private var explicitFixtureFactory: Boolean
 ) : Context<PF, F>(), NodeBuilder<PF> {
 
     private val children = mutableListOf<NodeBuilder<F>>()
     private val operations = Operations<F>()
 
-    override fun mapFixture(f: (PF) -> F) {
+    override fun deriveFixture(f: PF.(TestDescriptor) -> F) {
         if (explicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
         fixtureFactory = f
         explicitFixtureFactory = true
     }
-
+    
     override fun before(operation: F.() -> Unit) {
         operations.befores.add(operation)
     }
@@ -44,7 +45,7 @@ internal class ContextBuilder<PF, F>(
     override fun <G> createSubContext(
         name: String,
         type: KType,
-        fixtureFactory: (F.() -> G)?,
+        fixtureFactory: (F.(TestDescriptor) -> G)?,
         explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit
     ) {
@@ -64,9 +65,9 @@ internal class ContextBuilder<PF, F>(
     }
 
     @Suppress("UNCHECKED_CAST", "unused")
-    private fun fixtureFactoryOrError(fieldValue: ((PF) -> F)?): (PF) -> F = when {
+    private fun fixtureFactoryOrError(fieldValue: ((PF, TestDescriptor) -> F)?): (PF, TestDescriptor) -> F = when {
         fieldValue != null -> fieldValue
-        contextHasNoOperations() -> { _ -> Unit as F }
+        contextHasNoOperations() -> { _, _ -> Unit as F }
             // this is safe provided there are only fixture not replaceFixture calls in sub-contexts,
             // as we cannot provide a fixture here to act as receiver. TODO - check somehow
         else -> error("Fixture has not been set in context \"$name\"")

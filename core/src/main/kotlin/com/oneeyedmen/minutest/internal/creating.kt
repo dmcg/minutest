@@ -2,6 +2,7 @@ package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.Test
+import com.oneeyedmen.minutest.TestDescriptor
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
@@ -36,14 +37,14 @@ fun <F> topLevelContext(
 fun <F> topLevelContext(
     name: String,
     type: KType,
-    fixtureBuilder: (Unit.() -> F)?,
+    fixtureBuilder: (Unit.(TestDescriptor) -> F)?,
     builder: Context<Unit, F>.() -> Unit
 ): Context<Unit, F> =
     ContextBuilder(name, type, fixtureBuilder, true).apply(builder)
 
 
 @Suppress("UNCHECKED_CAST")
-private fun <F> fixtureFunFor(isUnit: Boolean): (Unit.() -> F)? = if (isUnit) {{ Unit as F }} else null
+private fun <F> fixtureFunFor(isUnit: Boolean): (Unit.(TestDescriptor) -> F)? = if (isUnit) {{ Unit as F }} else null
 
 fun KClass<*>.asKType(isNullable: Boolean) =  object : KType {
     override val arguments: List<KTypeProjection> = emptyList()
