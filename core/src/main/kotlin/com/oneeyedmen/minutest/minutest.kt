@@ -8,7 +8,9 @@ typealias TestContext<F> = Context<*, F>
 
 @MinutestMarker
 abstract class Context<ParentF, F> {
-    
+
+    abstract fun withTestDescriptor(f: (testDescriptorSupplier: TestDescriptor) -> Unit)
+
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
      *

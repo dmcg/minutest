@@ -43,8 +43,10 @@ object NamingTests {
 
         executeTest(junitTests<Fixture> {
 
-            instrumentedFixture { _, testDescriptor ->
-                Fixture(testDescriptor.fullName())
+            withTestDescriptor { testDescriptor ->
+                fixture {
+                    Fixture(testDescriptor.fullName())
+                }
             }
             
             context("outer") {

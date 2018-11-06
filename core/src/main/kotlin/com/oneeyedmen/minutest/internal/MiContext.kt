@@ -28,6 +28,7 @@ internal data class MiContext<PF, F>(
         
         val testInParent = object : Test<PF>, Named by test {
             override fun invoke(parentFixture: PF): PF {
+                operations.testDescriptorHolder.testDescriptor = this
                 val transformedTest = operations.applyTransformsTo(testWithPreparedFixture)
                 val initialFixture = fixtureFactory(parentFixture, this)
                 transformedTest(initialFixture)
