@@ -5,4 +5,7 @@ package com.oneeyedmen.minutest
  */
 interface Test<F> : Named, (F) -> F
 
+fun <F> Test<F>.withAction(action: (F)->F): Test<F> =
+    object : Test<F>, (F)->F by action, Named by this {}
+
 typealias TestTransform<F> = (Test<F>) -> Test<F>
