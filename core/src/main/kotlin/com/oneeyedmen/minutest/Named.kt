@@ -14,3 +14,5 @@ fun Named.fullName() =
         .filterNot(String::isEmpty)
         .toList()
         .reversed()
+
+typealias TestDescriptor = Named

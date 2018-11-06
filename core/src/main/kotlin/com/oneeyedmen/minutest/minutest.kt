@@ -6,8 +6,6 @@ import kotlin.reflect.KType
 
 typealias TestContext<F> = Context<*, F>
 
-typealias TestDescriptor = Named
-
 @MinutestMarker
 abstract class Context<ParentF, F> {
     
@@ -22,9 +20,13 @@ abstract class Context<ParentF, F> {
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts by transforming the parent fixture.
      */
-    fun mapFixture(f: (ParentF) -> F) = deriveFixture { f(this) }
-    
-    abstract fun deriveFixture(f: ParentF.(TestDescriptor)->F)
+    fun mapFixture(f: (parentFixture: ParentF) -> F) = instrumentedFixture { fixture, _ -> f(fixture) }
+
+    /**
+     * Define the fixture that will be used in this context's tests and sub-contexts by transforming the parent fixture,
+     * with additional information about the test that will be run.
+     */
+    abstract fun instrumentedFixture(f: (parentFixture: ParentF, testDescriptor: TestDescriptor) -> F)
     
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.

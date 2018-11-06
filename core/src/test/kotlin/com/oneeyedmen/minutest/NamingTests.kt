@@ -36,13 +36,14 @@ object NamingTests {
     }
     
     @org.junit.jupiter.api.Test
-    fun `names are passed to deriveFixture block`() {
+    fun `names are passed to instrumentedFixture block`() {
         val log = mutableListOf<List<String>>()
-        
+
         class Fixture(val name: List<String>)
-        
+
         executeTest(junitTests<Fixture> {
-            deriveFixture { testDescriptor ->
+
+            instrumentedFixture { _, testDescriptor ->
                 Fixture(testDescriptor.fullName())
             }
             

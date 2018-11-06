@@ -6,11 +6,14 @@ import com.oneeyedmen.minutest.TestDescriptor
 
 internal sealed class TestNode
 
+/**
+ * The runtime representation of a context.
+ */
 internal data class MiContext<PF, F>(
     override val name: String,
     override val parent: ParentContext<PF>,
     val children: List<TestNode>,
-    private val fixtureFactory: PF.(TestDescriptor) -> F,
+    private val fixtureFactory: (PF, TestDescriptor) -> F,
     private val operations: Operations<F>
 ) : ParentContext<F>, TestNode() {
 
@@ -36,6 +39,9 @@ internal data class MiContext<PF, F>(
     }
 }
 
+/**
+ * The runtime representation of a test.
+ */
 internal class MinuTest<F>(
     override val name: String,
     override val parent: ParentContext<F>,
