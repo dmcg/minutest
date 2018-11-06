@@ -2,6 +2,7 @@ package com.oneeyedmen.minutest
 
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 
 
 object TransformTests {
@@ -32,7 +33,6 @@ object TransformTests {
             "leaving transformed test"
         )
     }
-    
     @Test
     fun `transforms nest, following nesting of contexts`() {
         val log = mutableListOf<String>()
@@ -76,5 +76,20 @@ object TransformTests {
             "after outer",
             "leaving outer transformed test"
         )
+    }
+    
+    @Test
+    fun `transforms can disable tests`() {
+        val log = mutableListOf<String>()
+        
+        executeTest(junitTests<Unit> {
+            addTransform { test ->
+                test.withAction { /* no op */ }
+            }
+            
+            test("the test") { log.add("the test was invoked, but should not have been") }
+        })
+        
+        assertNothingLogged(log)
     }
 }
