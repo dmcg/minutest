@@ -20,3 +20,7 @@ fun executeTest(tests: Stream<out DynamicNode>) {
 fun assertLogged(log: List<String>, vararg expected: String) {
     assertEquals(expected.toList(), log)
 }
+
+fun assertNothingLogged(log: List<String>) {
+    assertEquals(emptyList<String>(), log)
+}
