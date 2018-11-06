@@ -22,7 +22,7 @@ fun <F> topLevelContext(
     ContextBuilder<Unit, F>(
         name,
         type,
-        fixtureFunFor(type.classifier == Unit::class),
+        fixtureFactoryFor(type.classifier == Unit::class),
         false
     ).apply(builder)
 
@@ -32,19 +32,19 @@ fun <F> topLevelContext(
     fixture: F,
     builder: Context<Unit, F>.() -> Unit
 ): Context<Unit, F> =
-    topLevelContext<F>(name, type, { fixture }, builder)
+    topLevelContext<F>(name, type, { _, _ -> fixture }, builder)
 
 fun <F> topLevelContext(
     name: String,
     type: KType,
-    fixtureBuilder: (Unit.(TestDescriptor) -> F)?,
+    fixtureFactory: ((Unit, TestDescriptor) -> F)?,
     builder: Context<Unit, F>.() -> Unit
 ): Context<Unit, F> =
-    ContextBuilder(name, type, fixtureBuilder, true).apply(builder)
+    ContextBuilder(name, type, fixtureFactory, true).apply(builder)
 
 
 @Suppress("UNCHECKED_CAST")
-private fun <F> fixtureFunFor(isUnit: Boolean): (Unit.(TestDescriptor) -> F)? = if (isUnit) {{ Unit as F }} else null
+private fun <F> fixtureFactoryFor(isUnit: Boolean): ((Unit, TestDescriptor) -> F)? = if (isUnit) {{ _, _ -> Unit as F }} else null
 
 fun KClass<*>.asKType(isNullable: Boolean) =  object : KType {
     override val arguments: List<KTypeProjection> = emptyList()
