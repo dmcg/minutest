@@ -11,8 +11,8 @@ object NamingTests {
         val log = mutableListOf<List<String>>()
         
         executeTest(junitTests<Unit> {
-            addTransform {
-                it.also { log.add(it.fullName()) }
+            addTransform { test ->
+                test.also { log.add(it.fullName()) }
             }
             
             context("outer") {
@@ -68,25 +68,32 @@ object NamingTests {
     }
 
     @org.junit.jupiter.api.Test
-    fun `names are passed to withTestDescriptor block`() {
+    fun `names are available as testDescriptor property`() {
         val log = mutableListOf<List<String>>()
 
         class Fixture(val name: List<String>)
 
         executeTest(junitTests<Fixture> {
 
-            withTestDescriptor { testDescriptor ->
-                fixture {
-                    Fixture(testDescriptor.fullName())
-                }
+            fixture {
+                Fixture(testDescriptor.fullName())
             }
             
             context("outer") {
-                test("outer test") { log.add(name) }
+                test("outer test") {
+                    assertEquals(name, testDescriptor.fullName())
+                    log.add(name)
+                }
                 
                 context("inner") {
-                    test("inner test 1") { log.add(name) }
-                    test("inner test 2") { log.add(name) }
+                    test("inner test 1") {
+                        assertEquals(name, testDescriptor.fullName())
+                        log.add(name)
+                    }
+                    test("inner test 2") {
+                        assertEquals(name, testDescriptor.fullName())
+                        log.add(name)
+                    }
                 }
             }
         })

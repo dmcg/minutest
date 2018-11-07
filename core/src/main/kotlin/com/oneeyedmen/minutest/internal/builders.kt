@@ -19,9 +19,10 @@ internal class ContextBuilder<PF, F>(
     private val children = mutableListOf<NodeBuilder<F>>()
     private val operations = Operations<F>()
 
-    override fun withTestDescriptor(f: (testDescriptor: TestDescriptor) -> Unit) {
+    override val testDescriptor: TestDescriptor get() = withTestDescriptor { it }
+
+    private fun <T> withTestDescriptor(f: (testDescriptor: TestDescriptor) -> T) =
         f(operations.testDescriptorHolder)
-    }
 
     override fun instrumentedFixture(f: (parentFixture: PF, testDescriptor: TestDescriptor) -> F) {
         if (explicitFixtureFactory)

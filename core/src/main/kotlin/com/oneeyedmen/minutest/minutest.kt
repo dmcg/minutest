@@ -9,8 +9,6 @@ typealias TestContext<F> = Context<*, F>
 @MinutestMarker
 abstract class Context<ParentF, F> {
 
-    abstract fun withTestDescriptor(f: (testDescriptor: TestDescriptor) -> Unit)
-
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
      *
@@ -92,6 +90,11 @@ abstract class Context<ParentF, F> {
     inline fun <reified G> derivedContext(name: String, noinline fixtureFactory: F.(TestDescriptor) -> G, noinline builder: Context<F, G>.() -> Unit) {
         createSubContext(name, asKType<G>(), fixtureFactory, true, builder)
     }
+
+    /**
+     * Information about the running test, available in the test or its parent contexts
+     */
+    abstract val testDescriptor: TestDescriptor
 
     /**
      * Add a transform to be applied to the tests
