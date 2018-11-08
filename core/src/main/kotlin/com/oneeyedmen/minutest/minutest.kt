@@ -97,6 +97,11 @@ abstract class Context<ParentF, F> {
     }
 
     /**
+     * Information about the running test, available in the test or its parent contexts
+     */
+    abstract val testDescriptor: TestDescriptor
+
+    /**
      * Add a transform to be applied to the tests
      */
     abstract fun addTransform(transform: TestTransform<F>)

@@ -19,6 +19,11 @@ internal class ContextBuilder<PF, F>(
     private val children = mutableListOf<NodeBuilder<F>>()
     private val operations = Operations<F>()
 
+    override val testDescriptor: TestDescriptor get() = withTestDescriptor { it }
+
+    private fun <T> withTestDescriptor(f: (testDescriptor: TestDescriptor) -> T) =
+        f(operations.testDescriptorHolder)
+
     override fun deriveFixture(f: (parentFixture: PF, testDescriptor: TestDescriptor) -> F) {
         if (explicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
