@@ -1,18 +1,12 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestDescriptor
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 
-internal object RootContext : ParentContext<Unit> {
-    override val name = ""
-    override val parent: Nothing? = null
-    override fun runTest(test: Test<Unit>) = test(Unit)
-}
 
 fun <F> topLevelContext(
     name: String,

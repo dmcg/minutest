@@ -9,7 +9,7 @@ internal sealed class TestNode
 /**
  * The runtime representation of a context.
  */
-internal data class MiContext<PF, F>(
+internal data class RuntimeContext<PF, F>(
     override val name: String,
     override val parent: ParentContext<PF>,
     val children: List<TestNode>,
@@ -42,7 +42,7 @@ internal data class MiContext<PF, F>(
 /**
  * The runtime representation of a test.
  */
-internal class MinuTest<F>(
+internal class RuntimeTest<F>(
     override val name: String,
     override val parent: ParentContext<F>,
     private val f: F.() -> F

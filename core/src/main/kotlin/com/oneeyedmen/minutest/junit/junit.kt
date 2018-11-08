@@ -44,9 +44,9 @@ fun <F> Context<Unit, F>.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
         .children
 
 private fun TestNode.toDynamicNode(): DynamicNode = when (this) {
-    is MinuTest<*> -> dynamicTest(name) { this.run() }
-    is MiContext<*, *> -> this.toDynamicContainer()
+    is RuntimeTest<*> -> dynamicTest(name) { this.run() }
+    is RuntimeContext<*, *> -> this.toDynamicContainer()
 }
 
-private fun MiContext<*, *>.toDynamicContainer(): DynamicContainer =
+private fun RuntimeContext<*, *>.toDynamicContainer(): DynamicContainer =
     dynamicContainer(name, children.map(TestNode::toDynamicNode))
