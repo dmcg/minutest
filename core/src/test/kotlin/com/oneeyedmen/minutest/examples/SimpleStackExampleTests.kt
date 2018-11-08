@@ -26,7 +26,8 @@ object SimpleStackExampleTests : JupiterTests {
 
         // another test will use a new fixture instance
         test("run second") {
-            assertTrue(this.isEmpty())
+            // you can also access the fixture as 'it()' if it reads nicer
+            assertTrue(it().isEmpty())
         }
     }
 }

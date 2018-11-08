@@ -20,8 +20,9 @@ object DerivedContextExampleTests : JupiterTests {
         }
 
         derivedContext<DerivedFixture>("inner converting fixture later") {
-            mapFixture {
-                DerivedFixture(it, "smoothie")
+
+            deriveFixture {
+                DerivedFixture(parentFixture, "smoothie")
             }
 
             test("takes DerivedFixture") {

@@ -8,41 +8,43 @@ typealias TestContext<F> = Context<*, F>
 
 @MinutestMarker
 abstract class Context<ParentF, F> {
-    
+
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
      *
      * Has access to the parent context's fixture as 'this'
      */
     @Suppress("FunctionName")
-    fun fixture_(factory: ParentF.() -> F) = mapFixture(factory)
-    
+    @Deprecated("Replace with deriveFixture")
+    fun fixture_(factory: ParentF.(testDescriptor: TestDescriptor) -> F) = deriveFixture(factory)
+
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts by transforming the parent fixture.
      */
-    fun mapFixture(f: (parentFixture: ParentF) -> F) = instrumentedFixture { fixture, _ -> f(fixture) }
+    @Deprecated("Replace with deriveFixture")
+    fun mapFixture(f: (parentFixture: ParentF) -> F) = deriveFixture { f(this) }
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts by transforming the parent fixture,
-     * with additional information about the test that will be run.
+     * (as 'this').
      */
-    abstract fun instrumentedFixture(f: (parentFixture: ParentF, testDescriptor: TestDescriptor) -> F)
-    
+    abstract fun deriveFixture(f: (ParentF).(testDescriptor: TestDescriptor) -> F)
+
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
      */
-    fun fixture(factory: () -> F) = fixture_ { factory() }
+    fun fixture(factory: (testDescriptor: TestDescriptor) -> F) = deriveFixture { factory(it) }
 
     /**
      * Apply an operation to the current fixture (accessible as 'this') before running tests or sub-contexts.
      */
     fun modifyFixture(operation: F.() -> Unit) = before(operation)
-    
+
     /**
      * Apply an operation to the current fixture (accessible as 'this') before running tests or sub-contexts.
      */
     abstract fun before(operation: F.() -> Unit)
-    
+
     /**
      * Apply an operation to the current fixture (accessible as 'this') after running tests.
      *
@@ -51,23 +53,23 @@ abstract class Context<ParentF, F> {
      * An exception thrown in an after will prevent later afters running.
      */
     abstract fun after(operation: F.() -> Unit)
-    
+
     /**
      * Define a test on the current fixture (accessible as 'this').
      */
     fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
-    
+
     /**
      * Define a test on the current fixture (accessible as 'this'), returning a new fixture to be processed by 'afters'.
      */
     @Suppress("FunctionName")
     abstract fun test_(name: String, f: F.() -> F)
-    
+
     /**
      * Define a sub-context, inheriting the fixture from this.
      */
     abstract fun context(name: String, builder: Context<F, F>.() -> Unit)
-    
+
     /**
      * Define a sub-context with a different fixture type.
      *
@@ -87,7 +89,10 @@ abstract class Context<ParentF, F> {
     /**
      * Define a sub-context with a different fixture type, supplying a fixture converter.
      */
-    inline fun <reified G> derivedContext(name: String, noinline fixtureFactory: F.(TestDescriptor) -> G, noinline builder: Context<F, G>.() -> Unit) {
+    inline fun <reified G> derivedContext(name: String,
+        noinline fixtureFactory: F.(TestDescriptor) -> G,
+        noinline builder: Context<F, G>.() -> Unit
+    ) {
         createSubContext(name, asKType<G>(), fixtureFactory, true, builder)
     }
 
@@ -103,5 +108,9 @@ abstract class Context<ParentF, F> {
         explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit
     )
-}
 
+
+    fun <G> G.it() = this
+
+    val ParentF.parentFixture get() = this
+}

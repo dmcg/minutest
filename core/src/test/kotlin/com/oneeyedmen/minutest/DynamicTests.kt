@@ -24,7 +24,7 @@ object DynamicTests {
         context("modify fixture for each test") {
             (1..3).forEach { i ->
                 context("banana count $i") {
-                    mapFixture { Fixture("$i ${it.fruit}") }
+                    deriveFixture { Fixture("$i ${fruit}") }
                     test("test for $i") {
                         assertEquals("$i banana", fruit)
                     }
