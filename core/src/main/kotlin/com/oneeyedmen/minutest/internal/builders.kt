@@ -61,9 +61,9 @@ internal class ContextBuilder<PF, F>(
         operations.transforms += transform
     }
 
-    override fun toTestNode(parent: ParentContext<PF>): MiContext<PF, F> {
+    override fun toTestNode(parent: ParentContext<PF>): RuntimeContext<PF, F> {
         val fixtureFactory = fixtureFactoryOrError(fixtureFactory)
-        return MiContext(name, parent, emptyList(), fixtureFactory, operations).let { context ->
+        return RuntimeContext(name, parent, emptyList(), fixtureFactory, operations).let { context ->
             // nastiness to set up parent child in immutable nodes
             context.copy(children = this.children.map { child -> child.toTestNode(context) })
         }
@@ -83,5 +83,5 @@ internal class ContextBuilder<PF, F>(
 }
 
 internal data class TestBuilder<F>(val name: String, val f: F.() -> F) : NodeBuilder<F> {
-    override fun toTestNode(parent: ParentContext<F>) = MinuTest(name, parent, f)
+    override fun toTestNode(parent: ParentContext<F>) = RuntimeTest(name, parent, f)
 }
