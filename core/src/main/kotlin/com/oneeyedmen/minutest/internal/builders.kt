@@ -12,7 +12,7 @@ internal interface NodeBuilder<F> {
 internal class ContextBuilder<PF, F>(
     private val name: String,
     private val type: KType,
-    private var fixtureFactory: ((PF, TestDescriptor) -> F)?,
+    private var fixtureFactory: ((PF) -> F)?,
     private var explicitFixtureFactory: Boolean
 ) : Context<PF, F>(), NodeBuilder<PF> {
 
@@ -24,7 +24,7 @@ internal class ContextBuilder<PF, F>(
     private fun <T> withTestDescriptor(f: (testDescriptor: TestDescriptor) -> T) =
         f(operations.testDescriptorHolder)
 
-    override fun deriveFixture(f: (parentFixture: PF, testDescriptor: TestDescriptor) -> F) {
+    override fun deriveFixture(f: (parentFixture: PF) -> F) {
         if (explicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
         fixtureFactory = f
@@ -50,7 +50,7 @@ internal class ContextBuilder<PF, F>(
     override fun <G> createSubContext(
         name: String,
         type: KType,
-        fixtureFactory: (F.(TestDescriptor) -> G)?,
+        fixtureFactory: (F.() -> G)?,
         explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit
     ) {
@@ -70,9 +70,9 @@ internal class ContextBuilder<PF, F>(
     }
 
     @Suppress("UNCHECKED_CAST", "unused")
-    private fun fixtureFactoryOrError(fieldValue: ((PF, TestDescriptor) -> F)?): (PF, TestDescriptor) -> F = when {
+    private fun fixtureFactoryOrError(fieldValue: ((PF) -> F)?): (PF) -> F = when {
         fieldValue != null -> fieldValue
-        contextHasNoOperations() -> { _, _ -> Unit as F }
+        contextHasNoOperations() -> { _ -> Unit as F }
             // this is safe provided there are only fixture not replaceFixture calls in sub-contexts,
             // as we cannot provide a fixture here to act as receiver. TODO - check somehow
         else -> error("Fixture has not been set in context \"$name\"")

@@ -16,7 +16,7 @@ abstract class Context<ParentF, F> {
      */
     @Suppress("FunctionName")
     @Deprecated("Replace with deriveFixture")
-    fun fixture_(factory: ParentF.(testDescriptor: TestDescriptor) -> F) = deriveFixture(factory)
+    fun fixture_(factory: ParentF.() -> F) = deriveFixture(factory)
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts by transforming the parent fixture.
@@ -28,12 +28,12 @@ abstract class Context<ParentF, F> {
      * Define the fixture that will be used in this context's tests and sub-contexts by transforming the parent fixture,
      * (as 'this').
      */
-    abstract fun deriveFixture(f: (ParentF).(testDescriptor: TestDescriptor) -> F)
+    abstract fun deriveFixture(f: (ParentF).() -> F)
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
      */
-    fun fixture(factory: (testDescriptor: TestDescriptor) -> F) = deriveFixture { factory(it) }
+    fun fixture(factory: () -> F) = deriveFixture { factory() }
 
     /**
      * Apply an operation to the current fixture (accessible as 'this') before running tests or sub-contexts.
@@ -90,7 +90,7 @@ abstract class Context<ParentF, F> {
      * Define a sub-context with a different fixture type, supplying a fixture converter.
      */
     inline fun <reified G> derivedContext(name: String,
-        noinline fixtureFactory: F.(TestDescriptor) -> G,
+        noinline fixtureFactory: F.() -> G,
         noinline builder: Context<F, G>.() -> Unit
     ) {
         createSubContext(name, asKType<G>(), fixtureFactory, true, builder)
@@ -109,13 +109,12 @@ abstract class Context<ParentF, F> {
     abstract fun <G> createSubContext(
         name: String,
         type: KType,
-        fixtureFactory: (F.(TestDescriptor) -> G)?,
+        fixtureFactory: (F.() -> G)?,
         explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit
     )
 
-
-    fun <G> G.it() = this
+    val <G> G.it get() = this
 
     val ParentF.parentFixture get() = this
 }
