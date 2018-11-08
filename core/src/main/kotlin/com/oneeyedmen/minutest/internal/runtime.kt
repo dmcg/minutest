@@ -14,8 +14,7 @@ internal data class RuntimeContext<PF, F>(
     override val parent: ParentContext<PF>,
     val children: List<TestNode>,
     private val fixtureFactory: (PF, TestDescriptor) -> F,
-    private val operations: Operations<F>,
-    private val testDescriptorHolder: TestDescriptorHolder
+    private val operations: Operations<F>
 ) : ParentContext<F>, TestNode() {
 
     override fun runTest(test: Test<F>) {
@@ -29,7 +28,7 @@ internal data class RuntimeContext<PF, F>(
         
         val testInParent = object : Test<PF>, Named by test {
             override fun invoke(parentFixture: PF): PF {
-                testDescriptorHolder.testDescriptor = this
+                operations.testDescriptorHolder.testDescriptor = this
                 val transformedTest = operations.applyTransformsTo(testWithPreparedFixture)
                 val initialFixture = fixtureFactory(parentFixture, this)
                 transformedTest(initialFixture)

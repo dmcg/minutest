@@ -18,12 +18,11 @@ internal class ContextBuilder<PF, F>(
 
     private val children = mutableListOf<NodeBuilder<F>>()
     private val operations = Operations<F>()
-    private val testDescriptorHolder = TestDescriptorHolder(null)
 
     override val testDescriptor: TestDescriptor get() = withTestDescriptor { it }
 
     private fun <T> withTestDescriptor(f: (testDescriptor: TestDescriptor) -> T) =
-        f(testDescriptorHolder)
+        f(operations.testDescriptorHolder)
 
     override fun deriveFixture(f: (parentFixture: PF, testDescriptor: TestDescriptor) -> F) {
         if (explicitFixtureFactory)
@@ -64,7 +63,7 @@ internal class ContextBuilder<PF, F>(
 
     override fun toTestNode(parent: ParentContext<PF>): RuntimeContext<PF, F> {
         val fixtureFactory = fixtureFactoryOrError(fixtureFactory)
-        return RuntimeContext(name, parent, emptyList(), fixtureFactory, operations, testDescriptorHolder).let { context ->
+        return RuntimeContext(name, parent, emptyList(), fixtureFactory, operations).let { context ->
             // nastiness to set up parent child in immutable nodes
             context.copy(children = this.children.map { child -> child.toTestNode(context) })
         }
