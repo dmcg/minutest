@@ -6,7 +6,7 @@ package com.oneeyedmen.minutest.internal
  * thrown and the value before it was.
  */
 internal data class OpResult<F>(val t: Throwable?, val lastValue: F) {
-    fun flatMap(f: (F) -> OpResult<F>): OpResult<F> =
+    private fun flatMap(f: (F) -> OpResult<F>): OpResult<F> =
         if (t != null) this
         else f(this.lastValue)
 
@@ -20,7 +20,7 @@ internal data class OpResult<F>(val t: Throwable?, val lastValue: F) {
             }
         }
 
-    fun maybeThrow() {
+    private fun maybeThrow() {
         if (t != null) {
             throw t
         }

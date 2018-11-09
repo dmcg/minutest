@@ -11,7 +11,7 @@ import java.io.IOException
 class BeforeAndAfterTests {
 
     // this is a very special case for testing testing - don't do this normally
-    val log = mutableListOf<String>()
+    private val log = mutableListOf<String>()
     private lateinit var expectedLog: List<String>
 
     @AfterEach fun checkLog() {

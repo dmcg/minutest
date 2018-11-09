@@ -9,7 +9,7 @@ import com.oneeyedmen.minutest.internal.topLevelContext
  */
 abstract class InlineJupiterTests<F>(
     builder: Context<Unit, F>.() -> Unit
-) : JupiterTests, IKnowMyGenericClass<F> {
+) : JupiterTests, IKnowMyGenericClass {
 
     @Suppress("LeakingThis")
     override val tests = topLevelContext(

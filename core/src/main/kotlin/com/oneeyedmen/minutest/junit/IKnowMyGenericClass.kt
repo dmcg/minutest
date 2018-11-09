@@ -4,7 +4,7 @@ import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
 import java.lang.reflect.ParameterizedType
 import kotlin.reflect.KClass
 
-internal interface IKnowMyGenericClass<F> {
+internal interface IKnowMyGenericClass {
 
     @Suppress("UNCHECKED_CAST")
     fun myGenericClass(): KClass<*> {
