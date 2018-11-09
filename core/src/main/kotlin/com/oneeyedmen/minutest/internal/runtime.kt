@@ -15,7 +15,7 @@ internal data class RuntimeContext<PF, F>(
 ) : ParentContext<F>, TestNode() {
 
     override fun runTest(test: Test<F>) {
-        parent.runTest(operations.buildParentTest(test))
+        parent.runTest(operations.prepareTest(test))
     }
 }
 

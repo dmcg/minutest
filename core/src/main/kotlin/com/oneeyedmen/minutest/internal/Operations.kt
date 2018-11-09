@@ -20,8 +20,8 @@ internal class Operations<PF, F>(
 
     fun addTransform(transform: TestTransform<F>) { transforms.add(transform) }
 
-    fun buildParentTest(test: Test<F>): Test<PF> {
-        val testWithPreparedFixture = object : Test<F>, Named by test {
+    fun prepareTest(test: Test<F>): Test<PF> {
+        val wrappedTest = object : Test<F>, Named by test {
             override fun invoke(initialFixture: F) =
                 applyBeforesTo(initialFixture)
                     .tryMap(test)
@@ -32,7 +32,7 @@ internal class Operations<PF, F>(
         return object : Test<PF>, Named by test {
             override fun invoke(parentFixture: PF): PF {
                 testDescriptorHolder.testDescriptor = this
-                val transformedTest = applyTransformsTo(testWithPreparedFixture)
+                val transformedTest = applyTransformsTo(wrappedTest)
                 transformedTest(resolvedFixtureFactory(parentFixture))
                 return parentFixture
             }
@@ -65,13 +65,14 @@ internal class Operations<PF, F>(
 
     @Suppress("UNCHECKED_CAST")
     fun tryToResolveFixtureFactory(noTestsInContext: Boolean, contextName: String) {
+        val fieldValue = fixtureFactory
         resolvedFixtureFactory = when {
-            fixtureFactory != null -> fixtureFactory
+            fieldValue != null -> fieldValue
             hasNoBeforesOrAfters() && noTestsInContext -> { _ -> Unit as F }
             // this is safe provided there are only fixture not replaceFixture calls in sub-contexts,
             // as we cannot provide a fixture here to act as receiver. TODO - check somehow
             else -> error("Fixture has not been set in context \"$contextName\"")
-        }!!
+        }
     }
 
 }
