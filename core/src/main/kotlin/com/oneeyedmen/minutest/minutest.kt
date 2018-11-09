@@ -117,4 +117,5 @@ abstract class Context<ParentF, F> {
     val <G> G.it get() = this
 
     val ParentF.parentFixture get() = this
+    val F.fixture get() = this
 }
