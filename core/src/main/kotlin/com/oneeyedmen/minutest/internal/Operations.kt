@@ -12,6 +12,7 @@ internal class Operations<PF, F>(
     private val afters = mutableListOf<(F) -> Unit>()
     private val transforms = mutableListOf<TestTransform<F>>()
     private lateinit var resolvedFixtureFactory: ((PF) -> F)
+    val testDescriptorHolder = TestDescriptorHolder(null)
 
     fun addBefore(f: (F) -> Unit) { befores.add(f) }
 
@@ -21,8 +22,27 @@ internal class Operations<PF, F>(
 
     fun hasNoBeforesOrAfters() = befores.isEmpty() && afters.isEmpty()
 
+    fun buildParentTest(test: Test<F>): Test<PF> {
+        val testWithPreparedFixture = object : Test<F>, Named by test {
+            override fun invoke(initialFixture: F) =
+                applyBeforesTo(initialFixture)
+                    .tryMap(test)
+                    .onLastValue(::applyAftersTo)
+                    .orThrow()
+        }
+
+        return object : Test<PF>, Named by test {
+            override fun invoke(parentFixture: PF): PF {
+                testDescriptorHolder.testDescriptor = this
+                val transformedTest = applyTransformsTo(testWithPreparedFixture)
+                transformedTest(resolvedFixtureFactory(parentFixture))
+                return parentFixture
+            }
+        }
+    }
+
     // apply befores in order - if anything is thrown return it and the last successful value
-    fun applyBeforesTo(fixture: F): OpResult<F> {
+    private fun applyBeforesTo(fixture: F): OpResult<F> {
         befores.forEach { beforeFn ->
             try {
                 beforeFn(fixture)
@@ -34,10 +54,10 @@ internal class Operations<PF, F>(
         return OpResult(null, fixture)
     }
 
-    fun applyTransformsTo(test: Test<F>): Test<F> =
-        transforms.fold(test, { acc, transform -> transform(acc) })
+    private fun applyTransformsTo(test: Test<F>): Test<F> =
+        transforms.fold(test) { acc, transform -> transform(acc) }
 
-    fun applyAftersTo(fixture: F) {
+    private fun applyAftersTo(fixture: F) {
         afters.forEach { afterFn ->
             afterFn(fixture)
         }
@@ -54,9 +74,6 @@ internal class Operations<PF, F>(
         }!!
     }
 
-    fun createFixture(parentFixture: PF) = resolvedFixtureFactory(parentFixture)
-
-    val testDescriptorHolder = TestDescriptorHolder(null)
 }
 
 data class TestDescriptorHolder(var testDescriptor: TestDescriptor?) : Named {

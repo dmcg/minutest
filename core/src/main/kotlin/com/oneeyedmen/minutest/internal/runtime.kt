@@ -1,6 +1,5 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Named
 import com.oneeyedmen.minutest.Test
 
 internal sealed class TestNode
@@ -16,25 +15,7 @@ internal data class RuntimeContext<PF, F>(
 ) : ParentContext<F>, TestNode() {
 
     override fun runTest(test: Test<F>) {
-        val testWithPreparedFixture = object : Test<F>, Named by test {
-            override fun invoke(initialFixture: F) =
-                operations.applyBeforesTo(initialFixture)
-                    .tryMap(test)
-                    .onLastValue(operations::applyAftersTo)
-                    .orThrow()
-        }
-        
-        val testInParent = object : Test<PF>, Named by test {
-            override fun invoke(parentFixture: PF): PF {
-                operations.testDescriptorHolder.testDescriptor = this
-                val transformedTest = operations.applyTransformsTo(testWithPreparedFixture)
-                val initialFixture = operations.createFixture(parentFixture)
-                transformedTest(initialFixture)
-                return parentFixture
-            }
-        }
-        
-        parent.runTest(testInParent)
+        parent.runTest(operations.buildParentTest(test))
     }
 }
 
