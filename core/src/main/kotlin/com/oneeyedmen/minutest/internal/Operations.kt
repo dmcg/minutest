@@ -20,8 +20,6 @@ internal class Operations<PF, F>(
 
     fun addTransform(transform: TestTransform<F>) { transforms.add(transform) }
 
-    fun hasNoBeforesOrAfters() = befores.isEmpty() && afters.isEmpty()
-
     fun buildParentTest(test: Test<F>): Test<PF> {
         val testWithPreparedFixture = object : Test<F>, Named by test {
             override fun invoke(initialFixture: F) =
@@ -62,6 +60,8 @@ internal class Operations<PF, F>(
             afterFn(fixture)
         }
     }
+
+    private fun hasNoBeforesOrAfters() = befores.isEmpty() && afters.isEmpty()
 
     @Suppress("UNCHECKED_CAST")
     fun tryToResolveFixtureFactory(noTestsInContext: Boolean, contextName: String) {

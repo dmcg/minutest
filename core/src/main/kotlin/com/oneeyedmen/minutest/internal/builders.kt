@@ -17,7 +17,7 @@ internal class ContextBuilder<PF, F>(
 ) : Context<PF, F>(), NodeBuilder<PF> {
 
     private val children = mutableListOf<NodeBuilder<F>>()
-    private val operations = Operations<PF, F>(parentFixtureFactory)
+    private val operations = Operations(parentFixtureFactory)
 
     override val testDescriptor: TestDescriptor get() = withTestDescriptor { it }
 
