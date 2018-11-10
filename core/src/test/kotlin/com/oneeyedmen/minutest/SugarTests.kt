@@ -20,11 +20,15 @@ class SugarTests : JupiterTests {
 
             deriveFixture {
                 assertEquals("blackcurrent", this.name)
-                assertEquals("blackcurrent", it.name)
                 assertEquals("blackcurrent", parentFixture.name)
                 // Doesn't compile
                 // assertEquals("blackcurrent", fixture.name)
                 Conserve("jam", parentFixture)
+            }
+
+            before {
+                assertEquals("jam", fixture.type)
+                assertEquals("jam", it.type)
             }
 
             test("test") {
