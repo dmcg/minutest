@@ -47,8 +47,20 @@ object NamingTests {
             fixture {
                 Fixture(testDescriptor.fullName())
             }
-            
+
+            // testDescriptor not available here
+
             context("outer") {
+
+                deriveFixture {
+                    assertEquals(name, testDescriptor.fullName())
+                    this
+                }
+
+                before {
+                    assertEquals(name, testDescriptor.fullName())
+                }
+
                 test("outer test") {
                     assertEquals(name, testDescriptor.fullName())
                     log.add(name)
@@ -63,6 +75,10 @@ object NamingTests {
                         assertEquals(name, testDescriptor.fullName())
                         log.add(name)
                     }
+                }
+
+                after {
+                    assertEquals(name, testDescriptor.fullName())
                 }
             }
         })

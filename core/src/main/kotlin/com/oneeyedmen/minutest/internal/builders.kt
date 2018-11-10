@@ -19,7 +19,7 @@ internal class ContextBuilder<PF, F>(
     private val children = mutableListOf<NodeBuilder<F>>()
     private val operations = Operations(parentFixtureFactory)
 
-    override val testDescriptor: TestDescriptor get() = operations.testDescriptorHolder
+    override val PF.testDescriptor: TestDescriptor get() = operations.testDescriptorHolder
 
     override fun deriveFixture(f: (parentFixture: PF) -> F) {
         if (explicitFixtureFactory)

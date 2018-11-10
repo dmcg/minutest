@@ -33,7 +33,7 @@ abstract class Context<ParentF, F> {
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
      */
-    fun fixture(factory: () -> F) = deriveFixture { factory() }
+    fun fixture(factory: (Unit).() -> F) = deriveFixture { Unit.factory() }
 
     /**
      * Apply an operation to the current fixture (accessible as 'this') before running tests or sub-contexts.
@@ -99,7 +99,8 @@ abstract class Context<ParentF, F> {
     /**
      * Information about the running test, available in the test or its parent contexts
      */
-    abstract val testDescriptor: TestDescriptor
+    abstract val ParentF.testDescriptor: TestDescriptor
+
 
     /**
      * Add a transform to be applied to the tests
