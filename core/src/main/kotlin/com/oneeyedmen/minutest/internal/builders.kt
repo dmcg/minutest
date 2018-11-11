@@ -19,7 +19,7 @@ internal class ContextBuilder<PF, F>(
     private val children = mutableListOf<NodeBuilder<F>>()
     private val operations = Operations<F>()
 
-    override fun deriveFixture(f: (parentFixture: PF, testDescriptor: TestDescriptor) -> F) {
+    override fun privateDeriveFixture(f: (parentFixture: PF, testDescriptor: TestDescriptor) -> F) {
         if (explicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
         fixtureFactory = f
@@ -39,10 +39,10 @@ internal class ContextBuilder<PF, F>(
     }
 
     override fun context(name: String, builder: Context<F, F>.() -> Unit) {
-        createSubContext(name, type, { this }, false, builder)
+        privateCreateSubContext(name, type, { this }, false, builder)
     }
 
-    override fun <G> createSubContext(
+    override fun <G> privateCreateSubContext(
         name: String,
         type: KType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,

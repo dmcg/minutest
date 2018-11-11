@@ -10,38 +10,70 @@ typealias TestContext<F> = Context<*, F>
 abstract class Context<ParentF, F> {
 
     /**
-     * Define the fixture that will be used in this context's tests and sub-contexts.
+     * Define a child-context, inheriting the fixture from the parent.
+     */
+    abstract fun context(name: String, builder: Context<F, F>.() -> Unit)
+
+    /**
+     * Define a child-context with a different fixture type.
      *
-     * Has access to the parent context's fixture as 'this'
+     * You will have to call [deriveFixture] in the sub-context to convert from the parent
+     * to the child fixture type.
      */
-    @Suppress("FunctionName")
-    @Deprecated("Replace with deriveFixture")
-    fun fixture_(factory: ParentF.(testDescriptor: TestDescriptor) -> F) = deriveFixture(factory)
+    inline fun <reified G> derivedContext(name: String, noinline builder: Context<F, G>.() -> Unit) {
+        privateCreateSubContext(name, asKType<G>(), null, false, builder)
+    }
 
     /**
-     * Define the fixture that will be used in this context's tests and sub-contexts by transforming the parent fixture.
+     * Define a sub-context with a different fixture type, supplying the new fixture value.
      */
-    @Deprecated("Replace with deriveFixture")
-    fun mapFixture(f: (parentFixture: ParentF) -> F) = deriveFixture { f(this) }
+    inline fun <reified G> derivedContext(name: String, fixture: G, noinline builder: Context<F, G>.() -> Unit) {
+        privateCreateSubContext(name, asKType<G>(), { fixture }, true, builder)
+    }
 
     /**
-     * Define the fixture that will be used in this context's tests and sub-contexts by transforming the parent fixture,
-     * (as 'this').
+     * Define a sub-context with a different fixture type, supplying a fixture converter.
      */
-    abstract fun deriveFixture(f: (ParentF).(testDescriptor: TestDescriptor) -> F)
+    inline fun <reified G> derivedContext(name: String,
+        noinline fixtureFactory: F.() -> G,
+        noinline builder: Context<F, G>.() -> Unit
+    ) {
+        privateCreateSubContext(name, asKType<G>(), { fixtureFactory() }, true, builder)
+    }
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
      */
-    fun fixture(factory: (testDescriptor: TestDescriptor) -> F) = deriveFixture { factory(it) }
+    fun fixture(factory: (Unit).() -> F) = deriveFixture { Unit.factory() }
 
     /**
-     * Apply an operation to the current fixture (accessible as 'this') before running tests or sub-contexts.
+     * Apply an operation to the current fixture (accessible as the receiver 'this')
+     * before running tests or sub-contexts.
      */
     fun modifyFixture(operation: F.() -> Unit) = before(operation)
 
     /**
-     * Apply an operation to the current fixture (accessible as 'this') before running tests or sub-contexts.
+     * Define the fixture that will be used in this context's tests and sub-contexts by
+     * transforming the parent fixture, accessible as the receiver 'this'.
+     */
+    fun deriveFixture(f: (ParentF).() -> F) = privateDeriveFixture { this.f() }
+
+
+    /**
+     * Define a test on the current fixture (accessible as 'this').
+     */
+    fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
+
+    /**
+     * Define a test on the current fixture (accessible as the receiver 'this'), returning
+     * a new fixture to be processed by 'afters'.
+     */
+    @Suppress("FunctionName")
+    abstract fun test_(name: String, f: F.() -> F)
+
+    /**
+     * Apply an operation to the current fixture (accessible as the receiver 'this') before
+     * running tests or sub-contexts.
      */
     abstract fun before(operation: F.() -> Unit)
 
@@ -55,53 +87,29 @@ abstract class Context<ParentF, F> {
     abstract fun after(operation: F.() -> Unit)
 
     /**
-     * Define a test on the current fixture (accessible as 'this').
+     * Make the fixture available as 'it' to improve communication in tests.
      */
-    fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
+    val F.it get() = this
 
     /**
-     * Define a test on the current fixture (accessible as 'this'), returning a new fixture to be processed by 'afters'.
+     * Name the fixture to improve communication.
      */
-    @Suppress("FunctionName")
-    abstract fun test_(name: String, f: F.() -> F)
+    val F.fixture get() = this
 
     /**
-     * Define a sub-context, inheriting the fixture from this.
+     * Name the parentFixture improve communication.
      */
-    abstract fun context(name: String, builder: Context<F, F>.() -> Unit)
+    val ParentF.parentFixture get() = this
 
     /**
-     * Define a sub-context with a different fixture type.
-     *
-     * You will have to call [fixture]' in the sub-context to convert from the parent to the child fixture type.
-     */
-    inline fun <reified G> derivedContext(name: String, noinline builder: Context<F, G>.() -> Unit) {
-        createSubContext(name, asKType<G>(), null, false, builder)
-    }
-
-    /**
-     * Define a sub-context with a different fixture type, supplying the new fixture value
-     */
-    inline fun <reified G> derivedContext(name: String, fixture: G, noinline builder: Context<F, G>.() -> Unit) {
-        createSubContext(name, asKType<G>(), { fixture }, true, builder)
-    }
-
-    /**
-     * Define a sub-context with a different fixture type, supplying a fixture converter.
-     */
-    inline fun <reified G> derivedContext(name: String,
-        noinline fixtureFactory: F.(TestDescriptor) -> G,
-        noinline builder: Context<F, G>.() -> Unit
-    ) {
-        createSubContext(name, asKType<G>(), fixtureFactory, true, builder)
-    }
-
-    /**
-     * Add a transform to be applied to the tests
+     * Add a transform to be applied to the tests in this context and its children.
      */
     abstract fun addTransform(transform: TestTransform<F>)
 
-    abstract fun <G> createSubContext(
+    /**
+     * Internal implementation, only public to be accessible to inline functions.
+     */
+    abstract fun <G> privateCreateSubContext(
         name: String,
         type: KType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
@@ -109,9 +117,25 @@ abstract class Context<ParentF, F> {
         builder: Context<F, G>.() -> Unit
     )
 
+    /**
+     * Internal implementation, only public to be accessible to extension functions.
+     */
+    abstract fun privateDeriveFixture(f: (ParentF).(testDescriptor: TestDescriptor) -> F)
 
-    val F.it get()= this
+    /**
+     * Define the fixture that will be used in this context's tests and sub-contexts.
+     *
+     * Has access to the parent context's fixture as 'this'
+     */
+    @Suppress("FunctionName")
+    @Deprecated("Replace with deriveFixture")
+    fun fixture_(factory: ParentF.() -> F) = deriveFixture(factory)
 
-    val ParentF.parentFixture get() = this
-    val F.fixture get() = this
+    /**
+     * Define the fixture that will be used in this context's tests and sub-contexts by
+     * transforming the parent fixture.
+     */
+    @Deprecated("Replace with deriveFixture")
+    fun mapFixture(f: (parentFixture: ParentF) -> F) = deriveFixture { f(this) }
+
 }
