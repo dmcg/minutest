@@ -91,7 +91,8 @@ object SimpleStackExampleTests : JupiterTests {
 
         // another test will use a new fixture instance
         test("run second") {
-            assertTrue(this.isEmpty())
+            // you can also access the fixture as 'it' if it reads nicer
+            assertTrue(it.isEmpty())
         }
     }
 }
@@ -144,7 +145,7 @@ object StackExampleTests : JupiterTests {
         // these tests run with an empty stack
 
         test("is empty") {
-            assertTrue(this.isEmpty())
+            assertTrue(it.isEmpty())
         }
 
         test("throws EmptyStackException when popped") {
@@ -164,17 +165,17 @@ object StackExampleTests : JupiterTests {
             // these tests run with the single item stack
 
             test("is not empty") {
-                assertFalse(isEmpty())
+                assertFalse(it.isEmpty())
             }
 
             test("returns the element when popped and is empty") {
                 assertEquals("one", pop())
-                assertTrue(isEmpty())
+                assertTrue(it.isEmpty())
             }
 
             test("returns the element when peeked but remains not empty") {
                 assertEquals("one", peek())
-                assertFalse(isEmpty())
+                assertFalse(it.isEmpty())
             }
         }
     }
