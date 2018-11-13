@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
-object NamingTests {
+class NamingTests {
     
     @org.junit.jupiter.api.Test
     fun `fully qualified name`() {

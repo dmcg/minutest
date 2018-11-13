@@ -5,9 +5,8 @@ import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 
-// Minutests are usually defined in a object.
-// Implement JupiterTests to have them run by JUnit 5
-object FirstMinutests : JupiterTests {
+// Implement JupiterTests to run Minutests with JUnit 5
+class FirstMinutests : JupiterTests {
 
     // tests are grouped in a context
     override val tests = context<Unit> {

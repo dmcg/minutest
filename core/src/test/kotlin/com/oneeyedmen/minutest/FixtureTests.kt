@@ -11,7 +11,7 @@ import java.io.FileNotFoundException
 import kotlin.streams.asSequence
 
 
-object FixtureTests {
+class FixtureTests {
 
     data class Fixture(
         var fruit: String,

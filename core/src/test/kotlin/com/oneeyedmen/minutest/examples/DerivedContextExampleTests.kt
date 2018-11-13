@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
-object DerivedContextExampleTests : JupiterTests {
+class DerivedContextExampleTests : JupiterTests {
 
     data class Fixture(val fruit: String)
 

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.TestFactory
 
 
-object DynamicTests {
+class DynamicTests {
 
     data class Fixture(
         var fruit: String,
