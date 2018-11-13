@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
 
-object SimpleStackExampleTests : JupiterTests {
+class SimpleStackExampleTests : JupiterTests {
 
     // The fixture type is the generic type of the test, here Stack<String>
     override val tests = context<Stack<String>> {

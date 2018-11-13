@@ -2,6 +2,7 @@ package com.oneeyedmen.minutest
 
 import com.oneeyedmen.minutest.internal.MinutestMarker
 import com.oneeyedmen.minutest.internal.asKType
+import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KType
 
 typealias TestContext<F> = Context<*, F>
@@ -120,7 +121,7 @@ abstract class Context<ParentF, F> {
     /**
      * Internal implementation, only public to be accessible to extension functions.
      */
-    abstract fun privateDeriveFixture(f: (ParentF).(testDescriptor: TestDescriptor) -> F)
+    internal abstract fun privateDeriveFixture(f: (ParentF).(testDescriptor: TestDescriptor) -> F)
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
@@ -128,7 +129,7 @@ abstract class Context<ParentF, F> {
      * Has access to the parent context's fixture as 'this'
      */
     @Suppress("FunctionName")
-    @Deprecated("Replace with deriveFixture")
+    @Deprecated("Replace with deriveFixture", ReplaceWith("deriveFixture"))
     fun fixture_(factory: ParentF.() -> F) = deriveFixture(factory)
 
     /**
@@ -137,5 +138,4 @@ abstract class Context<ParentF, F> {
      */
     @Deprecated("Replace with deriveFixture")
     fun mapFixture(f: (parentFixture: ParentF) -> F) = deriveFixture { f(this) }
-
 }

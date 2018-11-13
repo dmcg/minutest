@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.TestFactory
 
 
-object FixtureSupplyingTests {
+class FixtureSupplyingTests {
 
     @TestFactory fun `supply fixture at top`() = junitTests("banana") {
         context("parent had no fixture") {

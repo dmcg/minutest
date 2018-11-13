@@ -42,7 +42,7 @@ private fun TestContext<StringStack>.cantPop() = test("cant pop") {
 }
 
 // In order to give multiple sets of tests, in this example we are using JUnit @TestFactory functions
-object GeneratingExampleTests {
+class GeneratingExampleTests {
 
     // JUnit will run the tests from annotated functions
     @TestFactory fun `stack tests`() = junitTests<StringStack> {

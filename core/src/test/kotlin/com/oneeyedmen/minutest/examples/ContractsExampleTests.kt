@@ -33,7 +33,7 @@ private fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
 
 // Now tests can invoke the function to verify the contract in a context
 
-object ArrayListTests : JupiterTests {
+class ArrayListTests : JupiterTests {
 
     override val tests = context<MutableCollection<String>> {
         behavesAsMutableCollection("ArrayList") { ArrayList() }
@@ -43,7 +43,7 @@ object ArrayListTests : JupiterTests {
 // We can reuse the contract for different collections.
 
 // Here we use the convenience InlineJupiterTests to reduce boilerplate
-object LinkedListTests : InlineJupiterTests<MutableCollection<String>>({
+class LinkedListTests : InlineJupiterTests<MutableCollection<String>>({
 
     behavesAsMutableCollection("LinkedList") { LinkedList() }
 

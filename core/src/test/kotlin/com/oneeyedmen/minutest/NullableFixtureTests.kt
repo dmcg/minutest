@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.TestFactory
 
 
-object NullableFixtureTests {
+class NullableFixtureTests {
 
     @TestFactory fun `nullable String`() = junitTests<String?>(null) {
         test("fixture is null") {

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.TestFactory
 
 
-object ImmutableTests {
+class ImmutableTests {
 
     @TestFactory fun `before and after`() = junitTests<List<String>> {
         fixture { emptyList() }

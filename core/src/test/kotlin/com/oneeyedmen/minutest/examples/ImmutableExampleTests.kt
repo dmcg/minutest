@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
-object ImmutableExampleTests : JupiterTests {
+class ImmutableExampleTests : JupiterTests {
 
     // If you like this FP stuff, you may want to test an immutable fixture.
     override val tests = context<List<String>> {
