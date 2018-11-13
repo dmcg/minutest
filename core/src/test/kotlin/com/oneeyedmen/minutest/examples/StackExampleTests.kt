@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertThrows
 import java.util.*
 
-object StackExampleTests : JupiterTests {
+class StackExampleTests : JupiterTests {
 
     override val tests = context<Stack<String>> {
 

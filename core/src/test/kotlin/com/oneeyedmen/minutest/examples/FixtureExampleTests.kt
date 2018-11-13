@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.util.*
 
-object FixtureExampleTests : JupiterTests {
+class FixtureExampleTests : JupiterTests {
 
     // We have multiple state, so make a separate fixture class
     class Fixture {

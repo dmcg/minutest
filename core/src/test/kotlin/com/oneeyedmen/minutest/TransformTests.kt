@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 
 
-object TransformTests {
+class TransformTests {
     @Test
     fun `transforms wrap around application of before and after blocks`() {
         val log = mutableListOf<String>()

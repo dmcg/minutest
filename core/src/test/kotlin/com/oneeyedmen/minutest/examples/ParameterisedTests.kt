@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
-object ParameterisedTests : JupiterTests {
+class ParameterisedTests : JupiterTests {
 
     override val tests = context<Unit> {
 

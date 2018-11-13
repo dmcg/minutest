@@ -8,7 +8,7 @@ import org.junit.runner.Description
 
 private val log = mutableListOf<String>()
 
-object JunitRulesTests {
+class JunitRulesTests {
     class TestRule : TestWatcher() {
         var testDescription: String? = null
         
@@ -48,15 +48,19 @@ object JunitRulesTests {
             log.add(rule.testDescription.toString())
         }
     }
-
-    @JvmStatic @AfterAll fun checkTestIsRun() {
-        assertEquals(
-            listOf(
-                "test 1",
-                "outer.apply rule fixture class.test 1(com.oneeyedmen.minutest.junit.JunitRulesTests)",
-                "test 2",
-                "outer.apply rule test class.test 2(com.oneeyedmen.minutest.junit.JunitRulesTests)"),
-            log)
+    
+    companion object {
+        @JvmStatic
+        @AfterAll
+        fun checkTestIsRun() {
+            assertEquals(
+                listOf(
+                    "test 1",
+                    "outer.apply rule fixture class.test 1(com.oneeyedmen.minutest.junit.JunitRulesTests)",
+                    "test 2",
+                    "outer.apply rule test class.test 2(com.oneeyedmen.minutest.junit.JunitRulesTests)"),
+                log)
+        }
     }
 }
 

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.rules.TemporaryFolder
 
 
-object JunitRulesExampleTests : JupiterTests {
+class JunitRulesExampleTests : JupiterTests {
 
     class Fixture {
         // make rules part of the fixture, no need for an annotation
