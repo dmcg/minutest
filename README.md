@@ -46,9 +46,8 @@ My apologies to the Mavenites. If you are one then please try to work out what t
 To just test simple functions, define your tests in a subclass of JupiterTests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
 
 ```kotlin
-// Minutests are usually defined in a object.
-// Implement JupiterTests to have them run by JUnit 5
-object FirstMinutests : JupiterTests {
+// Implement JupiterTests to run Minutests with JUnit 5
+class FirstMinutests : JupiterTests {
 
     // tests are grouped in a context
     override val tests = context<Unit> {
@@ -71,7 +70,7 @@ object FirstMinutests : JupiterTests {
 Most tests require access to some state. The collection of state required by the tests is called the test fixture. If you are testing a class, at simplest the fixture might be an instance of the class.
 
 ```kotlin
-object SimpleStackExampleTests : JupiterTests {
+class SimpleStackExampleTests : JupiterTests {
 
     // The fixture type is the generic type of the test, here Stack<String>
     override val tests = context<Stack<String>> {
@@ -101,7 +100,7 @@ object SimpleStackExampleTests : JupiterTests {
 More complicated tests will have more than one piece of state. 
 
 ```kotlin
-object FixtureExampleTests : JupiterTests {
+class FixtureExampleTests : JupiterTests {
 
     // We have multiple state, so make a separate fixture class
     class Fixture {
@@ -136,7 +135,7 @@ private fun <E> Stack<E>.swapTop(otherStack: Stack<E>) {
 Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
 
 ```kotlin
-object StackExampleTests : JupiterTests {
+class StackExampleTests : JupiterTests {
 
     override val tests = context<Stack<String>> {
 
@@ -193,7 +192,7 @@ The key to Minutest is that by separating the fixture from the test code, both a
 For example, parameterised tests require [special handling](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests) in JUnit, but not in Minutest.
 
 ```kotlin
-object ParameterisedTests : JupiterTests {
+class ParameterisedTests : JupiterTests {
 
     override val tests = context<Unit> {
 
@@ -251,7 +250,7 @@ private fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
 
 // Now tests can invoke the function to verify the contract in a context
 
-object ArrayListTests : JupiterTests {
+class ArrayListTests : JupiterTests {
 
     override val tests = context<MutableCollection<String>> {
         behavesAsMutableCollection("ArrayList") { ArrayList() }
@@ -261,7 +260,7 @@ object ArrayListTests : JupiterTests {
 // We can reuse the contract for different collections.
 
 // Here we use the convenience InlineJupiterTests to reduce boilerplate
-object LinkedListTests : InlineJupiterTests<MutableCollection<String>>({
+class LinkedListTests : InlineJupiterTests<MutableCollection<String>>({
 
     behavesAsMutableCollection("LinkedList") { LinkedList() }
 
@@ -308,7 +307,7 @@ private fun TestContext<StringStack>.cantPop() = test("cant pop") {
 }
 
 // In order to give multiple sets of tests, in this example we are using JUnit @TestFactory functions
-object GeneratingExampleTests {
+class GeneratingExampleTests {
 
     // JUnit will run the tests from annotated functions
     @TestFactory fun `stack tests`() = junitTests<StringStack> {
@@ -367,7 +366,7 @@ The last of these generates the following tests
 Are you a functional programmer slumming it with Kotlin? Minutest allows immutable fixtures.
 
 ```kotlin
-object ImmutableExampleTests : JupiterTests {
+class ImmutableExampleTests : JupiterTests {
 
     // If you like this FP stuff, you may want to test an immutable fixture.
     override val tests = context<List<String>> {
@@ -395,7 +394,7 @@ object ImmutableExampleTests : JupiterTests {
 Power JUnit 4 user? Minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
 
 ```kotlin
-object JunitRulesExampleTests : JupiterTests {
+class JunitRulesExampleTests : JupiterTests {
 
     class Fixture {
         // make rules part of the fixture, no need for an annotation
