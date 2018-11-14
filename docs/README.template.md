@@ -65,7 +65,7 @@ Minutests can be defined in a Spec style, with nested contexts and tests. The JU
 
 This runs the following tests
 
-![StackExampleTests](docs/images/StackExampleTests.png)
+![StackExampleTests](images/StackExampleTests.png)
 
 ## Parameterised Tests
 
@@ -76,7 +76,7 @@ For example, parameterised tests require [special handling](https://junit.org/ju
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/ParameterisedTests.kt
 ```
 
-![ParameterisedTests](docs/images/ParameterisedTests.png)
+![ParameterisedTests](images/ParameterisedTests.png)
 
 ## Reusing Tests
 
@@ -96,7 +96,7 @@ Go crazy and unleash the `Power of Kotlin` to generate your tests on the fly.
 
 The last of these generates the following tests
 
-![MultipleStackExamples](docs/images/MultipleStackExamples.png)
+![MultipleStackExamples](images/MultipleStackExamples.png)
 
 ## Immutable Fixtures
 
@@ -105,12 +105,9 @@ Are you a functional programmer slumming it with Kotlin? Minutest allows immutab
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/Minutest/examples/ImmutableExampleTests.kt
 ```
 
-## JUnit Rules
+## Other Features
 
-Power JUnit 4 user? Minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
-
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/Minutest/examples/JUnitRulesExampleTests.kt
-```
+[JUnit rules](junit-rules.md)
 
 ## Support
 

@@ -3,7 +3,7 @@ import java.io.File
 tasks {
     val readme = create("readme") {
         doFirst {
-            generateReadme()
+            processMarkDown(project.projectDir)
         }
     }
 
@@ -12,13 +12,19 @@ tasks {
     }
 }
 
-fun generateReadme() {
-    val newReadmeLines = linesFrom("README.template.md").map { line ->
+fun processMarkDown(dir: File) {
+    dir.listFiles().filter { it.name.endsWith("template.md") }.forEach { file ->
+        processMarkDown(file, file.parentFile.resolve(file.name.replace(".template", "")))
+    }
+}
+
+fun processMarkDown(src: File, dest: File) {
+    val newReadmeLines = src.readLines().map { line ->
         "```insert-kotlin (.*)$".toRegex().find(line)?.groups?.get(1)?.value?.let { filename ->
             (listOf("```kotlin") + linesFrom(filename).filtered()).joinToString("\n")
         } ?: line
     }
-    File("README.md").writeText(newReadmeLines.joinToString("\n"))
+    dest.writeText(newReadmeLines.joinToString("\n"))
 }
 
 fun Iterable<String>.filtered(): List<String> = this

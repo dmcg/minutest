@@ -183,7 +183,7 @@ class StackExampleTests : JupiterTests {
 
 This runs the following tests
 
-![StackExampleTests](docs/images/StackExampleTests.png)
+![StackExampleTests](images/StackExampleTests.png)
 
 ## Parameterised Tests
 
@@ -217,7 +217,7 @@ fun String.isPalindrome(): Boolean =
     else (0 until length / 2).find { index -> this[index] != this[length - index - 1] } == null
 ```
 
-![ParameterisedTests](docs/images/ParameterisedTests.png)
+![ParameterisedTests](images/ParameterisedTests.png)
 
 ## Reusing Tests
 
@@ -359,7 +359,7 @@ private fun TestContext<StringStack>.canPop(canPop: Boolean) = if (canPop) canPo
 
 The last of these generates the following tests
 
-![MultipleStackExamples](docs/images/MultipleStackExamples.png)
+![MultipleStackExamples](images/MultipleStackExamples.png)
 
 ## Immutable Fixtures
 
@@ -389,32 +389,9 @@ class ImmutableExampleTests : JupiterTests {
 }
 ```
 
-## JUnit Rules
+## Other Features
 
-Power JUnit 4 user? Minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
-
-```kotlin
-class JunitRulesExampleTests : JupiterTests {
-
-    class Fixture {
-        // make rules part of the fixture, no need for an annotation
-        val testFolder = TemporaryFolder()
-    }
-
-    override val tests = context<Fixture> {
-
-        fixture { Fixture() }
-
-        // tell the context to use the rule for each test in it and its children
-        applyRule { this.testFolder }
-
-        // and it will apply in this and sub-contexts
-        test("test folder is present") {
-            assertTrue(testFolder.newFile().isFile)
-        }
-    }
-}
-```
+[JUnit rules](junit-rules.md)
 
 ## Support
 
