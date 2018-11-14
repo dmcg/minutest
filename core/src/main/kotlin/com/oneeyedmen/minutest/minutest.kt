@@ -2,7 +2,6 @@ package com.oneeyedmen.minutest
 
 import com.oneeyedmen.minutest.internal.MinutestMarker
 import com.oneeyedmen.minutest.internal.asKType
-import kotlin.DeprecationLevel.WARNING
 import kotlin.reflect.KType
 
 typealias TestContext<F> = Context<*, F>
@@ -13,7 +12,7 @@ abstract class Context<ParentF, F> {
     /**
      * Define a child-context, inheriting the fixture from the parent.
      */
-    abstract fun context(name: String, builder: Context<F, F>.() -> Unit)
+    abstract fun context(name: String, builder: Context<F, F>.() -> Unit): Focusable
 
     /**
      * Define a child-context with a different fixture type.
@@ -63,14 +62,14 @@ abstract class Context<ParentF, F> {
     /**
      * Define a test on the current fixture (accessible as 'this').
      */
-    fun test(name: String, f: F.() -> Unit) = test_(name) { this.apply(f) }
+    fun test(name: String, f: F.() -> Unit): Focusable = test_(name) { this.apply(f) }
 
     /**
      * Define a test on the current fixture (accessible as the receiver 'this'), returning
      * a new fixture to be processed by 'afters'.
      */
     @Suppress("FunctionName")
-    abstract fun test_(name: String, f: F.() -> F)
+    abstract fun test_(name: String, f: F.() -> F): Focusable
 
     /**
      * Apply an operation to the current fixture (accessible as the receiver 'this') before
@@ -116,7 +115,7 @@ abstract class Context<ParentF, F> {
         fixtureFactory: (F.(TestDescriptor) -> G)?,
         explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit
-    )
+    ): Focusable
 
     /**
      * Internal implementation, only public to be accessible to extension functions.
