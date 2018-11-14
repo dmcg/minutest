@@ -74,33 +74,33 @@ More complicated tests will have more than one piece of state.
 ```kotlin
 class FixtureExampleTests : JupiterTests {
 
-    // We have multiple state, so make a separate fixture class
+    // We have multiple items of test state, so make a separate fixture class
     class Fixture {
         // these would be the fields of your JUnit test
-        val stack1 = Stack<String>()
-        val stack2 = Stack<String>()
+        val stack1 = Stack<Int>()
+        val stack2 = Stack<Int>()
     }
 
     // now our context type is Fixture
     override val tests = context<Fixture> {
-        // Again the fixture is created once for each test
+
+        // create it in a fixture block
         fixture { Fixture() }
 
         // and access it in tests
-        test("swap top") {
-            stack1.push("on one")
-            stack2.push("on two")
-            stack1.swapTop(stack2)
-            assertEquals("on two", stack1.peek())
-            assertEquals("on one", stack2.peek())
+        test("add all single item") {
+            stack2.add(1)
+            stack1.addAll(stack2)
+            assertEquals(listOf(1), stack1.toList())
+        }
+
+        test("add all multiple items") {
+            assertTrue(stack1.isEmpty() && stack2.isEmpty(), "fixture is clean each test")
+            stack2.addAll(listOf(1, 2))
+            stack1.addAll(stack2)
+            assertEquals(listOf(1, 2), stack1.toList())
         }
     }
-}
-
-private fun <E> Stack<E>.swapTop(otherStack: Stack<E>) {
-    val myTop = pop()
-    push(otherStack.pop())
-    otherStack.push(myTop)
 }
 ```
 
