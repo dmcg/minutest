@@ -3,7 +3,7 @@ import java.io.File
 tasks {
     val readme = create("readme") {
         doFirst {
-            processMarkDown(project.projectDir)
+            processMarkDown(project.projectDir.resolve("src"))
         }
     }
 
@@ -14,7 +14,7 @@ tasks {
 
 fun processMarkDown(dir: File) {
     dir.listFiles().filter { it.name.endsWith("template.md") }.forEach { file ->
-        processMarkDown(file, file.parentFile.resolve(file.name.replace(".template", "")))
+        processMarkDown(file, file.parentFile.resolve("../" + file.name.replace(".template", "")))
     }
 }
 

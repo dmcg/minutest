@@ -2,44 +2,16 @@
 
 [ ![Download](https://api.bintray.com/packages/dmcg/oneeyedmen-mvn/minutest/images/download.svg) ](https://bintray.com/dmcg/oneeyedmen-mvn/minutest/_latestVersion)
 
-Minutest brings Spec-style testing to JUnit 5 and Kotlin.
+Minutest brings the power of Kotlin to JUnit 5, giving
+
+* Spec-style nested contexts and tests
+* Easy reuse of test code
+* On-the fly generation of tests
+* A level of expressiveness that has changed the way I write tests.
 
 ## Installation
 
-I don't think that Minutest is ready for Android or KotlinJS or KotlinNative projects yet. Sorry. If you prove me wrong please let me know.
-
-You can find the latest binaries and source in a Maven-compatible format on [JCenter](https://bintray.com/dmcg/oneeyedmen-mvn/minutest). So you need to reference JCenter as a repository.
-
-```groovy
-repositories {
-    jcenter()
-}
-```
-
-You will need to include Minutest and JUnit 5 on your test compilation classpath, and the JUnit engine on your test runtime classpath. 
-
-```groovy
-testCompile "org.junit.jupiter:junit-jupiter-api:+"
-testCompile "com.oneeyedmen:minutest:+"
-
-testRuntime "org.junit.jupiter:junit-jupiter-engine:+"
-testRuntime "org.junit.platform:junit-platform-launcher:+"
-```
-
-Finally you need to let test tasks know to use JUnit 5
-
-```groovy
-tasks {
-    test {
-        useJUnitPlatform()
-        testLogging {
-            events "skipped", "failed"
-        }
-    }
-}
-```
-
-My apologies to the Mavenites. If you are one then please try to work out what to do based on the [JUnit 5 docs](https://junit.org/junit5/docs/current/user-guide/#installation) and then submit a PR for this readme!
+[Instructions](installation.md)
 
 ## Usage
 
@@ -98,16 +70,11 @@ The last of these generates the following tests
 
 ![MultipleStackExamples](images/MultipleStackExamples.png)
 
-## Immutable Fixtures
-
-Are you a functional programmer slumming it with Kotlin? Minutest allows immutable fixtures.
-
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/Minutest/examples/ImmutableExampleTests.kt
-```
 
 ## Other Features
 
-[JUnit rules](junit-rules.md)
+* [Immutable fixtures](immutable-fixtures.md)
+* [JUnit rules](junit-rules.md)
 
 ## Support
 

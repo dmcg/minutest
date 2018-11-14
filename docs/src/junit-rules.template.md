@@ -1,4 +1,4 @@
-# Minutest
+# [Minutest](README.md)
 
 ## JUnit Rules
 
