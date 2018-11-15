@@ -12,7 +12,7 @@ internal data class RuntimeContext<PF, F>(
     override val parent: ParentContext<PF>,
     val children: List<TestNode>,
     private val operations: Operations<PF, F>
-) : ParentContext<F>, TestNode() {
+) : ParentContext<F>, TestNode(), com.oneeyedmen.minutest.Tests {
 
     override fun runTest(test: Test<F>) {
         parent.runTest(operations.buildParentTest(test))
