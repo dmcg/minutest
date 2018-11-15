@@ -1,7 +1,6 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.junit.InlineJupiterTests
 import com.oneeyedmen.minutest.junit.JupiterTests
 import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -41,10 +40,9 @@ class ArrayListTests : JupiterTests {
 }
 
 // We can reuse the contract for different collections.
+class LinkedListTests : JupiterTests {
 
-// Here we use the convenience InlineJupiterTests to reduce boilerplate
-class LinkedListTests : InlineJupiterTests<MutableCollection<String>>({
-
-    behavesAsMutableCollection("LinkedList") { LinkedList() }
-
-})
+    override val tests = context<MutableCollection<String>> {
+        behavesAsMutableCollection("ArrayList") { LinkedList() }
+    }
+}
