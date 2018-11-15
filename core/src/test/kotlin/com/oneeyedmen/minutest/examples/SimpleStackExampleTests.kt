@@ -11,23 +11,27 @@ class SimpleStackExampleTests : JupiterTests {
     // The fixture type is the generic type of the test, here Stack<String>
     override val tests = context<Stack<String>> {
 
-        // Instead of defining the fixture as a field of the test like JUnit,
-        // in Minutest you call 'fixture' to initialise it for every test.
-        fixture { Stack() }
+        // The fixture block tells Minutest how to create an instance of the fixture.
+        // Minutest will call it once for every test.
+        fixture {
+            Stack()
+        }
 
-        // In a test, 'this' is the fixture created above
-        test("run first") {
+        test("add an item") {
+            // In a test, 'this' is the fixture created above
             assertTrue(this.isEmpty())
 
-            // you can leave out 'this'
-            add("item")
-            assertFalse(isEmpty())
+            this.add("item")
+            assertFalse(this.isEmpty())
         }
 
         // another test will use a new fixture instance
-        test("run second") {
+        test("fixture is fresh") {
             // you can also access the fixture as 'it' if it reads nicer
             assertTrue(it.isEmpty())
+
+            // or use the implicit 'this'
+            assertFalse(isNotEmpty())
         }
     }
 }

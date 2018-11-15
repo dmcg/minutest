@@ -10,9 +10,10 @@ class StackExampleTests : JupiterTests {
 
     override val tests = context<Stack<String>> {
 
-        fixture { Stack() }
-
-        // these tests run with an empty stack
+        // The tests in the root context run with this empty stack
+        fixture {
+            Stack()
+        }
 
         test("is empty") {
             assertTrue(it.isEmpty())
@@ -26,13 +27,14 @@ class StackExampleTests : JupiterTests {
             assertThrows<EmptyStackException> { peek() }
         }
 
-        // nested context
+        // nested a context
         context("after pushing an element") {
 
-            // this context modifies the fixture from its parent
-            modifyFixture { push("one") }
-
-            // these tests run with the single item stack
+            // This context modifies the fixture from its parent -
+            // the tests run with the single item stack.
+            modifyFixture {
+                parentFixture.push("one")
+            }
 
             test("is not empty") {
                 assertFalse(it.isEmpty())

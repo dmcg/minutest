@@ -25,15 +25,16 @@ Most tests require access to some state. The collection of state required by the
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/SimpleStackExampleTests.kt
 ```
 
+Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
+
+```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/StackExampleTests.kt
+```
+
 More complicated tests will have more than one piece of state. 
 
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/FixtureExampleTests.kt
 ```
 
-Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
-
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/StackExampleTests.kt
-```
 
 This runs the following tests
 
