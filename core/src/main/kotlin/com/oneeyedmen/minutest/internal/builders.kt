@@ -7,7 +7,7 @@ import com.oneeyedmen.minutest.TestTransform
 import kotlin.reflect.KType
 
 internal interface NodeBuilder<F> : Focusable {
-    fun toTestNode(parent: ParentContext<F>): TestNode
+    fun toRuntimeNode(parent: ParentContext<F>): RuntimeNode
 }
 
 internal class ContextBuilder<PF, F>(
@@ -58,12 +58,12 @@ internal class ContextBuilder<PF, F>(
 
     override fun addTransform(transform: TestTransform<F>) = operations.addTransform(transform)
 
-    override fun toTestNode(parent: ParentContext<PF>): RuntimeContext<PF, F> {
+    override fun toRuntimeNode(parent: ParentContext<PF>): RuntimeContext<PF, F> {
         operations.tryToResolveFixtureFactory(thereAreTests(), name)
         return RuntimeContext(name, parent, emptyList(), operations).let { context ->
             // nastiness to set up parent child in immutable nodes
             val relevantChildren = if (hasFocused) children.filter { it.isFocused  } else children
-            context.copy(children = relevantChildren.map { child -> child.toTestNode(context) })
+            context.copy(children = relevantChildren.map { child -> child.toRuntimeNode(context) })
         }
     }
 
@@ -73,7 +73,7 @@ internal class ContextBuilder<PF, F>(
 
 internal data class TestBuilder<F>(val name: String, val f: F.() -> F) : NodeBuilder<F>, Focusable {
 
-    override fun toTestNode(parent: ParentContext<F>) = RuntimeTest(name, parent, f)
+    override fun toRuntimeNode(parent: ParentContext<F>) = RuntimeTest(name, parent, f)
 
     override var isFocused: Boolean = false
 }

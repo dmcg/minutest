@@ -49,14 +49,14 @@ fun com.oneeyedmen.minutest.Tests.toStreamOfDynamicNodes(): Stream<out DynamicNo
 // is not shown in the test runner. But see ruling.kt - ruleApplyingTest
 fun <F> Context<Unit, F>.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
     (this as ContextBuilder<Unit, F>)
-        .toTestNode(RootContext)
+        .toRuntimeNode(RootContext)
         .toDynamicContainer()
         .children
 
-private fun TestNode.toDynamicNode(): DynamicNode = when (this) {
+private fun RuntimeNode.toDynamicNode(): DynamicNode = when (this) {
     is RuntimeTest<*> -> dynamicTest(name) { this.run() }
     is RuntimeContext<*, *> -> this.toDynamicContainer()
 }
 
 private fun RuntimeContext<*, *>.toDynamicContainer(): DynamicContainer =
-    dynamicContainer(name, children.map(TestNode::toDynamicNode))
+    dynamicContainer(name, children.map(RuntimeNode::toDynamicNode))

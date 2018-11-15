@@ -38,7 +38,7 @@ fun <F> topLevelContext(
     ContextBuilder(name, type, fixtureFactory, true).apply(builder).toRootTestNode()
 
 private fun <F> Context<Unit, F>.toRootTestNode(): com.oneeyedmen.minutest.Tests =
-    (this as ContextBuilder<Unit, F>).toTestNode(RootContext)
+    (this as ContextBuilder<Unit, F>).toRuntimeNode(RootContext)
 
 @Suppress("UNCHECKED_CAST")
 private fun <F> fixtureFactoryFor(isUnit: Boolean): ((Unit, TestDescriptor) -> F)? = if (isUnit) {{ _, _ -> Unit as F }} else null
