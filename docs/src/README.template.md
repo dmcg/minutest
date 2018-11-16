@@ -35,10 +35,11 @@ More complicated tests will have more than one piece of state.
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/FixtureExampleTests.kt
 ```
 
-
 This runs the following tests
 
 ![StackExampleTests](images/StackExampleTests.png)
+
+[More discussion about fixtures](fixtures.md)
 
 ## Parameterised Tests
 

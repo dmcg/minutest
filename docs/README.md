@@ -159,10 +159,11 @@ class FixtureExampleTests : JupiterTests {
 }
 ```
 
-
 This runs the following tests
 
 ![StackExampleTests](images/StackExampleTests.png)
+
+[More discussion about fixtures](fixtures.md)
 
 ## Parameterised Tests
 
