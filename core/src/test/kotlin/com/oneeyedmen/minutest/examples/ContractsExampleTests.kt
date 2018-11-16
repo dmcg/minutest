@@ -8,14 +8,11 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
 
 
-// To run the same tests against different implementations, first define a function
-// taking the implementation and returning a TestContext
+// To run the same tests against different implementations, first define a TestContext extension function
+// that defines the tests you want run.
 private fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
-    collectionName: String,
-    factory: () -> MutableCollection<String>
+    collectionName: String
 ) {
-
-    fixture { factory() }
 
     context("$collectionName behaves as MutableCollection") {
 
@@ -30,12 +27,16 @@ private fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
     }
 }
 
-// Now tests can invoke the function to verify the contract in a context
+// Now tests can supply the fixture and invoke the function to verify the contract.
 
 class ArrayListTests : JupiterTests {
 
     override val tests = context<MutableCollection<String>> {
-        behavesAsMutableCollection("ArrayList") { ArrayList() }
+        fixture {
+            ArrayList()
+        }
+
+        behavesAsMutableCollection("ArrayList")
     }
 }
 
@@ -43,6 +44,10 @@ class ArrayListTests : JupiterTests {
 class LinkedListTests : JupiterTests {
 
     override val tests = context<MutableCollection<String>> {
-        behavesAsMutableCollection("ArrayList") { LinkedList() }
+        fixture {
+            LinkedList()
+        }
+
+        behavesAsMutableCollection("LinkedList")
     }
 }
