@@ -30,8 +30,11 @@ dependencies {
 }
 
 tasks {
-    "compileKotlin"(KotlinJvmCompile::class) { kotlinOptions.jvmTarget = "1.8" }
-    "compileTestKotlin"(KotlinJvmCompile::class) { kotlinOptions.jvmTarget = "1.8" }
+    withType<KotlinJvmCompile>() {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
 
     withType<Test> {
         useJUnitPlatform {
