@@ -1,4 +1,3 @@
-import java.io.File
 
 plugins {
     kotlin("jvm") version "1.2.71"
