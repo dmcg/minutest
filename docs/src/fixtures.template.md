@@ -15,7 +15,7 @@ You don't have to have a fixture. The simplest tests can just have assertions.
 
 ### Subject Under Test as Fixture
 
-It makes sense to have the subject under test as the fixture if it has state and there is no additional state.
+It makes sense to have the subject under test as the fixture if it has the only state in the test.
 
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/Minutest/examples/SubjectUnderTestFixtureExampleTests.kt
 ```
@@ -29,4 +29,9 @@ If you are testing static functions, making the arguments the fixture can be exp
 
 Again, where possible having the context name expressed in the fixture state, and vice-versa, keeps things honest.
 
-More TBA
+### Compound Fixture
+
+When testing a system that mediates between other components, it makes sense to bring them all into the fixture - this gives the test isolation and repeatability that is the point of the fixture.
+
+```insert-kotlin core/src/test/kotlin/com/oneeyedmen/Minutest/examples/CompoundFixtureExampleTests.kt
+```

@@ -37,7 +37,7 @@ class NoFixtureExampleTests : JupiterTests {
 
 ### Subject Under Test as Fixture
 
-It makes sense to have the subject under test as the fixture if it has state and there is no additional state.
+It makes sense to have the subject under test as the fixture if it has the only state in the test.
 
 ```kotlin
 class SubjectUnderTestFixtureExampleTests : JupiterTests {
@@ -80,31 +80,31 @@ If you are testing static functions, making the arguments the fixture can be exp
 ```kotlin
 class ArgumentsAsFixtureExampleTests : JupiterTests {
 
-    data class Arguments(val a: Int, val b: Int)
+    data class Arguments(val l: Int, val r: Int)
 
     override val tests = context<Arguments> {
 
         context("positive positive") {
             fixture {
-                Arguments(3, 1)
+                Arguments(l = 3, r = 1)
             }
             test("addition") {
-                assertEquals(4, a + b)
+                assertEquals(4, l + r)
             }
             test("subtraction") {
-                assertEquals(2, a - b)
+                assertEquals(2, l - r)
             }
         }
 
         context("positive negative") {
             fixture {
-                Arguments(3, -1)
+                Arguments(l = 3, r = -1)
             }
             test("addition") {
-                assertEquals(2, a + b)
+                assertEquals(2, l + r)
             }
             test("subtraction") {
-                assertEquals(4, a - b)
+                assertEquals(4, l - r)
             }
         }
     }
@@ -113,4 +113,93 @@ class ArgumentsAsFixtureExampleTests : JupiterTests {
 
 Again, where possible having the context name expressed in the fixture state, and vice-versa, keeps things honest.
 
-More TBA
+### Compound Fixture
+
+When testing a system that mediates between other components, it makes sense to bring them all into the fixture - this gives the test isolation and repeatability that is the point of the fixture.
+
+```kotlin
+class ControlPanel(
+    val keySwitch1: () -> Boolean,
+    val keySwitch2: () -> Boolean,
+    val beep: () -> Unit,
+    val launchMissile: () -> Unit
+) {
+    fun pressButton() {
+        if (keySwitch1() && keySwitch2())
+            launchMissile()
+        else
+            beep()
+    }
+    val warningLight get() = keySwitch1() && keySwitch2()
+}
+
+class CompoundFixtureExampleTests : JupiterTests {
+
+    class Fixture() {
+        // Rather than introduce a mocking framework, we can work with
+        // functions and mutable state.
+        var switch1On = false
+        var switch2On = false
+        var beeped = false
+        var missileLaunched = false
+
+        val controlPanel = ControlPanel(
+            keySwitch1 = { switch1On },
+            keySwitch2 = { switch2On },
+            beep = { beeped = true },
+            launchMissile = { missileLaunched = true }
+        )
+    }
+
+    override val tests = context<Fixture> {
+        fixture { Fixture() }
+
+        context("no keys turned") {
+            modifyFixture {
+                switch1On = true
+            }
+            test("light off") {
+                assertFalse(controlPanel.warningLight)
+            }
+            test("cannot launch") {
+                controlPanel.pressButton()
+                assertTrue(beeped)
+                assertFalse(missileLaunched)
+            }
+        }
+
+        context("only key 1 turned") {
+            modifyFixture {
+                switch1On = true
+            }
+            test("light off") {
+                assertFalse(controlPanel.warningLight)
+            }
+            test("cannot launch") {
+                controlPanel.pressButton()
+                assertTrue(beeped)
+                assertFalse(missileLaunched)
+            }
+        }
+
+        context("only key 2 turned") {
+            // ...
+        }
+
+        context("both keys turned") {
+            modifyFixture {
+                switch1On = true
+                switch2On = true
+            }
+            test("light on") {
+                assertTrue(controlPanel.warningLight)
+            }
+            test("will launch") {
+                controlPanel.pressButton()
+                assertFalse(beeped)
+                assertTrue(missileLaunched)
+            }
+        }
+    }
+}
+```

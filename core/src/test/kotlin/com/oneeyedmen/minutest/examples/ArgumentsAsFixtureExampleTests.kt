@@ -6,31 +6,31 @@ import org.junit.jupiter.api.Assertions.assertEquals
 
 class ArgumentsAsFixtureExampleTests : JupiterTests {
 
-    data class Arguments(val a: Int, val b: Int)
+    data class Arguments(val l: Int, val r: Int)
 
     override val tests = context<Arguments> {
 
         context("positive positive") {
             fixture {
-                Arguments(3, 1)
+                Arguments(l = 3, r = 1)
             }
             test("addition") {
-                assertEquals(4, a + b)
+                assertEquals(4, l + r)
             }
             test("subtraction") {
-                assertEquals(2, a - b)
+                assertEquals(2, l - r)
             }
         }
 
         context("positive negative") {
             fixture {
-                Arguments(3, -1)
+                Arguments(l = 3, r = -1)
             }
             test("addition") {
-                assertEquals(2, a + b)
+                assertEquals(2, l + r)
             }
             test("subtraction") {
-                assertEquals(4, a - b)
+                assertEquals(4, l - r)
             }
         }
     }
