@@ -72,6 +72,8 @@ class SubjectUnderTestFixtureExampleTests : JupiterTests {
     }
 }
 ```
+
+Even if the subject is immutable then you can [inspect it in after blocks](immutable-fixtures.md).
  
 ### Arguments as Fixture
 

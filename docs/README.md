@@ -348,7 +348,6 @@ The last of these generates the following tests
 
 ## Other Features
 
-* [Immutable fixtures](immutable-fixtures.md)
 * [JUnit rules](junit-rules.md)
 
 ## Support

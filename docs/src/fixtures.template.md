@@ -19,6 +19,8 @@ It makes sense to have the subject under test as the fixture if it has the only 
 
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/Minutest/examples/SubjectUnderTestFixtureExampleTests.kt
 ```
+
+Even if the subject is immutable then you can [inspect it in after blocks](immutable-fixtures.md).
  
 ### Arguments as Fixture
 
@@ -35,3 +37,4 @@ When testing a system that mediates between other components, it makes sense to 
 
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/Minutest/examples/CompoundFixtureExampleTests.kt
 ```
+
