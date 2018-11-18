@@ -39,7 +39,7 @@ Tests for cooperating components will typically have one piece of state. In this
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/CompoundFixtureExampleTests.kt
 ```
 
-[More discussion about fixtures](fixtures.md)
+Understanding fixtures is key to Minutest - [read more](fixtures.md)
 
 ## Parameterised Tests
 
@@ -61,24 +61,13 @@ If you want to reuse the same tests for different concrete implementations, defi
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/ContractsExampleTests.kt
 ```
 
-## Generate Tests
-
-Go crazy and unleash the `Power of Kotlin` to generate your tests on the fly.
-
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/GeneratingExampleTests.kt
-```
-
-The last of these generates the following tests
-
-![MultipleStackExamples](images/MultipleStackExamples.png)
-
-
 ## Other Features
 
+* [Generating Tests](generating-tests.md)
 * [JUnit rules](junit-rules.md)
 
 ## Support
 
-Minutest is still feeling its way towards a humane API. Until we reach version 1 this is subject to change - we'll try not to break things but it's better to move fast. Please do let us know what is working and what isn't, either physically or conceptually.
+Minutest is still feeling its way towards a humane API. Until we reach version 1 this is subject to change - we're trying to balance not breaking things with getting better quickly. Please do let us know what is working and what isn't, either physically or conceptually.
 
 The best bet for feedback and help is the [#minutest channel on the Kotlin Slack](https://kotlinlang.slack.com/messages/CCYE00YM6). See you there.
