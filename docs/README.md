@@ -124,6 +124,10 @@ class StackExampleTests : JupiterTests {
 }
 ```
 
+This runs the following tests
+
+![StackExampleTests](images/StackExampleTests.png)
+
 More complicated tests will have more than one piece of state. 
 
 ```kotlin
@@ -158,10 +162,6 @@ class FixtureExampleTests : JupiterTests {
     }
 }
 ```
-
-This runs the following tests
-
-![StackExampleTests](images/StackExampleTests.png)
 
 [More discussion about fixtures](fixtures.md)
 
