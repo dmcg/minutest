@@ -128,36 +128,65 @@ This runs the following tests
 
 ![StackExampleTests](images/StackExampleTests.png)
 
-More complicated tests will have more than one piece of state. 
+Tests for cooperating components will typically have one piece of state. In this case make the fixture encapsulate all the state. 
 
 ```kotlin
-class FixtureExampleTests : JupiterTests {
+class ControlPanel(
+    val keySwitch: () -> Boolean,
+    val beep: () -> Unit,
+    val launchMissile: () -> Unit
+) {
+    fun pressButton() {
+        if (keySwitch())
+            launchMissile()
+        else
+            beep()
+    }
+    val warningLight get() = keySwitch()
+}
 
-    // We have multiple items of test state, so make a separate fixture class
-    class Fixture {
-        // these would be the fields of your JUnit test
-        val stack1 = Stack<Int>()
-        val stack2 = Stack<Int>()
+class CompoundFixtureExampleTests : JupiterTests {
+
+    class Fixture() {
+        // Rather than introduce a mocking framework, we can work with
+        // functions and mutable state.
+        var keySwitchOn = false
+        var beeped = false
+        var missileLaunched = false
+
+        val controlPanel = ControlPanel(
+            keySwitch = { keySwitchOn },
+            beep = { beeped = true },
+            launchMissile = { missileLaunched = true }
+        )
     }
 
-    // now our context type is Fixture
     override val tests = context<Fixture> {
-
-        // create it in a fixture block
         fixture { Fixture() }
 
-        // and access it in tests
-        test("add all single item") {
-            stack2.add(1)
-            stack1.addAll(stack2)
-            assertEquals(listOf(1), stack1.toList())
+        context("key not turned") {
+            test("light off") {
+                assertFalse(controlPanel.warningLight)
+            }
+            test("cannot launch") {
+                controlPanel.pressButton()
+                assertTrue(beeped)
+                assertFalse(missileLaunched)
+            }
         }
 
-        test("add all multiple items") {
-            assertTrue(stack1.isEmpty() && stack2.isEmpty(), "fixture is clean each test")
-            stack2.addAll(listOf(1, 2))
-            stack1.addAll(stack2)
-            assertEquals(listOf(1, 2), stack1.toList())
+        context("key turned") {
+            modifyFixture {
+                keySwitchOn = true
+            }
+            test("light on") {
+                assertTrue(controlPanel.warningLight)
+            }
+            test("will launch") {
+                controlPanel.pressButton()
+                assertFalse(beeped)
+                assertTrue(missileLaunched)
+            }
         }
     }
 }

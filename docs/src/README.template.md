@@ -30,14 +30,14 @@ Minutests can be defined in a Spec style, with nested contexts and tests. The JU
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/StackExampleTests.kt
 ```
 
-More complicated tests will have more than one piece of state. 
-
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/FixtureExampleTests.kt
-```
-
 This runs the following tests
 
 ![StackExampleTests](images/StackExampleTests.png)
+
+Tests for cooperating components will typically have one piece of state. In this case make the fixture encapsulate all the state. 
+
+```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/CompoundFixtureExampleTests.kt
+```
 
 [More discussion about fixtures](fixtures.md)
 
