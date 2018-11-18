@@ -3,10 +3,7 @@ package com.oneeyedmen.minutest.internal
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.Tests
-import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
-import kotlin.reflect.KTypeProjection
 
 
 fun <F> topLevelContext(
@@ -17,7 +14,7 @@ fun <F> topLevelContext(
     ContextBuilder<Unit, F>(
         name,
         type,
-        fixtureFactoryFor(type.classifier == Unit::class),
+        fixtureFactoryFor(type),
         false
     ).apply(builder).toRootTestNode()
 
@@ -41,14 +38,9 @@ private fun <F> Context<Unit, F>.toRootTestNode(): com.oneeyedmen.minutest.Tests
     (this as ContextBuilder<Unit, F>).toRuntimeNode(RootContext)
 
 @Suppress("UNCHECKED_CAST")
-private fun <F> fixtureFactoryFor(isUnit: Boolean): ((Unit, TestDescriptor) -> F)? = if (isUnit) {{ _, _ -> Unit as F }} else null
-
-fun KClass<*>.asKType(isNullable: Boolean) =  object : KType {
-    override val arguments: List<KTypeProjection> = emptyList()
-    override val classifier: KClassifier = this@asKType
-    override val isMarkedNullable = isNullable
-    override fun toString() = this@asKType.toString()
-}
-
-inline fun <reified G> asKType() = G::class.asKType(null is G)
+private fun <F> fixtureFactoryFor(type: KType): ((Unit, TestDescriptor) -> F)? =
+    if (type.classifier == Unit::class) {
+        { _, _ -> Unit as F }
+    }
+    else null
 
