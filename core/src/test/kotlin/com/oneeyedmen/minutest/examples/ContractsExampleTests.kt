@@ -10,13 +10,11 @@ import java.util.*
 
 // To run the same tests against different implementations, first define a TestContext extension function
 // that defines the tests you want run.
-private fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
-    collectionName: String
-) {
+fun TestContext<MutableCollection<String>>.behavesAsMutableCollection() {
 
-    context("$collectionName behaves as MutableCollection") {
+    context("behaves as MutableCollection") {
 
-        test("is empty") {
+        test("is empty when created") {
             assertTrue(isEmpty())
         }
 
@@ -27,8 +25,7 @@ private fun TestContext<MutableCollection<String>>.behavesAsMutableCollection(
     }
 }
 
-// Now tests can supply the fixture and invoke the function to verify the contract.
-
+// Now tests can supply the fixture and invoke the function to create the tests to verify the contract.
 class ArrayListTests : JupiterTests {
 
     override val tests = context<MutableCollection<String>> {
@@ -36,7 +33,7 @@ class ArrayListTests : JupiterTests {
             ArrayList()
         }
 
-        behavesAsMutableCollection("ArrayList")
+        behavesAsMutableCollection()
     }
 }
 
@@ -48,6 +45,6 @@ class LinkedListTests : JupiterTests {
             LinkedList()
         }
 
-        behavesAsMutableCollection("LinkedList")
+        behavesAsMutableCollection()
     }
 }
