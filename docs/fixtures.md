@@ -180,3 +180,88 @@ class CompoundFixtureExampleTests : JupiterTests {
     }
 }
 ```
+
+### Parent Fixtures
+
+Fixtures are inherited from the parent context, and may be replaced or modified by children.
+
+```kotlin
+class ParentFixtureExampleTests : JupiterTests {
+
+    data class Fixture(var fruit: String)
+
+    override val tests = context<Fixture> {
+        fixture {
+            Fixture("banana")
+        }
+
+        test("sees the context's fixture") {
+            assertEquals("banana", fruit)
+        }
+
+        context("context inherits fixture") {
+            test("sees the parent context's fixture") {
+                assertEquals("banana", fruit)
+            }
+        }
+
+        context("context replaces fixture") {
+            fixture {
+                Fixture("kumquat")
+            }
+            test("sees the replaced fixture") {
+                assertEquals("kumquat", fruit)
+            }
+        }
+
+        context("context modifies fixture") {
+            modifyFixture {
+                fruit = "apple"
+            }
+            test("sees the modified fixture") {
+                assertEquals("apple", fruit)
+            }
+        }
+    }
+}
+```
+
+### Changing Fixture Type
+
+A context may change the type of its parent fixture.
+
+```kotlin
+class DerivedContextExampleTests : JupiterTests {
+
+    data class Fruit(val name: String)
+
+    data class FruitDrink(val fruit: Fruit, val name: String) {
+        override fun toString() = "${fruit.name} $name"
+    }
+
+    override val tests = context<Fruit> {
+
+        fixture {
+            Fruit("banana")
+        }
+
+        test("takes Fixture") {
+            assertEquals("banana", name)
+        }
+
+        // To change fixture type use derivedContext
+        derivedContext<FruitDrink>("change in fixture type") {
+
+            // We have to specify how to convert a Fruit to a FruitDrink
+            deriveFixture {
+                FruitDrink(parentFixture, "smoothie")
+            }
+
+            test("takes FruitDrink") {
+                assertEquals("banana smoothie", this.toString())
+            }
+        }
+    }
+}
+```
+

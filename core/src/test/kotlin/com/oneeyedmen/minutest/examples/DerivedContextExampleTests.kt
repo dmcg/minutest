@@ -7,38 +7,32 @@ import org.junit.jupiter.api.Assertions.assertEquals
 
 class DerivedContextExampleTests : JupiterTests {
 
-    data class Fixture(val fruit: String)
+    data class Fruit(val name: String)
 
-    data class DerivedFixture(val fixture: Fixture, val thing: String)
+    data class FruitDrink(val fruit: Fruit, val name: String) {
+        override fun toString() = "${fruit.name} $name"
+    }
 
-    override val tests = context<Fixture> {
+    override val tests = context<Fruit> {
 
-        fixture { Fixture("banana") }
+        fixture {
+            Fruit("banana")
+        }
 
         test("takes Fixture") {
-            assertEquals("banana", fruit)
+            assertEquals("banana", name)
         }
 
-        derivedContext<DerivedFixture>("inner converting fixture later") {
+        // To change fixture type use derivedContext
+        derivedContext<FruitDrink>("change in fixture type") {
 
+            // We have to specify how to convert a Fruit to a FruitDrink
             deriveFixture {
-                DerivedFixture(parentFixture, "smoothie")
+                FruitDrink(parentFixture, "smoothie")
             }
 
-            test("takes DerivedFixture") {
-                assertEquals(DerivedFixture(Fixture("banana"), "smoothie"), this)
-            }
-        }
-
-        derivedContext<DerivedFixture>("inner supplying converter", { DerivedFixture(this, "smoothie") }) {
-            test("takes DerivedFixture") {
-                assertEquals(DerivedFixture(Fixture("banana"), "smoothie"), this)
-            }
-        }
-
-        derivedContext("inner supplying fixture", DerivedFixture(Fixture("apple"), "pie")) {
-            test("takes DerivedFixture") {
-                assertEquals(DerivedFixture(Fixture("apple"), "pie"), this)
+            test("takes FruitDrink") {
+                assertEquals("banana smoothie", this.toString())
             }
         }
     }

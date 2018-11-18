@@ -38,3 +38,18 @@ When testing a system that mediates between other components, it makes sense to 
 ```insert-kotlin core/src/test/kotlin/com/oneeyedmen/Minutest/examples/CompoundFixtureExampleTests.kt
 ```
 
+### Parent Fixtures
+
+Fixtures are inherited from the parent context, and may be replaced or modified by children.
+
+```insert-kotlin core/src/test/kotlin/com/oneeyedmen/Minutest/examples/ParentFixtureExampleTests.kt
+```
+
+### Changing Fixture Type
+
+A context may change the type of its parent fixture.
+
+```insert-kotlin core/src/test/kotlin/com/oneeyedmen/Minutest/examples/DerivedContextExampleTests.kt
+```
+
+
