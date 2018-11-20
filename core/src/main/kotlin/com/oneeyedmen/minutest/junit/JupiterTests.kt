@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.internal.RuntimeNode
+import com.oneeyedmen.minutest.Tests
 import com.oneeyedmen.minutest.internal.asKType
 import com.oneeyedmen.minutest.internal.topLevelContext
 import org.junit.jupiter.api.DynamicNode
@@ -10,7 +10,7 @@ import java.util.stream.Stream
 
 interface JupiterTests {
 
-    val tests: RuntimeNode
+    val tests: Tests
 
     /**
      * Provided so that JUnit will run the tests

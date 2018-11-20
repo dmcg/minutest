@@ -2,12 +2,9 @@ package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JupiterTests
 import com.oneeyedmen.minutest.junit.context
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertThrows
-import java.util.EmptyStackException
-import java.util.Stack
+import java.util.*
 
 class StackExampleTests : JupiterTests {
 

@@ -1,13 +1,7 @@
 package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.internal.NodeBuilder
-import com.oneeyedmen.minutest.internal.RootContext
-import com.oneeyedmen.minutest.internal.RuntimeContext
-import com.oneeyedmen.minutest.internal.RuntimeTest
-import com.oneeyedmen.minutest.internal.RuntimeNode
-import com.oneeyedmen.minutest.internal.asKType
-import com.oneeyedmen.minutest.internal.topLevelContext
+import com.oneeyedmen.minutest.internal.*
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
@@ -19,14 +13,12 @@ import java.util.stream.Stream
  *
  * @see [Any.junitTests]
  */
-inline fun <reified F> junitTestsNamed(
-    name: String,
+inline fun <reified F> junitTestsNamed(name: String,
     noinline builder: Context<Unit, F>.() -> Unit
 ): Stream<out DynamicNode> =
     topLevelContext(name, asKType<F>(), builder).toStreamOfDynamicNodes()
 
-inline fun <reified F> junitTestsNamed(
-    name: String,
+inline fun <reified F> junitTestsNamed(name: String,
     fixture: F,
     noinline builder: Context<Unit, F>.() -> Unit
 ): Stream<out DynamicNode> =
@@ -49,12 +41,17 @@ inline fun <reified F> Any.junitTests(fixture: F,
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-fun RuntimeNode.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
-    Stream.of(toDynamicNode())
+fun com.oneeyedmen.minutest.Tests.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
+    (this as RuntimeContext<*, *>).toDynamicContainer().children
 
 
-fun NodeBuilder<Unit>.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
-    Stream.of(this.toTestNode(RootContext).toDynamicNode())
+// Note that we take the children of the root context to remove an unnecessary layer. Hence the rootContextName
+// is not shown in the test runner. But see ruling.kt - ruleApplyingTest
+fun <F> Context<Unit, F>.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
+    (this as ContextBuilder<Unit, F>)
+        .toRuntimeNode(RootContext)
+        .toDynamicContainer()
+        .children
 
 private fun RuntimeNode.toDynamicNode(): DynamicNode = when (this) {
     is RuntimeTest<*> -> dynamicTest(name) { this.run() }
