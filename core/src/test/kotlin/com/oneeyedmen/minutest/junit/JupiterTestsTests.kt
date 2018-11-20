@@ -49,11 +49,3 @@ class JupiterTestsWithSuppliedFixture : JupiterTests {
     }
 }
 
-class InlineJupiterTestsTests : InlineJupiterTests<String>({
-    fixture { "banana" }
-
-    test("test") {
-        assertEquals("banana", this)
-    }
-})
-

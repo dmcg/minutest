@@ -1,18 +1,19 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Test
+import com.oneeyedmen.minutest.Named
 
-internal sealed class RuntimeNode
+sealed class RuntimeNode : Named
 
 /**
  * The runtime representation of a context.
  */
-internal data class RuntimeContext<PF, F>(
+data class RuntimeContext<PF, F> internal constructor(
     override val name: String,
     override val parent: ParentContext<PF>,
     val children: List<RuntimeNode>,
     private val operations: Operations<PF, F>
-) : ParentContext<F>, RuntimeNode(), com.oneeyedmen.minutest.Tests {
+) : ParentContext<F>, RuntimeNode() {
 
     override fun runTest(test: Test<F>) {
         parent.runTest(operations.buildParentTest(test))
@@ -22,7 +23,7 @@ internal data class RuntimeContext<PF, F>(
 /**
  * The runtime representation of a test.
  */
-internal class RuntimeTest<F>(
+class RuntimeTest<F> internal constructor(
     override val name: String,
     override val parent: ParentContext<F>,
     private val f: F.() -> F
