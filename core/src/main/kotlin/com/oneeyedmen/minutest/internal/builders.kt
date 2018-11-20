@@ -1,12 +1,11 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.Focusable
 import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.TestTransform
 import kotlin.reflect.KType
 
-internal interface NodeBuilder<F> : Focusable {
+internal interface NodeBuilder<F> {
     fun toRuntimeNode(parent: ParentContext<F>): RuntimeNode
 }
 
@@ -19,8 +18,6 @@ internal class ContextBuilder<PF, F>(
 
     private val children = mutableListOf<NodeBuilder<F>>()
     private val operations = Operations(parentFixtureFactory)
-    var hasFocused: Boolean = false
-    override var isFocused: Boolean = false
 
     override fun privateDeriveFixture(f: (parentFixture: PF, testDescriptor: TestDescriptor) -> F) {
         if (explicitFixtureFactory)
@@ -37,8 +34,8 @@ internal class ContextBuilder<PF, F>(
         operations.addAfter(operation)
     }
 
-    override fun test_(name: String, f: F.() -> F): Focusable = TestBuilder(name, f).also {
-        children.add(it)
+    override fun test_(name: String, f: F.() -> F) {
+        children.add(TestBuilder(name, f))
     }
 
     override fun context(name: String, builder: Context<F, F>.() -> Unit) =
@@ -50,11 +47,9 @@ internal class ContextBuilder<PF, F>(
         fixtureFactory: (F.(TestDescriptor) -> G)?,
         explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit
-    ): Focusable =
-        ContextBuilder(name, type, fixtureFactory, explicitFixtureFactory).apply(builder).also {
-            children.add(it)
-        }
-
+    ) {
+        children.add(ContextBuilder(name, type, fixtureFactory, explicitFixtureFactory).apply(builder))
+    }
 
     override fun addTransform(transform: TestTransform<F>) = operations.addTransform(transform)
 
@@ -62,8 +57,7 @@ internal class ContextBuilder<PF, F>(
         operations.tryToResolveFixtureFactory(thereAreTests(), name)
         return RuntimeContext(name, parent, emptyList(), operations).let { context ->
             // nastiness to set up parent child in immutable nodes
-            val relevantChildren = if (hasFocused) children.filter { it.isFocused  } else children
-            context.copy(children = relevantChildren.map { child -> child.toRuntimeNode(context) })
+            context.copy(children = this.children.map { child -> child.toRuntimeNode(context) })
         }
     }
 
@@ -71,9 +65,6 @@ internal class ContextBuilder<PF, F>(
 
 }
 
-internal data class TestBuilder<F>(val name: String, val f: F.() -> F) : NodeBuilder<F>, Focusable {
-
+internal data class TestBuilder<F>(val name: String, val f: F.() -> F) : NodeBuilder<F> {
     override fun toRuntimeNode(parent: ParentContext<F>) = RuntimeTest(name, parent, f)
-
-    override var isFocused: Boolean = false
 }

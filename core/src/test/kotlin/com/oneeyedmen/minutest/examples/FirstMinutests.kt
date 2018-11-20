@@ -18,7 +18,7 @@ class FirstMinutests : JupiterTests {
             assertEquals(2, 1 + 1)
         }
 
-        // here is another test
+        // here is another one
         test("my second test") {
             assertNotEquals(42, 6 * 9)
         }
