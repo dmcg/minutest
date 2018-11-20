@@ -4,7 +4,7 @@ import com.oneeyedmen.minutest.junit.JupiterTests
 import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import java.util.Stack
+import java.util.*
 
 class SimpleStackExampleTests : JupiterTests {
 

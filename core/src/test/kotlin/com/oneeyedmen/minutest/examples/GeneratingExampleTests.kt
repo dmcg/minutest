@@ -2,13 +2,10 @@ package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.junit.junitTests
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
-import java.util.EmptyStackException
-import java.util.Stack
+import java.util.*
 
 // We can define functions that return tests for later injection
 

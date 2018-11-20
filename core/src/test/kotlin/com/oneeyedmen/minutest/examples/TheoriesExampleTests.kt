@@ -1,7 +1,6 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.disabled
 import com.oneeyedmen.minutest.junit.JupiterTests
 import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -31,7 +30,7 @@ class TheoriesExampleTests : JupiterTests {
             // When uncommented 2 failing tests are created -
             // is Fizz when divisible by 3 failed for value [15]
             // is Fizz when divisible by 3 failed for value [30]
-            disabled {
+            ignore {
                 theory(i, "is Fizz", Condition("divisible by 3") { this % 3 == 0 }) {
                     assertEquals("Fizz", fizzBuzz(i))
                 }
@@ -60,4 +59,8 @@ fun <F> TestContext<*>.theory(fixture: F, name: String, condition: Condition<F>,
 
 data class Condition<F>(val name: String, val predicate: F.() -> Boolean) {
     fun appliesTo(fixture: F) = predicate(fixture)
+}
+
+@Suppress("UNUSED_PARAMETER")
+fun ignore(f: () -> Unit) {
 }

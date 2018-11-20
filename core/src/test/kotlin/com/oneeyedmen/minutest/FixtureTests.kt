@@ -3,7 +3,6 @@ package com.oneeyedmen.minutest
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
@@ -125,10 +124,8 @@ class FixtureTests {
                 assertEquals("banana", fruit)
             }
         }.asSequence()
-        
         assertThrows<FileNotFoundException> {
-            // Yuck!  There must be a better way
-            ((tests.first() as DynamicContainer).children.asSequence().first() as DynamicTest).executable.execute()
+            ((tests.first() as DynamicTest)).executable.execute()
         }
     }
 }

@@ -2,6 +2,7 @@ package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.TestDescriptor
+import com.oneeyedmen.minutest.Tests
 import kotlin.reflect.KType
 
 
@@ -9,7 +10,7 @@ fun <F> topLevelContext(
     name: String,
     type: KType,
     builder: Context<Unit, F>.() -> Unit
-): RuntimeNode =
+): Tests =
     ContextBuilder<Unit, F>(
         name,
         type,
@@ -22,7 +23,7 @@ fun <F> topLevelContext(
     type: KType,
     fixture: F,
     builder: Context<Unit, F>.() -> Unit
-): RuntimeNode =
+): Tests =
     topLevelContext<F>(name, type, { _, _ -> fixture }, builder)
 
 fun <F> topLevelContext(
@@ -30,12 +31,11 @@ fun <F> topLevelContext(
     type: KType,
     fixtureFactory: ((Unit, TestDescriptor) -> F)?,
     builder: Context<Unit, F>.() -> Unit
-): RuntimeNode =
+): Tests =
     ContextBuilder(name, type, fixtureFactory, true).apply(builder).toRootTestNode()
 
-
-private fun <F> Context<Unit, F>.toRootTestNode(): RuntimeNode =
-    (this as ContextBuilder<Unit, F>).toTestNode(RootContext)
+private fun <F> Context<Unit, F>.toRootTestNode(): com.oneeyedmen.minutest.Tests =
+    (this as ContextBuilder<Unit, F>).toRuntimeNode(RootContext)
 
 @Suppress("UNCHECKED_CAST")
 private fun <F> fixtureFactoryFor(type: KType): ((Unit, TestDescriptor) -> F)? =
