@@ -2,79 +2,94 @@ package com.oneeyedmen.minutest.junit
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.platform.engine.EngineExecutionListener
-import org.junit.platform.engine.ExecutionRequest
-import org.junit.platform.engine.TestDescriptor
+import org.junit.platform.engine.TestEngine
 import org.junit.platform.engine.TestExecutionResult
 import org.junit.platform.engine.UniqueId
 import org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage
-import org.junit.platform.engine.reporting.ReportEntry
+import org.junit.platform.engine.support.descriptor.EngineDescriptor
+import org.junit.platform.launcher.TestExecutionListener
+import org.junit.platform.launcher.TestIdentifier
+import org.junit.platform.launcher.TestPlan
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request
+import org.junit.platform.launcher.core.LauncherFactory
 
 class MinutestTestEngineTests {
     @Test
     fun `finds and executes "pure minutest" tests`() {
-        val engine = MinutestTestEngine()
+        val launcher = LauncherFactory.create()
+        
         val discoveryRequest = request()
             .selectors(selectPackage("example"))
             .build()
         
-        val tests = engine.discover(discoveryRequest, UniqueId.forEngine(MinutestTestEngine.id))
-        
         val listener = TestLogger()
         
-        engine.execute(ExecutionRequest(tests, listener, discoveryRequest.configurationParameters))
+        launcher.execute(discoveryRequest, listener)
         
         Assertions.assertEquals(
             listOf(
-                "started: [engine:minutest]",
-                "started: [engine:minutest]/[minutest-package:example]",
-                "started: [engine:minutest]/[minutest-package:example]/[minutest-property:example context]",
-                "registered: [engine:minutest]/[minutest-package:example]/[minutest-property:example context]/[minutest-test:a failing test]",
-                "started: [engine:minutest]/[minutest-package:example]/[minutest-property:example context]/[minutest-test:a failing test]",
-                "failed: [engine:minutest]/[minutest-package:example]/[minutest-property:example context]/[minutest-test:a failing test], threw: org.opentest4j.AssertionFailedError: example failure",
-                "registered: [engine:minutest]/[minutest-package:example]/[minutest-property:example context]/[minutest-test:a passing test]",
-                "started: [engine:minutest]/[minutest-package:example]/[minutest-property:example context]/[minutest-test:a passing test]",
-                "successful: [engine:minutest]/[minutest-package:example]/[minutest-property:example context]/[minutest-test:a passing test]",
-                "successful: [engine:minutest]/[minutest-package:example]/[minutest-property:example context]",
-                "started: [engine:minutest]/[minutest-package:example]/[minutest-property:example typed context]",
-                "registered: [engine:minutest]/[minutest-package:example]/[minutest-property:example typed context]/[minutest-test:a typed fixture test]",
-                "started: [engine:minutest]/[minutest-package:example]/[minutest-property:example typed context]/[minutest-test:a typed fixture test]",
-                "successful: [engine:minutest]/[minutest-package:example]/[minutest-property:example typed context]/[minutest-test:a typed fixture test]",
-                "successful: [engine:minutest]/[minutest-package:example]/[minutest-property:example typed context]",
-                "successful: [engine:minutest]/[minutest-package:example]",
-                "successful: [engine:minutest]"),
+                "test plan started",
+                "test started: Minutest",
+                "test started: example",
+                "test started: example context",
+                "test registered: a failing test",
+                "test started: a failing test",
+                "test finished: a failing test",
+                "test registered: a passing test",
+                "test started: a passing test",
+                "test finished: a passing test",
+                "test finished: example context",
+                "test started: example typed context",
+                "test registered: a typed fixture test",
+                "test started: a typed fixture test",
+                "test finished: a typed fixture test",
+                "test finished: example typed context",
+                "test finished: example",
+                "test finished: Minutest",
+                "test plan finished"
+            ),
             listener.log
         )
     }
 }
 
-class TestLogger : EngineExecutionListener {
+class TestLogger : TestExecutionListener {
     private val _log = mutableListOf<String>()
     
     val log: List<String> get() = _log.toList()
     
-    override fun dynamicTestRegistered(testDescriptor: TestDescriptor) {
-        log("registered", testDescriptor)
+    override fun testPlanExecutionStarted(testPlan: TestPlan) {
+        log("test plan started")
     }
     
-    override fun executionStarted(testDescriptor: TestDescriptor) {
-        log("started", testDescriptor)
+    override fun dynamicTestRegistered(testIdentifier: TestIdentifier) {
+        log("test registered", testIdentifier)
     }
     
-    override fun executionFinished(testDescriptor: TestDescriptor, testExecutionResult: TestExecutionResult) {
-        log(testExecutionResult.status.name.toLowerCase(), testDescriptor, testExecutionResult.throwable.orElse(null))
+    override fun executionStarted(testIdentifier: TestIdentifier) {
+        log("test started", testIdentifier)
     }
     
-    override fun executionSkipped(testDescriptor: TestDescriptor, reason: String?) {
-        log("skipped", testDescriptor)
+    override fun executionFinished(testIdentifier: TestIdentifier, testExecutionResult: TestExecutionResult) {
+        log("test finished", testIdentifier)
+        
     }
     
-    private fun log(event: String, testDescriptor: TestDescriptor, failure: Throwable? = null) {
-        _log.add("$event: ${testDescriptor.uniqueId}${failure?.let { ", threw: $it" }.orEmpty()}")
+    override fun executionSkipped(testIdentifier: TestIdentifier, reason: String?) {
+        log("test skipped", testIdentifier)
     }
     
-    override fun reportingEntryPublished(testDescriptor: TestDescriptor, entry: ReportEntry) {
-        TODO("should not be called")
+    override fun testPlanExecutionFinished(testPlan: TestPlan) {
+        log("test plan finished")
+    }
+    
+    private fun log(event: String, testIdentifier: TestIdentifier) {
+        if (testIdentifier.uniqueId.startsWith("[engine:minutest]")) {
+            log("$event: ${testIdentifier.displayName}")
+        }
+    }
+    
+    private fun log(message: String) {
+        _log.add(message)
     }
 }
