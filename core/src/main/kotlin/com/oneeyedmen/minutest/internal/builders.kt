@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.TestTransform
 import kotlin.reflect.KType
 
-internal interface NodeBuilder<F> {
+interface NodeBuilder<F> {
     fun toRuntimeNode(parent: ParentContext<F>): RuntimeNode
 }
 
