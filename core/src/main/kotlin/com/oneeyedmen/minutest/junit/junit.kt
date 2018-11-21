@@ -41,17 +41,12 @@ inline fun <reified F> Any.junitTests(fixture: F,
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-fun com.oneeyedmen.minutest.Tests.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
-    (this as RuntimeContext<*, *>).toDynamicContainer().children
+fun RuntimeNode.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
+    Stream.of(toDynamicNode())
 
 
-// Note that we take the children of the root context to remove an unnecessary layer. Hence the rootContextName
-// is not shown in the test runner. But see ruling.kt - ruleApplyingTest
-fun <F> Context<Unit, F>.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
-    (this as ContextBuilder<Unit, F>)
-        .toRuntimeNode(RootContext)
-        .toDynamicContainer()
-        .children
+fun NodeBuilder<Unit>.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
+    Stream.of(this.toRootRuntimeNode().toDynamicNode())
 
 private fun RuntimeNode.toDynamicNode(): DynamicNode = when (this) {
     is RuntimeTest<*> -> dynamicTest(name) { this.run() }
