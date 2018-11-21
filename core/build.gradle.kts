@@ -22,6 +22,7 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
     implementation("org.junit.vintage:junit-vintage-engine:5.3.1")
     implementation("junit:junit:4.12")
+    implementation("io.github.classgraph:classgraph:4.4.12")
 
     testCompile(kotlin("test"))
 
@@ -40,7 +41,7 @@ tasks {
 
     withType<Test> {
         useJUnitPlatform {
-            includeEngines("junit-jupiter", "junit-vintage")
+            includeEngines("minutest", "junit-jupiter", "junit-vintage")
         }
     }
 

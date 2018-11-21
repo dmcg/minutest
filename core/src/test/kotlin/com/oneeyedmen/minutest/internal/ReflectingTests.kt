@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 
 class ReflectingTests : JupiterTests {
 
-    override val tests = context<Unit>() {
+    override val tests = context<Unit> {
 
         context("asKType") {
             test("captures class") {
