@@ -5,9 +5,9 @@ import com.oneeyedmen.minutest.internal.RuntimeNode
 import com.oneeyedmen.minutest.internal.asKType
 import com.oneeyedmen.minutest.internal.topLevelContext
 
-class TopLevelContextBuilder(val builderFn: (String) -> RuntimeNode) {
+class TopLevelContextBuilder(private val createTopLevelNode: (String) -> RuntimeNode) {
     fun build(name: String): RuntimeNode {
-        return builderFn(name)
+        return createTopLevelNode(name)
     }
 }
 
