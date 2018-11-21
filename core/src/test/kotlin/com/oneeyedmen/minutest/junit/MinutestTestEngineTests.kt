@@ -37,6 +37,11 @@ class MinutestTestEngineTests {
                 "started: [engine:minutest]/[minutest-package:example]/[minutest-property:example context]/[minutest-test:a passing test]",
                 "successful: [engine:minutest]/[minutest-package:example]/[minutest-property:example context]/[minutest-test:a passing test]",
                 "successful: [engine:minutest]/[minutest-package:example]/[minutest-property:example context]",
+                "started: [engine:minutest]/[minutest-package:example]/[minutest-property:example typed context]",
+                "registered: [engine:minutest]/[minutest-package:example]/[minutest-property:example typed context]/[minutest-test:a typed fixture test]",
+                "started: [engine:minutest]/[minutest-package:example]/[minutest-property:example typed context]/[minutest-test:a typed fixture test]",
+                "successful: [engine:minutest]/[minutest-package:example]/[minutest-property:example typed context]/[minutest-test:a typed fixture test]",
+                "successful: [engine:minutest]/[minutest-package:example]/[minutest-property:example typed context]",
                 "successful: [engine:minutest]/[minutest-package:example]",
                 "successful: [engine:minutest]"),
             listener.log
