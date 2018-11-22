@@ -26,8 +26,8 @@ dependencies {
 
     testCompile(kotlin("test"))
 
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:+")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:+") {
+    testCompile("org.junit.jupiter:junit-jupiter-engine:+")
+    testCompile("org.junit.platform:junit-platform-launcher:+") {
         because("enables running in IntelliJ using JUnit runner")
     }
 }
@@ -41,7 +41,7 @@ tasks {
 
     withType<Test> {
         useJUnitPlatform {
-            includeEngines("minutest", "junit-jupiter", "junit-vintage")
+            includeEngines("junit-jupiter", "junit-vintage")
         }
     }
 
