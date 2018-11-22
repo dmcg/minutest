@@ -1,3 +1,6 @@
+// explicit name for generated class so that tests are not coupled to the behaviour of the kotlin compiler
+@file:JvmName("ExampleMinutest")
+
 package example
 
 import com.oneeyedmen.minutest.experimental.context
@@ -15,11 +18,3 @@ val `example context` = context<Unit> {
     }
 }
 
-
-val `example typed context` = context<Stack<String>> {
-    fixture { Stack() }
-    
-    test("a typed fixture test") {
-        assertTrue(isEmpty())
-    }
-}
