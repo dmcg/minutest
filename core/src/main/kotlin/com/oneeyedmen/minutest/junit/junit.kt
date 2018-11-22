@@ -2,6 +2,7 @@ package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.internal.*
+import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
@@ -26,8 +27,9 @@ inline fun <reified F> Any.junitTests(fixture: F,
 fun RuntimeNode.toStreamOfDynamicNodes(): Stream<out DynamicNode> = Stream.of(this.toDynamicNode())
 
 private fun RuntimeNode.toDynamicNode(): DynamicNode = when (this) {
-    is RuntimeTest<*> -> dynamicTest(name) { this.run() }
-    is RuntimeContext<*, *> -> this.toDynamicContainer()
+    is RuntimeTest -> dynamicTest(name) { this.run() }
+    is RuntimeContext -> this.toDynamicContainer()
 }
 
-private fun RuntimeContext<*, *>.toDynamicContainer() = dynamicContainer(name, children.map(RuntimeNode::toDynamicNode))
+private fun RuntimeContext.toDynamicContainer(): DynamicContainer =
+    dynamicContainer(name, children.map(RuntimeNode::toDynamicNode))
