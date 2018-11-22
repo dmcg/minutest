@@ -49,9 +49,9 @@ fun NodeBuilder<Unit>.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
     Stream.of(this.toRootRuntimeNode().toDynamicNode())
 
 private fun RuntimeNode.toDynamicNode(): DynamicNode = when (this) {
-    is RuntimeTest<*> -> dynamicTest(name) { this.run() }
-    is RuntimeContext<*, *> -> this.toDynamicContainer()
+    is RuntimeTest -> dynamicTest(name) { this.run() }
+    is RuntimeContext -> this.toDynamicContainer()
 }
 
-private fun RuntimeContext<*, *>.toDynamicContainer(): DynamicContainer =
+private fun RuntimeContext.toDynamicContainer(): DynamicContainer =
     dynamicContainer(name, children.map(RuntimeNode::toDynamicNode))

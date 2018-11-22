@@ -2,8 +2,10 @@ package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.experimental.TopLevelContextBuilder
 import com.oneeyedmen.minutest.internal.RuntimeContext
-import com.oneeyedmen.minutest.internal.RuntimeTest
+import com.oneeyedmen.minutest.internal.RuntimeContextWithFixture
+import com.oneeyedmen.minutest.internal.RuntimeTestWithFixture
 import com.oneeyedmen.minutest.internal.RuntimeNode
+import com.oneeyedmen.minutest.internal.RuntimeTest
 import org.junit.platform.engine.EngineDiscoveryRequest
 import org.junit.platform.engine.EngineExecutionListener
 import org.junit.platform.engine.ExecutionRequest
@@ -70,7 +72,7 @@ class MinutestTestEngine : TestEngine {
     
     private fun executeMinutestNode(descriptor: TestDescriptor, node: RuntimeNode, listener: EngineExecutionListener) {
         when (node) {
-            is RuntimeContext<*, *> -> {
+            is RuntimeContextWithFixture<*, *> -> {
                 childDescriptors(node).forEach { child ->
                     descriptor.addChild(child)
                     listener.dynamicTestRegistered(child)
@@ -78,13 +80,13 @@ class MinutestTestEngine : TestEngine {
                     execute(child, listener)
                 }
             }
-            is RuntimeTest<*> -> {
+            is RuntimeTestWithFixture<*> -> {
                 node.run()
             }
         }
     }
     
-    private fun childDescriptors(context: RuntimeContext<*, *>) =
+    private fun childDescriptors(context: RuntimeContextWithFixture<*, *>) =
         context.children.map { MinutestNodeDescriptor(it) }
     
     private fun executeChildren(test: TestDescriptor, listener: EngineExecutionListener) {
@@ -187,13 +189,13 @@ class MinutestNodeDescriptor(
 ) : MinutestDescriptor() {
     
     override fun getType() = when (node) {
-        is RuntimeContext<*, *> -> CONTAINER
-        is RuntimeTest<*> -> TEST
+        is RuntimeContext -> CONTAINER
+        is RuntimeTest -> TEST
     }
     
     override val idType: String = when (node) {
-        is RuntimeContext<*, *> -> "minutest-context"
-        is RuntimeTest<*> -> "minutest-test"
+        is RuntimeContext -> "minutest-context"
+        is RuntimeTest -> "minutest-test"
     }
     
     override val id: String = node.name
