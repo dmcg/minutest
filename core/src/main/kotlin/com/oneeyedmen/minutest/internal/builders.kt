@@ -18,7 +18,7 @@ internal class ContextBuilder<PF, F>(
 ) : Context<PF, F>(), NodeBuilder<PF> {
 
     private val children = mutableListOf<NodeBuilder<F>>()
-    private val operations = Operations(parentFixtureFactory)
+    private val operations = OperationsBuilder(parentFixtureFactory)
 
     override fun privateDeriveFixture(f: (parentFixture: PF, testDescriptor: TestDescriptor) -> F) {
         if (explicitFixtureFactory)
@@ -55,8 +55,8 @@ internal class ContextBuilder<PF, F>(
     override fun addTransform(transform: TestTransform<F>) = operations.addTransform(transform)
 
     override fun toRuntimeNode(parent: ParentContext<PF>): RuntimeContextWithFixture<PF, F> {
-        operations.tryToResolveFixtureFactory(thereAreTests(), name)
-        return RuntimeContextWithFixture(name, parent, emptyList(), operations).let { context ->
+        val runtimeOperations = operations.buildOrThrow(thereAreTests(), name)
+        return RuntimeContextWithFixture(name, parent, emptyList(), runtimeOperations).let { context ->
             // nastiness to set up parent child in immutable nodes
             context.copy(children = this.children.map { child -> child.toRuntimeNode(context) })
         }
