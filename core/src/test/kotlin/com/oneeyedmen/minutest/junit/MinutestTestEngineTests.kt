@@ -1,10 +1,8 @@
 package com.oneeyedmen.minutest.junit
 
-import org.junit.Ignore
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.platform.engine.TestExecutionResult
-import org.junit.platform.engine.discovery.ClassNameFilter
 import org.junit.platform.engine.discovery.ClassNameFilter.*
 import org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 import org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage
@@ -112,7 +110,7 @@ class MinutestTestEngineTests {
         
         LauncherFactory.create().execute(
             request()
-                .filters(EngineFilter.includeEngines(MinutestTestEngine.id))
+                .filters(EngineFilter.includeEngines(MinutestTestEngine.engineId))
                 .apply(config)
                 .build(),
             listener)

@@ -29,7 +29,7 @@ inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(block:
     getSelectorsByType<T>().forEach(block)
 }
 
-internal fun scan(rq: EngineDiscoveryRequest): List<TestPackageDescriptor> {
+internal fun scan(root: MinutestEngineDescriptor, rq: EngineDiscoveryRequest): List<TestPackageDescriptor> {
     val scanner = ClassGraph()
         .enableClassInfo()
         .enableFieldInfo()
@@ -50,9 +50,14 @@ internal fun scan(rq: EngineDiscoveryRequest): List<TestPackageDescriptor> {
         .filter { it.isTopLevelContext() }
         .mapNotNull { it.toKotlinProperty() }
         .filter { it.visibility == PUBLIC }
-        .map { property -> TopLevelContextDescriptor(property) }
-        .groupBy { it.property.javaField?.declaringClass?.`package`?.name ?: "<tests>" }
-        .map { (packageName, tests) -> TestPackageDescriptor(packageName, tests) }
+        .groupBy { it.javaField?.declaringClass?.`package`?.name ?: "<tests>" }
+        .map { (packageName, properties) ->
+            TestPackageDescriptor(root, packageName).also { packageDescriptor ->
+                properties.forEach { property ->
+                    packageDescriptor.addChild(TopLevelContextDescriptor(packageDescriptor, property))
+                }
+            }
+        }
 }
 
 private fun FieldInfo.toKotlinProperty(): KProperty0<TopLevelContextBuilder>? {
