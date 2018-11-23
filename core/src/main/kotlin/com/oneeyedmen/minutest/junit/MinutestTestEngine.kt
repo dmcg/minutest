@@ -84,7 +84,8 @@ class MinutestTestEngine : TestEngine {
                     if (request.selectsByUniqueId(child)) {
                         listener.dynamicTestRegistered(child)
                         execute(child, request, listener)
-                    }  else {
+                    }
+                    else {
                         descriptor.removeChild(child)
                     }
                 }
@@ -113,6 +114,11 @@ class MinutestTestEngine : TestEngine {
 
 class MinutestEngineDescriptor(uniqueId: UniqueId, val discoveryRequest: EngineDiscoveryRequest) :
     EngineDescriptor(uniqueId, "Minutest")
+
+
+private val packageType = "minutest-package"
+private val contextType = "minutest-context"
+private val testType = "minutest-test"
 
 
 internal sealed class MinutestDescriptor : TestDescriptor {
@@ -171,13 +177,13 @@ internal class TestPackageDescriptor(
     
     override fun getType(): Type = CONTAINER
     override fun getDisplayName() = packageName
-    override val idType: String = "minutest-package"
+    override val idType: String = packageType
     override val id: String = packageName
     override fun getSource(): Optional<TestSource> =
 //        Optional.of(PackageSource.from(packageName))
         Optional.empty() // True implementation commented out because Gradle doesn't handle it correctly
-    
 }
+
 
 internal class TopLevelContextDescriptor(
     val property: KProperty0<TopLevelContextBuilder>
@@ -185,7 +191,7 @@ internal class TopLevelContextDescriptor(
     
     override fun getType(): Type = CONTAINER
     override fun getDisplayName() = property.name
-    override val idType: String = "minutest-context"
+    override val idType: String = contextType
     override val id: String = property.name
     override fun getSource(): Optional<TestSource> =
 //        Optional.ofNullable(MethodSource.from(property.getter.javaMethod))
@@ -193,6 +199,7 @@ internal class TopLevelContextDescriptor(
     
     fun instantiate() = property.get().build(property.name)
 }
+
 
 internal class MinutestNodeDescriptor(
     val node: RuntimeNode
@@ -204,8 +211,8 @@ internal class MinutestNodeDescriptor(
     }
     
     override val idType: String = when (node) {
-        is RuntimeContext -> "minutest-context"
-        is RuntimeTest -> "minutest-test"
+        is RuntimeContext -> contextType
+        is RuntimeTest -> testType
     }
     
     override val id: String = node.name
@@ -220,4 +227,3 @@ private fun EngineDiscoveryRequest.selectsByUniqueId(descriptor: TestDescriptor)
 
 private fun UniqueId.overlaps(that: UniqueId) =
     this.hasPrefix(that) || that.hasPrefix(this)
-    
