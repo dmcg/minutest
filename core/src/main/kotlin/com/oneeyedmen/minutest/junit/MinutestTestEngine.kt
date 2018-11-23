@@ -1,7 +1,11 @@
 package com.oneeyedmen.minutest.junit
 
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.experimental.TopLevelContextBuilder
-import com.oneeyedmen.minutest.internal.*
+import com.oneeyedmen.minutest.internal.RuntimeContextWithFixture
+import com.oneeyedmen.minutest.internal.RuntimeTestWithFixture
 import org.junit.platform.engine.*
 import org.junit.platform.engine.TestDescriptor.Type
 import org.junit.platform.engine.TestDescriptor.Type.CONTAINER
@@ -11,12 +15,6 @@ import org.junit.platform.engine.support.descriptor.EngineDescriptor
 import org.opentest4j.AssertionFailedError
 import java.util.Optional
 import kotlin.collections.LinkedHashSet
-import kotlin.collections.List
-import kotlin.collections.Set
-import kotlin.collections.emptySet
-import kotlin.collections.forEach
-import kotlin.collections.map
-import kotlin.collections.toSet
 import kotlin.reflect.KProperty0
 import kotlin.reflect.jvm.javaMethod
 
