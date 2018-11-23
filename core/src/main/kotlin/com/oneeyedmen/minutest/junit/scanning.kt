@@ -5,8 +5,11 @@ import io.github.classgraph.ClassGraph
 import io.github.classgraph.ClassRefTypeSignature
 import io.github.classgraph.FieldInfo
 import io.github.classgraph.TypeSignature
+import org.junit.platform.engine.DiscoveryFilter
 import org.junit.platform.engine.DiscoverySelector
 import org.junit.platform.engine.EngineDiscoveryRequest
+import org.junit.platform.engine.Filter
+import org.junit.platform.engine.discovery.ClassNameFilter
 import org.junit.platform.engine.discovery.ClassSelector
 import org.junit.platform.engine.discovery.DirectorySelector
 import org.junit.platform.engine.discovery.PackageSelector
@@ -18,6 +21,9 @@ import kotlin.reflect.jvm.kotlinProperty
 
 inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.getSelectorsByType(): List<T> =
     getSelectorsByType(T::class.java)
+
+inline fun <U, reified T : DiscoveryFilter<U>> EngineDiscoveryRequest.getFiltersByType(): Filter<U> =
+    Filter.composeFilters(getFiltersByType(T::class.java))
 
 inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(block: (T) -> Unit) {
     getSelectorsByType<T>().forEach(block)
@@ -39,6 +45,7 @@ fun scan(rq: EngineDiscoveryRequest): List<TestPackageDescriptor> {
     
     return scanned
         .allClasses
+        .filter { rq.getFiltersByType<String,ClassNameFilter>().apply(it.name).included() }
         .flatMap { it.declaredFieldInfo }
         .filter { it.isTopLevelContext() }
         .mapNotNull { it.toKotlinProperty() }

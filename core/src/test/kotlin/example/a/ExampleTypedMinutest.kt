@@ -1,6 +1,6 @@
 // explicit name for generated class so that tests are not coupled to the behaviour of the kotlin compiler
 @file:JvmName("ExplicitTypedMinutest")
-package example
+package example.a
 
 import com.oneeyedmen.minutest.experimental.context
 import org.junit.jupiter.api.Assertions
