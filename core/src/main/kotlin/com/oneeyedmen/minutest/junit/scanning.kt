@@ -29,7 +29,7 @@ inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(block:
     getSelectorsByType<T>().forEach(block)
 }
 
-fun scan(rq: EngineDiscoveryRequest): List<TestPackageDescriptor> {
+internal fun scan(rq: EngineDiscoveryRequest): List<TestPackageDescriptor> {
     val scanner = ClassGraph()
         .enableClassInfo()
         .enableFieldInfo()

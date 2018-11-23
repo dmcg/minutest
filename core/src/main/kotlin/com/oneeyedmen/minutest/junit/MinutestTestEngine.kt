@@ -115,9 +115,8 @@ class MinutestEngineDescriptor(uniqueId: UniqueId, val discoveryRequest: EngineD
     EngineDescriptor(uniqueId, "Minutest")
 
 
-sealed class MinutestDescriptor(
-    protected var _parent: TestDescriptor? = null
-) : TestDescriptor {
+internal sealed class MinutestDescriptor : TestDescriptor {
+    private var _parent: TestDescriptor? = null
     private val _children = LinkedHashSet<TestDescriptor>()
     
     final override fun getParent() =
@@ -162,7 +161,7 @@ sealed class MinutestDescriptor(
     
 }
 
-class TestPackageDescriptor(
+internal class TestPackageDescriptor(
     private val packageName: String,
     children: List<TopLevelContextDescriptor>
 ) : MinutestDescriptor() {
@@ -180,7 +179,7 @@ class TestPackageDescriptor(
     
 }
 
-class TopLevelContextDescriptor(
+internal class TopLevelContextDescriptor(
     val property: KProperty0<TopLevelContextBuilder>
 ) : MinutestDescriptor() {
     
@@ -195,7 +194,7 @@ class TopLevelContextDescriptor(
     fun instantiate() = property.get().build(property.name)
 }
 
-class MinutestNodeDescriptor(
+internal class MinutestNodeDescriptor(
     val node: RuntimeNode
 ) : MinutestDescriptor() {
     
