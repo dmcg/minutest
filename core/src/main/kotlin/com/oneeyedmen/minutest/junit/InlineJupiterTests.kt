@@ -7,6 +7,7 @@ import com.oneeyedmen.minutest.internal.topLevelContext
 /**
  * Convenience class to reduce boilerplate
  */
+@Deprecated("Replace with JupiterTests or an @TestFactory", replaceWith = ReplaceWith("JupiterTests"))
 abstract class InlineJupiterTests<F>(
     builder: Context<Unit, F>.() -> Unit
 ) : JupiterTests, IKnowMyGenericClass<F> {
