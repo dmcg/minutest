@@ -2,10 +2,11 @@ package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.TestDescriptor
 import kotlin.reflect.*
+import kotlin.reflect.full.createType
 
 inline fun <reified G> asKType() = G::class.asKType(null is G)
 
-fun KClass<*>.asKType(isNullable: Boolean): KType = MyKType(this, isNullable)
+fun KClass<*>.asKType(isNullable: Boolean): KType = createType(typeParameters.map { KTypeProjection.STAR }, isNullable)
 
 fun KType.creator(): (() -> Any)? {
     val classifier = this.classifier as? KClass<*> ?: return null
@@ -28,10 +29,6 @@ private fun Collection<KFunction<Any>>.noArgCtor() =
     find {
         it.visibility == KVisibility.PUBLIC && it.parameters.isEmpty()
     }
-
-internal data class MyKType(override val classifier: KClassifier, override val isMarkedNullable: Boolean) : KType {
-    override val arguments: List<KTypeProjection> = emptyList()
-}
 
 @Suppress("UNCHECKED_CAST")
 internal fun <F> experimentalFixtureFactoryFor(type: KType): ((Unit, TestDescriptor) -> F)? =
