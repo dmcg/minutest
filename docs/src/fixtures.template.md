@@ -2,7 +2,9 @@
 
 ## Fixtures
 
-The [JUnit 4 Wiki](https://github.com/junit-team/junit4/wiki/test-fixtures) says `A test fixture is a fixed state of a set of objects used as a baseline for running tests. The purpose of a test fixture is to ensure that there is a well known and fixed environment in which tests are run so that results are repeatable.`
+The [JUnit 4 Wiki](https://github.com/junit-team/junit4/wiki/test-fixtures) says:
+
+> A test fixture is a fixed state of a set of objects used as a baseline for running tests. The purpose of a test fixture is to ensure that there is a well known and fixed environment in which tests are run so that results are repeatable.
 
 Here are some ways of using fixtures in Minutest.
 
