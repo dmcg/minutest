@@ -4,8 +4,6 @@ import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.experimental.TopLevelContextBuilder
-import com.oneeyedmen.minutest.internal.PreparedRuntimeContext
-import com.oneeyedmen.minutest.internal.PreparedRuntimeTest
 import org.junit.platform.engine.*
 import org.junit.platform.engine.TestDescriptor.Type
 import org.junit.platform.engine.TestDescriptor.Type.CONTAINER
@@ -65,7 +63,7 @@ class MinutestTestEngine : TestEngine {
     
     private fun executeMinutestNode(descriptor: TestDescriptor, node: RuntimeNode, listener: EngineExecutionListener) {
         when (node) {
-            is PreparedRuntimeContext<*, *> -> {
+            is RuntimeContext -> {
                 childDescriptors(node).forEach { child ->
                     descriptor.addChild(child)
                     listener.dynamicTestRegistered(child)
@@ -73,13 +71,13 @@ class MinutestTestEngine : TestEngine {
                     execute(child, listener)
                 }
             }
-            is PreparedRuntimeTest<*> -> {
+            is RuntimeTest -> {
                 node.run()
             }
         }
     }
     
-    private fun childDescriptors(context: PreparedRuntimeContext<*, *>) =
+    private fun childDescriptors(context: RuntimeContext) =
         context.children.map { MinutestNodeDescriptor(it) }
     
     private fun executeChildren(test: TestDescriptor, listener: EngineExecutionListener) {
