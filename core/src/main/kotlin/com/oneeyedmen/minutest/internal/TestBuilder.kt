@@ -1,8 +1,10 @@
 package com.oneeyedmen.minutest.internal
 
+import com.oneeyedmen.minutest.RuntimeTest
+
 internal data class TestBuilder<F>(val name: String, val f: F.() -> F) : NodeBuilder<F> {
-    override fun buildNode(parent: ParentContext<F>) = PreparedRuntimeTest(
-        name,
-        parent,
-        f)
+
+    override fun buildNode(parent: ParentContext<F>): RuntimeTest =
+        PreparedRuntimeTest(name, parent, f)
+
 }

@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.TestTransform
 import kotlin.reflect.KType
@@ -56,30 +57,25 @@ internal class ContextBuilder<PF, F>(
         transforms.add(transform)
     }
 
-    override fun buildNode(parent: ParentContext<PF>): PreparedRuntimeContext<PF, F> {
-        val fixtureFactory = resolvedFixtureFactory()
-        return PreparedRuntimeContext(name,
-            parent,
-            emptyList(),
-            befores,
-            afters,
-            transforms,
-            fixtureFactory).let { context ->
-            // nastiness to set up parent child in immutable nodes
-            context.copy(children = this.children.map { child -> child.buildNode(context) })
-        }
+    override fun buildNode(parent: ParentContext<PF>): RuntimeContext = PreparedRuntimeContext(name,
+        parent,
+        emptyList(),
+        befores,
+        afters,
+        transforms,
+        resolvedFixtureFactory()).let { context ->
+        // nastiness to set up parent child in immutable nodes
+        context.copy(children = this.children.map { child -> child.buildNode(context) })
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun resolvedFixtureFactory(): (PF, TestDescriptor) -> F {
-        return when {
-            fixtureFactory != null -> fixtureFactory
-            thisContextDoesntNeedAFixture() -> { _, _ -> Unit as F }
-            // this is safe provided there are only fixture not replaceFixture calls in sub-contexts,
-            // as we cannot provide a fixture here to act as receiver. TODO - check somehow
-            else -> error("Fixture has not been set in context \"$name\"")
-        }!!
-    }
+    private fun resolvedFixtureFactory(): (PF, TestDescriptor) -> F = when {
+        fixtureFactory != null -> fixtureFactory
+        thisContextDoesntNeedAFixture() -> { _, _ -> Unit as F }
+        // this is safe provided there are only fixture not replaceFixture calls in sub-contexts,
+        // as we cannot provide a fixture here to act as receiver. TODO - check somehow
+        else -> error("Fixture has not been set in context \"$name\"")
+    }!!
 
     private fun thisContextDoesntNeedAFixture() =
         befores.isEmpty() && afters.isEmpty() && children.filterIsInstance<TestBuilder<F>>().isEmpty()
