@@ -65,7 +65,8 @@ internal class ContextBuilder<PF, F>(
         befores,
         afters,
         transforms,
-        resolvedFixtureFactory()).let { context ->
+        resolvedFixtureFactory(),
+        properties).let { context ->
         // nastiness to set up parent child in immutable nodes
         context.copy(children = this.children.map { child -> child.buildNode(context) })
     }
