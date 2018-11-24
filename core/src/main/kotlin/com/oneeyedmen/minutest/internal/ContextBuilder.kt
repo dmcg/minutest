@@ -40,19 +40,18 @@ internal class ContextBuilder<PF, F>(
     }
 
     override fun context(name: String, builder: Context<F, F>.() -> Unit) =
-        privateCreateSubContext(name, type, { this }, false, builder)
+        internalCreateContext(name, type, { this }, false, builder)
 
-    override fun <G> privateCreateSubContext(
+    override fun <G> internalCreateContext(
         name: String,
         type: KType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
         explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit
     ) {
-        children.add(ContextBuilder(name,
-            type,
-            fixtureFactory,
-            explicitFixtureFactory).apply(builder))
+        children.add(
+            ContextBuilder(name, type, fixtureFactory, explicitFixtureFactory).apply(builder)
+        )
     }
 
     override fun addTransform(transform: TestTransform<F>) {

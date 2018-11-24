@@ -21,14 +21,14 @@ abstract class Context<ParentF, F> {
      * to the child fixture type.
      */
     inline fun <reified G> derivedContext(name: String, noinline builder: Context<F, G>.() -> Unit) {
-        privateCreateSubContext(name, asKType<G>(), null, false, builder)
+        internalCreateContext(name, asKType<G>(), null, false, builder)
     }
 
     /**
      * Define a sub-context with a different fixture type, supplying the new fixture value.
      */
     inline fun <reified G> derivedContext(name: String, fixture: G, noinline builder: Context<F, G>.() -> Unit) {
-        privateCreateSubContext(name, asKType<G>(), { fixture }, true, builder)
+        internalCreateContext(name, asKType<G>(), { fixture }, true, builder)
     }
 
     /**
@@ -38,7 +38,7 @@ abstract class Context<ParentF, F> {
         noinline fixtureFactory: F.() -> G,
         noinline builder: Context<F, G>.() -> Unit
     ) {
-        privateCreateSubContext(name, asKType<G>(), { fixtureFactory() }, true, builder)
+        internalCreateContext(name, asKType<G>(), { fixtureFactory() }, true, builder)
     }
 
     /**
@@ -108,7 +108,7 @@ abstract class Context<ParentF, F> {
     /**
      * Internal implementation, only public to be accessible to inline functions.
      */
-    abstract fun <G> privateCreateSubContext(
+    abstract fun <G> internalCreateContext(
         name: String,
         type: KType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
