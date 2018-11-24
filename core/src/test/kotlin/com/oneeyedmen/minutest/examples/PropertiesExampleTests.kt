@@ -1,29 +1,28 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.Named
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.*
 import com.oneeyedmen.minutest.internal.PreparedRuntimeContext
 import com.oneeyedmen.minutest.internal.asKType
 import com.oneeyedmen.minutest.internal.topLevelContext
 import com.oneeyedmen.minutest.junit.toStreamOfDynamicNodes
 import org.junit.Assert.fail
+import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.TestFactory
 import org.opentest4j.TestAbortedException
+import java.util.stream.Stream
 
 
 class PropertiesExampleTests {
 
-    @TestFactory fun skipRoot() = topLevelContext<Unit>(javaClass.canonicalName, asKType<Unit>()) {
+    @TestFactory fun skipRoot() = filteredJUnitTests<Unit> {
         properties["skip"] = true
 
         test("won't run") {
             fail()
         }
-    }.filter().toStreamOfDynamicNodes()
+    }
 
-    @TestFactory fun skipContext() = topLevelContext<Unit>(javaClass.canonicalName, asKType<Unit>()) {
+    @TestFactory fun skipContext() = filteredJUnitTests<Unit> {
 
         test("will run") {}
 
@@ -35,34 +34,34 @@ class PropertiesExampleTests {
             }
         }
 
-    }.filter().toStreamOfDynamicNodes()
+    }
 
-    @TestFactory fun focusContext() = topLevelContext<Unit>(javaClass.canonicalName, asKType<Unit>()) {
+    @TestFactory fun focusContext() = filteredJUnitTests<Unit> {
 
-        context("focussed") {
+        context("focused") {
             properties["focus"] = true
 
             test("will run") {}
         }
 
-        context("not focussed") {
+        context("not focused") {
             test("won't run") {
                 fail()
             }
 
-            context("will run") {
+            context("focused inside not focused") {
                 properties["focus"] = true
 
                 test("will run") {}
             }
         }
 
-        context("another focussed") {
+        context("another focused") {
             properties["focus"] = true
 
             test("will run") {}
         }
-    }.focusFilter().toStreamOfDynamicNodes()
+    }
 }
 
 fun RuntimeNode.filter(): RuntimeNode = when (this) {
@@ -129,3 +128,6 @@ class SkippedTest(
 
 private fun RuntimeContext.mapChildren(f: (RuntimeNode) -> RuntimeNode) =
     (this as PreparedRuntimeContext<*, *>).copy(children = children.map(f))
+
+inline fun <reified F> Any.filteredJUnitTests(noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
+    topLevelContext(javaClass.canonicalName, asKType<F>(), builder).filter().focusFilter().toStreamOfDynamicNodes()
