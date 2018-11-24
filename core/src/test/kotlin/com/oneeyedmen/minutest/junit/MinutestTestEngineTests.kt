@@ -8,6 +8,7 @@ import org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 import org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage
 import org.junit.platform.engine.discovery.DiscoverySelectors.selectUniqueId
 import org.junit.platform.launcher.EngineFilter
+import org.junit.platform.launcher.LauncherDiscoveryRequest
 import org.junit.platform.launcher.TestExecutionListener
 import org.junit.platform.launcher.TestIdentifier
 import org.junit.platform.launcher.TestPlan
@@ -42,6 +43,16 @@ class MinutestTestEngineTests {
     }
     
     @Test
+    fun `reports discovered test packages and top level contexts in initial test plan`() {
+        assertDiscovered({ selectors(selectPackage("example.a")) },
+            "Minutest",
+            "example.a",
+            "example context",
+            "example typed context"
+        )
+    }
+    
+    @Test
     fun `select tests by class name`() {
         assertTestRun({ selectors(selectClass("example.a.ExampleMinutest")) },
             "test plan started",
@@ -65,11 +76,8 @@ class MinutestTestEngineTests {
     fun `select tests by class name pattern`() {
         assertTestRun(
             {
-                selectors(
-                    selectPackage("example.a")
-                ).filters(
-                    excludeClassNamePatterns(".*Typed.*")
-                )
+                selectors(selectPackage("example.a"))
+                filters(excludeClassNamePatterns(".*Typed.*"))
             },
             "test plan started",
             "test started: Minutest",
@@ -90,7 +98,15 @@ class MinutestTestEngineTests {
     
     @Test
     fun `select tests by unique id`() {
-        assertTestRun({ selectors(selectUniqueId("[engine:minutest]/[minutest-package:example.a]/[minutest-context:example context]/[minutest-test:a passing test]")) },
+        val uniqueIdSelector = selectUniqueId("[engine:minutest]/[minutest-package:example.a]/[minutest-context:example context]/[minutest-test:a passing test]")
+        
+        assertDiscovered({ selectors(uniqueIdSelector) },
+            "Minutest",
+            "example.a",
+            "example context"
+        )
+        
+        assertTestRun({ selectors(uniqueIdSelector) },
             "test plan started",
             "test started: Minutest",
             "test started: example.a",
@@ -105,17 +121,29 @@ class MinutestTestEngineTests {
         )
     }
     
+    private fun assertDiscovered(config: LauncherDiscoveryRequestBuilder.() -> Unit, vararg expectedTests: String) {
+        val plan = LauncherFactory.create().discover(
+            discoveryRequest(config))
+        
+        val tests = plan.roots.flatMap { setOf(it) + plan.getDescendants(it) }.map { it.displayName }.toSet()
+        assertEquals(expectedTests.toSet(), tests)
+    }
+    
     private fun assertTestRun(config: LauncherDiscoveryRequestBuilder.() -> Unit, vararg expectedLog: String) {
         val listener = TestLogger()
         
         LauncherFactory.create().execute(
-            request()
-                .filters(EngineFilter.includeEngines(MinutestTestEngine.engineId))
-                .apply(config)
-                .build(),
+            discoveryRequest(config),
             listener)
         
         assertEquals(expectedLog.asList().joinToString("\n"), listener.log.joinToString("\n"))
+    }
+    
+    private fun discoveryRequest(config: LauncherDiscoveryRequestBuilder.() -> Unit): LauncherDiscoveryRequest {
+        return request()
+            .filters(EngineFilter.includeEngines(MinutestTestEngine.engineId))
+            .apply(config)
+            .build()
     }
 }
 

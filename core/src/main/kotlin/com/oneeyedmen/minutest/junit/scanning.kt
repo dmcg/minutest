@@ -9,10 +9,13 @@ import org.junit.platform.engine.DiscoveryFilter
 import org.junit.platform.engine.DiscoverySelector
 import org.junit.platform.engine.EngineDiscoveryRequest
 import org.junit.platform.engine.Filter
+import org.junit.platform.engine.TestDescriptor
+import org.junit.platform.engine.UniqueId
 import org.junit.platform.engine.discovery.ClassNameFilter
 import org.junit.platform.engine.discovery.ClassSelector
 import org.junit.platform.engine.discovery.DirectorySelector
 import org.junit.platform.engine.discovery.PackageSelector
+import org.junit.platform.engine.discovery.UniqueIdSelector
 import kotlin.reflect.KProperty0
 import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.jvm.javaField
@@ -45,18 +48,20 @@ internal fun scan(root: MinutestEngineDescriptor, rq: EngineDiscoveryRequest): L
     
     return scanned
         .allClasses
-        .filter { rq.getFiltersByType<String,ClassNameFilter>().apply(it.name).included() }
+        .filter { rq.getFiltersByType<String, ClassNameFilter>().apply(it.name).included() }
         .flatMap { it.declaredFieldInfo }
         .filter { it.isTopLevelContext() }
         .mapNotNull { it.toKotlinProperty() }
         .filter { it.visibility == PUBLIC }
         .groupBy { it.javaField?.declaringClass?.`package`?.name ?: "<tests>" }
-        .map { (packageName, properties) ->
-            TestPackageDescriptor(root, packageName).also { packageDescriptor ->
-                properties.forEach { property ->
-                    packageDescriptor.addChild(TopLevelContextDescriptor(packageDescriptor, property))
-                }
-            }
+        .map { (packageName, properties) -> Pair(TestPackageDescriptor(root, packageName), properties) }
+        .filter { (packageDescriptor, _) -> rq.selectsByUniqueId(packageDescriptor) }
+        .map { (packageDescriptor, properties) ->
+            properties
+                .map { TopLevelContextDescriptor(packageDescriptor, it) }
+                .filter { rq.selectsByUniqueId(it) }
+                .forEach(packageDescriptor::addChild)
+            packageDescriptor
         }
 }
 
@@ -73,3 +78,10 @@ private fun TypeSignature.fieldTypeName() =
         is ClassRefTypeSignature -> baseClassName
         else -> null
     }
+
+internal fun EngineDiscoveryRequest.selectsByUniqueId(descriptor: TestDescriptor) =
+    getSelectorsByType<UniqueIdSelector>()
+        .run { isEmpty() || any { selector -> descriptor.uniqueId.overlaps(selector.uniqueId) } }
+
+internal fun UniqueId.overlaps(that: UniqueId) =
+    this.hasPrefix(that) || that.hasPrefix(this)

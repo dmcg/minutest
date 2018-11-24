@@ -208,9 +208,3 @@ private fun RuntimeNode.descriptorIdType(): String {
     }
 }
 
-private fun EngineDiscoveryRequest.selectsByUniqueId(descriptor: TestDescriptor) =
-    getSelectorsByType<UniqueIdSelector>()
-        .run { isEmpty() || any { selector -> descriptor.uniqueId.overlaps(selector.uniqueId) } }
-
-private fun UniqueId.overlaps(that: UniqueId) =
-    this.hasPrefix(that) || that.hasPrefix(this)
