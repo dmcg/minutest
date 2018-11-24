@@ -40,6 +40,7 @@ internal class ContextBuilder<PF, F>(
     }
 
     override fun context(name: String, builder: Context<F, F>.() -> Unit) =
+        // fixture factory is implicitly identity (return parent fixture (this)
         internalCreateContext(name, type, { this }, false, builder)
 
     override fun <G> internalCreateContext(
