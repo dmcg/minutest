@@ -18,7 +18,9 @@ internal class ContextBuilder<PF, F>(
     private val afters = mutableListOf<(F) -> Unit>()
     private val transforms = mutableListOf<TestTransform<F>>()
 
-    override fun privateDeriveFixture(f: (parentFixture: PF, testDescriptor: TestDescriptor) -> F) {
+    override fun deriveFixture(f: (PF).() -> F) = deriveInstrumentedFixture { parentFixture, _ ->  parentFixture.f() }
+
+    fun deriveInstrumentedFixture(f: (parentFixture: PF, testDescriptor: TestDescriptor) -> F) {
         if (explicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
         fixtureFactory = f

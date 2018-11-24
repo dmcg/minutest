@@ -56,8 +56,7 @@ abstract class Context<ParentF, F> {
      * Define the fixture that will be used in this context's tests and sub-contexts by
      * transforming the parent fixture, accessible as the receiver 'this'.
      */
-    fun deriveFixture(f: (ParentF).() -> F) = privateDeriveFixture { this.f() }
-
+    abstract fun deriveFixture(f: (ParentF).() -> F)
 
     /**
      * Define a test on the current fixture (accessible as 'this').
@@ -116,11 +115,6 @@ abstract class Context<ParentF, F> {
         explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit
     )
-
-    /**
-     * Internal implementation, only public to be accessible to extension functions.
-     */
-    internal abstract fun privateDeriveFixture(f: (ParentF).(testDescriptor: TestDescriptor) -> F)
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
