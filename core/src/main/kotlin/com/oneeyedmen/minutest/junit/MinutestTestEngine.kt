@@ -4,8 +4,8 @@ import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.experimental.TopLevelContextBuilder
-import com.oneeyedmen.minutest.internal.RuntimeContextWithFixture
-import com.oneeyedmen.minutest.internal.RuntimeTestWithFixture
+import com.oneeyedmen.minutest.internal.PreparedRuntimeContext
+import com.oneeyedmen.minutest.internal.PreparedRuntimeTest
 import org.junit.platform.engine.*
 import org.junit.platform.engine.TestDescriptor.Type
 import org.junit.platform.engine.TestDescriptor.Type.CONTAINER
@@ -65,7 +65,7 @@ class MinutestTestEngine : TestEngine {
     
     private fun executeMinutestNode(descriptor: TestDescriptor, node: RuntimeNode, listener: EngineExecutionListener) {
         when (node) {
-            is RuntimeContextWithFixture<*, *> -> {
+            is PreparedRuntimeContext<*, *> -> {
                 childDescriptors(node).forEach { child ->
                     descriptor.addChild(child)
                     listener.dynamicTestRegistered(child)
@@ -73,13 +73,13 @@ class MinutestTestEngine : TestEngine {
                     execute(child, listener)
                 }
             }
-            is RuntimeTestWithFixture<*> -> {
+            is PreparedRuntimeTest<*> -> {
                 node.run()
             }
         }
     }
     
-    private fun childDescriptors(context: RuntimeContextWithFixture<*, *>) =
+    private fun childDescriptors(context: PreparedRuntimeContext<*, *>) =
         context.children.map { MinutestNodeDescriptor(it) }
     
     private fun executeChildren(test: TestDescriptor, listener: EngineExecutionListener) {

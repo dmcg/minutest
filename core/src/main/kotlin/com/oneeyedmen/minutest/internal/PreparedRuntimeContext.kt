@@ -1,17 +1,25 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Named
-import com.oneeyedmen.minutest.Test
-import com.oneeyedmen.minutest.TestDescriptor
-import com.oneeyedmen.minutest.TestTransform
+import com.oneeyedmen.minutest.*
 
-internal class Operations<PF, F>(
+/**
+ * The runtime representation of a context.
+ */
+internal data class PreparedRuntimeContext<PF, F>(
+    override val name: String,
+    override val parent: ParentContext<PF>,
+    override val children: List<RuntimeNode>,
     private val befores: List<(F) -> Unit>,
     private val afters: List<(F) -> Unit>,
     private val transforms: List<TestTransform<F>>,
     private val fixtureFactory: ((PF, TestDescriptor) -> F)
-) {
-    fun buildParentTest(test: Test<F>): Test<PF> {
+) : RuntimeContext(), ParentContext<F> {
+
+    override fun runTest(test: Test<F>) {
+        parent.runTest(buildParentTest(test))
+    }
+
+    private fun buildParentTest(test: Test<F>): Test<PF> {
         val testWithPreparedFixture = object : Test<F>, Named by test {
             override fun invoke(initialFixture: F) =
                 applyBeforesTo(initialFixture)

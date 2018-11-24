@@ -36,7 +36,7 @@ fun <F> topLevelContext(
 
 
 internal fun NodeBuilder<Unit>.toRootRuntimeNode(): RuntimeNode =
-    this.toRuntimeNode(RootContext)
+    this.buildNode(RootContext)
 
 @Suppress("UNCHECKED_CAST")
 private fun <F> fixtureFactoryFor(type: KType): ((Unit, TestDescriptor) -> F)? =
