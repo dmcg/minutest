@@ -11,12 +11,8 @@ fun <F> topLevelContext(
     type: KType,
     builder: Context<Unit, F>.() -> Unit
 ): RuntimeNode =
-    ContextBuilder<Unit, F>(
-        name,
-        type,
-        fixtureFactoryFor(type),
-        false
-    ).apply(builder).toRootRuntimeNode()
+    ContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type), explicitFixtureFactory = false)
+        .apply(builder).toRootRuntimeNode()
 
 fun <F> topLevelContext(
     name: String,
@@ -32,7 +28,8 @@ fun <F> topLevelContext(
     fixtureFactory: ((Unit, TestDescriptor) -> F)?,
     builder: Context<Unit, F>.() -> Unit
 ): RuntimeNode =
-    ContextBuilder(name, type, fixtureFactory, true).apply(builder).toRootRuntimeNode()
+    ContextBuilder(name, type, fixtureFactory, explicitFixtureFactory = true)
+        .apply(builder).toRootRuntimeNode()
 
 
 internal fun NodeBuilder<Unit>.toRootRuntimeNode(): RuntimeNode =
