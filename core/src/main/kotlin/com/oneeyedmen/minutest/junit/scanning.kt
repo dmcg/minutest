@@ -5,11 +5,17 @@ import io.github.classgraph.ClassGraph
 import io.github.classgraph.ClassRefTypeSignature
 import io.github.classgraph.FieldInfo
 import io.github.classgraph.TypeSignature
+import org.junit.platform.engine.DiscoveryFilter
 import org.junit.platform.engine.DiscoverySelector
 import org.junit.platform.engine.EngineDiscoveryRequest
+import org.junit.platform.engine.Filter
+import org.junit.platform.engine.TestDescriptor
+import org.junit.platform.engine.UniqueId
+import org.junit.platform.engine.discovery.ClassNameFilter
 import org.junit.platform.engine.discovery.ClassSelector
 import org.junit.platform.engine.discovery.DirectorySelector
 import org.junit.platform.engine.discovery.PackageSelector
+import org.junit.platform.engine.discovery.UniqueIdSelector
 import kotlin.reflect.KProperty0
 import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.jvm.javaField
@@ -19,11 +25,14 @@ import kotlin.reflect.jvm.kotlinProperty
 inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.getSelectorsByType(): List<T> =
     getSelectorsByType(T::class.java)
 
+inline fun <U, reified T : DiscoveryFilter<U>> EngineDiscoveryRequest.getFiltersByType(): Filter<U> =
+    Filter.composeFilters(getFiltersByType(T::class.java))
+
 inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(block: (T) -> Unit) {
     getSelectorsByType<T>().forEach(block)
 }
 
-fun scan(rq: EngineDiscoveryRequest): List<TestPackageDescriptor> {
+internal fun scan(root: MinutestEngineDescriptor, rq: EngineDiscoveryRequest): List<TestPackageDescriptor> {
     val scanner = ClassGraph()
         .enableClassInfo()
         .enableFieldInfo()
@@ -39,13 +48,21 @@ fun scan(rq: EngineDiscoveryRequest): List<TestPackageDescriptor> {
     
     return scanned
         .allClasses
+        .filter { rq.getFiltersByType<String, ClassNameFilter>().apply(it.name).included() }
         .flatMap { it.declaredFieldInfo }
         .filter { it.isTopLevelContext() }
         .mapNotNull { it.toKotlinProperty() }
         .filter { it.visibility == PUBLIC }
-        .map { property -> TopLevelContextDescriptor(property) }
-        .groupBy { it.property.javaField?.declaringClass?.`package`?.name ?: "<tests>" }
-        .map { (packageName, tests) -> TestPackageDescriptor(packageName, tests) }
+        .groupBy { it.javaField?.declaringClass?.`package`?.name ?: "<tests>" }
+        .map { (packageName, properties) -> Pair(TestPackageDescriptor(root, packageName), properties) }
+        .filter { (packageDescriptor, _) -> rq.selectsByUniqueId(packageDescriptor) }
+        .map { (packageDescriptor, properties) ->
+            properties
+                .map { TopLevelContextDescriptor(packageDescriptor, it) }
+                .filter { rq.selectsByUniqueId(it) }
+                .forEach(packageDescriptor::addChild)
+            packageDescriptor
+        }
 }
 
 private fun FieldInfo.toKotlinProperty(): KProperty0<TopLevelContextBuilder>? {
@@ -61,3 +78,10 @@ private fun TypeSignature.fieldTypeName() =
         is ClassRefTypeSignature -> baseClassName
         else -> null
     }
+
+internal fun EngineDiscoveryRequest.selectsByUniqueId(descriptor: TestDescriptor) =
+    getSelectorsByType<UniqueIdSelector>()
+        .run { isEmpty() || any { selector -> descriptor.uniqueId.overlaps(selector.uniqueId) } }
+
+internal fun UniqueId.overlaps(that: UniqueId) =
+    this.hasPrefix(that) || that.hasPrefix(this)
