@@ -15,21 +15,19 @@ import java.util.stream.Stream
 
 class PropertiesExampleTests {
 
-    @TestFactory fun skipRoot() = filteredJUnitTests<Unit> {
-        properties["skip"] = true
+    @TestFactory fun skipRoot() = transformedJunitTests<Unit>(::skipFilter) {
+        annotateWith(SKIP)
 
         test("won't run") {
             fail()
         }
     }
 
-    @TestFactory fun skipContext() = filteredJUnitTests<Unit> {
+    @TestFactory fun skipContext() = transformedJunitTests<Unit>(::skipFilter) {
 
         test("will run") {}
 
-        context("skipped") {
-            properties["skip"] = true
-
+        SKIP - context("skipped") {
             test("won't run") {
                 fail()
             }
@@ -37,10 +35,9 @@ class PropertiesExampleTests {
 
     }
 
-    @TestFactory fun focusContext() = filteredJUnitTests<Unit> {
+    @TestFactory fun focusContext() = transformedJunitTests<Unit>(::focusFilter) {
 
-        context("focused") {
-
+        FOCUS - context("focused") {
             test("will run") {}
         }
 
@@ -49,80 +46,82 @@ class PropertiesExampleTests {
                 fail()
             }
 
-            "focus" annotate test("will run") {
-                properties["focus"] = true
-            }
+            FOCUS - test("focused test inside not focused will run") {}
 
-            FOCUS + context("focused inside not focused") {
+            FOCUS - context("focused inside not focused") {
                 test("will run") {}
             }
         }
 
-        context("another focused") {
-            properties["focus"] = true
-
+        context("another way of specifying focused") {
+            annotateWith(FOCUS)
             test("will run") {}
         }
     }
 }
 
-infix fun Pair<String, Any>.annotate(nodeBuilder: NodeBuilder<*>) {
-    nodeBuilder.properties.put(this.first, this.second)
+private fun Context<*, *>.annotateWith(annotation: Annotation) {
+    annotation.applyTo(properties)
 }
 
-infix fun String.annotate(nodeBuilder: NodeBuilder<*>) = (this to true).annotate(nodeBuilder)
-
-class Annotation(private val propertyName: String) {
+data class Annotation(private val propertyName: String) {
     fun applyTo(nodeBuilder: NodeBuilder<*>): NodeBuilder<*> {
-        nodeBuilder.properties[propertyName] = true
+        applyTo(nodeBuilder.properties)
         return nodeBuilder
     }
+    fun applyTo(properties: MutableMap<String, Any>) {
+        properties[propertyName] = true
+    }
+    fun appliesTo(properties: Map<String, Any>) = properties[propertyName] == true
 }
 
 val SKIP = Annotation("skip")
 val FOCUS = Annotation("focus")
 
-infix fun Annotation.annotate(nodeBuilder: NodeBuilder<*>) = this.applyTo(nodeBuilder)
+operator fun Annotation.minus(nodeBuilder: NodeBuilder<*>) = this.applyTo(nodeBuilder)
 
-operator fun Annotation.plus(nodeBuilder: NodeBuilder<*>) = this.applyTo(nodeBuilder)
-
-fun RuntimeNode.filter(): RuntimeNode = when (this) {
-    is RuntimeContext -> this.filter()
-    is RuntimeTest -> this
+operator fun List<Annotation>.minus(nodeBuilder: NodeBuilder<*>): NodeBuilder<*> {
+    forEach { it.applyTo(nodeBuilder) }
+    return nodeBuilder
 }
 
-fun RuntimeContext.filter(): RuntimeNode =
-    if (properties["skip"] == true)
-        SkippedContext(properties, "Skipped $name", parent)
+fun skipFilter(node: RuntimeNode): RuntimeNode = when (node) {
+    is RuntimeContext -> skipFilter(node)
+    is RuntimeTest -> node
+}
+
+fun skipFilter(context: RuntimeContext): RuntimeNode =
+    if (SKIP.appliesTo(context.properties))
+        SkippedContext(context.properties, "Skipped ${context.name}", context.parent)
     else
-        this.mapChildren(RuntimeNode::filter)
+        context.mapChildren(::skipFilter)
 
-fun RuntimeNode.focusFilter(): RuntimeNode = when (this) {
-    is RuntimeContext -> this.focusFilter()
-    is RuntimeTest -> this
+fun focusFilter(node: RuntimeNode): RuntimeNode = when (node) {
+    is RuntimeContext -> focusFilter(node)
+    is RuntimeTest -> node
 }
 
-fun RuntimeContext.focusFilter(): RuntimeNode =
-    if (this.children.hasFocus())
-        this.mapChildren(RuntimeNode::skipUnlessFocused)
-    else this
+fun focusFilter(context: RuntimeContext): RuntimeNode =
+    if (context.children.hasFocus())
+        context.mapChildren(RuntimeNode::skipUnlessFocused)
+    else context
 
 private fun Iterable<RuntimeNode>.hasFocus(): Boolean = this.find { it.hasFocus() } != null
 
 private fun RuntimeNode.hasFocus() =
     when (this) {
-        is RuntimeTest -> this.properties["focus"] == true
-        is RuntimeContext -> this.properties["focus"] == true || this.children.hasFocus()
+        is RuntimeTest -> FOCUS.appliesTo(properties)
+        is RuntimeContext -> FOCUS.appliesTo(properties) || this.children.hasFocus()
     }
 
 private fun RuntimeNode.skipUnlessFocused(): RuntimeNode =
     when (this) {
         is RuntimeTest -> when {
-            this.properties["focus"] == true -> this
+            FOCUS.appliesTo(properties)-> this
             else -> SkippedTest(this.name, this.parent, properties)
         }
         is RuntimeContext -> when {
-            this.properties["focus"] == true -> this
+            FOCUS.appliesTo(properties) -> this
             this.children.hasFocus() -> this.mapChildren(RuntimeNode::skipUnlessFocused)
             else -> SkippedContext(properties, "Skipped $name", parent)
         }
@@ -156,5 +155,5 @@ class SkippedTest(
 private fun RuntimeContext.mapChildren(f: (RuntimeNode) -> RuntimeNode) =
     (this as PreparedRuntimeContext<*, *>).copy(children = children.map(f))
 
-inline fun <reified F> Any.filteredJUnitTests(noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
-    topLevelContext(javaClass.canonicalName, asKType<F>(), builder).filter().focusFilter().toStreamOfDynamicNodes()
+inline fun <reified F> Any.transformedJunitTests(transform: (RuntimeNode) -> RuntimeNode, noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
+    topLevelContext(javaClass.canonicalName, asKType<F>(), builder).run(transform).toStreamOfDynamicNodes()
