@@ -15,7 +15,7 @@ import java.util.stream.Stream
 
 class PropertiesExampleTests {
 
-    @TestFactory fun skipRoot() = transformedJunitTests<Unit>(::skipFilter) {
+    @TestFactory fun skipRoot() = transformedJunitTests<Unit>(SKIP) {
         annotateWith(SKIP)
 
         test("won't run") {
@@ -23,7 +23,7 @@ class PropertiesExampleTests {
         }
     }
 
-    @TestFactory fun skipContext() = transformedJunitTests<Unit>(::skipFilter) {
+    @TestFactory fun skipContext() = transformedJunitTests<Unit>(SKIP) {
 
         test("will run") {}
 
@@ -35,7 +35,7 @@ class PropertiesExampleTests {
 
     }
 
-    @TestFactory fun focusContext() = transformedJunitTests<Unit>(::focusFilter) {
+    @TestFactory fun focusContext() = transformedJunitTests<Unit>(FOCUS) {
 
         FOCUS - context("focused") {
             test("will run") {}
@@ -60,28 +60,25 @@ class PropertiesExampleTests {
     }
 }
 
-private fun Context<*, *>.annotateWith(annotation: Annotation) {
+fun Context<*, *>.annotateWith(annotation: Annotation) {
     annotation.applyTo(properties)
 }
 
-data class Annotation(private val propertyName: String) {
-    fun applyTo(nodeBuilder: NodeBuilder<*>): NodeBuilder<*> {
-        applyTo(nodeBuilder.properties)
-        return nodeBuilder
-    }
+class Annotation(
+    private val propertyName: String,
+    private val transform: (RuntimeNode) -> RuntimeNode
+) : (RuntimeNode) -> RuntimeNode by transform {
     fun applyTo(properties: MutableMap<String, Any>) {
         properties[propertyName] = true
     }
     fun appliesTo(properties: Map<String, Any>) = properties[propertyName] == true
 }
 
-val SKIP = Annotation("skip")
-val FOCUS = Annotation("focus")
+val SKIP = Annotation("skip", ::skipFilter)
+val FOCUS = Annotation("focus", ::focusFilter)
 
-operator fun Annotation.minus(nodeBuilder: NodeBuilder<*>) = this.applyTo(nodeBuilder)
-
-operator fun List<Annotation>.minus(nodeBuilder: NodeBuilder<*>): NodeBuilder<*> {
-    forEach { it.applyTo(nodeBuilder) }
+operator fun Annotation.minus(nodeBuilder: NodeBuilder<*>): NodeBuilder<*> {
+    this.applyTo(nodeBuilder.properties)
     return nodeBuilder
 }
 
