@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.TestDescriptor
 import kotlin.reflect.KType

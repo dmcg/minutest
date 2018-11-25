@@ -1,6 +1,8 @@
 package com.oneeyedmen.minutest
 
-sealed class RuntimeNode : Named
+sealed class RuntimeNode : Named {
+    abstract val properties: Map<Any, Any>
+}
 
 abstract class RuntimeContext : RuntimeNode() {
     abstract val children: List<RuntimeNode>
