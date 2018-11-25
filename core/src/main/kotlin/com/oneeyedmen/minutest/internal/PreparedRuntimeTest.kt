@@ -10,7 +10,7 @@ internal class PreparedRuntimeTest<F>(
     override val name: String,
     override val parent: ParentContext<F>,
     private val f: F.() -> F,
-    override val properties: Map<String, Any>
+    override val properties: Map<Any, Any>
 ) : RuntimeTest(), Test<F>, (F)-> F by f {
     override fun run() = parent.runTest(this)
 }

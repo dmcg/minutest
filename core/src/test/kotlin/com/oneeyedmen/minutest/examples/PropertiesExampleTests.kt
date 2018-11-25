@@ -64,18 +64,17 @@ fun Context<*, *>.annotateWith(annotation: Annotation) {
     annotation.applyTo(properties)
 }
 
-class Annotation(
-    private val propertyName: String,
+data class Annotation(
     private val transform: (RuntimeNode) -> RuntimeNode
 ) : (RuntimeNode) -> RuntimeNode by transform {
-    fun applyTo(properties: MutableMap<String, Any>) {
-        properties[propertyName] = true
+    fun applyTo(properties: MutableMap<Any, Any>) {
+        properties[this] = true
     }
-    fun appliesTo(properties: Map<String, Any>) = properties[propertyName] == true
+    fun appliesTo(properties: Map<Any, Any>) = properties[this] == true
 }
 
-val SKIP = Annotation("skip", ::skipFilter)
-val FOCUS = Annotation("focus", ::focusFilter)
+val SKIP = Annotation(::skipFilter)
+val FOCUS = Annotation(::focusFilter)
 
 operator fun Annotation.minus(nodeBuilder: NodeBuilder<*>): NodeBuilder<*> {
     this.applyTo(nodeBuilder.properties)
@@ -126,14 +125,14 @@ private fun RuntimeNode.skipUnlessFocused(): RuntimeNode =
 
 
 class SkippedContext(
-    override val properties: Map<String, Any>,
+    override val properties: Map<Any, Any>,
     override val name: String,
     override val parent: Named?
 ) : RuntimeContext() {
     override val children = listOf(SkippingTest(this, properties))
 }
 
-class SkippingTest(override val parent: Named, override val properties: Map<String, Any>) : RuntimeTest() {
+class SkippingTest(override val parent: Named, override val properties: Map<Any, Any>) : RuntimeTest() {
     override val name = "skipped"
     override fun run() {
         throw TestAbortedException("skipped")
@@ -142,7 +141,7 @@ class SkippingTest(override val parent: Named, override val properties: Map<Stri
 
 class SkippedTest(
     override val name: String,
-    override val parent: Named?, override val properties: Map<String, Any>
+    override val parent: Named?, override val properties: Map<Any, Any>
 ) : RuntimeTest() {
     override fun run() {
         throw TestAbortedException("skipped")

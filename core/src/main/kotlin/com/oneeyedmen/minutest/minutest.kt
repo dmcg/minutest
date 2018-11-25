@@ -107,7 +107,10 @@ abstract class Context<ParentF, F> {
      */
     abstract fun addTransform(transform: TestTransform<F>)
 
-    val properties: MutableMap<String, Any> = HashMap()
+    /**
+     * An experimental map of properties that will be made available later in the test run.
+     */
+    val properties: MutableMap<Any, Any> = HashMap()
 
     /**
      * Internal implementation, only public to be accessible to inline functions.
