@@ -16,6 +16,7 @@ internal data class PreparedRuntimeContext<PF, F>(
     override val properties: Map<Any, Any>
 ) : RuntimeContext(), ParentContext<F> {
 
+
     override fun runTest(test: Test<F>) {
         parent.runTest(buildParentTest(test))
     }
@@ -59,4 +60,6 @@ internal data class PreparedRuntimeContext<PF, F>(
             afterFn(fixture)
         }
     }
+
+    override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
 }
