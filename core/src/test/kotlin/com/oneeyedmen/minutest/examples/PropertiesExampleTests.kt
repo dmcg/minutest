@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.internal.NodeBuilder
 import com.oneeyedmen.minutest.internal.PreparedRuntimeContext
 import com.oneeyedmen.minutest.internal.asKType
 import com.oneeyedmen.minutest.internal.topLevelContext
@@ -39,7 +40,6 @@ class PropertiesExampleTests {
     @TestFactory fun focusContext() = filteredJUnitTests<Unit> {
 
         context("focused") {
-            properties["focus"] = true
 
             test("will run") {}
         }
@@ -49,9 +49,12 @@ class PropertiesExampleTests {
                 fail()
             }
 
-            context("focused inside not focused") {
+            "focus" annotate test("will run") {
                 properties["focus"] = true
+            }
 
+
+            "focus" annotate context("focused inside not focused") {
                 test("will run") {}
             }
         }
@@ -63,6 +66,12 @@ class PropertiesExampleTests {
         }
     }
 }
+
+infix fun Pair<String, Any>.annotate(nodeBuilder: NodeBuilder<*>) {
+    nodeBuilder.properties.put(this.first, this.second)
+}
+
+infix fun String.annotate(nodeBuilder: NodeBuilder<*>) = (this to true).annotate(nodeBuilder)
 
 fun RuntimeNode.filter(): RuntimeNode = when (this) {
     is RuntimeContext -> this.filter()
@@ -89,13 +98,16 @@ private fun Iterable<RuntimeNode>.hasFocus(): Boolean = this.find { it.hasFocus(
 
 private fun RuntimeNode.hasFocus() =
     when (this) {
-        is RuntimeTest -> false
+        is RuntimeTest -> this.properties["focus"] == true
         is RuntimeContext -> this.properties["focus"] == true || this.children.hasFocus()
     }
 
 private fun RuntimeNode.skipUnlessFocused(): RuntimeNode =
     when (this) {
-        is RuntimeTest -> SkippedTest(this.name, this.parent)
+        is RuntimeTest -> when {
+            this.properties["focus"] == true -> this
+            else -> SkippedTest(this.name, this.parent, properties)
+        }
         is RuntimeContext -> when {
             this.properties["focus"] == true -> this
             this.children.hasFocus() -> this.mapChildren(RuntimeNode::skipUnlessFocused)
@@ -103,15 +115,16 @@ private fun RuntimeNode.skipUnlessFocused(): RuntimeNode =
         }
     }
 
+
 class SkippedContext(
     override val properties: Map<String, Any>,
     override val name: String,
     override val parent: Named?
 ) : RuntimeContext() {
-    override val children = listOf(SkippingTest(this))
+    override val children = listOf(SkippingTest(this, properties))
 }
 
-class SkippingTest(override val parent: Named) : RuntimeTest() {
+class SkippingTest(override val parent: Named, override val properties: Map<String, Any>) : RuntimeTest() {
     override val name = "skipped"
     override fun run() {
         throw TestAbortedException("skipped")
@@ -120,7 +133,8 @@ class SkippingTest(override val parent: Named) : RuntimeTest() {
 
 class SkippedTest(
     override val name: String,
-    override val parent: Named?) : RuntimeTest() {
+    override val parent: Named?, override val properties: Map<String, Any>
+) : RuntimeTest() {
     override fun run() {
         throw TestAbortedException("skipped")
     }
