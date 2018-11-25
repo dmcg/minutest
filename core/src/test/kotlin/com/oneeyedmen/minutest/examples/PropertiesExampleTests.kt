@@ -53,8 +53,7 @@ class PropertiesExampleTests {
                 properties["focus"] = true
             }
 
-
-            "focus" annotate context("focused inside not focused") {
+            FOCUS + context("focused inside not focused") {
                 test("will run") {}
             }
         }
@@ -72,6 +71,20 @@ infix fun Pair<String, Any>.annotate(nodeBuilder: NodeBuilder<*>) {
 }
 
 infix fun String.annotate(nodeBuilder: NodeBuilder<*>) = (this to true).annotate(nodeBuilder)
+
+class Annotation(private val propertyName: String) {
+    fun applyTo(nodeBuilder: NodeBuilder<*>): NodeBuilder<*> {
+        nodeBuilder.properties[propertyName] = true
+        return nodeBuilder
+    }
+}
+
+val SKIP = Annotation("skip")
+val FOCUS = Annotation("focus")
+
+infix fun Annotation.annotate(nodeBuilder: NodeBuilder<*>) = this.applyTo(nodeBuilder)
+
+operator fun Annotation.plus(nodeBuilder: NodeBuilder<*>) = this.applyTo(nodeBuilder)
 
 fun RuntimeNode.filter(): RuntimeNode = when (this) {
     is RuntimeContext -> this.filter()
