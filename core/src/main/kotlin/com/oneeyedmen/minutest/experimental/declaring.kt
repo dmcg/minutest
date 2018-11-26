@@ -2,6 +2,7 @@ package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.buildRootNode
 import com.oneeyedmen.minutest.internal.asKType
 import com.oneeyedmen.minutest.internal.topLevelContext
 
@@ -11,5 +12,6 @@ class TopLevelContextBuilder(private val createTopLevelNode: (String) -> Runtime
     }
 }
 
-inline fun <reified F> context(noinline builder: Context<Unit, F>.() -> Unit): TopLevelContextBuilder =
-    TopLevelContextBuilder { n -> topLevelContext(n, asKType<F>(), builder) }
+inline fun <reified F> context(noinline builder: Context<Unit, F>.() -> Unit) = TopLevelContextBuilder { name ->
+    topLevelContext(name, asKType<F>(), builder).buildRootNode()
+}

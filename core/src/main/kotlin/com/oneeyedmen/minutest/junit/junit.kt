@@ -1,9 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.*
 import com.oneeyedmen.minutest.internal.asKType
 import com.oneeyedmen.minutest.internal.topLevelContext
 import org.junit.jupiter.api.DynamicContainer
@@ -19,12 +16,16 @@ import java.util.stream.Stream
  * Designed to be called inside a class and to use the name as the class as the name of the test.
  */
 inline fun <reified F> Any.junitTests(noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
-    topLevelContext(javaClass.canonicalName, asKType<F>(), builder).toStreamOfDynamicNodes()
+    topLevelContext(javaClass.canonicalName, asKType<F>(), builder)
+        .buildRootNode()
+        .toStreamOfDynamicNodes()
 
 inline fun <reified F> Any.junitTests(fixture: F,
     noinline builder: Context<Unit, F>.() -> Unit
 ): Stream<out DynamicNode> =
-    topLevelContext(javaClass.canonicalName, asKType<F>(), fixture, builder).toStreamOfDynamicNodes()
+    topLevelContext(javaClass.canonicalName, asKType<F>(), fixture, builder)
+        .buildRootNode()
+        .toStreamOfDynamicNodes()
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 

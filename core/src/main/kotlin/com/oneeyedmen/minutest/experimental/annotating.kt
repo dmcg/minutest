@@ -22,14 +22,20 @@ fun Context<*, *>.annotateWith(annotation: Annotation) {
     annotation.applyTo(properties)
 }
 
-operator fun Annotation.minus(nodeBuilder: NodeBuilder<*>): NodeBuilder<*> {
+operator fun <F> Annotation.minus(nodeBuilder: NodeBuilder<F>): NodeBuilder<F> {
     this.applyTo(nodeBuilder.properties)
     return nodeBuilder
 }
 
 
-inline fun <reified F> Any.transformedJunitTests(transform: (RuntimeNode) -> RuntimeNode, noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
-    topLevelContext(javaClass.canonicalName, asKType<F>(), builder).run(transform).toStreamOfDynamicNodes()
+inline fun <reified F> Any.transformedJunitTests(
+    transform: (RuntimeNode) -> RuntimeNode,
+    noinline builder: Context<Unit, F>.() -> Unit
+): Stream<out DynamicNode> =
+    topLevelContext(javaClass.canonicalName, asKType<F>(), builder)
+        .buildRootNode()
+        .run(transform)
+        .toStreamOfDynamicNodes()
 
 
 internal fun RuntimeContext.mapChildren(f: (RuntimeNode) -> RuntimeNode) = this.withChildren(this.children.map(f))
