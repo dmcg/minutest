@@ -37,23 +37,3 @@ private fun RuntimeNode.toDynamicNode(): DynamicNode = when (this) {
 
 private fun RuntimeContext.toDynamicContainer(): DynamicContainer =
     dynamicContainer(name, children.map(RuntimeNode::toDynamicNode))
-
-// Will be removed next release
-
-/**
- * Define a [Context] and map it to be used as a JUnit [org.junit.jupiter.api.TestFactory].
- *
- * @see [Any.junitTests]
- */
-@Deprecated("Replace with Any.junitTests", replaceWith = ReplaceWith("Any.junitTests"))
-inline fun <reified F> junitTestsNamed(name: String,
-    noinline builder: Context<Unit, F>.() -> Unit
-): Stream<out DynamicNode> =
-    topLevelContext(name, asKType<F>(), builder).toStreamOfDynamicNodes()
-
-@Deprecated("Replace with Any.junitTests", replaceWith = ReplaceWith("Any.junitTests"))
-inline fun <reified F> junitTestsNamed(name: String,
-    fixture: F,
-    noinline builder: Context<Unit, F>.() -> Unit
-): Stream<out DynamicNode> =
-    topLevelContext(name, asKType<F>(), fixture, builder).toStreamOfDynamicNodes()
