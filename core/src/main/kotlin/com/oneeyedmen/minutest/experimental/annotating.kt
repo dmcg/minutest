@@ -27,7 +27,7 @@ operator fun <F> Annotation.minus(nodeBuilder: NodeBuilder<F>): NodeBuilder<F> {
     return nodeBuilder
 }
 
-
+@Deprecated("junitTests now supports this")
 inline fun <reified F> Any.transformedJunitTests(
     transform: (RuntimeNode) -> RuntimeNode,
     noinline builder: Context<Unit, F>.() -> Unit

@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.NodeBuilder
+import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.buildRootNode
 import com.oneeyedmen.minutest.internal.asKType
 import com.oneeyedmen.minutest.internal.topLevelContext
@@ -11,21 +11,32 @@ import java.util.stream.Stream
 
 interface JupiterTests {
 
-    val tests: NodeBuilder<Unit>
+    val tests: RuntimeNode
 
     /**
      * Provided so that JUnit will run the tests
      */
     @TestFactory
-    fun tests(): Stream<out DynamicNode> = tests.buildRootNode().toStreamOfDynamicNodes()
+    fun tests(): Stream<out DynamicNode> = tests.toStreamOfDynamicNodes()
 }
 
 /**
  * Define a group of tests.
  */
-inline fun <reified F> JupiterTests.context(noinline builder: Context<Unit, F>.() -> Unit) =
+inline fun <reified F> JupiterTests.context(
+    transform: (RuntimeNode) -> RuntimeNode = { it },
+    noinline builder: Context<Unit, F>.() -> Unit
+) =
     topLevelContext(javaClass.canonicalName, asKType<F>(), builder = builder)
+        .buildRootNode()
+        .run(transform)
 
-inline fun <reified F> JupiterTests.context(fixture: F, noinline builder: Context<Unit, F>.() -> Unit) =
+inline fun <reified F> JupiterTests.context(
+    fixture: F,
+    transform: (RuntimeNode) -> RuntimeNode = { it },
+    noinline builder: Context<Unit, F>.() -> Unit
+) =
     topLevelContext(javaClass.canonicalName, asKType<F>(), fixture, builder = builder)
+        .buildRootNode()
+        .run(transform)
 

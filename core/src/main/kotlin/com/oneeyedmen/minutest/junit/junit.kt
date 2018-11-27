@@ -15,16 +15,23 @@ import java.util.stream.Stream
  *
  * Designed to be called inside a class and to use the name as the class as the name of the test.
  */
-inline fun <reified F> Any.junitTests(noinline builder: Context<Unit, F>.() -> Unit): Stream<out DynamicNode> =
+inline fun <reified F> Any.junitTests(
+    transform: (RuntimeNode) -> RuntimeNode = { it },
+    noinline builder: Context<Unit, F>.() -> Unit
+): Stream<out DynamicNode> =
     topLevelContext(javaClass.canonicalName, asKType<F>(), builder)
         .buildRootNode()
+        .run(transform)
         .toStreamOfDynamicNodes()
 
-inline fun <reified F> Any.junitTests(fixture: F,
+inline fun <reified F> Any.junitTests(
+    fixture: F,
+    transform: (RuntimeNode) -> RuntimeNode = { it },
     noinline builder: Context<Unit, F>.() -> Unit
 ): Stream<out DynamicNode> =
     topLevelContext(javaClass.canonicalName, asKType<F>(), fixture, builder)
         .buildRootNode()
+        .run(transform)
         .toStreamOfDynamicNodes()
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
