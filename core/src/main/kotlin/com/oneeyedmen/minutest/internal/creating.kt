@@ -3,12 +3,11 @@ package com.oneeyedmen.minutest.internal
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.TestDescriptor
-import kotlin.reflect.KType
 
 
 fun <F> topLevelContext(
     name: String,
-    type: KType,
+    type: FixtureType,
     builder: Context<Unit, F>.() -> Unit
 ): NodeBuilder<Unit> =
     ContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type), explicitFixtureFactory = false)
@@ -16,7 +15,7 @@ fun <F> topLevelContext(
 
 fun <F> topLevelContext(
     name: String,
-    type: KType,
+    type: FixtureType,
     fixture: F,
     builder: Context<Unit, F>.() -> Unit
 ): NodeBuilder<Unit> =
@@ -24,7 +23,7 @@ fun <F> topLevelContext(
 
 fun <F> topLevelContext(
     name: String,
-    type: KType,
+    type: FixtureType,
     fixtureFactory: ((Unit, TestDescriptor) -> F)?,
     builder: Context<Unit, F>.() -> Unit
 ): NodeBuilder<Unit> =
@@ -32,7 +31,7 @@ fun <F> topLevelContext(
         .apply(builder)
 
 @Suppress("UNCHECKED_CAST")
-private fun <F> fixtureFactoryFor(type: KType): ((Unit, TestDescriptor) -> F)? =
+private fun <F> fixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) -> F)? =
     if (type.classifier == Unit::class) {
         { _, _ -> Unit as F }
     }

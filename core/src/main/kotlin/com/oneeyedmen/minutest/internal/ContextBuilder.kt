@@ -1,11 +1,10 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.*
-import kotlin.reflect.KType
 
 internal class ContextBuilder<PF, F>(
     private val name: String,
-    private val type: KType,
+    private val type: FixtureType,
     private var fixtureFactory: ((PF, TestDescriptor) -> F)?,
     private var explicitFixtureFactory: Boolean
 ) : Context<PF, F>(), NodeBuilder<PF> {
@@ -41,7 +40,7 @@ internal class ContextBuilder<PF, F>(
 
     override fun <G> internalCreateContext(
         name: String,
-        type: KType,
+        type: FixtureType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
         explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit

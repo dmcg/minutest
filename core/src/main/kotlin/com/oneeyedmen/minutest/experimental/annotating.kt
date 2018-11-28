@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.*
-import com.oneeyedmen.minutest.internal.asKType
+import com.oneeyedmen.minutest.internal.askType
 import com.oneeyedmen.minutest.internal.topLevelContext
 import com.oneeyedmen.minutest.junit.toStreamOfDynamicNodes
 import org.junit.jupiter.api.DynamicNode
@@ -32,7 +32,7 @@ inline fun <reified F> Any.transformedJunitTests(
     transform: (RuntimeNode) -> RuntimeNode,
     noinline builder: Context<Unit, F>.() -> Unit
 ): Stream<out DynamicNode> =
-    topLevelContext(javaClass.canonicalName, asKType<F>(), builder)
+    topLevelContext(javaClass.canonicalName, askType<F>(), builder)
         .buildRootNode()
         .run(transform)
         .toStreamOfDynamicNodes()

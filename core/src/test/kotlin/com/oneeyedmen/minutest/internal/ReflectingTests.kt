@@ -14,44 +14,44 @@ class ReflectingTests : JupiterTests {
 
         context("asKType") {
             test("captures class") {
-                assertEquals(String::class, asKType<String>().classifier)
+                assertEquals(String::class, askType<String>().classifier)
             }
             test("captures nullability") {
-                assertFalse(asKType<String>().isMarkedNullable)
-                assertTrue(asKType<String?>().isMarkedNullable)
+                assertFalse(askType<String>().isMarkedNullable)
+                assertTrue(askType<String?>().isMarkedNullable)
             }
         }
 
         context("KType.creator") {
             context("works for") {
                 test("String") {
-                    assertEquals("", asKType<String>().creator()!!.invoke())
+                    assertEquals("", askType<String>().creator()!!.invoke())
                 }
                 test("String?") {
-                    assertEquals("", asKType<String?>().creator()!!.invoke())
+                    assertEquals("", askType<String?>().creator()!!.invoke())
                 }
                 test("Unit") {
-                    assertEquals(Unit, asKType<Unit>().creator()!!.invoke())
+                    assertEquals(Unit, askType<Unit>().creator()!!.invoke())
                 }
                 test("HashMap") {
-                    assertEquals(HashMap<String, String>(), asKType<HashMap<String, String>>().creator()!!.invoke())
+                    assertEquals(HashMap<String, String>(), askType<HashMap<String, String>>().creator()!!.invoke())
                 }
                 test("Any") {
-                    assertEquals(Any::class, asKType<Any>().creator()!!.invoke()::class)
+                    assertEquals(Any::class, askType<Any>().creator()!!.invoke()::class)
                 }
                 test("public object") {
-                    assertEquals(PublicObject, asKType<PublicObject>().creator()!!.invoke())
+                    assertEquals(PublicObject, askType<PublicObject>().creator()!!.invoke())
                 }
             }
             context("is null for") {
                 test("private class") {
-                    assertNull(asKType<PrivateClass>().creator())
+                    assertNull(askType<PrivateClass>().creator())
                 }
                 test("public class with private ctor") {
-                    assertNull(asKType<PublicClassPrivateCtor>().creator())
+                    assertNull(askType<PublicClassPrivateCtor>().creator())
                 }
                 test("private object") {
-                    assertNull(asKType<PrivateObject>().creator())
+                    assertNull(askType<PrivateObject>().creator())
                 }
             }
         }

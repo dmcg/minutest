@@ -1,15 +1,18 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.TestDescriptor
-import kotlin.reflect.*
-import kotlin.reflect.full.createType
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.KVisibility
 
-inline fun <reified G> asKType() = G::class.asKType(null is G)
+inline fun <reified G> askType() = G::class.toFixtureType(null is G)
 
-fun KClass<*>.asKType(isNullable: Boolean): KType = createType(typeParameters.map { KTypeProjection.STAR }, isNullable)
+data class FixtureType(internal val classifier: KClass<*>, internal val isMarkedNullable: Boolean)
 
-fun KType.creator(): (() -> Any)? {
-    val classifier = this.classifier as? KClass<*> ?: return null
+fun KClass<*>.toFixtureType(isNullable: Boolean) = FixtureType(this, isNullable)
+
+fun FixtureType.creator(): (() -> Any)? {
+    val classifier = this.classifier
     if (classifier == Unit::class) return { Unit } // shortcut as we do this a lot
     val objectInstance = try {
         classifier.objectInstance
@@ -31,7 +34,7 @@ private fun Collection<KFunction<Any>>.noArgCtor() =
     }
 
 @Suppress("UNCHECKED_CAST")
-internal fun <F> experimentalFixtureFactoryFor(type: KType): ((Unit, TestDescriptor) -> F)? =
+internal fun <F> experimentalFixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) -> F)? =
     type.creator()?.let { creator ->
         { _: Unit, _: TestDescriptor -> creator() as F }
     }

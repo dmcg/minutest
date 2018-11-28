@@ -1,8 +1,8 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.internal.FixtureType
 import com.oneeyedmen.minutest.internal.MinutestMarker
-import com.oneeyedmen.minutest.internal.asKType
-import kotlin.reflect.KType
+import com.oneeyedmen.minutest.internal.askType
 
 typealias TestContext<F> = Context<*, F>
 
@@ -22,14 +22,14 @@ abstract class Context<ParentF, F> {
      */
     inline fun <reified G> derivedContext(name: String, noinline builder: Context<F, G>.() -> Unit) =
         // fixture factory not known
-        internalCreateContext(name, asKType<G>(), null, false, builder)
+        internalCreateContext(name, askType<G>(), null, false, builder)
 
     /**
      * Define a sub-context with a different fixture type, supplying the new fixture value.
      */
     inline fun <reified G> derivedContext(name: String, fixture: G, noinline builder: Context<F, G>.() -> Unit) =
         // fixture factory explicitly returns fixture
-        internalCreateContext(name, asKType<G>(), { fixture }, true, builder)
+        internalCreateContext(name, askType<G>(), { fixture }, true, builder)
 
     /**
      * Define a sub-context with a different fixture type, supplying a fixture converter.
@@ -39,7 +39,7 @@ abstract class Context<ParentF, F> {
         noinline builder: Context<F, G>.() -> Unit
     ) {
         // fixture factory explicitly set
-        internalCreateContext(name, asKType<G>(), { fixtureFactory() }, true, builder)
+        internalCreateContext(name, askType<G>(), { fixtureFactory() }, true, builder)
     }
 
     /**
@@ -116,7 +116,7 @@ abstract class Context<ParentF, F> {
      */
     abstract fun <G> internalCreateContext(
         name: String,
-        type: KType,
+        type: FixtureType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
         explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit
