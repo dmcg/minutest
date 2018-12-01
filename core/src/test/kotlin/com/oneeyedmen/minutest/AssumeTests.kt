@@ -20,7 +20,7 @@ class AssumeTests {
         }
 
         assertThrows<TestAbortedException> {
-            executeTest(tests)
+            executeTests(tests)
         }
     }
 

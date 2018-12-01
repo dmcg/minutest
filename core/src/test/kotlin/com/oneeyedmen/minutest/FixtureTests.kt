@@ -123,7 +123,7 @@ class FixtureTests {
             }
         }
         assertThrows<FileNotFoundException> {
-            executeTest(tests)
+            executeTests(tests)
         }
     }
 }

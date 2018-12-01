@@ -9,7 +9,7 @@ class TransformTests {
     fun `transforms wrap around application of before and after blocks`() {
         val log = mutableListOf<String>()
         
-        executeTest(junitTests<Unit> {
+        executeTests(junitTests<Unit> {
             before { log.add("before") }
             after { log.add("after") }
             
@@ -36,7 +36,7 @@ class TransformTests {
     fun `transforms nest, following nesting of contexts`() {
         val log = mutableListOf<String>()
         
-        executeTest(junitTests<Unit> {
+        executeTests(junitTests<Unit> {
             addTransform { test ->
                 test.withAction { fixture ->
                     log.add("entering outer transformed test")
@@ -81,7 +81,7 @@ class TransformTests {
     fun `transforms can disable tests`() {
         val log = mutableListOf<String>()
         
-        executeTest(junitTests<Unit> {
+        executeTests(junitTests<Unit> {
             addTransform { test ->
                 test.withAction { /* no op */ }
             }

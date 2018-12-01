@@ -106,7 +106,7 @@ class BeforeAndAfterTests {
         }
 
         assertThrows<IOException>("in test") {
-            executeTest(test)
+            executeTests(test)
         }
         expectedLog = listOf("test", "after")
     }
@@ -132,7 +132,7 @@ class BeforeAndAfterTests {
         }
 
         assertThrows<IOException>("in before") {
-            executeTest(test)
+            executeTests(test)
         }
         expectedLog = listOf("before", "after")
     }
@@ -178,7 +178,7 @@ class BeforeAndAfterTests {
         }
 
         assertThrows<IllegalStateException>("in before") {
-            executeTest(test)
+            executeTests(test)
         }
         expectedLog = listOf("top", "outer", "inner", "after outer")
     }
@@ -206,7 +206,7 @@ class BeforeAndAfterTests {
         }
 
         assertThrows<IOException>("in after") {
-            executeTest(test)
+            executeTests(test)
         }
         expectedLog = listOf("test", "after 1", "after 2")
     }
@@ -228,7 +228,7 @@ class BeforeAndAfterTests {
         }
 
         assertThrows<FileNotFoundException>("in after") {
-            executeTest(test)
+            executeTests(test)
         }
         expectedLog = listOf("test")
     }

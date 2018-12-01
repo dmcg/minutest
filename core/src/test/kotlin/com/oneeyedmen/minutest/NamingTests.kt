@@ -11,7 +11,7 @@ class NamingTests {
     fun `fully qualified name`() {
         val log = mutableListOf<List<String>>()
         
-        executeTest(junitTests<Unit> {
+        executeTests(junitTests<Unit> {
             addTransform {
                 it.also { log.add(it.fullName()) }
             }
@@ -42,7 +42,7 @@ class NamingTests {
 
         class Fixture(val name: List<String>)
 
-        executeTest(junitTests<Fixture> {
+        executeTests(junitTests<Fixture> {
 
             deriveFixtureInstrumented { testDescriptor ->
                 Fixture(testDescriptor.fullName())
