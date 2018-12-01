@@ -7,8 +7,9 @@ import org.junit.jupiter.api.TestFactory
 
 class FixtureSupplyingTests {
 
-    @TestFactory fun `supply fixture at top`() = junitTests("banana") {
-        context("parent had no fixture") {
+    @TestFactory fun `supply fixture at top`() = junitTests<String> {
+        fixture { "banana" }
+        context("parent had fixture") {
             test("test") {
                 assertEquals("banana", this)
             }
@@ -16,7 +17,8 @@ class FixtureSupplyingTests {
     }
 
     @TestFactory fun `supply fixture in derivedContext`() = junitTests<Unit> {
-        derivedContext("parent had no fixture", "banana") {
+        derivedContext<String>("parent had no fixture") {
+            fixture { "banana" }
             test("test") {
                 assertEquals("banana", this)
             }

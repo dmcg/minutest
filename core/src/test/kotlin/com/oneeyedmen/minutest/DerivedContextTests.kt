@@ -29,17 +29,5 @@ class DerivedContextTests : JupiterTests {
                 assertEquals(DerivedFixture(Fixture("banana"), "smoothie"), this)
             }
         }
-
-        derivedContext<DerivedFixture>("inner supplying converter", { DerivedFixture(this, "smoothie") }) {
-            test("takes DerivedFixture") {
-                assertEquals(DerivedFixture(Fixture("banana"), "smoothie"), this)
-            }
-        }
-
-        derivedContext("inner supplying fixture", DerivedFixture(Fixture("apple"), "pie")) {
-            test("takes DerivedFixture") {
-                assertEquals(DerivedFixture(Fixture("apple"), "pie"), this)
-            }
-        }
     }
 }

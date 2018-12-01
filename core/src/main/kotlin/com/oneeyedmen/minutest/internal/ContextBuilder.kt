@@ -6,7 +6,7 @@ internal class ContextBuilder<PF, F>(
     private val name: String,
     private val type: FixtureType,
     private var fixtureFactory: ((PF, TestDescriptor) -> F)?,
-    private var explicitFixtureFactory: Boolean
+    private var explicitFixtureFactory: Boolean = false
 ) : Context<PF, F>(), NodeBuilder<PF> {
 
     private val children = mutableListOf<NodeBuilder<F>>()
@@ -36,15 +36,14 @@ internal class ContextBuilder<PF, F>(
 
     override fun context(name: String, builder: Context<F, F>.() -> Unit) =
         // fixture factory is implicitly identity (return parent fixture (this)
-        internalCreateContext(name, type, { this }, false, builder)
+        internalCreateContext(name, type, { this }, builder)
 
     override fun <G> internalCreateContext(
         name: String,
         type: FixtureType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
-        explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit
-    ) = ContextBuilder(name, type, fixtureFactory, explicitFixtureFactory).apply(builder).also { children.add(it) }
+    ) = ContextBuilder(name, type, fixtureFactory).apply(builder).also { children.add(it) }
 
     override fun addTransform(transform: TestTransform<F>) {
         transforms.add(transform)

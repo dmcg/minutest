@@ -38,13 +38,3 @@ class JupiterTestsWithNullableFixture : JupiterTests {
         }
     }
 }
-
-class JupiterTestsWithSuppliedFixture : JupiterTests {
-
-    override val tests = context("banana") {
-
-        test("test") {
-            assertEquals("banana", this)
-        }
-    }
-}

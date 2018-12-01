@@ -30,13 +30,3 @@ inline fun <reified F> JupiterTests.context(
     topLevelContext(javaClass.canonicalName, askType<F>(), builder = builder)
         .buildRootNode()
         .run(transform)
-
-inline fun <reified F> JupiterTests.context(
-    fixture: F,
-    transform: (RuntimeNode) -> RuntimeNode = { it },
-    noinline builder: Context<Unit, F>.() -> Unit
-) =
-    topLevelContext(javaClass.canonicalName, askType<F>(), fixture, builder = builder)
-        .buildRootNode()
-        .run(transform)
-

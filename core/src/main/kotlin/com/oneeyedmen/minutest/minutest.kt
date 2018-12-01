@@ -21,26 +21,7 @@ abstract class Context<ParentF, F> {
      * to the child fixture type.
      */
     inline fun <reified G> derivedContext(name: String, noinline builder: Context<F, G>.() -> Unit) =
-        // fixture factory not known
-        internalCreateContext(name, askType<G>(), null, false, builder)
-
-    /**
-     * Define a sub-context with a different fixture type, supplying the new fixture value.
-     */
-    inline fun <reified G> derivedContext(name: String, fixture: G, noinline builder: Context<F, G>.() -> Unit) =
-        // fixture factory explicitly returns fixture
-        internalCreateContext(name, askType<G>(), { fixture }, true, builder)
-
-    /**
-     * Define a sub-context with a different fixture type, supplying a fixture converter.
-     */
-    inline fun <reified G> derivedContext(name: String,
-        noinline fixtureFactory: F.() -> G,
-        noinline builder: Context<F, G>.() -> Unit
-    ) {
-        // fixture factory explicitly set
-        internalCreateContext(name, askType<G>(), { fixtureFactory() }, true, builder)
-    }
+        internalCreateContext(name, askType<G>(), null, builder)
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
@@ -118,7 +99,6 @@ abstract class Context<ParentF, F> {
         name: String,
         type: FixtureType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
-        explicitFixtureFactory: Boolean,
         builder: Context<F, G>.() -> Unit
     ): NodeBuilder<F>
 
