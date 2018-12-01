@@ -101,20 +101,4 @@ abstract class Context<ParentF, F> {
         fixtureFactory: (F.(TestDescriptor) -> G)?,
         builder: Context<F, G>.() -> Unit
     ): NodeBuilder<F>
-
-    /**
-     * Define the fixture that will be used in this context's tests and sub-contexts.
-     *
-     * Has access to the parent context's fixture as 'this'
-     */
-    @Suppress("FunctionName")
-    @Deprecated("Replace with deriveFixture", ReplaceWith("deriveFixture"))
-    fun fixture_(factory: ParentF.() -> F) = deriveFixture(factory)
-
-    /**
-     * Define the fixture that will be used in this context's tests and sub-contexts by
-     * transforming the parent fixture.
-     */
-    @Deprecated("Replace with deriveFixture")
-    fun mapFixture(f: (parentFixture: ParentF) -> F) = deriveFixture { f(this) }
 }
