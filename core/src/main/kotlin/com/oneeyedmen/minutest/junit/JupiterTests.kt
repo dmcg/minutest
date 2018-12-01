@@ -2,9 +2,7 @@ package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.buildRootNode
-import com.oneeyedmen.minutest.internal.askType
-import com.oneeyedmen.minutest.internal.topLevelContext
+import com.oneeyedmen.minutest.internal.transformedTopLevelContext
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.TestFactory
 import java.util.stream.Stream
@@ -26,7 +24,5 @@ interface JupiterTests {
 inline fun <reified F> JupiterTests.context(
     transform: (RuntimeNode) -> RuntimeNode = { it },
     noinline builder: Context<Unit, F>.() -> Unit
-) =
-    topLevelContext(javaClass.canonicalName, askType<F>(), builder = builder)
-        .buildRootNode()
-        .run(transform)
+): RuntimeNode =
+    transformedTopLevelContext(javaClass.canonicalName, transform, builder)

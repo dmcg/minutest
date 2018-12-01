@@ -2,7 +2,6 @@ package com.oneeyedmen.minutest
 
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.fail
 
 
 class TransformTests {

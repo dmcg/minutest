@@ -3,13 +3,10 @@ package com.oneeyedmen.minutest
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.DynamicContainer
-import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
 import java.io.FileNotFoundException
-import kotlin.streams.asSequence
 
 
 class FixtureTests {
@@ -124,10 +121,9 @@ class FixtureTests {
             test("won't be run") {
                 assertEquals("banana", fruit)
             }
-        }.asSequence()
+        }
         assertThrows<FileNotFoundException> {
-            // Yuck!  There must be a better way
-            ((tests.first() as DynamicContainer).children.asSequence().first() as DynamicTest).executable.execute()
+            executeTest(tests)
         }
     }
 }
