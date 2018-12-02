@@ -1,23 +1,41 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.Named
+import com.oneeyedmen.minutest.NodeBuilder
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.RuntimeTest
 import org.opentest4j.TestAbortedException
+import kotlin.reflect.KClass
+import kotlin.reflect.full.safeCast
 
-data class Annotation(
-    private val transform: (RuntimeNode) -> RuntimeNode
-) : (RuntimeNode) -> RuntimeNode by transform {
-    fun applyTo(properties: MutableMap<Any, Any>) {
-        properties[this] = true
-    }
-
-    fun appliesTo(properties: Map<Any, Any>) = properties[this] == true
+abstract class AnnotationInterpreter<A: Any>(
+    private val annotationClass: KClass<A>
+) : (RuntimeNode) -> RuntimeNode {
+    
+    protected fun appliesTo(node: RuntimeNode) =
+        this in node.properties
+    
+    protected val RuntimeNode.annotation: A get() =
+        annotationClass.safeCast(properties[this]) ?: defaultAnnotationValue()
+    
+    abstract fun defaultAnnotationValue(): A
 }
 
-fun Context<*, *>.annotateWith(annotation: Annotation) {
+abstract class Annotation<A: Annotation<A>> {
+    abstract val transform: AnnotationInterpreter<A>
+    
+    fun applyTo(properties: MutableMap<Any, Any>) {
+        properties[transform] = this
+    }
+}
+
+fun Context<*,*>.annotateWith(annotation: Annotation<*>) {
     annotation.applyTo(properties)
 }
 
-operator fun <F> Annotation.minus(nodeBuilder: NodeBuilder<F>): NodeBuilder<F> {
+operator fun <F> Annotation<*>.minus(nodeBuilder: NodeBuilder<F>): NodeBuilder<F> {
     this.applyTo(nodeBuilder.properties)
     return nodeBuilder
 }

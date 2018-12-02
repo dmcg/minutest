@@ -4,15 +4,24 @@ import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 
-val SKIP = Annotation(::skipFilter)
-
-private fun skipFilter(node: RuntimeNode): RuntimeNode = when (node) {
-    is RuntimeContext -> skipFilter(node)
-    is RuntimeTest -> node
+object SKIP : Annotation<SKIP>() {
+    override val transform = SkipInterpreter
 }
 
-private fun skipFilter(context: RuntimeContext): RuntimeNode =
-    if (SKIP.appliesTo(context.properties))
-        skippingContext(context.properties, "Skipped ${context.name}", context.parent)
-    else
-        context.mapChildren(::skipFilter)
+object SkipInterpreter : AnnotationInterpreter<SKIP>(SKIP::class) {
+    override fun defaultAnnotationValue() = SKIP
+    
+    override fun invoke(node: RuntimeNode) = skipFilter(node)
+    
+    private fun skipFilter(node: RuntimeNode): RuntimeNode = when (node) {
+        is RuntimeContext -> skipFilter(node)
+        is RuntimeTest -> node
+    }
+    
+    private fun skipFilter(context: RuntimeContext): RuntimeNode =
+        if (appliesTo(context))
+            skippingContext(context.properties, "Skipped ${context.name}", context.parent)
+        else
+            context.mapChildren(::skipFilter)
+}
+

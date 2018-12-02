@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.experimental.FOCUS
+import com.oneeyedmen.minutest.experimental.FocusInterpreter
 import com.oneeyedmen.minutest.experimental.annotateWith
 import com.oneeyedmen.minutest.experimental.minus
 import com.oneeyedmen.minutest.junit.JupiterTests
@@ -10,8 +11,8 @@ import org.junit.Assert.fail
 
 class FocusExampleTests : JupiterTests {
 
-    override val tests = context<Unit>(FOCUS) {
-
+    override val tests = context<Unit>(FocusInterpreter) {
+        
         FOCUS - context("focused") {
             test("will run") {}
         }
