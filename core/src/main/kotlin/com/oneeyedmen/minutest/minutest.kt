@@ -101,4 +101,6 @@ abstract class Context<ParentF, F> {
         fixtureFactory: (F.(TestDescriptor) -> G)?,
         builder: Context<F, G>.() -> Unit
     ): NodeBuilder<F>
+
+    abstract fun afterAll(f: () -> Unit)
 }

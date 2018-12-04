@@ -11,14 +11,20 @@ internal data class PreparedRuntimeContext<PF, F>(
     override val children: List<RuntimeNode>,
     private val befores: List<(F) -> Unit>,
     private val afters: List<(F) -> Unit>,
+    private var afterAlls: List<() -> Unit>,
     private val transforms: List<TestTransform<F>>,
-    private val fixtureFactory: ((PF, TestDescriptor) -> F),
+    private val fixtureFactory: (PF, TestDescriptor) -> F,
     override val properties: Map<Any, Any>
 ) : RuntimeContext(), ParentContext<F> {
 
-
     override fun runTest(test: Test<F>) {
         parent.runTest(buildParentTest(test))
+    }
+
+    override fun close() {
+        afterAlls.forEach {
+            it()
+        }
     }
 
     private fun buildParentTest(test: Test<F>): Test<PF> {

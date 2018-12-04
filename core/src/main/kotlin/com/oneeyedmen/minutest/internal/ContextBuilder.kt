@@ -13,6 +13,7 @@ internal class ContextBuilder<PF, F>(
     private val befores = mutableListOf<(F) -> Unit>()
     private val afters = mutableListOf<(F) -> Unit>()
     private val transforms = mutableListOf<TestTransform<F>>()
+    private var afterAlls = mutableListOf<() -> Unit>()
 
     override fun deriveFixture(f: (PF).() -> F) = deriveInstrumentedFixture { parentFixture, _ ->  parentFixture.f() }
 
@@ -49,11 +50,16 @@ internal class ContextBuilder<PF, F>(
         transforms.add(transform)
     }
 
+    override fun afterAll(f: () -> Unit) {
+        afterAlls.add(f)
+    }
+
     override fun buildNode(parent: ParentContext<PF>): RuntimeContext = PreparedRuntimeContext(name,
         parent,
         emptyList(),
         befores,
         afters,
+        afterAlls,
         transforms,
         resolvedFixtureFactory(),
         properties).let { context ->

@@ -31,7 +31,7 @@ inline fun <reified F> Any.junitTests(
 fun RuntimeNode.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
     if (this is RuntimeContext)
         // don't create a vestigial single-child context
-        this.children.asSequence().map(RuntimeNode::toDynamicNode).asStream()
+        this.children.toStreamOfDynamicNodes(this)
     else
         Stream.of(this.toDynamicNode())
 
@@ -41,4 +41,7 @@ private fun RuntimeNode.toDynamicNode(): DynamicNode = when (this) {
 }
 
 private fun RuntimeContext.toDynamicContainer(): DynamicContainer =
-    dynamicContainer(name, children.map(RuntimeNode::toDynamicNode))
+    dynamicContainer(name, children.toStreamOfDynamicNodes(this))
+
+private fun Iterable<RuntimeNode>.toStreamOfDynamicNodes(parent: RuntimeContext) =
+    asSequence().map(RuntimeNode::toDynamicNode).asStream().onClose { parent.close() }

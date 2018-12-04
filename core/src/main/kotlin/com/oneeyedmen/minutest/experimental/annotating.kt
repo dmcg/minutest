@@ -35,6 +35,8 @@ internal data class PlainContext(
     override val parent: Named?,
     override val children: List<RuntimeNode> = emptyList()
 ) : RuntimeContext() {
+    override fun close() {}
+
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
 }
 
