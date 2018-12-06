@@ -1,58 +1,30 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.*
-import org.opentest4j.TestAbortedException
+import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.NodeBuilder
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
 
-data class Annotation(
-    private val transform: (RuntimeNode) -> RuntimeNode
-) : (RuntimeNode) -> RuntimeNode by transform {
-    fun applyTo(properties: MutableMap<Any, Any>) {
-        properties[this] = true
+class Annotation {
+    fun applyTo(nodeBuilder: NodeBuilder<*>) {
+        nodeBuilder.properties[this] = true
     }
 
-    fun appliesTo(properties: Map<Any, Any>) = properties[this] == true
+    fun appliesTo(runtimeNode: RuntimeNode) = runtimeNode.properties.containsKey(this)
 }
+
+operator fun <F> Annotation.minus(nodeBuilder: NodeBuilder<F>): NodeBuilder<F> =
+    nodeBuilder.also {
+        this.applyTo(it)
+    }
 
 fun Context<*, *>.annotateWith(annotation: Annotation) {
-    annotation.applyTo(properties)
+    annotation.applyTo(this as NodeBuilder<*>)
 }
 
-operator fun <F> Annotation.minus(nodeBuilder: NodeBuilder<F>): NodeBuilder<F> {
-    this.applyTo(nodeBuilder.properties)
-    return nodeBuilder
+fun ((RuntimeNode) -> RuntimeNode).then(next: (RuntimeNode) -> RuntimeNode) = { node: RuntimeNode ->
+    next(this(node))
 }
 
-internal fun RuntimeContext.mapChildren(f: (RuntimeNode) -> RuntimeNode) = this.withChildren(this.children.map(f))
-
-internal fun skippingContext(properties: Map<Any, Any>, name: String, parent: Named?) =
-    PlainContext(properties, "Skipped $name", parent).apply {
-        withChildren(listOf(SkippingTest(this, properties)))
-    }
-
-internal data class PlainContext(
-    override val properties: Map<Any, Any>,
-    override val name: String,
-    override val parent: Named?,
-    override val children: List<RuntimeNode> = emptyList()
-) : RuntimeContext() {
-    override fun close() {}
-
-    override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
-}
-
-internal class SkippingTest(override val parent: Named, override val properties: Map<Any, Any>) : RuntimeTest() {
-    override val name = "skipped"
-    override fun run() {
-        throw TestAbortedException("skipped")
-    }
-}
-
-internal class SkippedTest(
-    override val name: String,
-    override val parent: Named?, override val properties: Map<Any, Any>
-) : RuntimeTest() {
-    override fun run() {
-        throw TestAbortedException("skipped")
-    }
-}
-
+fun RuntimeContext.withTransformedChildren(transform: (RuntimeNode) -> RuntimeNode) =
+    withChildren(children.map(transform))
