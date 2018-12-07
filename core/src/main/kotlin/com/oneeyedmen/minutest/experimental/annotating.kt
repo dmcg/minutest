@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 
-interface Annotation {
+interface TestAnnotation {
     fun applyTo(nodeBuilder: NodeBuilder<*>) {
         addTo(nodeBuilder.properties)
     }
@@ -17,13 +17,13 @@ interface Annotation {
     }
 }
 
-operator fun <F> Annotation.minus(nodeBuilder: NodeBuilder<F>): NodeBuilder<F> =
+operator fun <F> TestAnnotation.minus(nodeBuilder: NodeBuilder<F>): NodeBuilder<F> =
     nodeBuilder.also {
         this.applyTo(it)
     }
 
 
-fun Context<*, *>.annotateWith(annotation: Annotation) {
+fun Context<*, *>.annotateWith(annotation: TestAnnotation) {
     annotation.applyTo(this as NodeBuilder<*>)
 }
 

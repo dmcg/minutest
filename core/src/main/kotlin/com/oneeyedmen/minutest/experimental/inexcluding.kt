@@ -7,8 +7,8 @@ import com.oneeyedmen.minutest.RuntimeTest
 import org.opentest4j.TestAbortedException
 
 
-object SKIP : Annotation
-object FOCUS : Annotation
+object SKIP : TestAnnotation
+object FOCUS : TestAnnotation
 
 val skipAndFocus = ::inexclude
 

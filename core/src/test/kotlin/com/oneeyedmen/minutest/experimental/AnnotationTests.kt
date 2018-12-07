@@ -19,4 +19,4 @@ class AnnotationTests : JupiterTests {
     }
 }
 
-object MyAnnotation : Annotation
+object MyAnnotation : TestAnnotation
