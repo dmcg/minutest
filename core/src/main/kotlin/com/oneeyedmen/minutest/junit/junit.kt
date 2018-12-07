@@ -1,9 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.*
 import com.oneeyedmen.minutest.internal.transformedTopLevelContext
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
@@ -19,10 +16,10 @@ import kotlin.streams.asStream
  * Designed to be called inside a class and to use the name as the class as the name of the test.
  */
 inline fun <reified F> Any.junitTests(
-    transform: (RuntimeNode) -> RuntimeNode = { it },
+    noinline transform: (RuntimeNode) -> RuntimeNode = { it },
     noinline builder: Context<Unit, F>.() -> Unit
 ): Stream<out DynamicNode> =
-    transformedTopLevelContext(javaClass.canonicalName, transform, builder)
+    transformedTopLevelContext(javaClass.canonicalName, transform, builder).buildRootNode()
         .toStreamOfDynamicNodes()
 
 
