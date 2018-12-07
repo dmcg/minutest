@@ -1,7 +1,5 @@
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.experimental.*
-import com.oneeyedmen.minutest.experimental.Annotation
 import com.oneeyedmen.minutest.junit.JupiterTests
 import com.oneeyedmen.minutest.junit.context
 import kotlin.test.fail

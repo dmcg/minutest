@@ -1,6 +1,5 @@
-package com.oneeyedmen.minutest.examples
+package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.experimental.autoClose
 import com.oneeyedmen.minutest.junit.JupiterTests
 import com.oneeyedmen.minutest.junit.context
 import java.io.BufferedWriter

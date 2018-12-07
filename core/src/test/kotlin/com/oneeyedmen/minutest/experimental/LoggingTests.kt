@@ -1,8 +1,7 @@
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.experimental.checkedAgainst
-import com.oneeyedmen.minutest.experimental.loggedTo
-import com.oneeyedmen.minutest.experimental.withTabsExpanded
+import com.oneeyedmen.minutest.assertLogged
+import com.oneeyedmen.minutest.executeTests
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -28,7 +27,7 @@ class LoggingTests {
         executeTests(tests)
 
         assertLogged(log.withTabsExpanded(2),
-            "com.oneeyedmen.minutest.LoggingTests",
+            "com.oneeyedmen.minutest.experimental.LoggingTests",
             "  top test",
             "  inner",
             "    inner test"
@@ -38,7 +37,7 @@ class LoggingTests {
     @Test fun checking() {
 
         val expected = listOf(
-            "com.oneeyedmen.minutest.LoggingTests",
+            "com.oneeyedmen.minutest.experimental.LoggingTests",
             "  top test",
             "  inner",
             "    inner test")

@@ -1,6 +1,7 @@
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.experimental.autoClose
+import com.oneeyedmen.minutest.assertLogged
+import com.oneeyedmen.minutest.executeTests
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.Test as JUnitTest
 

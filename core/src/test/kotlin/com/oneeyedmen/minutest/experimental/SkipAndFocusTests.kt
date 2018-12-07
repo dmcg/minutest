@@ -1,6 +1,7 @@
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.experimental.*
+import com.oneeyedmen.minutest.assertLogged
+import com.oneeyedmen.minutest.executeTests
 import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.Test
@@ -20,7 +21,7 @@ class SkipAndFocusTests {
             test("t2", noop)
         }
         checkLog(tests,
-            "com.oneeyedmen.minutest.SkipAndFocusTests",
+            "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
             "    t1",
             "    t2"
         )
@@ -32,7 +33,7 @@ class SkipAndFocusTests {
             test("t2", noop)
         }
         checkLog(tests,
-            "com.oneeyedmen.minutest.SkipAndFocusTests",
+            "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
             "    t1 skipped",
             "    t2"
         )
@@ -46,7 +47,7 @@ class SkipAndFocusTests {
             test("t2", noop)
         }
         checkLog(tests,
-            "com.oneeyedmen.minutest.SkipAndFocusTests",
+            "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
             "    c1 skipped",
             "    t2"
         )
@@ -58,7 +59,7 @@ class SkipAndFocusTests {
             FOCUS - test("t2", noop)
         }
         checkLog(tests,
-            "com.oneeyedmen.minutest.SkipAndFocusTests",
+            "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
             "    t1 skipped",
             "    t2"
         )
@@ -72,7 +73,7 @@ class SkipAndFocusTests {
             }
         }
         checkLog(tests,
-            "com.oneeyedmen.minutest.SkipAndFocusTests",
+            "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
             "    t1 skipped",
             "    c1",
             "        c1/t1"
@@ -87,7 +88,7 @@ class SkipAndFocusTests {
             }
         }
         checkLog(tests,
-            "com.oneeyedmen.minutest.SkipAndFocusTests",
+            "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
             "    t1 skipped",
             "    c1",
             "        c1/t1"
@@ -109,7 +110,7 @@ class SkipAndFocusTests {
             }
         }
         checkLog(tests,
-            "com.oneeyedmen.minutest.SkipAndFocusTests",
+            "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
             "    t1 skipped",
             "    c1",
             "        c1/t1",
@@ -128,7 +129,7 @@ class SkipAndFocusTests {
             }
         }
         checkLog(tests,
-            "com.oneeyedmen.minutest.SkipAndFocusTests skipped"
+            "com.oneeyedmen.minutest.experimental.SkipAndFocusTests skipped"
         )
     }
 
