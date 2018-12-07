@@ -10,17 +10,13 @@ inline fun <reified F> transformedTopLevelContext(
     name: String,
     noinline transform: (RuntimeNode) -> RuntimeNode,
     noinline builder: Context<Unit, F>.() -> Unit
-): NodeBuilder<Unit> =
-    TopLevelNodeBuilder(name, askType<F>(), builder, transform)
+): NodeBuilder<Unit> = topLevelContextBuilder(name, askType<F>(), builder, transform)
 
 fun <F> topLevelContext(
     name: String,
     type: FixtureType,
     builder: Context<Unit, F>.() -> Unit
-): NodeBuilder<Unit> =
-    ContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type))
-        .apply(builder)
-
+): NodeBuilder<Unit> = ContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type)).apply(builder)
 
 @Suppress("UNCHECKED_CAST")
 private fun <F> fixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) -> F)? =
@@ -29,17 +25,23 @@ private fun <F> fixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) ->
     }
     else null
 
-class TopLevelNodeBuilder<F>(
-    private val name: String,
-    private val type: FixtureType,
-    private val builder: Context<Unit, F>.() -> Unit,
-    private val transform: (RuntimeNode) -> RuntimeNode
-) : NodeBuilder<Unit> {
+/**
+ * An object to hang top-level annotations onto.
+ * It passes them on to the top level context and applies transforms to give the root node.
+ */
+fun <F> topLevelContextBuilder(
+    name: String,
+    type: FixtureType,
+    builder: Context<Unit, F>.() -> Unit,
+    transform: (RuntimeNode) -> RuntimeNode
+) = object : NodeBuilder<Unit> {
 
     override val properties: MutableMap<Any, Any> = HashMap()
 
     override fun buildNode(parent: ParentContext<Unit>): RuntimeNode {
-        return topLevelContext(name, type, builder).buildNode(parent).run(transform)
+        val topLevelContext = topLevelContext(name, type, builder)
+        // we need to apply our annotations to the root, then run the transforms
+        topLevelContext.properties.putAll(properties)
+        return topLevelContext.buildNode(parent).run(transform)
     }
-
 }

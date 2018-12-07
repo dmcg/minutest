@@ -1,21 +1,26 @@
 package com.oneeyedmen.minutest.experimental
 
+import com.oneeyedmen.minutest.LoadedRuntimeTest
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import org.opentest4j.TestAbortedException
 
 
-val SKIP = Annotation()
-val FOCUS = Annotation()
+object SKIP : Annotation
+object FOCUS : Annotation
 
 val skipAndFocus = ::inexclude
 
 fun inexclude(root: RuntimeNode) = when (root) {
     is RuntimeTest -> root.inexcluded(defaultToSkip = false)
     is RuntimeContext -> {
-        val defaultToSkip = root.hasAFocusedChild()
-        root.withTransformedChildren { it.inexcluded(defaultToSkip) }
+        if (SKIP.appliesTo(root)) {
+            root.skipped()
+        } else {
+            val defaultToSkip = root.hasAFocusedChild()
+            root.withTransformedChildren { it.inexcluded(defaultToSkip) }
+        }
     }
 }
 
@@ -52,11 +57,6 @@ private fun RuntimeTest.inexcluded(defaultToSkip: Boolean) =
         else -> this
     }
 
-private fun RuntimeNode.skipped() = object : RuntimeTest() {
-    override val name = "${this@skipped.name} skipped"
-    override val properties = this@skipped.properties
-    override val parent = this@skipped.parent
-    override fun run() {
-        throw TestAbortedException("skipped")
-    }
+private fun RuntimeNode.skipped() = LoadedRuntimeTest("${this.name} skipped", this.parent, this.properties) {
+    throw TestAbortedException("skipped")
 }

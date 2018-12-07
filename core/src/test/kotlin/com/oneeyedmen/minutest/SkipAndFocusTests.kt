@@ -5,6 +5,7 @@ import com.oneeyedmen.minutest.junit.junitTests
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.Test
 import java.util.stream.Stream
+import kotlin.test.fail
 
 
 class SkipAndFocusTests {
@@ -116,6 +117,18 @@ class SkipAndFocusTests {
             "        c1/c2",
             "            c1/c2/t1",
             "            c1/c2/t2 skipped"
+        )
+    }
+
+    @Test fun `skip from root`() {
+        val tests = junitTests<Unit>(skipAndFocus.then(loggedTo(log))) {
+            annotateWith(SKIP)
+            test("root was skipped") {
+                fail("root wasn't skipped")
+            }
+        }
+        checkLog(tests,
+            "com.oneeyedmen.minutest.SkipAndFocusTests skipped"
         )
     }
 

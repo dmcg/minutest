@@ -68,4 +68,6 @@ internal data class PreparedRuntimeContext<PF, F>(
     }
 
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
+
+    override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
 }

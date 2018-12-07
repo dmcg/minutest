@@ -1,15 +1,13 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.*
 
 fun checkedAgainst(check: (List<String>) -> Unit): (RuntimeNode) -> RuntimeNode = { node ->
     when (node) {
         is RuntimeTest -> error("Can only check a context")
         is RuntimeContext -> {
             val log = mutableListOf<String>()
-            LoggingRuntimeContext(node, log, 0) {
+            loggingRuntimeContext(node, log, 0) {
                 check(log)
             }
         }
@@ -20,51 +18,41 @@ fun loggedTo(log: MutableList<String>): (RuntimeNode) -> RuntimeNode = { node ->
     node.loggedTo(log, 0)
 }
 
-fun List<String>.withTabsExpanded(spaces: Int) = this.map { it.replace("\t", " ".repeat(spaces))}
+fun List<String>.withTabsExpanded(spaces: Int) = this.map { it.replace("\t", " ".repeat(spaces)) }
 
 private fun RuntimeNode.loggedTo(log: MutableList<String>, level: Int): RuntimeNode =
     when (this) {
-        is RuntimeContext -> LoggingRuntimeContext(this, log, level)
-        is RuntimeTest -> LoggingRuntimeTest(this, log, level)
+        is RuntimeContext -> loggingRuntimeContext(this, log, level)
+        is RuntimeTest -> loggingRuntimeTest(this, log, level)
     }
 
-private data class LoggingRuntimeContext(
-    private val wrapped: RuntimeContext,
-    private val log: MutableList<String>,
-    private val indent: Int,
-    private val done: () -> Unit = {}
-) : RuntimeContext() {
+private fun loggingRuntimeContext(
+    wrapped: RuntimeContext,
+    log: MutableList<String>,
+    indent: Int,
+    done: () -> Unit = {}
+) : RuntimeContext {
+    val childrenLog = mutableListOf<String>()
 
-    private val childrenLog = mutableListOf<String>()
-    override val properties = wrapped.properties
-    override val children = wrapped.children.map { it.loggedTo(childrenLog, indent + 1) }
-    override val name = wrapped.name
-    override val parent = wrapped.parent
+    return LoadedRuntimeContext(
+        wrapped.name,
+        wrapped.parent,
+        wrapped.properties,
+        wrapped.children.map { it.loggedTo(childrenLog, indent + 1) }
 
-    override fun withChildren(children: List<RuntimeNode>) = this.copy(wrapped = wrapped.withChildren(children))
-
-    override fun close() {
-        log.add("${indent.tabs()}$name")
+    ) {
+        log.add("${indent.tabs()}${wrapped.name}")
         log.addAll(childrenLog)
         wrapped.close()
         done()
     }
 }
 
-private data class LoggingRuntimeTest(
-    private val wrapped: RuntimeTest,
-    private val log: MutableList<String>,
-    private val indent: Int
-) : RuntimeTest() {
 
-    override val properties = wrapped.properties
-    override val name = wrapped.name
-    override val parent = wrapped.parent
-
-    override fun run() {
-        log.add("${indent.tabs()}$name")
+private fun loggingRuntimeTest(wrapped: RuntimeTest, log: MutableList<String>, indent: Int): RuntimeTest =
+    LoadedRuntimeTest(wrapped.name, wrapped.parent, wrapped.properties) {
+        log.add("${indent.tabs()}${wrapped.name}")
         wrapped.run()
     }
-}
 
 private fun Int.tabs() = "\t".repeat(this)
