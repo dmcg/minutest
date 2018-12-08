@@ -57,6 +57,6 @@ private fun RuntimeTest.inexcluded(defaultToSkip: Boolean) =
         else -> this
     }
 
-private fun RuntimeNode.skipped() = LoadedRuntimeTest("${this.name} skipped", this.parent, this.properties) {
+private fun RuntimeNode.skipped() = LoadedRuntimeTest(this.name, this.parent, this.properties) {
     throw TestAbortedException("skipped")
 }

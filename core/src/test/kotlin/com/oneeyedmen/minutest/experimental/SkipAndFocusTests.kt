@@ -34,7 +34,7 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
-            "    t1 skipped",
+            "    t1",
             "    t2"
         )
     }
@@ -48,7 +48,7 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
-            "    c1 skipped",
+            "    c1",
             "    t2"
         )
     }
@@ -60,7 +60,7 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
-            "    t1 skipped",
+            "    t1",
             "    t2"
         )
     }
@@ -74,7 +74,7 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
-            "    t1 skipped",
+            "    t1",
             "    c1",
             "        c1/t1"
         )
@@ -89,7 +89,7 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
-            "    t1 skipped",
+            "    t1",
             "    c1",
             "        c1/t1"
         )
@@ -111,13 +111,13 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "com.oneeyedmen.minutest.experimental.SkipAndFocusTests",
-            "    t1 skipped",
+            "    t1",
             "    c1",
             "        c1/t1",
-            "        c1/c1 skipped",
+            "        c1/c1",
             "        c1/c2",
             "            c1/c2/t1",
-            "            c1/c2/t2 skipped"
+            "            c1/c2/t2"
         )
     }
 
@@ -129,7 +129,7 @@ class SkipAndFocusTests {
             }
         }
         checkLog(tests,
-            "com.oneeyedmen.minutest.experimental.SkipAndFocusTests skipped"
+            "com.oneeyedmen.minutest.experimental.SkipAndFocusTests"
         )
     }
 
