@@ -3,6 +3,7 @@ package com.oneeyedmen.minutest.junit
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.platform.engine.TestExecutionResult
+import org.junit.platform.engine.UniqueId
 import org.junit.platform.engine.discovery.ClassNameFilter.*
 import org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 import org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage
@@ -20,55 +21,56 @@ class MinutestTestEngineTests {
     @Test
     fun `selects tests by package`() {
         assertTestRun({ selectors(selectPackage("example.a")) },
-            "test plan started",
-            "test started: Minutest",
-            "test started: example.a",
-            "test started: example context",
-            "test registered: a failing test",
-            "test started: a failing test",
-            "test failed: a failing test",
-            "test registered: a passing test",
-            "test started: a passing test",
-            "test successful: a passing test",
-            "test successful: example context",
-            "test started: example typed context",
-            "test registered: a typed fixture test",
-            "test started: a typed fixture test",
-            "test successful: a typed fixture test",
-            "test successful: example typed context",
-            "test successful: example.a",
-            "test successful: Minutest",
-            "test plan finished"
+            "plan started",
+            "started: Minutest",
+            "started: example.a",
+            "registered: example context",
+            "started: example context",
+            "registered: a failing test",
+            "started: a failing test",
+            "failed: a failing test",
+            "registered: a passing test",
+            "started: a passing test",
+            "successful: a passing test",
+            "successful: example context",
+            "registered: example typed context",
+            "started: example typed context",
+            "registered: a typed fixture test",
+            "started: a typed fixture test",
+            "successful: a typed fixture test",
+            "successful: example typed context",
+            "successful: example.a",
+            "successful: Minutest",
+            "plan finished"
         )
     }
     
     @Test
-    fun `reports discovered test packages and top level contexts in initial test plan`() {
+    fun `initial test plan contains the packages discovered to declare top level contexts`() {
         assertDiscovered({ selectors(selectPackage("example.a")) },
             "Minutest",
-            "example.a",
-            "example context",
-            "example typed context"
+            "example.a"
         )
     }
     
     @Test
     fun `select tests by class name`() {
         assertTestRun({ selectors(selectClass("example.a.ExampleMinutest")) },
-            "test plan started",
-            "test started: Minutest",
-            "test started: example.a",
-            "test started: example context",
-            "test registered: a failing test",
-            "test started: a failing test",
-            "test failed: a failing test",
-            "test registered: a passing test",
-            "test started: a passing test",
-            "test successful: a passing test",
-            "test successful: example context",
-            "test successful: example.a",
-            "test successful: Minutest",
-            "test plan finished"
+            "plan started",
+            "started: Minutest",
+            "started: example.a",
+            "registered: example context",
+            "started: example context",
+            "registered: a failing test",
+            "started: a failing test",
+            "failed: a failing test",
+            "registered: a passing test",
+            "started: a passing test",
+            "successful: a passing test",
+            "successful: example context",
+            "successful: example.a",
+            "successful: Minutest",
+            "plan finished"
         )
     }
     
@@ -79,65 +81,67 @@ class MinutestTestEngineTests {
                 selectors(selectPackage("example.a"))
                 filters(excludeClassNamePatterns(".*Typed.*"))
             },
-            "test plan started",
-            "test started: Minutest",
-            "test started: example.a",
-            "test started: example context",
-            "test registered: a failing test",
-            "test started: a failing test",
-            "test failed: a failing test",
-            "test registered: a passing test",
-            "test started: a passing test",
-            "test successful: a passing test",
-            "test successful: example context",
-            "test successful: example.a",
-            "test successful: Minutest",
-            "test plan finished"
+            "plan started",
+            "started: Minutest",
+            "started: example.a",
+            "registered: example context",
+            "started: example context",
+            "registered: a failing test",
+            "started: a failing test",
+            "failed: a failing test",
+            "registered: a passing test",
+            "started: a passing test",
+            "successful: a passing test",
+            "successful: example context",
+            "successful: example.a",
+            "successful: Minutest",
+            "plan finished"
         )
     }
     
     @Test
     fun `select tests by unique id`() {
-        val uniqueIdSelector = selectUniqueId("[engine:minutest]/[minutest-package:example.a]/[minutest-context:example context]/[minutest-test:a passing test]")
+        val uniqueIdSelector = selectUniqueId("[engine:minutest]/[minutest-context:example.a]/[minutest-context:example context]/[minutest-test:a passing test]")
         
         assertDiscovered({ selectors(uniqueIdSelector) },
             "Minutest",
-            "example.a",
-            "example context"
+            "example.a"
         )
         
         assertTestRun({ selectors(uniqueIdSelector) },
-            "test plan started",
-            "test started: Minutest",
-            "test started: example.a",
-            "test started: example context",
-            "test registered: a passing test",
-            "test started: a passing test",
-            "test successful: a passing test",
-            "test successful: example context",
-            "test successful: example.a",
-            "test successful: Minutest",
-            "test plan finished"
+            "plan started",
+            "started: Minutest",
+            "started: example.a",
+            "registered: example context",
+            "started: example context",
+            "registered: a passing test",
+            "started: a passing test",
+            "successful: a passing test",
+            "successful: example context",
+            "successful: example.a",
+            "successful: Minutest",
+            "plan finished"
         )
     }
     
     private fun assertDiscovered(config: LauncherDiscoveryRequestBuilder.() -> Unit, vararg expectedTests: String) {
-        val plan = LauncherFactory.create().discover(
-            discoveryRequest(config))
+        val tests = performDiscovery(config)
+            .roots
+            .flatMap { setOf(it) + performDiscovery(config).getDescendants(it) }
+            .map { it.displayName }
+            .toSet()
         
-        val tests = plan.roots.flatMap { setOf(it) + plan.getDescendants(it) }.map { it.displayName }.toSet()
-        assertEquals(expectedTests.toSet(), tests)
+        assertEquals(expectedTests.toSet(), tests, "discovered")
     }
     
     private fun assertTestRun(config: LauncherDiscoveryRequestBuilder.() -> Unit, vararg expectedLog: String) {
         val listener = TestLogger()
-        
-        LauncherFactory.create().execute(
-            discoveryRequest(config),
-            listener)
-        
-        assertEquals(expectedLog.asList().joinToString("\n"), listener.log.joinToString("\n"))
+        LauncherFactory.create().execute(discoveryRequest(config), listener)
+        assertEquals(expectedLog.asList().joinToString("\n"), listener.log.joinToString("\n"), "executed")
     }
+    
+    private fun performDiscovery(config: LauncherDiscoveryRequestBuilder.() -> Unit) =
+        LauncherFactory.create().discover(discoveryRequest(config))
     
     private fun discoveryRequest(config: LauncherDiscoveryRequestBuilder.() -> Unit): LauncherDiscoveryRequest {
         return request()
@@ -153,28 +157,28 @@ private class TestLogger : TestExecutionListener {
     val log: List<String> get() = _log.toList()
     
     override fun testPlanExecutionStarted(testPlan: TestPlan) {
-        log("test plan started")
+        log("plan started")
     }
     
     override fun dynamicTestRegistered(testIdentifier: TestIdentifier) {
-        log("test registered", testIdentifier)
+        log("registered", testIdentifier)
     }
     
     override fun executionStarted(testIdentifier: TestIdentifier) {
-        log("test started", testIdentifier)
+        log("started", testIdentifier)
     }
     
     override fun executionFinished(testIdentifier: TestIdentifier, testExecutionResult: TestExecutionResult) {
-        log("test ${testExecutionResult.status.name.toLowerCase()}", testIdentifier)
+        log(testExecutionResult.status.name.toLowerCase(), testIdentifier)
         
     }
     
     override fun executionSkipped(testIdentifier: TestIdentifier, reason: String?) {
-        log("test skipped", testIdentifier)
+        log("skipped", testIdentifier)
     }
     
     override fun testPlanExecutionFinished(testPlan: TestPlan) {
-        log("test plan finished")
+        log("plan finished")
     }
     
     private fun log(event: String, testIdentifier: TestIdentifier) {
