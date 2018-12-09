@@ -1,3 +1,4 @@
+
 package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.*
@@ -27,14 +28,25 @@ interface JUnit5Minutests : JUnitXMinutests {
  *
  * Designed to be called inside a class and to use the name as the class as the name of the test.
  */
-@Deprecated("Use com.oneeyedmen.minutest.junit.JUnitXMinutestsKt.context and then NodeBuilder.toTestFactory()",
-    ReplaceWith("context", "com.oneeyedmen.minutest.junit.context"))
+@Deprecated("Use testFactoryFor(com.oneeyedmen.minutest.junit.context {})")
 inline fun <reified F> Any.junitTests(
     noinline transform: (RuntimeNode) -> RuntimeNode = { it },
     noinline builder: Context<Unit, F>.() -> Unit
 ): Stream<out DynamicNode> = this.context(transform, builder).toTestFactory()
 
-fun NodeBuilder<Unit>.toTestFactory() = this.buildRootNode().toStreamOfDynamicNodes()
+/**
+ * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory].
+ *
+ * @see [NodeBuilder<Unit>#testFactory()]
+ */
+fun testFactoryFor(root: NodeBuilder<Unit>) = root.buildRootNode().toStreamOfDynamicNodes()
+
+/**
+ * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]
+ *
+ * @see [testFactoryFor(NodeBuilder<Unit>)]
+ */
+fun NodeBuilder<Unit>.toTestFactory() = testFactoryFor(this)
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
