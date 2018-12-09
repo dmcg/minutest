@@ -279,7 +279,8 @@ class LinkedListTests : JUnit5Minutests {
 
 ## Other Features
 
-* [Generating Tests](generating-tests.md)
+* [Generating tests](generating-tests.md)
+* [Running only certain tests](focus-and-skip.md)
 * [JUnit rules](junit-rules.md)
 
 ## Support

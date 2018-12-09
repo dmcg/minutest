@@ -1,10 +1,12 @@
-package com.oneeyedmen.minutest.experimental
+# [Minutest](README.md)
 
-import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
-import kotlin.test.fail
+## Focus and Skip [Experimental]
 
+Once you have run some tests, you can point to them in IntelliJ's test output pane and re-run individual tests. But sometimes you want to be able to signal in source that you only want to run some tests, or that one or more should be skipped.
 
+Enter Focus and Skip.
+
+```kotlin
 class SkipAndFocusExampleTests : JUnit5Minutests {
 
     // Skip and Focus (currently) require a transform to be installed to work
@@ -37,3 +39,6 @@ class SkipAndFocusExampleTests : JUnit5Minutests {
         }
     }
 }
+```
+
+To be honest, it's a bit arbitrary at the moment, but I find it useful, so you might too. Just don't rely on your intuition about how skip and focus interact if your tests do anything irreversible.
