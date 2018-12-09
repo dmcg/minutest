@@ -16,7 +16,7 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode>(type) {
 
     override fun getChildren(): List<RuntimeNode> {
         val testInstance = (testClass.javaClass.newInstance() as? JUnit4Minutests) ?:
-            error("${this::class.simpleName} should be applied to an instance of Junit4Minutests")
+            error("${this::class.simpleName} should be applied to an instance of JUnit4Minutests")
         rootContext = testInstance.tests.buildRootNode() as RuntimeContext
         return rootContext.children
     }
