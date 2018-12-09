@@ -5,7 +5,7 @@
 Go crazy and unleash the `Power of Kotlin` to generate your tests on the fly.
 
 ```kotlin
-// We can define functions that return tests for later injection
+// We can define extension functions that return tests for later injection
 
 private typealias StringStack = Stack<String>
 
@@ -39,16 +39,27 @@ private fun TestContext<StringStack>.cantPop() = test("cant pop") {
     assertThrows<EmptyStackException> { pop() }
 }
 
-// In order to give multiple sets of tests, in this example we are using JUnit @TestFactory functions
-class GeneratingExampleTests {
+class GeneratingExampleTests : JUnit5Minutests {
 
-    // JUnit will run the tests from annotated functions (note the .toTestFactory())
-    @TestFactory fun `stack tests`() = context<StringStack> {
+    val summary = listOf(
+        "com.oneeyedmen.minutest.examples.GeneratingExampleTests",
+        "    an empty stack",
+        "        is empty",
+        "        can push",
+        "        cant pop",
+        "    a stack with one item",
+        "        is not empty",
+        "        can push",
+        "        can pop",
+        "        has the item on top"
+    )
+
+    override val tests = context<StringStack>(willRun(summary)) {
 
         fixture { StringStack() }
 
         context("an empty stack") {
-            // invoke the functions to create tests
+            // invoke the extension functions to create tests
             isEmpty(true)
             canPush()
             cantPop()
@@ -65,31 +76,10 @@ class GeneratingExampleTests {
                 assertEquals("one", peek())
             }
         }
-    }.toTestFactory()
-
-    @TestFactory fun `multiple tests on multiple stacks`() = context<StringStack> {
-
-        fixture { StringStack() }
-
-        // here we generate a context with 3 tests for each of 4 stacks
-        (0..3).forEach { itemCount ->
-            context("stack with $itemCount items") {
-
-                modifyFixture {
-                    (1..itemCount).forEach { add(it.toString()) }
-                }
-
-                isEmpty(itemCount == 0)
-                canPush()
-                canPop(itemCount > 0)
-            }
-        }
-    }.toTestFactory()
+    }
 }
 
-private fun TestContext<StringStack>.canPop(canPop: Boolean) = if (canPop) canPop() else cantPop()
+private fun willRun(expectedLog: List<String>): (RuntimeNode) -> RuntimeNode = checkedAgainst { actualLog ->
+    assertEquals(expectedLog, actualLog.withTabsExpanded(4))
+}
 ```
-
-The last of these generates the following tests
-
-![MultipleStackExamples](images/MultipleStackExamples.png)
