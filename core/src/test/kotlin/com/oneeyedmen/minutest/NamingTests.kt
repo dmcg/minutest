@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest
 
 import com.oneeyedmen.minutest.experimental.deriveFixtureInstrumented
-import com.oneeyedmen.minutest.junit.junitTests
+import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
@@ -11,7 +11,7 @@ class NamingTests {
     fun `fully qualified name`() {
         val log = mutableListOf<List<String>>()
         
-        executeTests(junitTests<Unit> {
+        executeTests(context<Unit> {
             addTransform {
                 it.also { log.add(it.fullName()) }
             }
@@ -42,7 +42,7 @@ class NamingTests {
 
         class Fixture(val name: List<String>)
 
-        executeTests(junitTests<Fixture> {
+        executeTests(context<Fixture> {
 
             deriveFixtureInstrumented { testDescriptor ->
                 Fixture(testDescriptor.fullName())

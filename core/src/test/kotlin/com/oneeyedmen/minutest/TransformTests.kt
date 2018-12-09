@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.junitTests
+import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Test
 
 
@@ -9,7 +9,7 @@ class TransformTests {
     fun `transforms wrap around application of before and after blocks`() {
         val log = mutableListOf<String>()
         
-        executeTests(junitTests<Unit> {
+        executeTests(context<Unit> {
             before { log.add("before") }
             after { log.add("after") }
             
@@ -32,11 +32,12 @@ class TransformTests {
             "leaving transformed test"
         )
     }
+
     @Test
     fun `transforms nest, following nesting of contexts`() {
         val log = mutableListOf<String>()
-        
-        executeTests(junitTests<Unit> {
+
+        executeTests(context<Unit> {
             addTransform { test ->
                 test.withAction { fixture ->
                     log.add("entering outer transformed test")
@@ -44,10 +45,10 @@ class TransformTests {
                     log.add("leaving outer transformed test")
                 }
             }
-            
+
             before { log.add("before outer") }
             after { log.add("after outer") }
-            
+
             context("inner") {
                 addTransform { test ->
                     test.withAction { fixture ->
@@ -56,10 +57,10 @@ class TransformTests {
                         log.add("leaving inner transformed test")
                     }
                 }
-    
+
                 before { log.add("before inner") }
                 after { log.add("after inner") }
-                
+
                 test("the test") { log.add("the test") }
             }
         })
@@ -81,7 +82,7 @@ class TransformTests {
     fun `transforms can disable tests`() {
         val log = mutableListOf<String>()
         
-        executeTests(junitTests<Unit> {
+        executeTests(context<Unit> {
             addTransform { test ->
                 test.withAction { /* no op */ }
             }

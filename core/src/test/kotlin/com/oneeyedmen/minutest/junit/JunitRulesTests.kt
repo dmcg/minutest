@@ -2,13 +2,12 @@ package com.oneeyedmen.minutest.junit
 
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.TestFactory
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 private val log = mutableListOf<String>()
 
-class JunitRulesTests {
+class JunitRulesTests : JUnit5Minutests {
     class TestRule : TestWatcher() {
         var testDescription: String? = null
         
@@ -21,7 +20,7 @@ class JunitRulesTests {
         val rule = TestRule()
     }
 
-    @TestFactory fun test() = junitTests<Fixture> {
+    override val tests = context<Fixture> {
         fixture {
             Fixture()
         }

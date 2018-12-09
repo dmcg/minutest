@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.junitTests
+import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.junit.toTestFactory
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -16,7 +17,7 @@ class FixtureTests {
         val log: MutableList<String> = mutableListOf()
     )
 
-    @TestFactory fun `with fixtures`() = junitTests<Fixture> {
+    @TestFactory fun `with fixtures`() = context<Fixture> {
 
         fixture { Fixture("banana") }
 
@@ -72,48 +73,48 @@ class FixtureTests {
                 assertEquals("banana", fruit)
             }
         }
-    }
+    }.toTestFactory()
 
-    @TestFactory fun `no fixture`() = junitTests<Unit> {
+    @TestFactory fun `no fixture`() = context<Unit> {
         test("I need not specify Unit fixture") {
             assertNotNull("banana")
         }
-    }
+    }.toTestFactory()
 
     @Test fun `throws IllegalStateException if no fixture specified when one is needed by a test`() {
         assertThrows<IllegalStateException> {
-            junitTests<Fixture> {
+            context<Fixture> {
                 test("I report not having a fixture") {
                     assertEquals("banana", fruit)
                 }
-            }
+            }.toTestFactory()
         }
     }
 
     @Test fun `throws IllegalStateException if no fixture specified when one is needed by a fixture`() {
         assertThrows<IllegalStateException> {
-            junitTests<Fixture> {
+            context<Fixture> {
                 modifyFixture {
                     this.fruit
                 }
                 test("I report not having a fixture") {
                     assertEquals("banana", fruit)
                 }
-            }
+            }.toTestFactory()
         }
     }
 
     @Test fun `throws IllegalStateException if fixture is specified twice in a context`() {
         assertThrows<IllegalStateException> {
-            junitTests<Fixture> {
+            context<Fixture> {
                 fixture { Fixture("banana") }
                 fixture { Fixture("banana") }
-            }
+            }.toTestFactory()
         }
     }
 
     @Test fun `throws exception thrown from fixture`() {
-        val tests = junitTests<Fixture> {
+        val tests = context<Fixture> {
             fixture {
                 throw FileNotFoundException()
             }

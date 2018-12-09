@@ -1,7 +1,8 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.junit.junitTests
+import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.junit.toTestFactory
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.assertThrows
@@ -44,8 +45,8 @@ private fun TestContext<StringStack>.cantPop() = test("cant pop") {
 // In order to give multiple sets of tests, in this example we are using JUnit @TestFactory functions
 class GeneratingExampleTests {
 
-    // JUnit will run the tests from annotated functions
-    @TestFactory fun `stack tests`() = junitTests<StringStack> {
+    // JUnit will run the tests from annotated functions (note the .toTestFactory())
+    @TestFactory fun `stack tests`() = context<StringStack> {
 
         fixture { StringStack() }
 
@@ -67,9 +68,9 @@ class GeneratingExampleTests {
                 assertEquals("one", peek())
             }
         }
-    }
+    }.toTestFactory()
 
-    @TestFactory fun `multiple tests on multiple stacks`() = junitTests<StringStack> {
+    @TestFactory fun `multiple tests on multiple stacks`() = context<StringStack> {
 
         fixture { StringStack() }
 
@@ -86,7 +87,7 @@ class GeneratingExampleTests {
                 canPop(itemCount > 0)
             }
         }
-    }
+    }.toTestFactory()
 }
 
 private fun TestContext<StringStack>.canPop(canPop: Boolean) = if (canPop) canPop() else cantPop()

@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.junit.toTestFactory
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicNode
@@ -17,6 +18,8 @@ fun executeTests(tests: Stream<out DynamicNode>) {
         }
     }
 }
+
+fun executeTests(root: NodeBuilder<Unit>) = executeTests(root.toTestFactory())
 
 fun assertLogged(log: List<String>, vararg expected: String) {
     assertEquals(expected.toList(), log)

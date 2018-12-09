@@ -2,7 +2,7 @@ package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.assertLogged
 import com.oneeyedmen.minutest.executeTests
-import com.oneeyedmen.minutest.junit.junitTests
+import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.IOException
@@ -15,7 +15,7 @@ class LoggingTests {
     @Test fun logging() {
         val log = mutableListOf<String>()
 
-        val tests = junitTests<Unit>(loggedTo(log)) {
+        val tests = context<Unit>(loggedTo(log)) {
 
             test("top test") {}
 
@@ -42,7 +42,7 @@ class LoggingTests {
             "  inner",
             "    inner test")
 
-        val tests = junitTests<Unit>(checkedAgainst { assertEquals(expected, it.withTabsExpanded(2))} ) {
+        val tests = context<Unit>(checkedAgainst { assertEquals(expected, it.withTabsExpanded(2))} ) {
 
             test("top test") {}
 
@@ -58,7 +58,7 @@ class LoggingTests {
 
         val expected = emptyList<String>()
 
-        val tests = junitTests<Unit>(checkedAgainst { assertEquals(expected, it)} ) {
+        val tests = context<Unit>(checkedAgainst { assertEquals(expected, it)} ) {
 
             test("test") {}
         }
@@ -72,7 +72,7 @@ class LoggingTests {
 
         val expected = emptyList<String>()
 
-        val tests = junitTests<Unit>(checkedAgainst { assertEquals(expected, it)} ) {
+        val tests = context<Unit>(checkedAgainst { assertEquals(expected, it)} ) {
             test("test") {
                 throw IOException("deliberate")
             }

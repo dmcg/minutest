@@ -1,13 +1,13 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.junitTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
+import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.TestFactory
 
 
-class ImmutableTests {
+class ImmutableTests : JUnit5Minutests {
 
-    @TestFactory fun `before and after`() = junitTests<List<String>> {
+    override val tests = context<List<String>> {
         fixture { emptyList() }
 
         after {

@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.junitTests
+import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.junit.toTestFactory
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -18,7 +19,7 @@ class BeforeAndAfterTests {
         assertEquals(expectedLog, log)
     }
 
-    @TestFactory fun `plain before and after`() = junitTests<MutableList<String>> {
+    @TestFactory fun `plain before and after`() = context<MutableList<String>> {
 
         expectedLog = listOf("before 1", "before 2", "test", "after 1", "after 2")
 
@@ -48,9 +49,9 @@ class BeforeAndAfterTests {
             assertEquals(listOf("before 1", "before 2"), this)
             add("test")
         }
-    }
+    }.toTestFactory()
 
-    @TestFactory fun `nested before and after`() = junitTests<MutableList<String>> {
+    @TestFactory fun `nested before and after`() = context<MutableList<String>> {
 
         expectedLog = listOf("outer before 1", "inner before", "inner fixture", "test", "inner after", "outer after")
 
@@ -87,11 +88,11 @@ class BeforeAndAfterTests {
                 add("test")
             }
         }
-    }
+    }.toTestFactory()
 
     @Test fun `after run on test failure`() {
 
-        val test = junitTests<MutableList<String>> {
+        val test = context<MutableList<String>> {
             fixture { log }
 
             after {
@@ -113,7 +114,7 @@ class BeforeAndAfterTests {
 
     @Test fun `after is run if before fails`() {
 
-        val test = junitTests<MutableList<String>> {
+        val test = context<MutableList<String>> {
             fixture { log }
 
             before {
@@ -140,7 +141,7 @@ class BeforeAndAfterTests {
     @Test fun `afters are run with the last successful before fixture`() {
 
         // use an immutable fixture to prove the point
-        val test = junitTests<List<String>> {
+        val test = context<List<String>> {
             fixture {
                 log.add("top")
                 listOf("top")
@@ -185,7 +186,7 @@ class BeforeAndAfterTests {
 
     @Test fun `afters abort if they throw`() {
 
-        val test = junitTests<Unit> {
+        val test = context<Unit> {
 
             test("test") {
                 log.add("test")
@@ -214,7 +215,7 @@ class BeforeAndAfterTests {
     @Test fun `fails with the last exception`() {
 
         // use an immutable fixture to prove the point
-        val test = junitTests<Unit> {
+        val test = context<Unit> {
 
             test_("test") {
                 log.add("test")

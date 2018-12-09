@@ -1,18 +1,18 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.junitTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
+import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.TestFactory
 
 
-class DynamicTests {
+class DynamicTests : JUnit5Minutests {
 
     data class Fixture(
         var fruit: String,
         val log: MutableList<String> = mutableListOf()
     )
 
-    @TestFactory fun `dynamic generation`() = junitTests<Fixture> {
+    override val tests = context<Fixture> {
         fixture { Fixture("banana") }
 
         context("same fixture for each") {

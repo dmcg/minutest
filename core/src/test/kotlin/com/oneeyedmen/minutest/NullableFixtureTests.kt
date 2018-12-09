@@ -1,13 +1,13 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.junitTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
+import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.TestFactory
 
 
-class NullableFixtureTests {
+class NullableFixtureTests : JUnit5Minutests {
 
-    @TestFactory fun `nullable String`() = junitTests<String?> {
+    override val tests = context<String?> {
         fixture { null }
         test("fixture is null") {
             assertNull(this)

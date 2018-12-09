@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.junitTests
+import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.junit.toTestFactory
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.TestFactory
@@ -16,7 +17,7 @@ class AfterAllTests {
         assertEquals(expectedLog, log)
     }
 
-    @TestFactory fun `top level`() = junitTests<MutableList<String>> {
+    @TestFactory fun `top level`() = context<MutableList<String>> {
 
         expectedLog = listOf("test 1", "test 2", "after all")
 
@@ -33,9 +34,9 @@ class AfterAllTests {
         test("test 2") {
             add("test 2")
         }
-    }
+    }.toTestFactory()
 
-    @TestFactory fun `not top level`() = junitTests<MutableList<String>> {
+    @TestFactory fun `not top level`() = context<MutableList<String>> {
 
         expectedLog = listOf("test 1", "test 2", "after all")
 
@@ -55,6 +56,7 @@ class AfterAllTests {
                 add("test 2")
             }
         }
-    }
+    }.toTestFactory()
+
 }
 

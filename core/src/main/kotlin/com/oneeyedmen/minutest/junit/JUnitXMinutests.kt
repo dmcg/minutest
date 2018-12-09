@@ -11,9 +11,11 @@ interface JUnitXMinutests {
 }
 
 /**
- * Define a group of tests.
+ * Define a [Context] for [JUnitXMinutests] tests.
+ *
+ * Designed to be called inside a class and to use the name as the class as the name of the context.
  */
-inline fun <reified F> JUnitXMinutests.context(
+inline fun <reified F> Any.context(
     noinline transform: (RuntimeNode) -> RuntimeNode = { it },
     noinline builder: Context<Unit, F>.() -> Unit
 ): NodeBuilder<Unit> = transformedTopLevelContext(javaClass.canonicalName, transform, builder)
