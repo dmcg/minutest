@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
 
 
-class JupiterTestsWithPlainFixture : JupiterTests {
+class JUnit5TestsWithPlainFixture : JUnit5Minutests {
 
     override val tests = context<String> {
         fixture { "banana" }
@@ -16,7 +16,7 @@ class JupiterTestsWithPlainFixture : JupiterTests {
     }
 }
 
-class JupiterTestsWithGenericFixture : JupiterTests {
+class JUnit5TestsWithGenericFixture : JUnit5Minutests {
 
     override val tests = context<Stack<String>> {
         fixture { Stack() }
@@ -27,7 +27,7 @@ class JupiterTestsWithGenericFixture : JupiterTests {
     }
 }
 
-class JupiterTestsWithNullableFixture : JupiterTests {
+class JUnit5TestsWithNullableFixture : JUnit5Minutests {
 
     override val tests = context<String?> {
         fixture { "banana" }

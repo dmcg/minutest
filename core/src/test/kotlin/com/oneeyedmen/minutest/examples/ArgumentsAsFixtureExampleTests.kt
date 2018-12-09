@@ -1,10 +1,10 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 
-class ArgumentsAsFixtureExampleTests : JupiterTests {
+class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
 
     data class Arguments(val l: Int, val r: Int)
 

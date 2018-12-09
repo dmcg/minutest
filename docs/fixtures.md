@@ -13,7 +13,7 @@ Here are some ways of using fixtures in Minutest.
 You don't have to have a fixture. The simplest tests can just have assertions.
 
 ```kotlin
-class NoFixtureExampleTests : JupiterTests {
+class NoFixtureExampleTests : JUnit5Minutests {
 
     override val tests = context<Unit> {
 
@@ -42,7 +42,7 @@ class NoFixtureExampleTests : JupiterTests {
 It makes sense to have the subject under test as the fixture if it has the only state in the test.
 
 ```kotlin
-class SubjectUnderTestFixtureExampleTests : JupiterTests {
+class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
 
     override val tests = context<List<String>> {
 
@@ -82,7 +82,7 @@ Even if the subject is immutable then you can [inspect it in after blocks](immut
 If you are testing static functions, making the arguments the fixture can be expressive. 
 
 ```kotlin
-class ArgumentsAsFixtureExampleTests : JupiterTests {
+class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
 
     data class Arguments(val l: Int, val r: Int)
 
@@ -136,7 +136,7 @@ class ControlPanel(
     val warningLight get() = keySwitch()
 }
 
-class CompoundFixtureExampleTests : JupiterTests {
+class CompoundFixtureExampleTests : JUnit5Minutests {
 
     class Fixture() {
         // Rather than introduce a mocking framework, we can work with
@@ -188,7 +188,7 @@ class CompoundFixtureExampleTests : JupiterTests {
 Fixtures are inherited from the parent context, and may be replaced or modified by children.
 
 ```kotlin
-class ParentFixtureExampleTests : JupiterTests {
+class ParentFixtureExampleTests : JUnit5Minutests {
 
     data class Fixture(var fruit: String)
 
@@ -233,7 +233,7 @@ class ParentFixtureExampleTests : JupiterTests {
 A context may change the type of its parent fixture.
 
 ```kotlin
-class DerivedContextExampleTests : JupiterTests {
+class DerivedContextExampleTests : JUnit5Minutests {
 
     data class Fruit(val name: String)
 

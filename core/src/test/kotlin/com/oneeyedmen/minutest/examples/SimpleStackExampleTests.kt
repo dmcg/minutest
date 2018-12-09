@@ -1,12 +1,12 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
 
-class SimpleStackExampleTests : JupiterTests {
+class SimpleStackExampleTests : JUnit5Minutests {
 
     // The fixture type is the generic type of the test, here Stack<String>
     override val tests = context<Stack<String>> {

@@ -1,12 +1,12 @@
 package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.NodeBuilder
-import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.junit.context
 import kotlin.test.fail
 
 
-class AnnotationTests : JupiterTests {
+class AnnotationTests : JUnit5Minutests {
 
     override val tests = SKIP - context<Unit>(skipAndFocus) {
         isNodeBuilder(MyAnnotation - test("single annotation") {})

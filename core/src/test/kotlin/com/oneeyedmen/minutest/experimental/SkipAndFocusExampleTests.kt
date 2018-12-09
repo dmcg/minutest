@@ -1,11 +1,11 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.junit.context
 import kotlin.test.fail
 
 
-class SkipAndFocusExampleTests : JupiterTests {
+class SkipAndFocusExampleTests : JUnit5Minutests {
 
     override val tests = context<Unit>(skipAndFocus) {
 

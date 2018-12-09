@@ -15,11 +15,11 @@ Minutest brings the power of Kotlin to JUnit 5, giving
 
 ## Usage
 
-To just test simple functions, define your tests in a subclass of JupiterTests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
+To just test simple functions, define your tests in a subclass of JUnit5Minutests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
 
 ```kotlin
-// Implement JupiterTests to run Minutests with JUnit 5
-class FirstMinutests : JupiterTests {
+// Implement JUnit5Minutests to run Minutests with JUnit 5
+class FirstMinutests : JUnit5Minutests {
 
     // tests are grouped in a context
     override val tests = context<Unit> {
@@ -42,7 +42,7 @@ class FirstMinutests : JupiterTests {
 Most tests require access to some state. The collection of state required by the tests is called the test fixture. If you are testing a class, at simplest the fixture might be an instance of the class.
 
 ```kotlin
-class SimpleStackExampleTests : JupiterTests {
+class SimpleStackExampleTests : JUnit5Minutests {
 
     // The fixture type is the generic type of the test, here Stack<String>
     override val tests = context<Stack<String>> {
@@ -76,7 +76,7 @@ class SimpleStackExampleTests : JupiterTests {
 Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
 
 ```kotlin
-class StackExampleTests : JupiterTests {
+class StackExampleTests : JUnit5Minutests {
 
     override val tests = context<Stack<String>> {
 
@@ -145,7 +145,7 @@ class ControlPanel(
     val warningLight get() = keySwitch()
 }
 
-class CompoundFixtureExampleTests : JupiterTests {
+class CompoundFixtureExampleTests : JUnit5Minutests {
 
     class Fixture() {
         // Rather than introduce a mocking framework, we can work with
@@ -201,7 +201,7 @@ The key to Minutest is that by separating the fixture from the test code, both a
 For example, parameterised tests require [special handling](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests) in JUnit, but not in Minutest.
 
 ```kotlin
-class ParameterisedTests : JupiterTests {
+class ParameterisedTests : JUnit5Minutests {
 
     override val tests = context<Unit> {
 
@@ -253,7 +253,7 @@ fun TestContext<MutableCollection<String>>.behavesAsMutableCollection() {
 }
 
 // Now tests can supply the fixture and invoke the function to create the tests to verify the contract.
-class ArrayListTests : JupiterTests {
+class ArrayListTests : JUnit5Minutests {
 
     override val tests = context<MutableCollection<String>> {
         fixture {
@@ -265,7 +265,7 @@ class ArrayListTests : JupiterTests {
 }
 
 // We can reuse the contract for different collections.
-class LinkedListTests : JupiterTests {
+class LinkedListTests : JUnit5Minutests {
 
     override val tests = context<MutableCollection<String>> {
         fixture {

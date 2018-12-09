@@ -1,12 +1,12 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertThrows
 import java.util.*
 
-class StackExampleTests : JupiterTests {
+class StackExampleTests : JUnit5Minutests {
 
     override val tests = context<Stack<String>> {
 

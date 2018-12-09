@@ -1,12 +1,12 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Assumptions.assumeTrue
 
 
-class AssumeTests : JupiterTests {
+class AssumeTests : JUnit5Minutests {
 
     override val tests = context<Unit> {
         test("try it") {

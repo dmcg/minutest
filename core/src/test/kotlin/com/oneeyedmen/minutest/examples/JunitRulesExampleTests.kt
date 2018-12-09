@@ -1,13 +1,13 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.junit.applyRule
 import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.rules.TemporaryFolder
 
 
-class JunitRulesExampleTests : JupiterTests {
+class JunitRulesExampleTests : JUnit5Minutests {
 
     class Fixture {
         // make rules part of the fixture, no need for an annotation

@@ -1,12 +1,12 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.junit.context
 import java.io.BufferedWriter
 import java.nio.file.Files
 import kotlin.test.assertEquals
 
-class AutoCloseExampleTests : JupiterTests {
+class AutoCloseExampleTests : JUnit5Minutests {
 
     val tempFile = Files.createTempFile("temp", ".txt").toFile()
 

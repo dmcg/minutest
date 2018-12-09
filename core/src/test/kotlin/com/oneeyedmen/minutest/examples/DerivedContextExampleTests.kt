@@ -1,11 +1,11 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
-class DerivedContextExampleTests : JupiterTests {
+class DerivedContextExampleTests : JUnit5Minutests {
 
     data class Fruit(val name: String)
 

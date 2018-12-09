@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.junit.context
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -8,7 +8,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 
-class ReflectingTests : JupiterTests {
+class ReflectingTests : JUnit5Minutests {
 
     override val tests = context<Unit>() {
 

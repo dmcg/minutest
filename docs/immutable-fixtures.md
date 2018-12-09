@@ -5,7 +5,7 @@
 Are you a functional programmer slumming it with Kotlin? Minutest allows immutable fixtures.
 
 ```kotlin
-class ImmutableExampleTests : JupiterTests {
+class ImmutableExampleTests : JUnit5Minutests {
 
     // If you like this FP stuff, you may want to test an immutable fixture.
     override val tests = context<List<String>> {

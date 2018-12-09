@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.junit.JupiterTests
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.junit.context
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -19,7 +19,7 @@ class ControlPanel(
     val warningLight get() = keySwitch()
 }
 
-class CompoundFixtureExampleTests : JupiterTests {
+class CompoundFixtureExampleTests : JUnit5Minutests {
 
     class Fixture() {
         // Rather than introduce a mocking framework, we can work with
