@@ -14,13 +14,8 @@ import org.junit.platform.engine.TestExecutionResult
 import org.junit.platform.engine.TestSource
 import org.junit.platform.engine.TestTag
 import org.junit.platform.engine.UniqueId
-import org.junit.platform.engine.discovery.MethodSelector
 import org.junit.platform.engine.support.descriptor.EngineDescriptor
-import org.opentest4j.AssertionFailedError
 import org.opentest4j.IncompleteExecutionException
-import org.opentest4j.TestAbortedException
-import org.opentest4j.TestSkippedException
-import sun.tools.java.MethodSet
 import java.util.Optional
 import kotlin.reflect.jvm.jvmName
 
