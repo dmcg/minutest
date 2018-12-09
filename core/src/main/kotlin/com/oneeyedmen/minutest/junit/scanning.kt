@@ -1,7 +1,12 @@
 package com.oneeyedmen.minutest.junit
 
+import com.oneeyedmen.minutest.LoadedRuntimeContext
+import com.oneeyedmen.minutest.Named
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.experimental.TopLevelContextBuilder
 import io.github.classgraph.ClassGraph
+import io.github.classgraph.ClassInfo
 import io.github.classgraph.ClassRefTypeSignature
 import io.github.classgraph.FieldInfo
 import io.github.classgraph.TypeSignature
@@ -25,44 +30,67 @@ import kotlin.reflect.jvm.kotlinProperty
 inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.getSelectorsByType(): List<T> =
     getSelectorsByType(T::class.java)
 
-inline fun <U, reified T : DiscoveryFilter<U>> EngineDiscoveryRequest.getFiltersByType(): Filter<U> =
+inline fun <reified T : DiscoveryFilter<U>, U> EngineDiscoveryRequest.getFiltersByType(): Filter<U> =
     Filter.composeFilters(getFiltersByType(T::class.java))
 
 inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(block: (T) -> Unit) {
     getSelectorsByType<T>().forEach(block)
 }
 
-internal fun scan(root: MinutestEngineDescriptor, rq: EngineDiscoveryRequest): List<TestPackageDescriptor> {
-    val scanner = ClassGraph()
+internal data class ScannedPackageContext(
+    val packageName: String,
+    private val contextProperties: List<KProperty0<TopLevelContextBuilder>>,
+    override val properties: Map<Any,Any> = emptyMap()
+
+) : RuntimeContext() {
+    
+    override val parent: Named? = null
+    override val name: String get() = packageName
+    override val children: List<RuntimeNode> by lazy { contextProperties.map { p -> p.get().build(p.name) } }
+    
+    override fun withChildren(children: List<RuntimeNode>): RuntimeContext {
+        return LoadedRuntimeContext(name, parent, emptyMap(), children, {})
+    }
+    
+    override fun withProperties(properties: Map<Any, Any>): RuntimeNode {
+        return copy(properties = properties)
+    }
+    
+    override fun close() {
+    }
+}
+
+internal fun scan(root: MinutestEngineDescriptor, rq: EngineDiscoveryRequest): List<TestDescriptor> {
+    return scan(
+        scannerConfig = {
+            rq.forEach<PackageSelector> { whitelistPackages(it.packageName) }
+            rq.forEach<ClassSelector> { whitelistClasses(it.className) }
+            rq.forEach<DirectorySelector> { whitelistPaths(it.rawPath) }
+        },
+        classFilter = {
+            rq.getFiltersByType<ClassNameFilter, String>().apply(it.name).included()
+        })
+        .map { MinutestNodeDescriptor(root, it) }
+        .filter {rq.selectsByUniqueId(it) }
+}
+
+private fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean): List<ScannedPackageContext> {
+    return ClassGraph()
         .enableClassInfo()
         .enableFieldInfo()
         .ignoreFieldVisibility()
         .disableJarScanning()
         .disableNestedJarScanning()
-    
-    rq.forEach<PackageSelector> { scanner.whitelistPackages(it.packageName) }
-    rq.forEach<ClassSelector> { scanner.whitelistClasses(it.className) }
-    rq.forEach<DirectorySelector> { scanner.whitelistPaths(it.rawPath) }
-    
-    val scanned = scanner.scan()
-    
-    return scanned
+        .apply(scannerConfig)
+        .scan()
         .allClasses
-        .filter { rq.getFiltersByType<String, ClassNameFilter>().apply(it.name).included() }
+        .filter(classFilter)
         .flatMap { it.declaredFieldInfo }
         .filter { it.isTopLevelContext() }
         .mapNotNull { it.toKotlinProperty() }
         .filter { it.visibility == PUBLIC }
         .groupBy { it.javaField?.declaringClass?.`package`?.name ?: "<tests>" }
-        .map { (packageName, properties) -> Pair(TestPackageDescriptor(root, packageName), properties) }
-        .filter { (packageDescriptor, _) -> rq.selectsByUniqueId(packageDescriptor) }
-        .map { (packageDescriptor, properties) ->
-            properties
-                .map { TopLevelContextDescriptor(packageDescriptor, it) }
-                .filter { rq.selectsByUniqueId(it) }
-                .forEach(packageDescriptor::addChild)
-            packageDescriptor
-        }
+        .map { (packageName, properties) -> ScannedPackageContext(packageName, properties) }
 }
 
 private fun FieldInfo.toKotlinProperty(): KProperty0<TopLevelContextBuilder>? {
