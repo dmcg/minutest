@@ -19,28 +19,34 @@ import org.junit.platform.engine.UniqueId
 import org.junit.platform.engine.discovery.ClassNameFilter
 import org.junit.platform.engine.discovery.ClassSelector
 import org.junit.platform.engine.discovery.DirectorySelector
+import org.junit.platform.engine.discovery.MethodSelector
+import org.junit.platform.engine.discovery.PackageNameFilter
 import org.junit.platform.engine.discovery.PackageSelector
 import org.junit.platform.engine.discovery.UniqueIdSelector
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty0
 import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.kotlinProperty
 
 
-inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.getSelectorsByType(): List<T> =
-    getSelectorsByType(T::class.java)
-
-inline fun <reified T : DiscoveryFilter<U>, U> EngineDiscoveryRequest.getFiltersByType(): Filter<U> =
-    Filter.composeFilters(getFiltersByType(T::class.java))
-
-inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(block: (T) -> Unit) {
+internal inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(block: (T) -> Unit) {
     getSelectorsByType<T>().forEach(block)
 }
+
+internal inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.getSelectorsByType(): List<T> =
+    getSelectorsByType(T::class.java)
+
+internal inline fun <reified T : DiscoveryFilter<String>> EngineDiscoveryRequest.getFiltersByType(): Filter<String> =
+    combineFiltersByType(T::class)
+
+internal fun EngineDiscoveryRequest.combineFiltersByType(filterClass: KClass<out DiscoveryFilter<String>>): Filter<String> =
+    Filter.composeFilters(getFiltersByType(filterClass.java))
 
 internal data class ScannedPackageContext(
     val packageName: String,
     private val contextProperties: List<KProperty0<TopLevelContextBuilder>>,
-    override val properties: Map<Any,Any> = emptyMap()
+    override val properties: Map<Any, Any> = emptyMap()
 
 ) : RuntimeContext() {
     
@@ -61,6 +67,11 @@ internal data class ScannedPackageContext(
 }
 
 internal fun scan(root: MinutestEngineDescriptor, rq: EngineDiscoveryRequest): List<TestDescriptor> {
+    // Cannot select by method
+    if (rq.getSelectorsByType<MethodSelector>().isNotEmpty()) {
+        return emptyList()
+    }
+    
     return scan(
         scannerConfig = {
             rq.forEach<PackageSelector> { whitelistPackages(it.packageName) }
@@ -68,10 +79,11 @@ internal fun scan(root: MinutestEngineDescriptor, rq: EngineDiscoveryRequest): L
             rq.forEach<DirectorySelector> { whitelistPaths(it.rawPath) }
         },
         classFilter = {
-            rq.getFiltersByType<ClassNameFilter, String>().apply(it.name).included()
+            rq.getFiltersByType<ClassNameFilter>().apply(it.name).included() &&
+                rq.getFiltersByType<PackageNameFilter>().apply(it.packageName).included()
         })
         .map { MinutestNodeDescriptor(root, it) }
-        .filter {rq.selectsByUniqueId(it) }
+        .filter { rq.selectsByUniqueId(it) }
 }
 
 private fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean): List<ScannedPackageContext> {

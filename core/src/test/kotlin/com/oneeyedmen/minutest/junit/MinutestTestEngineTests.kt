@@ -6,8 +6,11 @@ import org.junit.platform.engine.TestExecutionResult
 import org.junit.platform.engine.UniqueId
 import org.junit.platform.engine.discovery.ClassNameFilter.*
 import org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
+import org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod
 import org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage
 import org.junit.platform.engine.discovery.DiscoverySelectors.selectUniqueId
+import org.junit.platform.engine.discovery.PackageNameFilter
+import org.junit.platform.engine.discovery.PackageNameFilter.excludePackageNames
 import org.junit.platform.launcher.EngineFilter
 import org.junit.platform.launcher.LauncherDiscoveryRequest
 import org.junit.platform.launcher.TestExecutionListener
@@ -100,6 +103,37 @@ class MinutestTestEngineTests {
     }
     
     @Test
+    fun `filter tests by package name`() {
+        assertTestRun(
+            {
+                selectors(selectPackage("example"))
+                filters(excludePackageNames("example.b"))
+            },
+            "plan started",
+            "started: Minutest",
+            "started: example.a",
+            "registered: example context",
+            "started: example context",
+            "registered: a failing test",
+            "started: a failing test",
+            "failed: a failing test",
+            "registered: a passing test",
+            "started: a passing test",
+            "successful: a passing test",
+            "successful: example context",
+            "registered: example typed context",
+            "started: example typed context",
+            "registered: a typed fixture test",
+            "started: a typed fixture test",
+            "successful: a typed fixture test",
+            "successful: example typed context",
+            "successful: example.a",
+            "successful: Minutest",
+            "plan finished"
+        )
+    }
+    
+    @Test
     fun `select tests by unique id`() {
         val uniqueIdSelector = selectUniqueId("[engine:minutest]/[minutest-context:example.a]/[minutest-context:example context]/[minutest-test:a passing test]")
         
@@ -119,6 +153,22 @@ class MinutestTestEngineTests {
             "successful: a passing test",
             "successful: example context",
             "successful: example.a",
+            "successful: Minutest",
+            "plan finished"
+        )
+    }
+    
+    @Test
+    fun `returns no tests if discovery request selects by method`() {
+        val methodSelector = selectMethod("TheoreticalExample#aMethod()")
+        
+        assertDiscovered({ selectors(methodSelector) },
+            "Minutest"
+        )
+        
+        assertTestRun({ selectors(methodSelector) },
+            "plan started",
+            "started: Minutest",
             "successful: Minutest",
             "plan finished"
         )

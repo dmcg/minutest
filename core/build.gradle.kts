@@ -22,7 +22,7 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter-api:5.3.2")
     implementation("org.junit.vintage:junit-vintage-engine:5.3.2")
     implementation("junit:junit:4.12")
-    implementation("io.github.classgraph:classgraph:4.4.12")
+    implementation("io.github.classgraph:classgraph:4.6.6")
 
     testCompile(kotlin("test"))
 
