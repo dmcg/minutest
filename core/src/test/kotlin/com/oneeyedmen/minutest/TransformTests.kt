@@ -1,6 +1,5 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Test
 
 
@@ -9,10 +8,10 @@ class TransformTests {
     fun `transforms wrap around application of before and after blocks`() {
         val log = mutableListOf<String>()
         
-        executeTests(context<Unit> {
+        executeTests(rootContext<Unit> {
             before { log.add("before") }
             after { log.add("after") }
-            
+
             addTransform { test ->
                 test.withAction { fixture ->
                     log.add("entering transformed test")
@@ -20,7 +19,7 @@ class TransformTests {
                     log.add("leaving transformed test")
                 }
             }
-            
+
             test("the test") { log.add("the test") }
         })
         
@@ -37,7 +36,7 @@ class TransformTests {
     fun `transforms nest, following nesting of contexts`() {
         val log = mutableListOf<String>()
 
-        executeTests(context<Unit> {
+        executeTests(rootContext<Unit> {
             addTransform { test ->
                 test.withAction { fixture ->
                     log.add("entering outer transformed test")
@@ -82,11 +81,11 @@ class TransformTests {
     fun `transforms can disable tests`() {
         val log = mutableListOf<String>()
         
-        executeTests(context<Unit> {
+        executeTests(rootContext<Unit> {
             addTransform { test ->
                 test.withAction { /* no op */ }
             }
-            
+
             test("the test") { log.add("the test was invoked, but should not have been") }
         })
         

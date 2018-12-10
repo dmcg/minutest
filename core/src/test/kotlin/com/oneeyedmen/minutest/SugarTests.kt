@@ -1,7 +1,6 @@
 package com.oneeyedmen.minutest
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
@@ -10,7 +9,7 @@ class SugarTests : JUnit5Minutests {
     data class Fruit(val name: String)
     data class Conserve(val type: String, val fruit: Fruit)
 
-    override val tests = context<Fruit> {
+    override val tests = rootContext<Fruit> {
 
         fixture {
             Fruit("blackcurrent")

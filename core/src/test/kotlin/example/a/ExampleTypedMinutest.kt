@@ -2,11 +2,11 @@
 @file:JvmName("ExplicitTypedMinutest")
 package example.a
 
-import com.oneeyedmen.minutest.experimental.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions
-import java.util.Stack
+import java.util.*
 
-fun `example typed context`() = context<Stack<String>> {
+fun `example typed context`() = rootContext<Stack<String>> {
     fixture { Stack() }
     
     test("a typed fixture test") {

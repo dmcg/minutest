@@ -1,14 +1,14 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
 class ImmutableExampleTests : JUnit5Minutests {
 
     // If you like this FP stuff, you may want to test an immutable fixture.
-    override val tests = context<List<String>> {
+    override val tests = rootContext<List<String>> {
 
         // List<String> is immutable
         fixture { emptyList() }

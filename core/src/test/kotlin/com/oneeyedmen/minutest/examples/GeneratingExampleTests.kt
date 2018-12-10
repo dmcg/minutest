@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.experimental.checkedAgainst
 import com.oneeyedmen.minutest.experimental.withTabsExpanded
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertThrows
 import java.util.*
@@ -47,7 +47,7 @@ private fun TestContext<StringStack>.cantPop() = test("cant pop") {
 class GeneratingExampleTests : JUnit5Minutests {
 
     val summary = listOf(
-        "com.oneeyedmen.minutest.examples.GeneratingExampleTests",
+        "root",
         "    an empty stack",
         "        is empty",
         "        can push",
@@ -59,7 +59,7 @@ class GeneratingExampleTests : JUnit5Minutests {
         "        has the item on top"
     )
 
-    override val tests = context<StringStack>(willRun(summary)) {
+    override val tests = rootContext<StringStack>(willRun(summary)) {
 
         fixture { StringStack() }
 

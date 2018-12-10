@@ -1,12 +1,12 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 
 class NoFixtureExampleTests : JUnit5Minutests {
 
-    override val tests = context<Unit> {
+    override val tests = rootContext<Unit> {
 
         context("addition") {
             test("positive + positive") {

@@ -1,7 +1,6 @@
 package com.oneeyedmen.minutest
 
 import com.oneeyedmen.minutest.experimental.deriveFixtureInstrumented
-import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
@@ -11,14 +10,14 @@ class NamingTests {
     fun `fully qualified name`() {
         val log = mutableListOf<List<String>>()
         
-        executeTests(context<Unit> {
+        executeTests(rootContext<Unit> {
             addTransform {
                 it.also { log.add(it.fullName()) }
             }
-            
+
             context("outer") {
                 test("outer test") {}
-                
+
                 context("inner") {
                     test("inner test 1") {}
                     test("inner test 2") {}
@@ -28,9 +27,9 @@ class NamingTests {
         
         assertEquals(
             listOf(
-                listOf(javaClass.canonicalName, "outer", "outer test"),
-                listOf(javaClass.canonicalName, "outer", "inner", "inner test 1"),
-                listOf(javaClass.canonicalName, "outer", "inner", "inner test 2")
+                listOf("root", "outer", "outer test"),
+                listOf("root", "outer", "inner", "inner test 1"),
+                listOf("root", "outer", "inner", "inner test 2")
             ),
             log
         )
@@ -42,7 +41,7 @@ class NamingTests {
 
         class Fixture(val name: List<String>)
 
-        executeTests(context<Fixture> {
+        executeTests(rootContext<Fixture> {
 
             deriveFixtureInstrumented { testDescriptor ->
                 Fixture(testDescriptor.fullName())
@@ -50,7 +49,7 @@ class NamingTests {
 
             context("outer") {
                 test("outer test") { log.add(name) }
-                
+
                 context("inner") {
                     test("inner test 1") { log.add(name) }
                     test("inner test 2") { log.add(name) }
@@ -60,9 +59,9 @@ class NamingTests {
         
         assertEquals(
             listOf(
-                listOf(javaClass.canonicalName, "outer", "outer test"),
-                listOf(javaClass.canonicalName, "outer", "inner", "inner test 1"),
-                listOf(javaClass.canonicalName, "outer", "inner", "inner test 2")
+                listOf("root", "outer", "outer test"),
+                listOf("root", "outer", "inner", "inner test 1"),
+                listOf("root", "outer", "inner", "inner test 2")
             ),
             log
         )

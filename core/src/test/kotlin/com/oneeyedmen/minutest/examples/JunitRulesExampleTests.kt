@@ -2,7 +2,7 @@ package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.junit.applyRule
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.rules.TemporaryFolder
 
@@ -14,7 +14,7 @@ class JunitRulesExampleTests : JUnit5Minutests {
         val testFolder = TemporaryFolder()
     }
 
-    override val tests = context<Fixture> {
+    override val tests = rootContext<Fixture> {
 
         fixture { Fixture() }
 

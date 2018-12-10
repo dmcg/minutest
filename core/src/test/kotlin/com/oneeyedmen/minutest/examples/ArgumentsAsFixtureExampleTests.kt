@@ -1,14 +1,14 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 
 class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
 
     data class Arguments(val l: Int, val r: Int)
 
-    override val tests = context<Arguments> {
+    override val tests = rootContext<Arguments> {
 
         context("positive positive") {
             fixture {

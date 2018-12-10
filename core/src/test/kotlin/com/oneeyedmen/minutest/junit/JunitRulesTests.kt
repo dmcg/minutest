@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
+import com.oneeyedmen.minutest.rootContext
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.AfterAll
 import org.junit.rules.TestWatcher
@@ -20,7 +21,7 @@ class JunitRulesTests : JUnit5Minutests {
         val rule = TestRule()
     }
 
-    override val tests = context<Fixture> {
+    override val tests = rootContext<Fixture>(name = javaClass.canonicalName) {
         fixture {
             Fixture()
         }
@@ -47,7 +48,7 @@ class JunitRulesTests : JUnit5Minutests {
             log.add(rule.testDescription.toString())
         }
     }
-    
+
     companion object {
         @JvmStatic
         @AfterAll

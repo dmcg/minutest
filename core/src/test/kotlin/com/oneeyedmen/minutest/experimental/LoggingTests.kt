@@ -2,7 +2,7 @@ package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.assertLogged
 import com.oneeyedmen.minutest.executeTests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.IOException
@@ -15,7 +15,7 @@ class LoggingTests {
     @Test fun logging() {
         val log = mutableListOf<String>()
 
-        val tests = context<Unit>(loggedTo(log)) {
+        val tests = rootContext<Unit>(loggedTo(log)) {
 
             test("top test") {}
 
@@ -27,7 +27,7 @@ class LoggingTests {
         executeTests(tests)
 
         assertLogged(log.withTabsExpanded(2),
-            "com.oneeyedmen.minutest.experimental.LoggingTests",
+            "root",
             "  top test",
             "  inner",
             "    inner test"
@@ -37,12 +37,14 @@ class LoggingTests {
     @Test fun checking() {
 
         val expected = listOf(
-            "com.oneeyedmen.minutest.experimental.LoggingTests",
+            "root",
             "  top test",
             "  inner",
             "    inner test")
 
-        val tests = context<Unit>(checkedAgainst { assertEquals(expected, it.withTabsExpanded(2))} ) {
+        val tests = rootContext<Unit>(
+            checkedAgainst { assertEquals(expected, it.withTabsExpanded(2))}
+        ) {
 
             test("top test") {}
 
@@ -58,8 +60,9 @@ class LoggingTests {
 
         val expected = emptyList<String>()
 
-        val tests = context<Unit>(checkedAgainst { assertEquals(expected, it)} ) {
-
+        val tests = rootContext<Unit>(
+            checkedAgainst { assertEquals(expected, it)})
+        {
             test("test") {}
         }
 
@@ -72,7 +75,8 @@ class LoggingTests {
 
         val expected = emptyList<String>()
 
-        val tests = context<Unit>(checkedAgainst { assertEquals(expected, it)} ) {
+        val tests = rootContext<Unit>(
+            checkedAgainst { assertEquals(expected, it)}) {
             test("test") {
                 throw IOException("deliberate")
             }

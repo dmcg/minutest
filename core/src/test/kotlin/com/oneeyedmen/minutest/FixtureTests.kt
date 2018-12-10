@@ -1,6 +1,5 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.context
 import com.oneeyedmen.minutest.junit.toTestFactory
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -17,7 +16,7 @@ class FixtureTests {
         val log: MutableList<String> = mutableListOf()
     )
 
-    @TestFactory fun `with fixtures`() = context<Fixture> {
+    @TestFactory fun `with fixtures`() = rootContext<Fixture> {
 
         fixture { Fixture("banana") }
 
@@ -75,7 +74,7 @@ class FixtureTests {
         }
     }.toTestFactory()
 
-    @TestFactory fun `no fixture`() = context<Unit> {
+    @TestFactory fun `no fixture`() = rootContext<Unit> {
         test("I need not specify Unit fixture") {
             assertNotNull("banana")
         }
@@ -83,7 +82,7 @@ class FixtureTests {
 
     @Test fun `throws IllegalStateException if no fixture specified when one is needed by a test`() {
         assertThrows<IllegalStateException> {
-            context<Fixture> {
+            rootContext<Fixture> {
                 test("I report not having a fixture") {
                     assertEquals("banana", fruit)
                 }
@@ -93,7 +92,7 @@ class FixtureTests {
 
     @Test fun `throws IllegalStateException if no fixture specified when one is needed by a fixture`() {
         assertThrows<IllegalStateException> {
-            context<Fixture> {
+            rootContext<Fixture> {
                 modifyFixture {
                     this.fruit
                 }
@@ -106,7 +105,7 @@ class FixtureTests {
 
     @Test fun `throws IllegalStateException if fixture is specified twice in a context`() {
         assertThrows<IllegalStateException> {
-            context<Fixture> {
+            rootContext<Fixture> {
                 fixture { Fixture("banana") }
                 fixture { Fixture("banana") }
             }.toTestFactory()
@@ -114,7 +113,7 @@ class FixtureTests {
     }
 
     @Test fun `throws exception thrown from fixture`() {
-        val tests = context<Fixture> {
+        val tests = rootContext<Fixture> {
             fixture {
                 throw FileNotFoundException()
             }

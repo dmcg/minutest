@@ -1,13 +1,12 @@
 package com.oneeyedmen.minutest
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
 class ImmutableTests : JUnit5Minutests {
 
-    override val tests = context<List<String>> {
+    override val tests = rootContext<List<String>> {
         fixture { emptyList() }
 
         after {

@@ -2,13 +2,13 @@ package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import kotlin.test.fail
 
 
 class AnnotationTests : JUnit5Minutests {
 
-    override val tests = SKIP - context<Unit>(skipAndFocus) {
+    override val tests = SKIP - rootContext<Unit>(skipAndFocus) {
         isNodeBuilder(MyAnnotation - test("single annotation") {})
         isNodeBuilder(MyAnnotation - context("single annotation") {})
 
@@ -23,7 +23,6 @@ class AnnotationTests : JUnit5Minutests {
             fail("top level skip didn't work")
         }
     }
-
 }
 
 object MyAnnotation : TestAnnotation

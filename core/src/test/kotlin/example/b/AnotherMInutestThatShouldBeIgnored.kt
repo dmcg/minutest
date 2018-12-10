@@ -1,8 +1,8 @@
 package example.b
 
-import com.oneeyedmen.minutest.experimental.context
+import com.oneeyedmen.minutest.rootContext
 
-fun `this context  should not appear in the test plan`() = context<Unit> {
+val `this context  should not appear in the test plan` = rootContext<Unit> {
     test("this test should not appear in the test plan") {
     
     }

@@ -1,13 +1,13 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
 class ParameterisedTests : JUnit5Minutests {
 
-    override val tests = context<Unit> {
+    override val tests = rootContext<Unit> {
 
         // Once we are in a context, running the same tests for multiple parameters is
         // as easy as calling `test()` for each one.

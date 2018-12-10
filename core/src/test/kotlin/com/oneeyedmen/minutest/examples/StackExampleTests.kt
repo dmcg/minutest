@@ -1,14 +1,14 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 class StackExampleTests : JUnit5Minutests {
 
-    override val tests = context<Stack<String>> {
+    override val tests = rootContext<Stack<String>> {
 
         // The tests in the root context run with this empty stack
         fixture {

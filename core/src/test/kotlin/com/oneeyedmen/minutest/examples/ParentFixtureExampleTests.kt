@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
@@ -9,7 +9,7 @@ class ParentFixtureExampleTests : JUnit5Minutests {
 
     data class Fixture(var fruit: String)
 
-    override val tests = context<Fixture> {
+    override val tests = rootContext<Fixture> {
         fixture {
             Fixture("banana")
         }

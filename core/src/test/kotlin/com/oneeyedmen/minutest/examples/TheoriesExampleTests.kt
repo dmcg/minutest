@@ -2,7 +2,7 @@ package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 // http://www.oneeyedmen.com/tdd-v-testing-part2.html
 class TheoriesExampleTests : JUnit5Minutests {
 
-    override val tests = context<Unit> {
+    override val tests = rootContext<Unit> {
         (1..31).forEach { i ->
 
             // These theories will be checked, but no tests are actually created

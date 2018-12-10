@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
@@ -13,7 +13,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
         override fun toString() = "${fruit.name} $name"
     }
 
-    override val tests = context<Fruit> {
+    override val tests = rootContext<Fruit> {
 
         fixture {
             Fruit("banana")

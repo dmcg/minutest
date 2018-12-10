@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 
 class ReflectingTests : JUnit5Minutests {
 
-    override val tests = context<Unit>() {
+    override val tests = rootContext<Unit> {
 
         context("asKType") {
             test("captures class") {

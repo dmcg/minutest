@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import java.io.BufferedWriter
 import java.nio.file.Files
 import kotlin.test.assertEquals
@@ -10,7 +10,7 @@ class AutoCloseExampleTests : JUnit5Minutests {
 
     val tempFile = Files.createTempFile("temp", ".txt").toFile()
 
-    override val tests = context<Unit> {
+    override val tests = rootContext<Unit> {
 
         // autoclose values are lazily created and disposed after all tests in the context are complete
         val sharedResource: BufferedWriter by autoClose {

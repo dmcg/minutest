@@ -1,9 +1,9 @@
 package example.a
 
-import com.oneeyedmen.minutest.experimental.context
+import com.oneeyedmen.minutest.rootContext
 
 
 // This should not be picked up the the classpath scanner
-fun exampleContextHelper(exampleParam: Any) = context<Unit> {
+fun exampleContextHelper(exampleParam: Any) = rootContext<Unit> {
 
 }

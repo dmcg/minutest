@@ -2,7 +2,7 @@ package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
@@ -28,7 +28,7 @@ fun TestContext<MutableCollection<String>>.behavesAsMutableCollection() {
 // Now tests can supply the fixture and invoke the function to create the tests to verify the contract.
 class ArrayListTests : JUnit5Minutests {
 
-    override val tests = context<MutableCollection<String>> {
+    override val tests = rootContext<MutableCollection<String>> {
         fixture {
             ArrayList()
         }
@@ -40,7 +40,7 @@ class ArrayListTests : JUnit5Minutests {
 // We can reuse the contract for different collections.
 class LinkedListTests : JUnit5Minutests {
 
-    override val tests = context<MutableCollection<String>> {
+    override val tests = rootContext<MutableCollection<String>> {
         fixture {
             LinkedList()
         }

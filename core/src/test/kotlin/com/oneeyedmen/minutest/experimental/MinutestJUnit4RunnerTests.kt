@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.junit.JUnit4Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.Test
 import org.opentest4j.TestAbortedException
 import kotlin.test.assertEquals
@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 
 class MinutestJUnit4RunnerTests : JUnit4Minutests() {
 
-    override val tests = context<Unit>(loggedTo(testLog)) {
+    override val tests = rootContext<Unit>(loggedTo(testLog)) {
 
         test("test") {}
 
@@ -41,7 +41,7 @@ class AMinutestJUnit4RunnerTestsVerifier {
 
     @Test fun `check the other run`() {
         assertEquals(listOf(
-            "com.oneeyedmen.minutest.experimental.MinutestJUnit4RunnerTests",
+            "root",
             "    test",
             "    context",
             "        test x",

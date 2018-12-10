@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 
@@ -35,7 +35,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
         )
     }
 
-    override val tests = context<Fixture> {
+    override val tests = rootContext<Fixture> {
         fixture { Fixture() }
 
         context("key not turned") {

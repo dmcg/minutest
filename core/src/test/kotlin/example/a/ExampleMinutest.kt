@@ -3,11 +3,11 @@
 
 package example.a
 
-import com.oneeyedmen.minutest.experimental.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
 
-fun `example context`() = context<Unit> {
+fun `example context`() = rootContext<Unit> {
     test("a failing test") {
         fail("example failure")
     }

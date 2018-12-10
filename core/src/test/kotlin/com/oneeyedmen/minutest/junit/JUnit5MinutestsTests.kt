@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
@@ -7,7 +8,7 @@ import java.util.*
 
 class JUnit5TestsWithPlainFixture : JUnit5Minutests {
 
-    override val tests = context<String> {
+    override val tests = rootContext<String> {
         fixture { "banana" }
 
         test("test") {
@@ -18,7 +19,7 @@ class JUnit5TestsWithPlainFixture : JUnit5Minutests {
 
 class JUnit5TestsWithGenericFixture : JUnit5Minutests {
 
-    override val tests = context<Stack<String>> {
+    override val tests = rootContext<Stack<String>> {
         fixture { Stack() }
 
         test("test") {
@@ -29,7 +30,7 @@ class JUnit5TestsWithGenericFixture : JUnit5Minutests {
 
 class JUnit5TestsWithNullableFixture : JUnit5Minutests {
 
-    override val tests = context<String?> {
+    override val tests = rootContext<String?> {
         fixture { "banana" }
 
         test("test") {

@@ -1,12 +1,12 @@
 package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.context
+import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.*
 
 class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
 
-    override val tests = context<List<String>> {
+    override val tests = rootContext<List<String>> {
 
         context("empty") {
             fixture {

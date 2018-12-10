@@ -36,11 +36,11 @@ interface JUnit5Minutests : JUnitXMinutests {
  *
  * Designed to be called inside a class and to use the name as the class as the name of the test.
  */
-@Deprecated("Use testFactoryFor(com.oneeyedmen.minutest.junit.context {})")
+@Deprecated("Use testFactoryFor(com.oneeyedmen.minutest.rootContext {})")
 inline fun <reified F> Any.junitTests(
     noinline transform: (RuntimeNode) -> RuntimeNode = { it },
     noinline builder: Context<Unit, F>.() -> Unit
-): Stream<out DynamicNode> = this.context(transform, builder).toTestFactory()
+): Stream<out DynamicNode> = rootContext(transform, javaClass.canonicalName, builder).toTestFactory()
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory].
