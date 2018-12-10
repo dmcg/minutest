@@ -21,6 +21,14 @@ interface JUnit5Minutests : JUnitXMinutests {
      */
     @TestFactory
     fun tests(): Stream<out DynamicNode> = tests.buildRootNode().toStreamOfDynamicNodes()
+
+// WIP
+//    @TestFactory
+//    fun otherTests(): Stream<out DynamicNode>? {
+//        return (this::class.memberFunctions.find { it.returnType.classifier == NodeBuilder::class }
+//            ?.call(this)
+//            as? NodeBuilder<Unit>)?.buildRootNode()?.toStreamOfDynamicNodes()
+//    }
 }
 
 /**
