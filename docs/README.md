@@ -22,7 +22,7 @@ To just test simple functions, define your tests in a subclass of JUnit5Minutest
 class FirstMinutests : JUnit5Minutests {
 
     // tests are grouped in a context
-    override val tests = context<Unit> {
+    override val tests = rootContext<Unit> {
 
         // define a test by calling test
         test("my first test") {
@@ -45,7 +45,7 @@ Most tests require access to some state. The collection of state required by the
 class SimpleStackExampleTests : JUnit5Minutests {
 
     // The fixture type is the generic type of the test, here Stack<String>
-    override val tests = context<Stack<String>> {
+    override val tests = rootContext<Stack<String>> {
 
         // The fixture block tells Minutest how to create an instance of the fixture.
         // Minutest will call it once for every test.
@@ -78,7 +78,7 @@ Minutests can be defined in a Spec style, with nested contexts and tests. The JU
 ```kotlin
 class StackExampleTests : JUnit5Minutests {
 
-    override val tests = context<Stack<String>> {
+    override val tests = rootContext<Stack<String>> {
 
         // The tests in the root context run with this empty stack
         fixture {
@@ -161,7 +161,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
         )
     }
 
-    override val tests = context<Fixture> {
+    override val tests = rootContext<Fixture> {
         fixture { Fixture() }
 
         context("key not turned") {
@@ -203,7 +203,7 @@ For example, parameterised tests require [special handling](https://junit.org/ju
 ```kotlin
 class ParameterisedTests : JUnit5Minutests {
 
-    override val tests = context<Unit> {
+    override val tests = rootContext<Unit> {
 
         // Once we are in a context, running the same tests for multiple parameters is
         // as easy as calling `test()` for each one.
@@ -255,7 +255,7 @@ fun TestContext<MutableCollection<String>>.behavesAsMutableCollection() {
 // Now tests can supply the fixture and invoke the function to create the tests to verify the contract.
 class ArrayListTests : JUnit5Minutests {
 
-    override val tests = context<MutableCollection<String>> {
+    override val tests = rootContext<MutableCollection<String>> {
         fixture {
             ArrayList()
         }
@@ -267,7 +267,7 @@ class ArrayListTests : JUnit5Minutests {
 // We can reuse the contract for different collections.
 class LinkedListTests : JUnit5Minutests {
 
-    override val tests = context<MutableCollection<String>> {
+    override val tests = rootContext<MutableCollection<String>> {
         fixture {
             LinkedList()
         }

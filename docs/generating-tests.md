@@ -42,7 +42,7 @@ private fun TestContext<StringStack>.cantPop() = test("cant pop") {
 class GeneratingExampleTests : JUnit5Minutests {
 
     val summary = listOf(
-        "com.oneeyedmen.minutest.examples.GeneratingExampleTests",
+        "root",
         "    an empty stack",
         "        is empty",
         "        can push",
@@ -54,7 +54,7 @@ class GeneratingExampleTests : JUnit5Minutests {
         "        has the item on top"
     )
 
-    override val tests = context<StringStack>(willRun(summary)) {
+    override val tests = rootContext<StringStack>(willRun(summary)) {
 
         fixture { StringStack() }
 

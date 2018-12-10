@@ -15,7 +15,7 @@ You don't have to have a fixture. The simplest tests can just have assertions.
 ```kotlin
 class NoFixtureExampleTests : JUnit5Minutests {
 
-    override val tests = context<Unit> {
+    override val tests = rootContext<Unit> {
 
         context("addition") {
             test("positive + positive") {
@@ -44,7 +44,7 @@ It makes sense to have the subject under test as the fixture if it has the only 
 ```kotlin
 class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
 
-    override val tests = context<List<String>> {
+    override val tests = rootContext<List<String>> {
 
         context("empty") {
             fixture {
@@ -86,7 +86,7 @@ class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
 
     data class Arguments(val l: Int, val r: Int)
 
-    override val tests = context<Arguments> {
+    override val tests = rootContext<Arguments> {
 
         context("positive positive") {
             fixture {
@@ -152,7 +152,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
         )
     }
 
-    override val tests = context<Fixture> {
+    override val tests = rootContext<Fixture> {
         fixture { Fixture() }
 
         context("key not turned") {
@@ -192,7 +192,7 @@ class ParentFixtureExampleTests : JUnit5Minutests {
 
     data class Fixture(var fruit: String)
 
-    override val tests = context<Fixture> {
+    override val tests = rootContext<Fixture> {
         fixture {
             Fixture("banana")
         }
@@ -241,7 +241,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
         override fun toString() = "${fruit.name} $name"
     }
 
-    override val tests = context<Fruit> {
+    override val tests = rootContext<Fruit> {
 
         fixture {
             Fruit("banana")
