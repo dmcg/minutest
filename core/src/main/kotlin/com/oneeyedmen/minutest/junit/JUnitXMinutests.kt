@@ -1,9 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.NodeBuilder
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.rootContext
+import com.oneeyedmen.minutest.*
 import kotlin.reflect.full.memberFunctions
 
 
@@ -26,3 +23,14 @@ inline fun <reified F> Any.context(
 internal fun Any.testMethods(): List<NodeBuilder<Unit>> = this::class.memberFunctions
     .filter { it.returnType.classifier == NodeBuilder::class }
     .map { it.call(this) as NodeBuilder<Unit> }
+
+internal fun Any.rootContextFromMethods(): RuntimeContext {
+    val testMethodsAsNodes: List<NodeBuilder<Unit>> = testMethods()
+    val singleNode = when {
+        testMethodsAsNodes.isEmpty() -> error("No test methods found")
+        testMethodsAsNodes.size > 1 -> error("More than one test method found")
+        else -> testMethodsAsNodes.first()
+    }
+    val runtimeContext = singleNode.buildRootNode() as RuntimeContext
+    return runtimeContext
+}

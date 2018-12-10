@@ -6,6 +6,17 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
 
 
+class JUnit5TestsWithFunction : JUnit5Minutests {
+
+    fun myTests() = rootContext<String> {
+        fixture { "banana" }
+
+        test("test") {
+            assertEquals("banana", this)
+        }
+    }
+}
+
 class JUnit5TestsWithPlainFixture : JUnit5Minutests {
 
     override val tests = rootContext<String> {

@@ -1,6 +1,8 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.RuntimeTest
 import org.junit.runner.Description
 import org.junit.runner.notification.RunNotifier
 import org.junit.runners.ParentRunner
@@ -14,16 +16,9 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode>(type) {
     override fun getChildren(): List<RuntimeNode> {
         val testInstance = (testClass.javaClass.newInstance() as? JUnit4Minutests) ?:
             error("${this::class.simpleName} should be applied to an instance of JUnit4Minutests")
-        val testMethodsAsNodes: List<NodeBuilder<Unit>> = testInstance.testMethods()
-        val singleNode = when {
-            testMethodsAsNodes.isEmpty() -> error("No test methods found")
-            testMethodsAsNodes.size > 1 -> error("More than one test method found")
-            else -> testMethodsAsNodes.first()
-        }
-        rootContext = singleNode.buildRootNode() as RuntimeContext
+        rootContext = testInstance.rootContextFromMethods()
         return rootContext.children
     }
-
 
     override fun runChild(child: RuntimeNode, notifier: RunNotifier) = run(child, notifier)
 

@@ -12,23 +12,18 @@ import kotlin.streams.asStream
 @Deprecated("JupiterTests is now JUnit5Minutests", replaceWith = ReplaceWith("JUnit5Minutests"))
 typealias JupiterTests = JUnit5Minutests
 
-interface JUnit5Minutests : JUnitXMinutests {
+interface JUnit5Minutests {
 
-    override val tests: NodeBuilder<Unit> // a clue to what to override
+    val tests: NodeBuilder<Unit>? get() = null // a clue to what to override
 
     /**
      * Provided so that JUnit will run the tests
      */
     @TestFactory
-    fun tests(): Stream<out DynamicNode> = tests.buildRootNode().toStreamOfDynamicNodes()
-
-// WIP
-//    @TestFactory
-//    fun otherTests(): Stream<out DynamicNode>? {
-//        return (this::class.memberFunctions.find { it.returnType.classifier == NodeBuilder::class }
-//            ?.call(this)
-//            as? NodeBuilder<Unit>)?.buildRootNode()?.toStreamOfDynamicNodes()
-//    }
+    fun tests(): Stream<out DynamicNode> = when {
+        tests != null -> tests!!.buildRootNode().toStreamOfDynamicNodes()
+        else -> this.rootContextFromMethods().toStreamOfDynamicNodes()
+    }
 }
 
 /**
