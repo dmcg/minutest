@@ -1,29 +1,23 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.*
-import io.github.classgraph.*
-import org.junit.platform.engine.*
-import org.junit.platform.engine.TestDescriptor
-import org.junit.platform.engine.discovery.*
-import kotlin.reflect.KClass
+import com.oneeyedmen.minutest.LoadedRuntimeContext
+import com.oneeyedmen.minutest.LoadedRuntimeTest
+import com.oneeyedmen.minutest.Named
+import com.oneeyedmen.minutest.NodeBuilder
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.buildRootNode
+import io.github.classgraph.ClassGraph
+import io.github.classgraph.ClassInfo
+import io.github.classgraph.ClassRefTypeSignature
+import io.github.classgraph.MethodInfo
+import io.github.classgraph.TypeSignature
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.kotlinFunction
 
-
-internal inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(block: (T) -> Unit) {
-    getSelectorsByType<T>().forEach(block)
-}
-
-internal inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.getSelectorsByType(): List<T> =
-    getSelectorsByType(T::class.java)
-
-internal inline fun <reified T : DiscoveryFilter<String>> EngineDiscoveryRequest.getFiltersByType(): Filter<String> =
-    combineFiltersByType(T::class)
-
-internal fun EngineDiscoveryRequest.combineFiltersByType(filterClass: KClass<out DiscoveryFilter<String>>): Filter<String> =
-    Filter.composeFilters(getFiltersByType(filterClass.java))
 
 internal data class ScannedPackageContext(
     val packageName: String,
@@ -56,27 +50,7 @@ internal data class ScannedPackageContext(
     }
 }
 
-internal fun scan(root: MinutestEngineDescriptor, rq: EngineDiscoveryRequest): List<TestDescriptor> {
-    // Cannot select by method
-    if (rq.getSelectorsByType<MethodSelector>().isNotEmpty()) {
-        return emptyList()
-    }
-    
-    return scan(
-        scannerConfig = {
-            rq.forEach<PackageSelector> { whitelistPackages(it.packageName) }
-            rq.forEach<ClassSelector> { whitelistClasses(it.className) }
-            rq.forEach<DirectorySelector> { whitelistPaths(it.rawPath) }
-        },
-        classFilter = {
-            rq.getFiltersByType<ClassNameFilter>().apply(it.name).included() &&
-                rq.getFiltersByType<PackageNameFilter>().apply(it.packageName).included()
-        })
-        .map { MinutestNodeDescriptor(root, it) }
-        .filter { rq.selectsByUniqueId(it) }
-}
-
-private fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean): List<ScannedPackageContext> {
+internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean): List<ScannedPackageContext> {
     return ClassGraph()
         .enableClassInfo()
         .enableMethodInfo()
@@ -107,9 +81,3 @@ private fun MethodInfo.definesTopLevelContext() =
 private fun TypeSignature.name() =
     (this as? ClassRefTypeSignature)?.baseClassName
 
-internal fun EngineDiscoveryRequest.selectsByUniqueId(descriptor: TestDescriptor) =
-    getSelectorsByType<UniqueIdSelector>()
-        .run { isEmpty() || any { selector -> descriptor.uniqueId.overlaps(selector.uniqueId) } }
-
-internal fun UniqueId.overlaps(that: UniqueId) =
-    this.hasPrefix(that) || that.hasPrefix(this)
