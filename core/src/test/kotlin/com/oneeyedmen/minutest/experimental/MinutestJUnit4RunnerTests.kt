@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 
 class MinutestJUnit4RunnerTests : JUnit4Minutests() {
 
-    override val tests = rootContext<Unit>(loggedTo(testLog)) {
+    fun tests() = rootContext<Unit>(loggedTo(testLog)) {
 
         test("test") {}
 
@@ -53,7 +53,6 @@ class AMinutestJUnit4RunnerTestsVerifier {
             "            test",
             "        skipped"),
             testLog.withTabsExpanded(4))
-
     }
 }
 

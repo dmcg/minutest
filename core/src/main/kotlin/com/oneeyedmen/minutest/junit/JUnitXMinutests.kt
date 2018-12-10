@@ -23,6 +23,6 @@ inline fun <reified F> Any.context(
 ): NodeBuilder<Unit> = rootContext(transform, javaClass.canonicalName, builder)
 
 
-internal fun testMethods(container: Any): List<NodeBuilder<Unit>> = container::class.memberFunctions
+internal fun Any.testMethods(): List<NodeBuilder<Unit>> = this::class.memberFunctions
     .filter { it.returnType.classifier == NodeBuilder::class }
-    .map { it.call(container) as NodeBuilder<Unit> }
+    .map { it.call(this) as NodeBuilder<Unit> }

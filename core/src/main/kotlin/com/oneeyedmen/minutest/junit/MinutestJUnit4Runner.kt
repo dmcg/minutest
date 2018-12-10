@@ -1,9 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.RuntimeTest
-import com.oneeyedmen.minutest.buildRootNode
+import com.oneeyedmen.minutest.*
 import org.junit.runner.Description
 import org.junit.runner.notification.RunNotifier
 import org.junit.runners.ParentRunner
@@ -12,12 +9,18 @@ import org.opentest4j.TestAbortedException
 
 class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode>(type) {
 
-    private lateinit var rootContext: RuntimeContext;
+    private lateinit var rootContext: RuntimeContext
 
     override fun getChildren(): List<RuntimeNode> {
         val testInstance = (testClass.javaClass.newInstance() as? JUnit4Minutests) ?:
             error("${this::class.simpleName} should be applied to an instance of JUnit4Minutests")
-        rootContext = testInstance.tests.buildRootNode() as RuntimeContext
+        val testMethodsAsNodes: List<NodeBuilder<Unit>> = testInstance.testMethods()
+        val singleNode = when {
+            testMethodsAsNodes.isEmpty() -> error("No test methods found")
+            testMethodsAsNodes.size > 1 -> error("More than one test method found")
+            else -> testMethodsAsNodes.first()
+        }
+        rootContext = singleNode.buildRootNode() as RuntimeContext
         return rootContext.children
     }
 
