@@ -1,21 +1,12 @@
 package com.oneeyedmen.minutest.junit
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.platform.engine.TestExecutionResult
-import org.junit.platform.engine.UniqueId
-import org.junit.platform.engine.discovery.ClassNameFilter.*
-import org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
-import org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod
-import org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage
-import org.junit.platform.engine.discovery.DiscoverySelectors.selectUniqueId
-import org.junit.platform.engine.discovery.PackageNameFilter
+import org.junit.platform.engine.discovery.ClassNameFilter.excludeClassNamePatterns
+import org.junit.platform.engine.discovery.DiscoverySelectors.*
 import org.junit.platform.engine.discovery.PackageNameFilter.excludePackageNames
-import org.junit.platform.launcher.EngineFilter
-import org.junit.platform.launcher.LauncherDiscoveryRequest
-import org.junit.platform.launcher.TestExecutionListener
-import org.junit.platform.launcher.TestIdentifier
-import org.junit.platform.launcher.TestPlan
+import org.junit.platform.launcher.*
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request
 import org.junit.platform.launcher.core.LauncherFactory
@@ -36,6 +27,9 @@ class MinutestTestEngineTests {
             "started: a passing test",
             "successful: a passing test",
             "successful: example context",
+            "registered: example skipped context",
+            "started: example skipped context",
+            "aborted: example skipped context",
             "registered: example typed context",
             "started: example typed context",
             "registered: a typed fixture test",
@@ -96,6 +90,9 @@ class MinutestTestEngineTests {
             "started: a passing test",
             "successful: a passing test",
             "successful: example context",
+            "registered: example skipped context",
+            "started: example skipped context",
+            "aborted: example skipped context",
             "successful: example.a",
             "successful: Minutest",
             "plan finished"
@@ -121,6 +118,9 @@ class MinutestTestEngineTests {
             "started: a passing test",
             "successful: a passing test",
             "successful: example context",
+            "registered: example skipped context",
+            "started: example skipped context",
+            "aborted: example skipped context",
             "registered: example typed context",
             "started: example typed context",
             "registered: a typed fixture test",

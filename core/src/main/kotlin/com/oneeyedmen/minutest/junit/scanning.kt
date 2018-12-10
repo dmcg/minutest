@@ -36,9 +36,11 @@ internal data class ScannedPackageContext(
     override val name: String get() = packageName
     override val children: List<RuntimeNode> by lazy {
         contextProperties.map { p ->
-            val rootWithDefaultName = (p.get().buildRootNode() as? RuntimeContext)
-                ?: error("Can't yet have tests at top level")
-            LoadedRuntimeContext(rootWithDefaultName, name = p.name)
+            val rootWithDefaultName = p.get().buildRootNode()
+            when (rootWithDefaultName) {
+                is RuntimeContext -> LoadedRuntimeContext(rootWithDefaultName, name = p.name)
+                is RuntimeTest -> LoadedRuntimeTest(rootWithDefaultName, name = p.name)
+            }
         }
     }
     
