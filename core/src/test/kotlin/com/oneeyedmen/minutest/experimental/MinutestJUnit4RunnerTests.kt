@@ -1,16 +1,13 @@
 package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.junit.JUnit4Minutests
-import com.oneeyedmen.minutest.junit.MinutestJUnit4Runner
 import com.oneeyedmen.minutest.junit.context
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.opentest4j.TestAbortedException
 import kotlin.test.assertEquals
 
 
-@RunWith(MinutestJUnit4Runner::class)
-class MinutestJUnit4RunnerTests : JUnit4Minutests {
+class MinutestJUnit4RunnerTests : JUnit4Minutests() {
 
     override val tests = context<Unit>(loggedTo(testLog)) {
 
