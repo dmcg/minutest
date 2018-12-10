@@ -6,10 +6,10 @@ import org.junit.platform.engine.*
 import org.junit.platform.engine.TestDescriptor
 import org.junit.platform.engine.discovery.*
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty0
+import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility.PUBLIC
-import kotlin.reflect.jvm.javaField
-import kotlin.reflect.jvm.kotlinProperty
+import kotlin.reflect.jvm.javaMethod
+import kotlin.reflect.jvm.kotlinFunction
 
 
 internal inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(block: (T) -> Unit) {
@@ -27,7 +27,7 @@ internal fun EngineDiscoveryRequest.combineFiltersByType(filterClass: KClass<out
 
 internal data class ScannedPackageContext(
     val packageName: String,
-    private val contextProperties: List<KProperty0<NodeBuilder<Unit>>>,
+    private val contextProperties: List<KFunction<NodeBuilder<Unit>>>,
     override val properties: Map<Any, Any> = emptyMap()
 
 ) : RuntimeContext() {
@@ -36,7 +36,7 @@ internal data class ScannedPackageContext(
     override val name: String get() = packageName
     override val children: List<RuntimeNode> by lazy {
         contextProperties.map { p ->
-            val rootWithDefaultName = p.get().buildRootNode()
+            val rootWithDefaultName = p.call().buildRootNode()
             when (rootWithDefaultName) {
                 is RuntimeContext -> LoadedRuntimeContext(rootWithDefaultName, name = p.name)
                 is RuntimeTest -> LoadedRuntimeTest(rootWithDefaultName, name = p.name)
@@ -79,35 +79,33 @@ internal fun scan(root: MinutestEngineDescriptor, rq: EngineDiscoveryRequest): L
 private fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean): List<ScannedPackageContext> {
     return ClassGraph()
         .enableClassInfo()
-        .enableFieldInfo()
-        .ignoreFieldVisibility()
+        .enableMethodInfo()
         .disableJarScanning()
         .disableNestedJarScanning()
         .apply(scannerConfig)
         .scan()
         .allClasses
+        .filter { it.isStandardClass && !it.isAnonymousInnerClass && it.isPublic && !it.isSynthetic }
         .filter(classFilter)
-        .flatMap { it.declaredFieldInfo }
-        .filter { it.isTopLevelContext() }
-        .mapNotNull { it.toKotlinProperty() }
+        .flatMap { it.declaredMethodInfo }
+        .filter { it.definesTopLevelContext() }
+        .mapNotNull { it.toKotlinFunction() }
         .filter { it.visibility == PUBLIC }
-        .groupBy { it.javaField?.declaringClass?.`package`?.name ?: "<tests>" }
-        .map { (packageName, properties) -> ScannedPackageContext(packageName, properties) }
+        .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
+        .map { (packageName, functions) -> ScannedPackageContext(packageName, functions) }
 }
 
-private fun FieldInfo.toKotlinProperty(): KProperty0<NodeBuilder<Unit>>? {
+private fun MethodInfo.toKotlinFunction(): KFunction<NodeBuilder<Unit>>? {
     @Suppress("UNCHECKED_CAST")
-    return loadClassAndGetField().kotlinProperty as? KProperty0<NodeBuilder<Unit>>
+    return loadClassAndGetMethod().kotlinFunction as? KFunction<NodeBuilder<Unit>>
 }
 
-private fun FieldInfo.isTopLevelContext() =
-    isStatic && typeSignatureOrTypeDescriptor.fieldTypeName() == NodeBuilder::class.java.name
+private fun MethodInfo.definesTopLevelContext() =
+    isStatic && isPublic && parameterInfo.isEmpty() && !isBridge
+        && typeSignatureOrTypeDescriptor.resultType.name() == NodeBuilder::class.java.name
 
-private fun TypeSignature.fieldTypeName() =
-    when (this) {
-        is ClassRefTypeSignature -> baseClassName
-        else -> null
-    }
+private fun TypeSignature.name() =
+    (this as? ClassRefTypeSignature)?.baseClassName
 
 internal fun EngineDiscoveryRequest.selectsByUniqueId(descriptor: TestDescriptor) =
     getSelectorsByType<UniqueIdSelector>()

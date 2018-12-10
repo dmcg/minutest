@@ -6,7 +6,7 @@ import com.oneeyedmen.minutest.experimental.context
 import org.junit.jupiter.api.Assertions
 import java.util.Stack
 
-val `example typed context` = context<Stack<String>> {
+fun `example typed context`() = context<Stack<String>> {
     fixture { Stack() }
     
     test("a typed fixture test") {
