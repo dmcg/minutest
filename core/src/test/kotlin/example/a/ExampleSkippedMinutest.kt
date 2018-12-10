@@ -1,5 +1,5 @@
 // explicit name for generated class so that tests are not coupled to the behaviour of the kotlin compiler
-@file:JvmName("ExampleTransformedMinutest")
+@file:JvmName("ExampleSkippedMinutest")
 
 package example.a
 
