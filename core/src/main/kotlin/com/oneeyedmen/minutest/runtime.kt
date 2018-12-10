@@ -20,6 +20,16 @@ data class LoadedRuntimeTest(
     override val properties: Map<Any, Any>,
     val block: () -> Unit
 ) : RuntimeTest() {
+
+    constructor(
+        delegate: RuntimeTest,
+        name: String = delegate.name,
+        parent: Named? = delegate.parent,
+        properties: Map<Any, Any> = delegate.properties,
+        block: () -> Unit = delegate::run
+    ) :
+        this(name, parent, properties, block)
+
     override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
 
     override fun run() {
@@ -34,6 +44,17 @@ data class LoadedRuntimeContext(
     override val children: List<RuntimeNode>,
     val onClose: () -> Unit
 ) : RuntimeContext() {
+
+    constructor(
+        delegate: RuntimeContext,
+        name: String = delegate.name,
+        parent: Named? = delegate.parent,
+        properties: Map<Any, Any> = delegate.properties,
+        children: List<RuntimeNode> = delegate.children,
+        onClose: () -> Unit = delegate::close
+        ) :
+        this(name, parent, properties, children, onClose)
+
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
     override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
 

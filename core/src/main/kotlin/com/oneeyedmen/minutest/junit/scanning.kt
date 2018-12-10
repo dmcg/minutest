@@ -1,28 +1,10 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.LoadedRuntimeContext
-import com.oneeyedmen.minutest.Named
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.experimental.TopLevelContextBuilder
-import io.github.classgraph.ClassGraph
-import io.github.classgraph.ClassInfo
-import io.github.classgraph.ClassRefTypeSignature
-import io.github.classgraph.FieldInfo
-import io.github.classgraph.TypeSignature
-import org.junit.platform.engine.DiscoveryFilter
-import org.junit.platform.engine.DiscoverySelector
-import org.junit.platform.engine.EngineDiscoveryRequest
-import org.junit.platform.engine.Filter
+import com.oneeyedmen.minutest.*
+import io.github.classgraph.*
+import org.junit.platform.engine.*
 import org.junit.platform.engine.TestDescriptor
-import org.junit.platform.engine.UniqueId
-import org.junit.platform.engine.discovery.ClassNameFilter
-import org.junit.platform.engine.discovery.ClassSelector
-import org.junit.platform.engine.discovery.DirectorySelector
-import org.junit.platform.engine.discovery.MethodSelector
-import org.junit.platform.engine.discovery.PackageNameFilter
-import org.junit.platform.engine.discovery.PackageSelector
-import org.junit.platform.engine.discovery.UniqueIdSelector
+import org.junit.platform.engine.discovery.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty0
 import kotlin.reflect.KVisibility.PUBLIC
@@ -45,14 +27,20 @@ internal fun EngineDiscoveryRequest.combineFiltersByType(filterClass: KClass<out
 
 internal data class ScannedPackageContext(
     val packageName: String,
-    private val contextProperties: List<KProperty0<TopLevelContextBuilder>>,
+    private val contextProperties: List<KProperty0<NodeBuilder<Unit>>>,
     override val properties: Map<Any, Any> = emptyMap()
 
 ) : RuntimeContext() {
     
     override val parent: Named? = null
     override val name: String get() = packageName
-    override val children: List<RuntimeNode> by lazy { contextProperties.map { p -> p.get().build(p.name) } }
+    override val children: List<RuntimeNode> by lazy {
+        contextProperties.map { p ->
+            val rootWithDefaultName = (p.get().buildRootNode() as? RuntimeContext)
+                ?: error("Can't yet have tests at top level")
+            LoadedRuntimeContext(rootWithDefaultName, name = p.name)
+        }
+    }
     
     override fun withChildren(children: List<RuntimeNode>): RuntimeContext {
         return LoadedRuntimeContext(name, parent, emptyMap(), children, {})
@@ -105,13 +93,13 @@ private fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) 
         .map { (packageName, properties) -> ScannedPackageContext(packageName, properties) }
 }
 
-private fun FieldInfo.toKotlinProperty(): KProperty0<TopLevelContextBuilder>? {
+private fun FieldInfo.toKotlinProperty(): KProperty0<NodeBuilder<Unit>>? {
     @Suppress("UNCHECKED_CAST")
-    return loadClassAndGetField().kotlinProperty as? KProperty0<TopLevelContextBuilder>
+    return loadClassAndGetField().kotlinProperty as? KProperty0<NodeBuilder<Unit>>
 }
 
 private fun FieldInfo.isTopLevelContext() =
-    isStatic && typeSignatureOrTypeDescriptor.fieldTypeName() == TopLevelContextBuilder::class.java.name
+    isStatic && typeSignatureOrTypeDescriptor.fieldTypeName() == NodeBuilder::class.java.name
 
 private fun TypeSignature.fieldTypeName() =
     when (this) {

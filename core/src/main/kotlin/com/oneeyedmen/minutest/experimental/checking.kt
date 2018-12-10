@@ -31,28 +31,24 @@ private fun loggingRuntimeContext(
     log: MutableList<String>,
     indent: Int,
     done: () -> Unit = {}
-) : RuntimeContext {
+): RuntimeContext {
     val childrenLog = mutableListOf<String>()
-
-    return LoadedRuntimeContext(
-        wrapped.name,
-        wrapped.parent,
-        wrapped.properties,
-        wrapped.children.map { it.loggedTo(childrenLog, indent + 1) }
-
-    ) {
-        log.add("${indent.tabs()}${wrapped.name}")
-        log.addAll(childrenLog)
-        wrapped.close()
-        done()
-    }
+    return LoadedRuntimeContext(wrapped,
+        children = wrapped.children.map { it.loggedTo(childrenLog, indent + 1) },
+        onClose = {
+            log.add("${indent.tabs()}${wrapped.name}")
+            log.addAll(childrenLog)
+            wrapped.close()
+            done()
+        }
+    )
 }
 
 
 private fun loggingRuntimeTest(wrapped: RuntimeTest, log: MutableList<String>, indent: Int): RuntimeTest =
-    LoadedRuntimeTest(wrapped.name, wrapped.parent, wrapped.properties) {
+    LoadedRuntimeTest(wrapped, block = {
         log.add("${indent.tabs()}${wrapped.name}")
         wrapped.run()
-    }
+    })
 
 private fun Int.tabs() = "\t".repeat(this)
