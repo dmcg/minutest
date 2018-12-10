@@ -4,6 +4,7 @@ import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.internal.transformedTopLevelContext
+import kotlin.reflect.full.memberFunctions
 
 
 interface JUnitXMinutests {
@@ -19,3 +20,8 @@ inline fun <reified F> Any.context(
     noinline transform: (RuntimeNode) -> RuntimeNode = { it },
     noinline builder: Context<Unit, F>.() -> Unit
 ): NodeBuilder<Unit> = transformedTopLevelContext(javaClass.canonicalName, transform, builder)
+
+
+internal fun testMethods(container: Any): List<NodeBuilder<Unit>> = container::class.memberFunctions
+    .filter { it.returnType.classifier == NodeBuilder::class }
+    .map { it.call(container) as NodeBuilder<Unit> }
