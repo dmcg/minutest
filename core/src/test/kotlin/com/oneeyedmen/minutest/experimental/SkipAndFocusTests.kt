@@ -132,7 +132,7 @@ class SkipAndFocusTests {
         )
     }
 
-    private fun checkLog(tests: NodeBuilder<Unit>, vararg expected: String) {
+    private fun checkLog(tests: NodeBuilder<Unit, *>, vararg expected: String) {
         executeTests(tests)
         assertLogged(log.withTabsExpanded(4), *expected)
     }

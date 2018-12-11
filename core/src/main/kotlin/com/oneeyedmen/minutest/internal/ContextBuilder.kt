@@ -7,9 +7,9 @@ internal class ContextBuilder<PF, F>(
     private val type: FixtureType,
     private var fixtureFactory: ((PF, TestDescriptor) -> F)?,
     private var explicitFixtureFactory: Boolean = false
-) : Context<PF, F>(), NodeBuilder<PF> {
+) : Context<PF, F>(), NodeBuilder<PF, F> {
 
-    private val children = mutableListOf<NodeBuilder<F>>()
+    private val children = mutableListOf<NodeBuilder<F, *>>()
     private val befores = mutableListOf<(F) -> Unit>()
     private val afters = mutableListOf<(F) -> Unit>()
     private val transforms = mutableListOf<TestTransform<F>>()
@@ -32,7 +32,7 @@ internal class ContextBuilder<PF, F>(
         afters.add(operation)
     }
 
-    override fun test_(name: String, f: F.() -> F): NodeBuilder<F> =
+    override fun test_(name: String, f: F.() -> F): NodeBuilder<F, F> =
         TestBuilder(name, f).also { children.add(it) }
 
     override fun context(name: String, builder: Context<F, F>.() -> Unit) =

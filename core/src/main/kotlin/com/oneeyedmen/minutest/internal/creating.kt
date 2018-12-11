@@ -10,13 +10,13 @@ inline fun <reified F> transformedTopLevelContext(
     name: String,
     noinline transform: (RuntimeNode) -> RuntimeNode,
     noinline builder: Context<Unit, F>.() -> Unit
-): NodeBuilder<Unit> = topLevelContextBuilder(name, askType<F>(), builder, transform)
+): NodeBuilder<Unit, F> = topLevelContextBuilder(name, askType<F>(), builder, transform)
 
 fun <F> topLevelContext(
     name: String,
     type: FixtureType,
     builder: Context<Unit, F>.() -> Unit
-): NodeBuilder<Unit> = ContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type)).apply(builder)
+): NodeBuilder<Unit, F> = ContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type)).apply(builder)
 
 @Suppress("UNCHECKED_CAST")
 private fun <F> fixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) -> F)? =
@@ -34,7 +34,7 @@ fun <F> topLevelContextBuilder(
     type: FixtureType,
     builder: Context<Unit, F>.() -> Unit,
     transform: (RuntimeNode) -> RuntimeNode
-) = object : NodeBuilder<Unit> {
+) = object : NodeBuilder<Unit, F> {
 
     override val properties: MutableMap<Any, Any> = HashMap()
 

@@ -14,7 +14,7 @@ typealias JupiterTests = JUnit5Minutests
 
 interface JUnit5Minutests {
 
-    val tests: NodeBuilder<Unit>? get() = null // a clue to what to override
+    val tests: NodeBuilder<Unit, *>? get() = null // a clue to what to override
 
     /**
      * Provided so that JUnit will run the tests
@@ -42,14 +42,14 @@ inline fun <reified F> Any.junitTests(
  *
  * @see [NodeBuilder<Unit>#testFactory()]
  */
-fun testFactoryFor(root: NodeBuilder<Unit>) = root.buildRootNode().toStreamOfDynamicNodes()
+fun testFactoryFor(root: NodeBuilder<Unit, *>) = root.buildRootNode().toStreamOfDynamicNodes()
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]
  *
  * @see [testFactoryFor(NodeBuilder<Unit>)]
  */
-fun NodeBuilder<Unit>.toTestFactory() = testFactoryFor(this)
+fun NodeBuilder<Unit, *>.toTestFactory() = testFactoryFor(this)
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 

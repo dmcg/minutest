@@ -30,4 +30,4 @@ object AnotherAnnotation : TestAnnotation
 object YetAnotherAnnotation : TestAnnotation
 
 // check that expression is a nodebuilder at compile time
-private fun <F> isNodeBuilder(nodeBuilder: NodeBuilder<F>) = nodeBuilder
+private fun <PF, F> isNodeBuilder(nodeBuilder: NodeBuilder<PF, F>) = nodeBuilder

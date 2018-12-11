@@ -20,7 +20,7 @@ import kotlin.reflect.jvm.kotlinFunction
 
 internal data class ScannedPackageContext(
     val packageName: String,
-    private val contextFuns: List<KFunction0<NodeBuilder<Unit>>>,
+    private val contextFuns: List<KFunction0<NodeBuilder<Unit, *>>>,
     override val properties: Map<Any, Any> = emptyMap()
 
 ) : RuntimeContext() {
@@ -68,9 +68,9 @@ internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo)
         .map { (packageName, functions) -> ScannedPackageContext(packageName, functions) }
 }
 
-private fun MethodInfo.toKotlinFunction(): KFunction0<NodeBuilder<Unit>>? {
+private fun MethodInfo.toKotlinFunction(): KFunction0<NodeBuilder<Unit, *>>? {
     @Suppress("UNCHECKED_CAST")
-    return loadClassAndGetMethod().kotlinFunction as? KFunction0<NodeBuilder<Unit>>
+    return loadClassAndGetMethod().kotlinFunction as? KFunction0<NodeBuilder<Unit, *>>
 }
 
 private fun MethodInfo.definesTopLevelContext() =

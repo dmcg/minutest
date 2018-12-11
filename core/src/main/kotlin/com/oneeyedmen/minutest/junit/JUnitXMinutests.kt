@@ -5,7 +5,7 @@ import kotlin.reflect.full.memberFunctions
 
 
 interface JUnitXMinutests {
-    val tests: NodeBuilder<Unit>
+    val tests: NodeBuilder<Unit, *>
 }
 
 /**
@@ -17,15 +17,16 @@ interface JUnitXMinutests {
 inline fun <reified F> Any.context(
     noinline transform: (RuntimeNode) -> RuntimeNode = { it },
     noinline builder: Context<Unit, F>.() -> Unit
-): NodeBuilder<Unit> = rootContext(transform, javaClass.canonicalName, builder)
+): NodeBuilder<Unit, *> = rootContext(transform, javaClass.canonicalName, builder)
 
 
-internal fun Any.testMethods(): List<NodeBuilder<Unit>> = this::class.memberFunctions
+@Suppress("UNCHECKED_CAST")
+internal fun Any.testMethods(): List<NodeBuilder<Unit, *>> = this::class.memberFunctions
     .filter { it.returnType.classifier == NodeBuilder::class }
-    .map { it.call(this) as NodeBuilder<Unit> }
+    .map { it.call(this) as NodeBuilder<Unit, *> }
 
 internal fun Any.rootContextFromMethods(): RuntimeContext {
-    val testMethodsAsNodes: List<NodeBuilder<Unit>> = testMethods()
+    val testMethodsAsNodes: List<NodeBuilder<Unit, *>> = testMethods()
     val singleNode = when {
         testMethodsAsNodes.isEmpty() -> error("No test methods found")
         testMethodsAsNodes.size > 1 -> error("More than one test method found")

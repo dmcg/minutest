@@ -7,4 +7,4 @@ inline fun <reified F> rootContext(
     noinline transform: (RuntimeNode) -> RuntimeNode = { it },
     name: String = "root",
     noinline builder: Context<Unit, F>.() -> Unit
-): NodeBuilder<Unit> = transformedTopLevelContext(name, transform, builder)
+): NodeBuilder<Unit, F> = transformedTopLevelContext(name, transform, builder)
