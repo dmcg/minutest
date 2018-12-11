@@ -4,13 +4,13 @@ import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.fullName
-import org.junit.Ignore
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class ScanningTests {
     @Test
-    @Ignore("bug report")
+    @Disabled("bug report")
     fun `scanned tests have correct full names`() {
         val scan = scan({whitelistPackages("example.a")})
         
