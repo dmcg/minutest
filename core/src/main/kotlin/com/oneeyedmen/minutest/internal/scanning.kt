@@ -1,4 +1,4 @@
-package com.oneeyedmen.minutest.junit
+package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.LoadedRuntimeContext
 import com.oneeyedmen.minutest.LoadedRuntimeTest
@@ -13,15 +13,14 @@ import io.github.classgraph.ClassInfo
 import io.github.classgraph.ClassRefTypeSignature
 import io.github.classgraph.MethodInfo
 import io.github.classgraph.TypeSignature
-import kotlin.reflect.KFunction
+import kotlin.reflect.KFunction0
 import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.kotlinFunction
 
-
 internal data class ScannedPackageContext(
     val packageName: String,
-    private val contextProperties: List<KFunction<NodeBuilder<Unit>>>,
+    private val contextFuns: List<KFunction0<NodeBuilder<Unit>>>,
     override val properties: Map<Any, Any> = emptyMap()
 
 ) : RuntimeContext() {
@@ -29,11 +28,11 @@ internal data class ScannedPackageContext(
     override val parent: Named? = null
     override val name: String get() = packageName
     override val children: List<RuntimeNode> by lazy {
-        contextProperties.map { p ->
-            val rootWithDefaultName = p.call().buildRootNode()
+        contextFuns.map { f ->
+            val rootWithDefaultName = f().buildRootNode()
             when (rootWithDefaultName) {
-                is RuntimeContext -> LoadedRuntimeContext(rootWithDefaultName, name = p.name)
-                is RuntimeTest -> LoadedRuntimeTest(rootWithDefaultName, name = p.name)
+                is RuntimeContext -> LoadedRuntimeContext(rootWithDefaultName, name = f.name)
+                is RuntimeTest -> LoadedRuntimeTest(rootWithDefaultName, name = f.name)
             }
         }
     }
@@ -69,9 +68,9 @@ internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo)
         .map { (packageName, functions) -> ScannedPackageContext(packageName, functions) }
 }
 
-private fun MethodInfo.toKotlinFunction(): KFunction<NodeBuilder<Unit>>? {
+private fun MethodInfo.toKotlinFunction(): KFunction0<NodeBuilder<Unit>>? {
     @Suppress("UNCHECKED_CAST")
-    return loadClassAndGetMethod().kotlinFunction as? KFunction<NodeBuilder<Unit>>
+    return loadClassAndGetMethod().kotlinFunction as? KFunction0<NodeBuilder<Unit>>
 }
 
 private fun MethodInfo.definesTopLevelContext() =

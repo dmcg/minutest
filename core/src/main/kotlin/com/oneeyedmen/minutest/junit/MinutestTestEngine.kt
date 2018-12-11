@@ -106,7 +106,7 @@ class MinutestTestEngine : TestEngine {
     }
     
     companion object {
-        val engineId = "minutest"
+        const val engineId = "minutest"
     }
 }
 
@@ -130,7 +130,7 @@ private class MinutestNodeDescriptor(
     private val _uniqueId = parent.uniqueId.append(node.descriptorIdType(), node.name)
     
     override fun getDisplayName() = node.name
-    override fun getUniqueId() = _uniqueId
+    override fun getUniqueId(): UniqueId = _uniqueId
     override fun getSource() = Optional.ofNullable(source)
     override fun getType() = when (node) {
         is RuntimeContext -> CONTAINER
@@ -185,7 +185,7 @@ private fun scan(root: MinutestEngineDescriptor, rq: EngineDiscoveryRequest): Li
         return emptyList()
     }
     
-    return scan(
+    return com.oneeyedmen.minutest.internal.scan(
         scannerConfig = {
             rq.forEach<PackageSelector> { whitelistPackages(it.packageName) }
             rq.forEach<ClassSelector> { whitelistClasses(it.className) }
