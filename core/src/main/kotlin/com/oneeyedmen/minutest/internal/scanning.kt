@@ -31,8 +31,8 @@ internal data class ScannedPackageContext(
         contextFuns.map { f ->
             val rootWithDefaultName = f().buildRootNode()
             when (rootWithDefaultName) {
-                is RuntimeContext -> LoadedRuntimeContext(rootWithDefaultName, name = f.name)
-                is RuntimeTest -> LoadedRuntimeTest(rootWithDefaultName, name = f.name)
+                is RuntimeContext -> LoadedRuntimeContext(delegate = rootWithDefaultName, name = f.name)
+                is RuntimeTest -> LoadedRuntimeTest(delegate = rootWithDefaultName, name = f.name)
             }
         }
     }
@@ -49,7 +49,7 @@ internal data class ScannedPackageContext(
     }
 }
 
-internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean): List<ScannedPackageContext> {
+internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean = {true}): List<ScannedPackageContext> {
     return ClassGraph()
         .enableClassInfo()
         .enableMethodInfo()
