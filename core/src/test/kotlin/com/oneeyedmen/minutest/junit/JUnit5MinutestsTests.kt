@@ -8,7 +8,15 @@ import java.util.*
 
 class JUnit5TestsWithFunction : JUnit5Minutests {
 
-    fun myTests() = rootContext<String> {
+    fun someTests() = rootContext<String> {
+        fixture { "banana" }
+
+        test("test") {
+            assertEquals("banana", this)
+        }
+    }
+
+    fun someMoreTests() = rootContext<String> {
         fixture { "banana" }
 
         test("test") {

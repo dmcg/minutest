@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.*
+import kotlin.reflect.KFunction
 import kotlin.reflect.full.memberFunctions
 
 
@@ -21,17 +22,23 @@ inline fun <reified F> Any.context(
 
 
 @Suppress("UNCHECKED_CAST")
-internal fun Any.testMethods(): List<NodeBuilder<Unit, *>> = this::class.memberFunctions
-    .filter { it.returnType.classifier == RootNodeBuilder::class }
-    .map { it.call(this) as NodeBuilder<Unit, *> }
+internal fun Any.testMethods(): List<KFunction<RootNodeBuilder<*>>> = this::class.memberFunctions
+    .filter { it.returnType.classifier == RootNodeBuilder::class } as List<KFunction<RootNodeBuilder<*>>>
+
 
 internal fun Any.rootContextFromMethods(): RuntimeContext {
-    val testMethodsAsNodes: List<NodeBuilder<Unit, *>> = testMethods()
-    val singleNode = when {
-        testMethodsAsNodes.isEmpty() -> error("No test methods found")
-        testMethodsAsNodes.size > 1 -> error("More than one test method found")
-        else -> testMethodsAsNodes.first()
+    val testMethods = testMethods()
+    return when {
+        testMethods.isEmpty() -> error("No test methods found")
+        testMethods.size == 1 -> toRootNode(testMethods.first())
+        else -> LoadedRuntimeContext("", null, emptyMap(),
+            testMethods.map { method -> LoadedRuntimeContext(toRootNode(method), name = method.name) },
+            onClose = {})
+
     }
-    val runtimeContext = singleNode.buildRootNode() as RuntimeContext
-    return runtimeContext
 }
+
+private fun Any.toRootNode(method: KFunction<RootNodeBuilder<*>>) =
+    method.call(this).buildRootNode() as RuntimeContext
+
+
