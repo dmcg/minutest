@@ -1,16 +1,13 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.NodeBuilder
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.TestDescriptor
+import com.oneeyedmen.minutest.*
 
 
 inline fun <reified F> transformedTopLevelContext(
     name: String,
     noinline transform: (RuntimeNode) -> RuntimeNode,
     noinline builder: Context<Unit, F>.() -> Unit
-): NodeBuilder<Unit, F> = topLevelContextBuilder(name, askType<F>(), builder, transform)
+): RootNodeBuilder<F> = topLevelContextBuilder(name, askType<F>(), builder, transform)
 
 fun <F> topLevelContext(
     name: String,
@@ -34,7 +31,7 @@ fun <F> topLevelContextBuilder(
     type: FixtureType,
     builder: Context<Unit, F>.() -> Unit,
     transform: (RuntimeNode) -> RuntimeNode
-) = object : NodeBuilder<Unit, F> {
+) = object : RootNodeBuilder<F> {
 
     override val properties: MutableMap<Any, Any> = HashMap()
 

@@ -1,18 +1,7 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.LoadedRuntimeContext
-import com.oneeyedmen.minutest.LoadedRuntimeTest
-import com.oneeyedmen.minutest.Named
-import com.oneeyedmen.minutest.NodeBuilder
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.RuntimeTest
-import com.oneeyedmen.minutest.buildRootNode
-import io.github.classgraph.ClassGraph
-import io.github.classgraph.ClassInfo
-import io.github.classgraph.ClassRefTypeSignature
-import io.github.classgraph.MethodInfo
-import io.github.classgraph.TypeSignature
+import com.oneeyedmen.minutest.*
+import io.github.classgraph.*
 import kotlin.reflect.KFunction0
 import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.jvm.javaMethod
@@ -75,7 +64,7 @@ private fun MethodInfo.toKotlinFunction(): KFunction0<NodeBuilder<Unit, *>>? {
 
 private fun MethodInfo.definesTopLevelContext() =
     isStatic && isPublic && parameterInfo.isEmpty() && !isBridge
-        && typeSignatureOrTypeDescriptor.resultType.name() == NodeBuilder::class.java.name
+        && typeSignatureOrTypeDescriptor.resultType.name() == RootNodeBuilder::class.java.name
 
 private fun TypeSignature.name() =
     (this as? ClassRefTypeSignature)?.baseClassName
