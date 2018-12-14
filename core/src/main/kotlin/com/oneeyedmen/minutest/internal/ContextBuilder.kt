@@ -54,17 +54,14 @@ internal class ContextBuilder<PF, F>(
         afterAlls.add(f)
     }
 
-    override fun buildNode(parent: ParentContext<PF>): RuntimeContext = PreparedRuntimeContext(name,
-        parent,
-        emptyList(),
-        befores,
-        afters,
-        afterAlls,
-        transforms,
-        resolvedFixtureFactory(),
-        properties).let { context ->
-        // nastiness to set up parent child in immutable nodes
-        context.copy(children = this.children.map { child -> child.buildNode(context) })
+    override fun buildNode(parent: ParentContext<PF>): RuntimeContext {
+        val children = mutableListOf<RuntimeNode>()
+        return PreparedRuntimeContext(name, parent, children, befores, afters, afterAlls, transforms,
+            resolvedFixtureFactory(),
+            properties).apply {
+            // nastiness to set up parent child in immutable nodes
+            children.addAll(this@ContextBuilder.children.map { child -> child.buildNode(this) })
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
