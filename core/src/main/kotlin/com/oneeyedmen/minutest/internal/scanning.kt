@@ -64,7 +64,7 @@ private fun MethodInfo.toKotlinFunction(): KFunction0<NodeBuilder<Unit, *>>? {
 
 private fun MethodInfo.definesTopLevelContext() =
     isStatic && isPublic && parameterInfo.isEmpty() && !isBridge
-        && typeSignatureOrTypeDescriptor.resultType.name() == RootNodeBuilder::class.java.name
+        && typeSignatureOrTypeDescriptor.resultType.name() == NodeBuilder::class.java.name
 
 private fun TypeSignature.name() =
     (this as? ClassRefTypeSignature)?.baseClassName
