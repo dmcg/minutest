@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.*
 /**
  * The runtime representation of a context.
  */
-internal data class PreparedRuntimeContext<PF, F>(
+internal class PreparedRuntimeContext<PF, F>(
     override val name: String,
     override val parent: ParentContext<PF>,
     override val children: List<RuntimeNode>,
@@ -16,6 +16,19 @@ internal data class PreparedRuntimeContext<PF, F>(
     private val fixtureFactory: (PF, TestDescriptor) -> F,
     override val properties: Map<Any, Any>
 ) : RuntimeContext(), ParentContext<F> {
+
+    constructor(
+        copied: PreparedRuntimeContext<PF, F>,
+        name: String = copied.name,
+        parent: ParentContext<PF> = copied.parent,
+        children: List<RuntimeNode> = copied.children,
+        befores: List<(F) -> Unit> = copied.befores,
+        afters: List<(F) -> Unit> = copied.afters,
+        afterAlls: List<() -> Unit> = copied.afterAlls,
+        transforms: List<TestTransform<F>> = copied.transforms,
+        fixtureFactory: (PF, TestDescriptor) -> F = copied.fixtureFactory,
+        properties: Map<Any, Any> = copied.properties
+    ) : this (name, parent, children, befores, afters, afterAlls, transforms, fixtureFactory, properties)
 
     override fun runTest(test: Test<F>) {
         parent.runTest(buildParentTest(test))
@@ -67,7 +80,7 @@ internal data class PreparedRuntimeContext<PF, F>(
         }
     }
 
-    override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
+    override fun withChildren(children: List<RuntimeNode>) = PreparedRuntimeContext(this, children = children)
 
-    override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
+    override fun withProperties(properties: Map<Any, Any>) = PreparedRuntimeContext(this, properties = properties)
 }
