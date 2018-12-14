@@ -33,7 +33,7 @@ internal class ContextBuilder<PF, F>(
     }
 
     override fun test_(name: String, f: F.() -> F): NodeBuilder<F, F> =
-        TestBuilder(name, f).also { children.add(it) }
+        addChild(TestBuilder(name, f))
 
     override fun context(name: String, builder: Context<F, F>.() -> Unit) =
         // fixture factory is implicitly identity (return parent fixture (this)
@@ -44,8 +44,13 @@ internal class ContextBuilder<PF, F>(
         type: FixtureType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
         builder: Context<F, G>.() -> Unit
-    ) = ContextBuilder(name, type, fixtureFactory).apply(builder).also { children.add(it) }
-
+    ) = addChild(ContextBuilder(name, type, fixtureFactory).apply(builder))
+    
+    fun <T: NodeBuilder<F,*>> addChild(child: T): T {
+        children.add(child)
+        return child
+    }
+    
     override fun addTransform(transform: TestTransform<F>) {
         transforms.add(transform)
     }
