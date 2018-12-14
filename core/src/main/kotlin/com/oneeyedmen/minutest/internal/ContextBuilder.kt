@@ -1,6 +1,9 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.NodeBuilder
+import com.oneeyedmen.minutest.TestDescriptor
+import com.oneeyedmen.minutest.TestTransform
 
 internal class ContextBuilder<PF, F>(
     private val name: String,
@@ -54,15 +57,10 @@ internal class ContextBuilder<PF, F>(
         afterAlls.add(f)
     }
 
-    override fun buildNode(parent: ParentContext<PF>): RuntimeContext {
-        val children = mutableListOf<RuntimeNode>()
-        return PreparedRuntimeContext(name, parent, children, befores, afters, afterAlls, transforms,
+    override fun buildNode(parent: ParentContext<PF>) =
+        PreparedRuntimeContext(name, parent, children, befores, afters, afterAlls, transforms,
             resolvedFixtureFactory(),
-            properties).apply {
-            // nastiness to set up parent child in immutable nodes
-            children.addAll(this@ContextBuilder.children.map { child -> child.buildNode(this) })
-        }
-    }
+            properties)
 
     @Suppress("UNCHECKED_CAST")
     private fun resolvedFixtureFactory(): (PF, TestDescriptor) -> F = when {

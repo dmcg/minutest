@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.*
 /**
  * The runtime representation of a context.
  */
-internal class PreparedRuntimeContext<PF, F>(
+internal class PreparedRuntimeContext<PF, F> private constructor(
     override val name: String,
     override val parent: ParentContext<PF>,
     override val children: List<RuntimeNode>,
@@ -17,18 +17,23 @@ internal class PreparedRuntimeContext<PF, F>(
     override val properties: Map<Any, Any>
 ) : RuntimeContext(), ParentContext<F> {
 
-    constructor(
-        copied: PreparedRuntimeContext<PF, F>,
-        name: String = copied.name,
-        parent: ParentContext<PF> = copied.parent,
-        children: List<RuntimeNode> = copied.children,
-        befores: List<(F) -> Unit> = copied.befores,
-        afters: List<(F) -> Unit> = copied.afters,
-        afterAlls: List<() -> Unit> = copied.afterAlls,
-        transforms: List<TestTransform<F>> = copied.transforms,
-        fixtureFactory: (PF, TestDescriptor) -> F = copied.fixtureFactory,
-        properties: Map<Any, Any> = copied.properties
-    ) : this (name, parent, children, befores, afters, afterAlls, transforms, fixtureFactory, properties)
+    companion object {
+        operator fun <PF, F> invoke(
+            name: String,
+            parent: ParentContext<PF>,
+            childBuilders: List<NodeBuilder<F, *>>,
+            befores: List<(F) -> Unit>,
+            afters: List<(F) -> Unit>,
+            afterAlls: List<() -> Unit>,
+            transforms: List<TestTransform<F>>,
+            fixtureFactory: (PF, TestDescriptor) -> F,
+            properties: Map<Any, Any>
+        ): PreparedRuntimeContext<PF, F> = mutableListOf<RuntimeNode>().let { kids ->
+            PreparedRuntimeContext(name, parent, kids, befores, afters, afterAlls, transforms, fixtureFactory, properties).apply {
+                kids.addAll(childBuilders.map { it.buildNode(this) })
+            }
+        }
+    }
 
     override fun runTest(test: Test<F>) {
         parent.runTest(buildParentTest(test))
@@ -63,8 +68,7 @@ internal class PreparedRuntimeContext<PF, F>(
         befores.forEach { beforeFn ->
             try {
                 beforeFn(fixture)
-            }
-            catch (t: Throwable) {
+            } catch (t: Throwable) {
                 return OpResult(t, fixture)
             }
         }
@@ -80,7 +84,28 @@ internal class PreparedRuntimeContext<PF, F>(
         }
     }
 
-    override fun withChildren(children: List<RuntimeNode>) = PreparedRuntimeContext(this, children = children)
+    private fun copy(
+        name: String = this.name,
+        parent: ParentContext<PF> = this.parent,
+        children: List<RuntimeNode> = this.children,
+        befores: List<(F) -> Unit> = this.befores,
+        afters: List<(F) -> Unit> = this.afters,
+        afterAlls: List<() -> Unit> = this.afterAlls,
+        transforms: List<TestTransform<F>> = this.transforms,
+        fixtureFactory: (PF, TestDescriptor) -> F = this.fixtureFactory,
+        properties: Map<Any, Any> = this.properties
+    ) = PreparedRuntimeContext(name,
+        parent,
+        children,
+        befores,
+        afters,
+        afterAlls,
+        transforms,
+        fixtureFactory,
+        properties)
 
-    override fun withProperties(properties: Map<Any, Any>) = PreparedRuntimeContext(this, properties = properties)
+    // TODO - make this a List<NodeBuilder> to make sure that we preserve the parent-child relationship
+    override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
+
+    override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
 }
