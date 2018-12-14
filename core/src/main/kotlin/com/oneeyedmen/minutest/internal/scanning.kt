@@ -52,6 +52,7 @@ internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo)
         .flatMap { it.declaredMethodInfo }
         .filter { it.definesTopLevelContext() }
         .mapNotNull { it.toKotlinFunction() }
+        // Check Kotlin visibility because a public static Java method might have internal visibility in Kotlin
         .filter { it.visibility == PUBLIC }
         .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
         .map { (packageName, functions) -> ScannedPackageContext(packageName, functions) }
