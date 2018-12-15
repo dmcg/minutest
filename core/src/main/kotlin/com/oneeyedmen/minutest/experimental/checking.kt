@@ -1,6 +1,10 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
+import com.oneeyedmen.minutest.internal.RuntimeTestWrapper
 
 fun checkedAgainst(check: (List<String>) -> Unit): (RuntimeNode) -> RuntimeNode = { node ->
     when (node) {
@@ -31,18 +35,7 @@ private fun <F> loggingRuntimeContext(
     log: MutableList<String>,
     indent: Int,
     done: () -> Unit = {}
-): RuntimeContext<F> {
-    val childrenLog = mutableListOf<String>()
-    return LoadedRuntimeContext(wrapped,
-        children = wrapped.children.map { it.loggedTo(childrenLog, indent + 1) },
-        onClose = {
-            log.add("${indent.tabs()}${wrapped.name}")
-            log.addAll(childrenLog)
-            wrapped.close()
-            done()
-        }
-    )
-}
+) = LoggingRuntimeContextWrapper(wrapped, log, indent, done)
 
 
 private fun loggingRuntimeTest(wrapped: RuntimeTest, log: MutableList<String>, indent: Int) =
@@ -52,3 +45,18 @@ private fun loggingRuntimeTest(wrapped: RuntimeTest, log: MutableList<String>, i
     })
 
 private fun Int.tabs() = "\t".repeat(this)
+
+private class LoggingRuntimeContextWrapper<F>(
+    wrapped: RuntimeContext<F>,
+    private val log: MutableList<String>,
+    private val indent: Int,
+    private val onDone: () -> Unit = {},
+    private val childLog: MutableList<String> = mutableListOf()
+) : RuntimeContextWrapper<F>(wrapped, wrapped.children.map { it.loggedTo(childLog, indent + 1) }) {
+    override fun close() {
+        log.add("${indent.tabs()}${wrapped.name}")
+        log.addAll(childLog)
+        wrapped.close()
+        onDone()
+    }
+}

@@ -23,14 +23,16 @@ internal data class ScannedPackageContext(
         contextFuns.map { f ->
             val rootWithDefaultName = f().buildRootNode()
             when (rootWithDefaultName) {
-                is RuntimeContext<*> -> LoadedRuntimeContext(delegate = rootWithDefaultName, name = f.name)
-                is RuntimeTest -> RuntimeTestWrapper(delegate = rootWithDefaultName, name = f.name)
+                is RuntimeContext<*> -> RuntimeContextWrapper(rootWithDefaultName,
+                    name = f.name)
+                is RuntimeTest -> RuntimeTestWrapper(delegate = rootWithDefaultName,
+                    name = f.name)
             }
         }
     }
     
     override fun withChildren(children: List<RuntimeNode>): RuntimeContext<Unit> {
-        return LoadedRuntimeContext(name, parent, emptyMap(), children, {}, {})
+        return RuntimeContextWrapper(this, children)
     }
     
     override fun withProperties(properties: Map<Any, Any>): RuntimeContext<Unit> {

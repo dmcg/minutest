@@ -1,4 +1,7 @@
-package com.oneeyedmen.minutest
+package com.oneeyedmen.minutest.internal
+
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeTest
 
 /**
  * Wraps a RuntimeTest so that its execution can be instrumented or influenced.
