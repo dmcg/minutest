@@ -35,13 +35,13 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         }
     }
 
-    // This should be Test<F>, but RuntimeContext doesn't yet have a generic type
     override fun runTest(test: Test<F>) {
-        val testForParentToRun = buildParentTest(test)
+        val testForParentToRun: Test<PF> = buildParentTest(test)
         if (parent != null)
             parent.runTest(testForParentToRun)
         else {
-            // If we don't have a parent, we must be a root, and so the fixture type must be Unit
+            // If I don't have a parent, I must be a root, and so my parent fixture type must be Unit
+            @Suppress("UNCHECKED_CAST")
             (testForParentToRun as Test<Unit>)(Unit)
         }
     }
