@@ -7,7 +7,7 @@ import com.oneeyedmen.minutest.*
  */
 internal class PreparedRuntimeContext<PF, F> private constructor(
     override val name: String,
-    override val parent: ParentContext<PF>,
+    override val parent: RuntimeContext?,
     override val children: List<RuntimeNode>,
     private val befores: List<(F) -> Unit>,
     private val afters: List<(F) -> Unit>,
@@ -15,12 +15,12 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
     private val transforms: List<TestTransform<F>>,
     private val fixtureFactory: (PF, TestDescriptor) -> F,
     override val properties: Map<Any, Any>
-) : RuntimeContext(), ParentContext<F> {
+) : RuntimeContext() {
 
     companion object {
         operator fun <PF, F> invoke(
             name: String,
-            parent: ParentContext<PF>,
+            parent: RuntimeContext?,
             childBuilders: List<NodeBuilder<F, *>>,
             befores: List<(F) -> Unit>,
             afters: List<(F) -> Unit>,
@@ -35,8 +35,12 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         }
     }
 
-    override fun runTest(test: Test<F>) {
-        parent.runTest(buildParentTest(test))
+    override fun runTest(test: Test<*>) {
+        val testForParentToRun = buildParentTest(test as Test<F>)
+        if (parent != null)
+            parent.runTest(testForParentToRun)
+        else
+            (testForParentToRun as Test<Unit>)(Unit)
     }
 
     override fun close() {
@@ -86,7 +90,7 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
 
     private fun copy(
         name: String = this.name,
-        parent: ParentContext<PF> = this.parent,
+        parent: RuntimeContext? = this.parent,
         children: List<RuntimeNode> = this.children,
         befores: List<(F) -> Unit> = this.befores,
         afters: List<(F) -> Unit> = this.afters,

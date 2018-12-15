@@ -1,9 +1,6 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.NodeBuilder
-import com.oneeyedmen.minutest.TestDescriptor
-import com.oneeyedmen.minutest.TestTransform
+import com.oneeyedmen.minutest.*
 
 internal class ContextBuilder<PF, F>(
     private val name: String,
@@ -62,7 +59,7 @@ internal class ContextBuilder<PF, F>(
         afterAlls.add(f)
     }
 
-    override fun buildNode(parent: ParentContext<PF>) =
+    override fun buildNode(parent: RuntimeContext?) =
         PreparedRuntimeContext(name, parent, children, befores, afters, afterAlls, transforms,
             resolvedFixtureFactory(),
             properties)

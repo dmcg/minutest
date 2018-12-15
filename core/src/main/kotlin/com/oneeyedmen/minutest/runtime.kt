@@ -8,6 +8,7 @@ sealed class RuntimeNode : Named {
 abstract class RuntimeContext : RuntimeNode(), AutoCloseable {
     abstract val children: List<RuntimeNode>
     abstract fun withChildren(children: List<RuntimeNode>): RuntimeContext
+    abstract fun runTest(test: Test<*>)
 }
 
 abstract class RuntimeTest: RuntimeNode() {
@@ -42,8 +43,11 @@ data class LoadedRuntimeContext(
     override val parent: Named?,
     override val properties: Map<Any, Any>,
     override val children: List<RuntimeNode>,
+    val runnner: (test: Test<*>)-> Unit,
     val onClose: () -> Unit
 ) : RuntimeContext() {
+
+    override fun runTest(test: Test<*>) = runnner(test)
 
     constructor(
         delegate: RuntimeContext,
@@ -53,7 +57,7 @@ data class LoadedRuntimeContext(
         children: List<RuntimeNode> = delegate.children,
         onClose: () -> Unit = delegate::close
         ) :
-        this(name, parent, properties, children, onClose)
+        this(name, parent, properties, children, { delegate.runTest(it) }, onClose)
 
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
     override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)

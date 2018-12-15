@@ -1,9 +1,6 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.NodeBuilder
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.TestDescriptor
+import com.oneeyedmen.minutest.*
 
 
 inline fun <reified F> transformedTopLevelContext(
@@ -38,7 +35,7 @@ fun <F> topLevelContextBuilder(
 
     override val properties: MutableMap<Any, Any> = HashMap()
 
-    override fun buildNode(parent: ParentContext<Unit>): RuntimeNode {
+    override fun buildNode(parent: RuntimeContext?): RuntimeNode {
         val topLevelContext = topLevelContext(name, type, builder)
         // we need to apply our annotations to the root, then run the transforms
         topLevelContext.properties.putAll(properties)
