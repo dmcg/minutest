@@ -31,5 +31,5 @@ private fun Sequence<RuntimeNode>.tests(): Sequence<RuntimeTest> = flatMap { it.
 
 private fun RuntimeNode.tests(): Sequence<RuntimeTest> = when (this) {
     is RuntimeTest -> sequenceOf(this)
-    is RuntimeContext -> children.asSequence().flatMap { it.tests() }
+    is RuntimeContext<*> -> children.asSequence().flatMap { it.tests() }
 }

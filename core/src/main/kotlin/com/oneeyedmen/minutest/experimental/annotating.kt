@@ -40,5 +40,5 @@ fun ((RuntimeNode) -> RuntimeNode).then(next: (RuntimeNode) -> RuntimeNode) = { 
     next(this(node))
 }
 
-fun RuntimeContext.withTransformedChildren(transform: (RuntimeNode) -> RuntimeNode) =
+fun <F> RuntimeContext<F>.withTransformedChildren(transform: (RuntimeNode) -> RuntimeNode) =
     withChildren(children.map(transform))

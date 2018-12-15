@@ -3,30 +3,14 @@ package com.oneeyedmen.minutest.junit
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
-import org.junit.platform.engine.DiscoveryFilter
-import org.junit.platform.engine.DiscoverySelector
-import org.junit.platform.engine.EngineDiscoveryRequest
-import org.junit.platform.engine.EngineExecutionListener
-import org.junit.platform.engine.ExecutionRequest
-import org.junit.platform.engine.Filter
-import org.junit.platform.engine.TestDescriptor
+import org.junit.platform.engine.*
 import org.junit.platform.engine.TestDescriptor.Type.CONTAINER
 import org.junit.platform.engine.TestDescriptor.Type.TEST
-import org.junit.platform.engine.TestEngine
-import org.junit.platform.engine.TestExecutionResult
-import org.junit.platform.engine.TestSource
-import org.junit.platform.engine.TestTag
-import org.junit.platform.engine.UniqueId
-import org.junit.platform.engine.discovery.ClassNameFilter
-import org.junit.platform.engine.discovery.ClassSelector
-import org.junit.platform.engine.discovery.DirectorySelector
-import org.junit.platform.engine.discovery.MethodSelector
-import org.junit.platform.engine.discovery.PackageNameFilter
-import org.junit.platform.engine.discovery.PackageSelector
-import org.junit.platform.engine.discovery.UniqueIdSelector
+import org.junit.platform.engine.discovery.*
 import org.junit.platform.engine.support.descriptor.EngineDescriptor
 import org.opentest4j.IncompleteExecutionException
 import java.util.Optional
+import kotlin.collections.LinkedHashSet
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
@@ -54,7 +38,7 @@ class MinutestTestEngine : TestEngine {
         val result = try {
             if (descriptor is MinutestNodeDescriptor) {
                 when (descriptor.node) {
-                    is RuntimeContext -> executeDynamicChildren(descriptor, request, listener)
+                    is RuntimeContext<*> -> executeDynamicChildren(descriptor, request, listener)
                     is RuntimeTest -> executeTest(descriptor.node)
                 }
             }
@@ -86,7 +70,7 @@ class MinutestTestEngine : TestEngine {
     
     private fun MinutestNodeDescriptor.childrenAsDescriptors() =
         when (node) {
-            is RuntimeContext ->
+            is RuntimeContext<*> ->
                 node.children.map { child -> MinutestNodeDescriptor(this, child) }
             is RuntimeTest ->
                 emptyList()
@@ -133,7 +117,7 @@ private class MinutestNodeDescriptor(
     override fun getUniqueId(): UniqueId = _uniqueId
     override fun getSource() = Optional.ofNullable(source)
     override fun getType() = when (node) {
-        is RuntimeContext -> CONTAINER
+        is RuntimeContext<*> -> CONTAINER
         is RuntimeTest -> TEST
     }
     
@@ -174,7 +158,7 @@ private class MinutestNodeDescriptor(
 
 private fun RuntimeNode.descriptorIdType(): String {
     return when (this) {
-        is RuntimeContext -> contextType
+        is RuntimeContext<*> -> contextType
         is RuntimeTest -> testType
     }
 }

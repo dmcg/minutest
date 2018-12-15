@@ -25,13 +25,12 @@ internal fun Any.testMethods(): List<NodeBuilder<Unit, *>> = this::class.memberF
     .filter { it.returnType.classifier == NodeBuilder::class }
     .map { it.call(this) as NodeBuilder<Unit, *> }
 
-internal fun Any.rootContextFromMethods(): RuntimeContext {
+internal fun Any.rootContextFromMethods(): RuntimeContext<Unit> {
     val testMethodsAsNodes: List<NodeBuilder<Unit, *>> = testMethods()
     val singleNode = when {
         testMethodsAsNodes.isEmpty() -> error("No test methods found")
         testMethodsAsNodes.size > 1 -> error("More than one test method found")
         else -> testMethodsAsNodes.first()
     }
-    val runtimeContext = singleNode.buildRootNode() as RuntimeContext
-    return runtimeContext
+    return singleNode.buildRootNode() as RuntimeContext<Unit>
 }

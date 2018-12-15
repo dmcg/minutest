@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.*
 fun checkedAgainst(check: (List<String>) -> Unit): (RuntimeNode) -> RuntimeNode = { node ->
     when (node) {
         is RuntimeTest -> error("Can only check a context")
-        is RuntimeContext -> {
+        is RuntimeContext<*> -> {
             val log = mutableListOf<String>()
             loggingRuntimeContext(node, log, 0) {
                 check(log)
@@ -22,16 +22,16 @@ fun List<String>.withTabsExpanded(spaces: Int) = this.map { it.replace("\t", " "
 
 private fun RuntimeNode.loggedTo(log: MutableList<String>, level: Int): RuntimeNode =
     when (this) {
-        is RuntimeContext -> loggingRuntimeContext(this, log, level)
+        is RuntimeContext<*> -> loggingRuntimeContext(this, log, level)
         is RuntimeTest -> loggingRuntimeTest(this, log, level)
     }
 
-private fun loggingRuntimeContext(
-    wrapped: RuntimeContext,
+private fun <F> loggingRuntimeContext(
+    wrapped: RuntimeContext<F>,
     log: MutableList<String>,
     indent: Int,
     done: () -> Unit = {}
-): RuntimeContext {
+): RuntimeContext<F> {
     val childrenLog = mutableListOf<String>()
     return LoadedRuntimeContext(wrapped,
         children = wrapped.children.map { it.loggedTo(childrenLog, indent + 1) },

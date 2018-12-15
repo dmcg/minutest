@@ -7,7 +7,7 @@ import com.oneeyedmen.minutest.*
  */
 internal class PreparedRuntimeContext<PF, F> private constructor(
     override val name: String,
-    override val parent: RuntimeContext?,
+    override val parent: RuntimeContext<PF>?,
     override val children: List<RuntimeNode>,
     private val befores: List<(F) -> Unit>,
     private val afters: List<(F) -> Unit>,
@@ -15,12 +15,12 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
     private val transforms: List<TestTransform<F>>,
     private val fixtureFactory: (PF, TestDescriptor) -> F,
     override val properties: Map<Any, Any>
-) : RuntimeContext() {
+) : RuntimeContext<F>() {
 
     companion object {
         operator fun <PF, F> invoke(
             name: String,
-            parent: RuntimeContext?,
+            parent: RuntimeContext<PF>?,
             childBuilders: List<NodeBuilder<F, *>>,
             befores: List<(F) -> Unit>,
             afters: List<(F) -> Unit>,
@@ -35,12 +35,15 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         }
     }
 
-    override fun runTest(test: Test<*>) {
-        val testForParentToRun = buildParentTest(test as Test<F>)
+    // This should be Test<F>, but RuntimeContext doesn't yet have a generic type
+    override fun runTest(test: Test<F>) {
+        val testForParentToRun = buildParentTest(test)
         if (parent != null)
             parent.runTest(testForParentToRun)
-        else
+        else {
+            // If we don't have a parent, we must be a root, and so the fixture type must be Unit
             (testForParentToRun as Test<Unit>)(Unit)
+        }
     }
 
     override fun close() {
@@ -90,7 +93,7 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
 
     private fun copy(
         name: String = this.name,
-        parent: RuntimeContext? = this.parent,
+        parent: RuntimeContext<PF>? = this.parent,
         children: List<RuntimeNode> = this.children,
         befores: List<(F) -> Unit> = this.befores,
         afters: List<(F) -> Unit> = this.afters,

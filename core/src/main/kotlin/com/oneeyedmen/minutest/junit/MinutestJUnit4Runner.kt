@@ -11,7 +11,7 @@ import org.opentest4j.TestAbortedException
 
 class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode>(type) {
 
-    private lateinit var rootContext: RuntimeContext
+    private lateinit var rootContext: RuntimeContext<Unit>
 
     override fun getChildren(): List<RuntimeNode> {
         val testInstance = (testClass.javaClass.newInstance() as? JUnit4Minutests) ?:
@@ -37,14 +37,14 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode>(type) {
 
     private fun run(node: RuntimeNode, notifier: RunNotifier) = when(node) {
         is RuntimeTest -> run(node, notifier)
-        is RuntimeContext -> run(node, notifier)
+        is RuntimeContext<*> -> run(node, notifier)
     }
 
     private fun run(test: RuntimeTest, notifier: RunNotifier) {
         runLeaf(test.asStatement(notifier), test.toDescription(), notifier)
     }
 
-    private fun run(context: RuntimeContext, notifier: RunNotifier) {
+    private fun run(context: RuntimeContext<*>, notifier: RunNotifier) {
         notifier.fireTestStarted(context.toDescription())
         context.children.forEach {
             run(it, notifier)
@@ -56,7 +56,7 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode>(type) {
 
 private fun RuntimeNode.toDescription(): Description = when (this) {
     is RuntimeTest -> Description.createTestDescription(parent?.name.orEmpty(), this.name)
-    is RuntimeContext -> Description.createSuiteDescription(this.name).apply {
+    is RuntimeContext<*> -> Description.createSuiteDescription(this.name).apply {
         this@toDescription.children.forEach {
             addChild(it.toDescription())
         }

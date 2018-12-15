@@ -12,8 +12,8 @@ internal data class ScannedPackageContext(
     private val contextFuns: List<KFunction0<NodeBuilder<Unit, *>>>,
     override val properties: Map<Any, Any> = emptyMap()
 
-) : RuntimeContext() {
-    override fun runTest(test: Test<*>) {
+) : RuntimeContext<Unit>() {
+    override fun runTest(test: Test<Unit>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -23,13 +23,13 @@ internal data class ScannedPackageContext(
         contextFuns.map { f ->
             val rootWithDefaultName = f().buildRootNode()
             when (rootWithDefaultName) {
-                is RuntimeContext -> LoadedRuntimeContext(delegate = rootWithDefaultName, name = f.name)
+                is RuntimeContext<*> -> LoadedRuntimeContext(delegate = rootWithDefaultName, name = f.name)
                 is RuntimeTest -> LoadedRuntimeTest(delegate = rootWithDefaultName, name = f.name)
             }
         }
     }
     
-    override fun withChildren(children: List<RuntimeNode>): RuntimeContext {
+    override fun withChildren(children: List<RuntimeNode>): RuntimeContext<Unit> {
         return LoadedRuntimeContext(name, parent, emptyMap(), children, {}, {})
     }
     

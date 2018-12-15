@@ -14,7 +14,7 @@ val skipAndFocus = ::inexclude
 
 fun inexclude(root: RuntimeNode) = when (root) {
     is RuntimeTest -> root.inexcluded(defaultToSkip = false)
-    is RuntimeContext -> {
+    is RuntimeContext<*> -> {
         if (SKIP.appliesTo(root)) {
             root.skipped()
         } else {
@@ -26,19 +26,19 @@ fun inexclude(root: RuntimeNode) = when (root) {
 
 private fun RuntimeNode.hasAFocusedChild(): Boolean = when (this) {
     is RuntimeTest -> FOCUS.appliesTo(this)
-    is RuntimeContext -> hasAFocusedChild()
+    is RuntimeContext<*> -> hasAFocusedChild()
 }
 
-private fun RuntimeContext.hasAFocusedChild() = FOCUS.appliesTo(this) || children.hasAFocusedChild()
+private fun RuntimeContext<*>.hasAFocusedChild() = FOCUS.appliesTo(this) || children.hasAFocusedChild()
 
 private fun List<RuntimeNode>.hasAFocusedChild() = find { it.hasAFocusedChild() } != null
 
 private fun RuntimeNode.inexcluded(defaultToSkip: Boolean): RuntimeNode = when (this) {
     is RuntimeTest -> inexcluded(defaultToSkip)
-    is RuntimeContext -> inexcluded(defaultToSkip)
+    is RuntimeContext<*> -> inexcluded(defaultToSkip)
 }
 
-private fun RuntimeContext.inexcluded(defaultToSkip: Boolean) =
+private fun RuntimeContext<*>.inexcluded(defaultToSkip: Boolean) =
     when {
         FOCUS.appliesTo(this) ->
             this.withTransformedChildren { it.inexcluded(defaultToSkip = false) }
