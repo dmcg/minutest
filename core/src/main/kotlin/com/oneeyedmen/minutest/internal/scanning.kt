@@ -17,14 +17,14 @@ internal data class ScannedPackageContext(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override val parent: Named? = null
+    override val parent = null
     override val name: String get() = packageName
     override val children: List<RuntimeNode> by lazy {
         contextFuns.map { f ->
             val rootWithDefaultName = f().buildRootNode()
             when (rootWithDefaultName) {
                 is RuntimeContext<*> -> LoadedRuntimeContext(delegate = rootWithDefaultName, name = f.name)
-                is RuntimeTest -> LoadedRuntimeTest(delegate = rootWithDefaultName, name = f.name)
+                is RuntimeTest -> RuntimeTestWrapper(delegate = rootWithDefaultName, name = f.name)
             }
         }
     }
@@ -33,7 +33,7 @@ internal data class ScannedPackageContext(
         return LoadedRuntimeContext(name, parent, emptyMap(), children, {}, {})
     }
     
-    override fun withProperties(properties: Map<Any, Any>): RuntimeNode {
+    override fun withProperties(properties: Map<Any, Any>): RuntimeContext<Unit> {
         return copy(properties = properties)
     }
     

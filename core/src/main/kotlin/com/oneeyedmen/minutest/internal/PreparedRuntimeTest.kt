@@ -11,8 +11,8 @@ import com.oneeyedmen.minutest.TestDescriptor
 internal class PreparedRuntimeTest<F>(
     override val name: String,
     parent: RuntimeContext<F>?,
-    private val f: F.(TestDescriptor) -> F,
-    override val properties: Map<Any, Any>
+    override val properties: Map<Any, Any>,
+    private val f: F.(TestDescriptor) -> F
 ) : RuntimeTest(), Test<F>, (F) -> F {
 
     override val parent: RuntimeContext<F> = parent ?: error("RuntimeTest [$name] must have a parent")
@@ -28,5 +28,6 @@ internal class PreparedRuntimeTest<F>(
         parent: RuntimeContext<F>? = this.parent,
         f:  F.(TestDescriptor) -> F = this.f,
         properties: Map<Any, Any> = this.properties
-    ) = PreparedRuntimeTest(name, parent, f, properties)
+    ) = PreparedRuntimeTest(name, parent, properties, f)
 }
+

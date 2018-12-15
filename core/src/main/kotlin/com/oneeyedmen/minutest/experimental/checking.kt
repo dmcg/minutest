@@ -45,10 +45,10 @@ private fun <F> loggingRuntimeContext(
 }
 
 
-private fun loggingRuntimeTest(wrapped: RuntimeTest, log: MutableList<String>, indent: Int): RuntimeTest =
-    LoadedRuntimeTest(wrapped, block = {
+private fun loggingRuntimeTest(wrapped: RuntimeTest, log: MutableList<String>, indent: Int) =
+    RuntimeTestWrapper(wrapped, block = { delegate ->
         log.add("${indent.tabs()}${wrapped.name}")
-        wrapped.run()
+        delegate.run()
     })
 
 private fun Int.tabs() = "\t".repeat(this)
