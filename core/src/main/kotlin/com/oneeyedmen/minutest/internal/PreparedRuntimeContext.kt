@@ -22,12 +22,12 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
             name: String,
             parent: RuntimeContext<PF>?,
             childBuilders: List<NodeBuilder<F, *>>,
-            befores: List<(F) -> Unit>,
-            afters: List<(F) -> Unit>,
-            afterAlls: List<() -> Unit>,
-            transforms: List<TestTransform<F>>,
+            befores: List<(F) -> Unit> = emptyList(),
+            afters: List<(F) -> Unit> = emptyList(),
+            afterAlls: List<() -> Unit> = emptyList(),
+            transforms: List<TestTransform<F>> = emptyList(),
             fixtureFactory: (PF, TestDescriptor) -> F,
-            properties: Map<Any, Any>
+            properties: Map<Any, Any> = emptyMap()
         ): PreparedRuntimeContext<PF, F> = mutableListOf<RuntimeNode>().let { kids ->
             PreparedRuntimeContext(name, parent, kids, befores, afters, afterAlls, transforms, fixtureFactory, properties).apply {
                 kids.addAll(childBuilders.map { it.buildNode(this) })
@@ -113,4 +113,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
 
     // TODO - make this a List<NodeBuilder> to make sure that we preserve the parent-child relationship
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
+
+    override fun adoptedBy(parent: RuntimeContext<*>?) = copy(parent = parent as RuntimeContext<PF>)
 }

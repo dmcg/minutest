@@ -19,4 +19,7 @@ class RuntimeTestWrapper(
     override fun run() {
         block(delegate)
     }
+
+    override fun adoptedBy(parent: RuntimeContext<*>?) = RuntimeTestWrapper(delegate.adoptedBy(parent))
+
 }

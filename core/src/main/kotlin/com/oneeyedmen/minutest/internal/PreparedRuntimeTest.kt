@@ -20,5 +20,7 @@ internal class PreparedRuntimeTest<F>(
     override fun invoke(fixture: F) = fixture.f(this)
     
     override fun run() = parent.runTest(this)
+
+    override fun adoptedBy(parent: RuntimeContext<*>?) = PreparedRuntimeTest(name, parent as RuntimeContext<F>, properties, f)
 }
 
