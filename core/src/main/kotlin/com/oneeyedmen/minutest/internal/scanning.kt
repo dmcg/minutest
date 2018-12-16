@@ -35,10 +35,6 @@ internal data class ScannedPackageContext(
         return RuntimeContextWrapper(this, children)
     }
     
-    override fun withProperties(properties: Map<Any, Any>): RuntimeContext<Unit> {
-        return copy(properties = properties)
-    }
-    
     override fun close() {
     }
 }

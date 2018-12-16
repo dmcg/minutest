@@ -21,7 +21,6 @@ open class RuntimeContextWrapper<F>(
     override fun runTest(test: Test<F>) = wrapped.runTest(test)
 
     override fun withChildren(children: List<RuntimeNode>) = wrapped.withChildren(children)
-    override fun withProperties(properties: Map<Any, Any>) = wrapped.withProperties(properties)
 
     override fun close() = wrapped.close()
 }

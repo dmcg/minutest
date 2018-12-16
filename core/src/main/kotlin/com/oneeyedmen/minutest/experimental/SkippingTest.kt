@@ -13,12 +13,4 @@ internal class SkippingTest<F>(
     override val properties: Map<Any, Any>
 ) : RuntimeTest() {
     override fun run() = throw TestAbortedException("skipped")
-
-    override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
-
-    private fun copy(
-        name: String = this.name,
-        parent: RuntimeContext<F>? = this.parent,
-        properties: Map<Any, Any> = this.properties
-    ) = SkippingTest(name, parent, properties)
 }

@@ -113,6 +113,4 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
 
     // TODO - make this a List<NodeBuilder> to make sure that we preserve the parent-child relationship
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
-
-    override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
 }

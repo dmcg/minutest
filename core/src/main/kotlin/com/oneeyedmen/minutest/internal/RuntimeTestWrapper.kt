@@ -16,9 +16,6 @@ class RuntimeTestWrapper(
     override val parent: RuntimeContext<*>? = delegate.parent
     override val properties: Map<Any, Any> = delegate.properties
 
-    override fun withProperties(properties: Map<Any, Any>) =
-        RuntimeTestWrapper(delegate.withProperties(properties), block = block)
-
     override fun run() {
         block(delegate)
     }

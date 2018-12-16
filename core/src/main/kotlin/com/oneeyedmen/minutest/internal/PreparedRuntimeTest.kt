@@ -20,14 +20,5 @@ internal class PreparedRuntimeTest<F>(
     override fun invoke(fixture: F) = fixture.f(this)
     
     override fun run() = parent.runTest(this)
-
-    override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
-
-    private fun copy(
-        name: String = this.name,
-        parent: RuntimeContext<F>? = this.parent,
-        f:  F.(TestDescriptor) -> F = this.f,
-        properties: Map<Any, Any> = this.properties
-    ) = PreparedRuntimeTest(name, parent, properties, f)
 }
 
