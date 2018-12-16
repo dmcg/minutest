@@ -5,22 +5,20 @@ import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.fullName
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class ScanningTests {
     @Test
-    @Disabled("bug report")
     fun `scanned tests have correct full names`() {
         val scan = scan({whitelistPackages("example.a")})
         
         val tests = scan.asSequence().tests().map { it.fullName().joinToString("/") }.toSet()
         assertEquals(
             setOf(
-                "example.a/a failing test",
-                "example.a/a passing test",
-                "example.a/example skipped context",
-                "example.a/a typed fixture test"
+                "example.a/example context/a failing test",
+                "example.a/example context/a passing test",
+                "example.a/example skipped context/example skipped context", // A little suss because of the skip
+                "example.a/example typed context/a typed fixture test"
             ),
             tests
         )

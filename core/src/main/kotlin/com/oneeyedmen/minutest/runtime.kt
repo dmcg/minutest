@@ -9,7 +9,7 @@ sealed class RuntimeNode : Named {
 abstract class RuntimeContext<F> : RuntimeNode(), AutoCloseable {
     abstract val children: List<RuntimeNode>
     // TODO - should be withTransformedChildren, taking a (RuntimeContext) -> RuntimeNode
-    abstract fun withChildren(children: List<RuntimeNode>): RuntimeContext<F>
+    abstract fun adopting(children: List<RuntimeNode>): RuntimeContext<F>
     abstract override fun adoptedBy(parent: RuntimeContext<*>?): RuntimeContext<F>
     abstract fun runTest(test: Test<F>)
 }

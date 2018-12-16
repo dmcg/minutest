@@ -7,6 +7,7 @@ import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Test
 import kotlin.test.fail
 
+// TODO - these tests are completely pointless now that I've removed the skipped from the name!
 
 class SkipAndFocusTests {
 

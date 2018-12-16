@@ -41,4 +41,4 @@ fun ((RuntimeNode) -> RuntimeNode).then(next: (RuntimeNode) -> RuntimeNode) = { 
 }
 
 fun <F> RuntimeContext<F>.withTransformedChildren(transform: (RuntimeNode) -> RuntimeNode) =
-    withChildren(children.map(transform))
+    adopting(children.map(transform))
