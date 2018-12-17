@@ -1,13 +1,12 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.assertLogged
 import com.oneeyedmen.minutest.executeTests
+import com.oneeyedmen.minutest.internal.TopLevelContextBuilder
 import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Test
 import kotlin.test.fail
 
-// TODO - these tests are completely pointless now that I've removed the skipped from the name!
 
 class SkipAndFocusTests {
 
@@ -28,7 +27,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `skip test`() {
-        val tests = rootContext<Unit>(skipAndFocus<Unit>().then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             SKIP - test("t1") { fail("t1 wasn't skipped") }
             test("t2", noop)
         }
@@ -40,7 +39,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `skip context`() {
-        val tests = rootContext<Unit>(skipAndFocus<Unit>().then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             SKIP - context("c1") {
                 test("c1/t1") { fail("c1/t1 wasn't skipped") }
             }
@@ -55,7 +54,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `focus test skips unfocused`() {
-        val tests = rootContext<Unit>(skipAndFocus<Unit>().then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             test("t1") { fail("t1 wasn't skipped") }
             FOCUS - test("t2", noop)
         }
@@ -67,7 +66,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `focus context skips unfocused`() {
-        val tests = rootContext<Unit>(skipAndFocus<Unit>().then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             test("t1") { fail("t1 wasn't skipped") }
             FOCUS - context("c1") {
                 test("c1/t1", noop)
@@ -82,7 +81,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `focus downtree skips unfocused from root`() {
-        val tests = rootContext<Unit>(skipAndFocus<Unit>().then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             test("t1") { fail("t1 wasn't skipped") }
             context("c1") {
                 FOCUS - test("c1/t1", noop)
@@ -97,7 +96,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `deep thing`() {
-        val tests = rootContext<Unit>(skipAndFocus<Unit>().then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             test("t1") { fail("t1 wasn't skipped") }
             context("c1") {
                 FOCUS - test("c1/t1", noop)
@@ -124,7 +123,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `skip from root`() {
-        val tests = rootContext<Unit>(skipAndFocus<Unit>().then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             annotateWith(SKIP)
             test("root was skipped") {
                 fail("root wasn't skipped")
@@ -136,7 +135,7 @@ class SkipAndFocusTests {
         )
     }
 
-    private fun checkLog(tests: NodeBuilder<Unit, *>, vararg expected: String) {
+    private fun checkLog(tests: TopLevelContextBuilder<*>, vararg expected: String) {
         executeTests(tests)
         assertLogged(log.withTabsExpanded(4), *expected)
     }

@@ -11,7 +11,7 @@ import org.opentest4j.TestAbortedException
 
 class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode>(type) {
 
-    private lateinit var rootContext: RuntimeContext<Unit>
+    private lateinit var rootContext: RuntimeContext<*>
 
     override fun getChildren(): List<RuntimeNode> {
         val testInstance = (testClass.javaClass.newInstance() as? JUnit4Minutests) ?:

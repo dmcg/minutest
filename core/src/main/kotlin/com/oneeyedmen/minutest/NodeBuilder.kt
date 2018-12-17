@@ -5,5 +5,3 @@ interface NodeBuilder<ParentF, F> {
     val properties: MutableMap<Any, Any>
     fun buildNode(parent: RuntimeContext<ParentF>?): RuntimeNode
 }
-
-fun NodeBuilder<Unit, *>.buildRootNode(): RuntimeNode = buildNode(null)
