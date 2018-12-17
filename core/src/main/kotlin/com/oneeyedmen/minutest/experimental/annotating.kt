@@ -11,7 +11,7 @@ interface TestAnnotation {
         addTo(nodeBuilder.properties)
     }
 
-    fun appliesTo(runtimeNode: RuntimeNode) = runtimeNode.properties.containsKey(this)
+    fun appliesTo(runtimeNode: RuntimeNode<*, *>) = runtimeNode.properties.containsKey(this)
 
     fun addTo(properties: MutableMap<Any, Any>) {
         properties[this] = true
@@ -36,9 +36,11 @@ fun Context<*, *>.annotateWith(annotation: TestAnnotation) {
     annotation.applyTo(this as NodeBuilder<*, *>)
 }
 
-fun <F> ((RuntimeContext<F>) -> RuntimeContext<F>).then(next: (RuntimeContext<F>) -> RuntimeContext<F>) = { context: RuntimeContext<F> ->
+fun <F> ((RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>).then(
+    next: (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>
+) = { context: RuntimeContext<Unit, F> ->
     next(this(context))
 }
 
-fun <F> RuntimeContext<F>.withTransformedChildren(transform: (RuntimeNode) -> RuntimeNode) =
+fun <PF, F> RuntimeContext<PF, F>.withTransformedChildren(transform: (RuntimeNode<F, *>) -> RuntimeNode<F, *>) =
     adopting(children.map(transform))

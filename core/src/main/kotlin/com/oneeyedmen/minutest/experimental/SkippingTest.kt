@@ -7,12 +7,12 @@ import org.opentest4j.TestAbortedException
 /**
  * A very special RuntimeTest that does not need a parent, as it never needs a fixture.
  */
-internal class SkippingTest(
+internal class SkippingTest<F>(
     override val name: String,
-    override val parent: RuntimeContext<*>,
+    override val parent: RuntimeContext<*, F>,
     override val properties: Map<Any, Any>
-) : RuntimeTest() {
+) : RuntimeTest<F>() {
     override fun run() = throw TestAbortedException("skipped")
 
-    override fun adoptedBy(parent: RuntimeContext<*>) = SkippingTest(name, parent, properties)
+    override fun adoptedBy(parent: RuntimeContext<*, F>) = SkippingTest(name, parent, properties)
 }

@@ -7,7 +7,8 @@ import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.kotlinFunction
 
-internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean = {true}): List<RuntimeContext<Unit>> {
+internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean = {true})
+    : List<RuntimeContext<Unit, Unit>> {
     return ClassGraph()
         .enableClassInfo()
         .enableMethodInfo()
@@ -40,7 +41,8 @@ private fun TypeSignature.name() =
     (this as? ClassRefTypeSignature)?.baseClassName
 
 
-internal fun rootFor(packageName: String, contextFuns: List<KFunction0<TopLevelContextBuilder<*>>>): RuntimeContext<Unit> {
+internal fun rootFor(packageName: String, contextFuns: List<KFunction0<TopLevelContextBuilder<*>>>)
+    : RuntimeContext<Unit, Unit> {
     val rootContextBuilders: List<TopLevelContextBuilder<*>> = contextFuns
         .map { fn ->
             fn().copy(name = fn.name)

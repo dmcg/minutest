@@ -14,19 +14,19 @@ data class TopLevelContextBuilder<F>(
     val name: String,
     val type: FixtureType,
     val builder: Context<Unit, F>.() -> Unit,
-    val transform: (RuntimeContext<F>) -> RuntimeContext<F>,
+    val transform: (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>,
     override val properties: MutableMap<Any, Any> = mutableMapOf()
 ) : NodeBuilder<Unit, F> {
 
     companion object {
         inline operator fun <reified F> invoke(
             name: String,
-            noinline transform: (RuntimeContext<F>) -> RuntimeContext<F>,
+            noinline transform: (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>,
             noinline builder: Context<Unit, F>.() -> Unit
         ) = TopLevelContextBuilder(name, askType<F>(), builder, transform)
     }
 
-    override fun buildNode(parent: RuntimeContext<Unit>?): RuntimeContext<F> {
+    override fun buildNode(parent: RuntimeContext<*, Unit>?): RuntimeContext<Unit, F> {
         val delegateBuilder = ContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type)).apply {
             this.properties.putAll(this@TopLevelContextBuilder.properties)
             this.builder()
@@ -34,7 +34,7 @@ data class TopLevelContextBuilder<F>(
         return delegateBuilder.buildNode(parent).run(transform)
     }
 
-    fun buildRootNode(): RuntimeContext<F> = buildNode(null)
+    fun buildRootNode(): RuntimeContext<Unit, F> = buildNode(null)
 
     @Suppress("UNCHECKED_CAST")
     private fun <F> fixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) -> F)? =

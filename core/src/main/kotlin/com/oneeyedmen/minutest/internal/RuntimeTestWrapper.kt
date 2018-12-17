@@ -8,18 +8,18 @@ import com.oneeyedmen.minutest.RuntimeTest
  *
  * The test's parent is not updated, so that when it is run, it runs as it would have before.
  */
-class RuntimeTestWrapper(
-    val delegate: RuntimeTest,
+class RuntimeTestWrapper<F>(
+    val delegate: RuntimeTest<F>,
     override val name: String = delegate.name,
-    val block: (RuntimeTest) -> Unit = { it.run() }
-) : RuntimeTest() {
-    override val parent: RuntimeContext<*> = delegate.parent
+    val block: (RuntimeTest<F>) -> Unit = { it.run() }
+) : RuntimeTest<F>() {
+    override val parent: RuntimeContext<*, F> = delegate.parent
     override val properties: Map<Any, Any> = delegate.properties
 
     override fun run() {
         block(delegate)
     }
 
-    override fun adoptedBy(parent: RuntimeContext<*>) = RuntimeTestWrapper(delegate.adoptedBy(parent))
+    override fun adoptedBy(parent: RuntimeContext<*, F>) = RuntimeTestWrapper(delegate.adoptedBy(parent))
 
 }

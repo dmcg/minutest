@@ -42,20 +42,20 @@ fun <F> TopLevelContextBuilder<F>.toTestFactory() = testFactoryFor(this)
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-fun RuntimeNode.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
-    if (this is RuntimeContext<*>)
+fun RuntimeNode<*, *>.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
+    if (this is RuntimeContext<*, *>)
     // don't create a vestigial single-child context
         this.children.toStreamOfDynamicNodes(this)
     else
         Stream.of(this.toDynamicNode())
 
-private fun RuntimeNode.toDynamicNode(): DynamicNode = when (this) {
+private fun RuntimeNode<*, *>.toDynamicNode(): DynamicNode = when (this) {
     is RuntimeTest -> DynamicTest.dynamicTest(name) { this.run() }
-    is RuntimeContext<*> -> this.toDynamicContainer()
+    is RuntimeContext -> this.toDynamicContainer()
 }
 
-private fun RuntimeContext<*>.toDynamicContainer(): DynamicContainer =
+private fun RuntimeContext<*, *>.toDynamicContainer(): DynamicContainer =
     DynamicContainer.dynamicContainer(name, children.toStreamOfDynamicNodes(this))
 
-private fun Iterable<RuntimeNode>.toStreamOfDynamicNodes(parent: RuntimeContext<*>) =
-    asSequence().map(RuntimeNode::toDynamicNode).asStream().onClose { parent.close() }
+private fun Iterable<RuntimeNode<*, *>>.toStreamOfDynamicNodes(parent: RuntimeContext<*, *>) =
+    asSequence().map { it.toDynamicNode() }.asStream().onClose { parent.close() }
