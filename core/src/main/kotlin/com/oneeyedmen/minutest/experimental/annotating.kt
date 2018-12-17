@@ -19,13 +19,13 @@ interface TestAnnotation {
 
     operator fun plus(that: TestAnnotation) = listOf(this, that)
 
-    operator fun <PF, F> minus(nodeBuilder: NodeBuilder<PF, F>): NodeBuilder<PF, F> =
+    operator fun <PF, F, NodeBuilderT: NodeBuilder<PF, F>> minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
         nodeBuilder.also {
             this.applyTo(it)
         }
 }
 
-operator fun <PF, F> Iterable<TestAnnotation>.minus(nodeBuilder: NodeBuilder<PF, F>): NodeBuilder<PF, F> =
+operator fun <PF, F, NodeBuilderT: NodeBuilder<PF, F>> Iterable<TestAnnotation>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT=
     nodeBuilder.also {
         this.forEach { annotation ->
             annotation.applyTo(nodeBuilder)

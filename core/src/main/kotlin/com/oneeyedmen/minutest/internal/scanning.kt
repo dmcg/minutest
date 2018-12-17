@@ -1,6 +1,5 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.RuntimeContext
 import io.github.classgraph.*
 import kotlin.reflect.KFunction0
@@ -28,24 +27,23 @@ internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo)
         .map { (packageName, functions) -> rootFor(packageName, functions) }
 }
 
-private fun MethodInfo.toKotlinFunction(): KFunction0<NodeBuilder<Unit, *>>? {
+private fun MethodInfo.toKotlinFunction(): KFunction0<TopLevelContextBuilder<*>>? {
     @Suppress("UNCHECKED_CAST")
-    return loadClassAndGetMethod().kotlinFunction as? KFunction0<NodeBuilder<Unit, *>>
+    return loadClassAndGetMethod().kotlinFunction as? KFunction0<TopLevelContextBuilder<*>>
 }
 
 private fun MethodInfo.definesTopLevelContext() =
     isStatic && isPublic && parameterInfo.isEmpty() && !isBridge
-        && typeSignatureOrTypeDescriptor.resultType.name() == NodeBuilder::class.java.name
+        && typeSignatureOrTypeDescriptor.resultType.name() == TopLevelContextBuilder::class.java.name
 
 private fun TypeSignature.name() =
     (this as? ClassRefTypeSignature)?.baseClassName
 
 
-internal fun rootFor(packageName: String, contextFuns: List<KFunction0<NodeBuilder<Unit, *>>>): RuntimeContext<Unit> {
+internal fun rootFor(packageName: String, contextFuns: List<KFunction0<TopLevelContextBuilder<*>>>): RuntimeContext<Unit> {
     val rootContextBuilders: List<TopLevelContextBuilder<*>> = contextFuns
         .map { fn ->
-            (fn() as TopLevelContextBuilder<*>).copy(name = fn.name)
-            // TODO - we should be finding TopLevelContextBuilder not NodeBuilder
+            fn().copy(name = fn.name)
         }
     return PreparedRuntimeContext<Unit, Unit>(
         name = packageName,

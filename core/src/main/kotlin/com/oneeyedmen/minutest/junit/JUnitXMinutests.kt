@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.internal.TopLevelContextBuilder
 import kotlin.reflect.full.memberFunctions
 
 
@@ -22,7 +23,7 @@ inline fun <reified F> Any.context(
 
 @Suppress("UNCHECKED_CAST")
 internal fun Any.testMethods(): List<NodeBuilder<Unit, *>> = this::class.memberFunctions
-    .filter { it.returnType.classifier == NodeBuilder::class }
+    .filter { it.returnType.classifier == TopLevelContextBuilder::class }
     .map { it.call(this) as NodeBuilder<Unit, *> }
 
 internal fun Any.rootContextFromMethods(): RuntimeContext<Unit> {
