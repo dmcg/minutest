@@ -13,13 +13,13 @@ class RuntimeTestWrapper(
     override val name: String = delegate.name,
     val block: (RuntimeTest) -> Unit = { it.run() }
 ) : RuntimeTest() {
-    override val parent: RuntimeContext<*>? = delegate.parent
+    override val parent: RuntimeContext<*> = delegate.parent
     override val properties: Map<Any, Any> = delegate.properties
 
     override fun run() {
         block(delegate)
     }
 
-    override fun adoptedBy(parent: RuntimeContext<*>?) = RuntimeTestWrapper(delegate.adoptedBy(parent))
+    override fun adoptedBy(parent: RuntimeContext<*>) = RuntimeTestWrapper(delegate.adoptedBy(parent))
 
 }

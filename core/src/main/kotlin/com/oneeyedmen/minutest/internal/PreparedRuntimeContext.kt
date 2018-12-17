@@ -40,7 +40,7 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         if (parent != null)
             parent.runTest(testForParentToRun)
         else {
-            // If I don't have a parent, I must be a root, and so my parent fixture type must be Unit
+            // I don't have a parent so I must be a root, so my parent fixture type must be Unit. I can provide that.
             @Suppress("UNCHECKED_CAST")
             (testForParentToRun as Test<Unit>)(Unit)
         }
@@ -114,5 +114,5 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
     // TODO - make this a List<NodeBuilder> to make sure that we preserve the parent-child relationship
     override fun adopting(children: List<RuntimeNode>) = copy(children = children.map { it.adoptedBy(this) } )
 
-    override fun adoptedBy(parent: RuntimeContext<*>?) = copy(parent = parent as RuntimeContext<PF>)
+    override fun adoptedBy(parent: RuntimeContext<*>) = copy(parent = parent as RuntimeContext<PF>)
 }

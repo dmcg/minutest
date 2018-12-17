@@ -9,10 +9,10 @@ import org.opentest4j.TestAbortedException
  */
 internal class SkippingTest(
     override val name: String,
-    override val parent: RuntimeContext<*>?,
+    override val parent: RuntimeContext<*>,
     override val properties: Map<Any, Any>
 ) : RuntimeTest() {
     override fun run() = throw TestAbortedException("skipped")
 
-    override fun adoptedBy(parent: RuntimeContext<*>?) = SkippingTest(name, parent, properties)
+    override fun adoptedBy(parent: RuntimeContext<*>) = SkippingTest(name, parent, properties)
 }

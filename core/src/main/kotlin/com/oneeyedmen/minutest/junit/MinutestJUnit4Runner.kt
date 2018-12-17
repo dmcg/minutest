@@ -55,7 +55,7 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode>(type) {
 }
 
 private fun RuntimeNode.toDescription(): Description = when (this) {
-    is RuntimeTest -> Description.createTestDescription(parent?.name.orEmpty(), this.name)
+    is RuntimeTest -> Description.createTestDescription(parent.name, this.name)
     is RuntimeContext<*> -> Description.createSuiteDescription(this.name).apply {
         this@toDescription.children.forEach {
             addChild(it.toDescription())

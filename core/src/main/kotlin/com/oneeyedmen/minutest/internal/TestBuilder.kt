@@ -8,5 +8,7 @@ internal data class TestBuilder<F>(val name: String, val f: F.(TestDescriptor) -
 
     override val properties: MutableMap<Any, Any> = HashMap()
 
-    override fun buildNode(parent: RuntimeContext<F>?) = PreparedRuntimeTest(name, parent, properties, f)
+    override fun buildNode(parent: RuntimeContext<F>?) =
+        if (parent == null) error("Can't build test [$name] without a parent context")
+        else PreparedRuntimeTest(name, parent, properties, f)
 }
