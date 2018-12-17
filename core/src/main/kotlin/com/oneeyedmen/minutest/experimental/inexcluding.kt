@@ -51,11 +51,9 @@ private fun RuntimeContext<*>.inexcluded(defaultToSkip: Boolean) =
 private fun RuntimeTest.inexcluded(defaultToSkip: Boolean) =
     when {
         FOCUS.appliesTo(this) -> this
-        defaultToSkip || SKIP.appliesTo(this) -> this.skipped()
+        defaultToSkip || SKIP.appliesTo(this) -> SkippingTest(this.name, this.parent, this.properties)
         else -> this
     }
 
-private fun RuntimeNode.skipped() = when (this) {
-    is RuntimeTest -> SkippingTest(this.name, this.parent, this.properties)
-    is RuntimeContext<*> -> SkippingTest(this.name, this, this.properties)
-}
+private fun RuntimeContext<*>.skipped() = this.adopting(listOf(SkippingTest("skipping ${this.name}", this, this.properties)))
+

@@ -17,7 +17,7 @@ class ScanningTests {
             setOf(
                 "example.a/example context/a failing test",
                 "example.a/example context/a passing test",
-                "example.a/example skipped context/example skipped context", // A little suss because of the skip
+                "example.a/example skipped context/skipping example skipped context",
                 "example.a/example typed context/a typed fixture test"
             ),
             tests
