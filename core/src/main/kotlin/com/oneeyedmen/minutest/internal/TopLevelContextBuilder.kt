@@ -11,14 +11,14 @@ data class TopLevelContextBuilder<F>(
     val name: String,
     val type: FixtureType,
     val builder: Context<Unit, F>.() -> Unit,
-    val transform: (RuntimeNode) -> RuntimeNode,
+    val transform: (RuntimeContext<F>) -> RuntimeContext<F>,
     override val properties: MutableMap<Any, Any> = mutableMapOf()
 ) : NodeBuilder<Unit, F> {
 
     companion object {
         inline operator fun <reified F> invoke(
             name: String,
-            noinline transform: (RuntimeNode) -> RuntimeNode,
+            noinline transform: (RuntimeContext<F>) -> RuntimeContext<F>,
             noinline builder: Context<Unit, F>.() -> Unit
         ) = TopLevelContextBuilder(name, askType<F>(), builder, transform)
     }

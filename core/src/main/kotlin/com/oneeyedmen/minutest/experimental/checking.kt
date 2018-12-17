@@ -6,20 +6,15 @@ import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
 import com.oneeyedmen.minutest.internal.RuntimeTestWrapper
 
-fun checkedAgainst(check: (List<String>) -> Unit): (RuntimeNode) -> RuntimeNode = { node ->
-    when (node) {
-        is RuntimeTest -> error("Can only check a context")
-        is RuntimeContext<*> -> {
-            val log = mutableListOf<String>()
-            loggingRuntimeContext(node, log, 0) {
-                check(log)
-            }
-        }
+fun <F> checkedAgainst(check: (List<String>) -> Unit): (RuntimeContext<F>) -> RuntimeContext<F> = { node ->
+    val log = mutableListOf<String>()
+    loggingRuntimeContext(node, log, 0) {
+        check(log)
     }
 }
 
-fun loggedTo(log: MutableList<String>): (RuntimeNode) -> RuntimeNode = { node ->
-    node.loggedTo(log, 0)
+fun <F> loggedTo(log: MutableList<String>): (RuntimeContext<F>) -> RuntimeContext<F> = { context: RuntimeContext<F> ->
+    loggingRuntimeContext(context, log, 0)
 }
 
 fun List<String>.withTabsExpanded(spaces: Int) = this.map { it.replace("\t", " ".repeat(spaces)) }

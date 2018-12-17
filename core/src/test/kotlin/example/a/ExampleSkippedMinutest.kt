@@ -9,7 +9,7 @@ import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.fail
 
 
-fun `example skipped context`() = SKIP - rootContext<Unit>(skipAndFocus) {
+fun `example skipped context`() = SKIP - rootContext<Unit>(skipAndFocus()) {
     test("skip is honoured") {
         fail("skip wasn't honoured")
     }

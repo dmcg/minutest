@@ -9,9 +9,6 @@ import org.junit.jupiter.api.TestFactory
 import java.util.stream.Stream
 import kotlin.streams.asStream
 
-@Deprecated("JupiterTests is now JUnit5Minutests", replaceWith = ReplaceWith("JUnit5Minutests"))
-typealias JupiterTests = JUnit5Minutests
-
 interface JUnit5Minutests {
 
     val tests: NodeBuilder<Unit, *>? get() = null // a clue to what to override
@@ -25,17 +22,6 @@ interface JUnit5Minutests {
         else -> this.rootContextFromMethods().toStreamOfDynamicNodes()
     }
 }
-
-/**
- * Define a [Context] and map it to be used as a JUnit [org.junit.jupiter.api.TestFactory].
- *
- * Designed to be called inside a class and to use the name as the class as the name of the test.
- */
-@Deprecated("Use testFactoryFor(com.oneeyedmen.minutest.rootContext {})")
-inline fun <reified F> Any.junitTests(
-    noinline transform: (RuntimeNode) -> RuntimeNode = { it },
-    noinline builder: Context<Unit, F>.() -> Unit
-): Stream<out DynamicNode> = rootContext(transform, javaClass.canonicalName, builder).toTestFactory()
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory].

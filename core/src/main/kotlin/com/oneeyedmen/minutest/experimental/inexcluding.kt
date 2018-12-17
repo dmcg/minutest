@@ -8,19 +8,16 @@ import com.oneeyedmen.minutest.RuntimeTest
 object SKIP : TestAnnotation
 object FOCUS : TestAnnotation
 
-val skipAndFocus = ::inexclude
+fun <F> skipAndFocus(): (RuntimeContext<F>) -> RuntimeContext<F> = { inexclude(it) }
 
-fun inexclude(root: RuntimeNode) = when (root) {
-    is RuntimeTest -> root.inexcluded(defaultToSkip = false)
-    is RuntimeContext<*> -> {
-        if (SKIP.appliesTo(root)) {
-            root.skipped()
-        } else {
-            val defaultToSkip = root.hasAFocusedChild()
-            root.withTransformedChildren { it.inexcluded(defaultToSkip) }
-        }
+fun <F> inexclude(root: RuntimeContext<F>): RuntimeContext<F> =
+    if (SKIP.appliesTo(root)) {
+        root.skipped()
+    } else {
+        val defaultToSkip = root.hasAFocusedChild()
+        root.withTransformedChildren { it.inexcluded(defaultToSkip) }
     }
-}
+
 
 private fun RuntimeNode.hasAFocusedChild(): Boolean = when (this) {
     is RuntimeTest -> FOCUS.appliesTo(this)
@@ -55,5 +52,7 @@ private fun RuntimeTest.inexcluded(defaultToSkip: Boolean) =
         else -> this
     }
 
-private fun RuntimeContext<*>.skipped() = this.adopting(listOf(SkippingTest("skipping ${this.name}", this, this.properties)))
+private fun <F> RuntimeContext<F>.skipped() = this.adopting(listOf(SkippingTest("skipping ${this.name}",
+    this,
+    this.properties)))
 
