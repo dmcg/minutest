@@ -25,7 +25,7 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode>(type) {
 
     override fun runChild(child: RuntimeNode, notifier: RunNotifier) = run(child, RootContext, notifier)
 
-    override fun describeChild(child: RuntimeNode) = child.toDescription()
+    override fun describeChild(child: RuntimeNode) = child.toDescription(RootContext)
 
     override fun classBlock(notifier: RunNotifier): Statement {
         // This is the only way that I've found to close the top level context
@@ -44,24 +44,24 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode>(type) {
     }
 
     private fun run(test: RuntimeTest, parentContext: ParentContext<*>, notifier: RunNotifier) {
-        runLeaf(test.asStatement(parentContext, notifier), test.toDescription(), notifier)
+        runLeaf(test.asStatement(parentContext, notifier), test.toDescription(parentContext), notifier)
     }
 
     private fun run(context: RuntimeContext, parentContext: ParentContext<*>, notifier: RunNotifier) {
-        notifier.fireTestStarted(context.toDescription())
+        notifier.fireTestStarted(context.toDescription(parentContext))
         context.children.forEach {
             run(it, parentContext, notifier)
         }
         context.close()
-        notifier.fireTestFinished(context.toDescription())
+        notifier.fireTestFinished(context.toDescription(parentContext))
     }
 }
 
-private fun RuntimeNode.toDescription(): Description = when (this) {
-    is RuntimeTest -> Description.createTestDescription(parent?.name.orEmpty(), this.name)
+private fun RuntimeNode.toDescription(parentContext: ParentContext<*>): Description = when (this) {
+    is RuntimeTest -> Description.createTestDescription(parentContext.name, this.name)
     is RuntimeContext -> Description.createSuiteDescription(this.name).apply {
         this@toDescription.children.forEach {
-            addChild(it.toDescription())
+            addChild(it.toDescription(parentContext))
         }
     }
 }
@@ -72,7 +72,7 @@ private fun RuntimeTest.asStatement(parentContext: ParentContext<*>, notifier: R
             run(parentContext)
         } catch (aborted: TestAbortedException) {
             // JUnit 4 doesn't understand JUnit 5's convention
-            notifier.fireTestIgnored(this@asStatement.toDescription())
+            notifier.fireTestIgnored(this@asStatement.toDescription(parentContext))
         }
     }
 }

@@ -63,7 +63,7 @@ internal class ContextBuilder<PF, F>(
     }
 
     override fun buildNode(parent: ParentContext<PF>) =
-        PreparedRuntimeContext(name, parent, children, befores, afters, afterAlls, transforms,
+        PreparedRuntimeContext(name, children, befores, afters, afterAlls, transforms,
             resolvedFixtureFactory(),
             properties)
 

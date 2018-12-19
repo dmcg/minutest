@@ -9,7 +9,6 @@ import com.oneeyedmen.minutest.TestDescriptor
  */
 internal data class PreparedRuntimeTest<F>(
     override val name: String,
-    override val parent: ParentContext<F>,
     private val f: F.(TestDescriptor) -> F,
     override val properties: Map<Any, Any>
 ) : RuntimeTest(), Test<F>, (F)-> F {

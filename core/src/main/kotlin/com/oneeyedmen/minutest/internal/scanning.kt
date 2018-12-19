@@ -17,7 +17,6 @@ internal data class ScannedPackageContext(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override val parent: Named? = null
     override val name: String get() = packageName
     override val children: List<RuntimeNode> by lazy {
         contextFuns.map { f ->
@@ -27,7 +26,7 @@ internal data class ScannedPackageContext(
     }
     
     override fun withChildren(children: List<RuntimeNode>): RuntimeContext {
-        return LoadedRuntimeContext(name, parent, emptyMap(), children, {_, _ -> Unit}, {})
+        return LoadedRuntimeContext(name, emptyMap(), children, {_, _ -> Unit}, {})
     }
     
     override fun withProperties(properties: Map<Any, Any>): RuntimeNode {

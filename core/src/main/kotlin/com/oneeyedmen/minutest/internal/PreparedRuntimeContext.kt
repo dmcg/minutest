@@ -7,7 +7,6 @@ import com.oneeyedmen.minutest.*
  */
 internal class PreparedRuntimeContext<PF, F> private constructor(
     override val name: String,
-    override val parent: ParentContext<PF>,
     override val children: List<RuntimeNode>,
     private val befores: List<(F) -> Unit>,
     private val afters: List<(F) -> Unit>,
@@ -20,7 +19,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
     companion object {
         operator fun <PF, F> invoke(
             name: String,
-            parent: ParentContext<PF>,
             childBuilders: List<NodeBuilder<F, *>>,
             befores: List<(F) -> Unit>,
             afters: List<(F) -> Unit>,
@@ -29,7 +27,7 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
             fixtureFactory: (PF, TestDescriptor) -> F,
             properties: Map<Any, Any>
         ): PreparedRuntimeContext<PF, F> = mutableListOf<RuntimeNode>().let { kids ->
-            PreparedRuntimeContext(name, parent, kids, befores, afters, afterAlls, transforms, fixtureFactory, properties).apply {
+            PreparedRuntimeContext(name, kids, befores, afters, afterAlls, transforms, fixtureFactory, properties).apply {
                 kids.addAll(childBuilders.map { it.buildNode(this) })
             }
         }
@@ -99,7 +97,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
 
     private fun copy(
         name: String = this.name,
-        parent: ParentContext<PF> = this.parent,
         children: List<RuntimeNode> = this.children,
         befores: List<(F) -> Unit> = this.befores,
         afters: List<(F) -> Unit> = this.afters,
@@ -108,7 +105,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         fixtureFactory: (PF, TestDescriptor) -> F = this.fixtureFactory,
         properties: Map<Any, Any> = this.properties
     ) = PreparedRuntimeContext(name,
-        parent,
         children,
         befores,
         afters,

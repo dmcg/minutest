@@ -54,14 +54,13 @@ private fun RuntimeTest.inexcluded(defaultToSkip: Boolean) =
         else -> this
     }
 
-private fun RuntimeTest.skipped() = skipper(name, parent, properties)
+private fun RuntimeTest.skipped() = skipper(name, properties)
 
 private fun skipper(name: String,
-    parent: Named?,
     properties: Map<Any, Any>
-): LoadedRuntimeTest = LoadedRuntimeTest(name, parent, properties,
+): LoadedRuntimeTest = LoadedRuntimeTest(name, properties,
     xRunner = { throw TestAbortedException("skipped") })
 
 private fun RuntimeContext.skipped() = LoadedRuntimeContext(this,
-    children = listOf(skipper("skipping ${this.name}", this, emptyMap()))
+    children = listOf(skipper("skipping ${this.name}", emptyMap()))
 )

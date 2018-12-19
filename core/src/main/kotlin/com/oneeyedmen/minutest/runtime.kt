@@ -3,6 +3,8 @@ package com.oneeyedmen.minutest
 import com.oneeyedmen.minutest.internal.ParentContext
 
 sealed class RuntimeNode : Named {
+    abstract override val name: String
+    override val parent = null
     abstract val properties: Map<Any, Any>
     abstract fun withProperties(properties: Map<Any, Any>): RuntimeNode
 }
@@ -30,7 +32,6 @@ fun <F> ParentContext<F>.andThen(nextContext: RuntimeContext): ParentContext<Any
 
 data class LoadedRuntimeTest(
     override val name: String,
-    override val parent: Named?,
     override val properties: Map<Any, Any>,
     val xRunner: (ParentContext<*>) -> Unit
 ) : RuntimeTest() {
@@ -38,11 +39,10 @@ data class LoadedRuntimeTest(
     constructor(
         delegate: RuntimeTest,
         name: String = delegate.name,
-        parent: Named? = delegate.parent,
         properties: Map<Any, Any> = delegate.properties,
         xRunner: (ParentContext<*>) -> Unit = delegate::run
     ) :
-        this(name, parent, properties, xRunner)
+        this(name, properties, xRunner)
 
     override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
 
@@ -53,7 +53,6 @@ data class LoadedRuntimeTest(
 
 data class LoadedRuntimeContext(
     override val name: String,
-    override val parent: Named?,
     override val properties: Map<Any, Any>,
     override val children: List<RuntimeNode>,
     val runner: (Test<*>, ParentContext<*>) -> Unit,
@@ -64,13 +63,12 @@ data class LoadedRuntimeContext(
     constructor(
         delegate: RuntimeContext,
         name: String = delegate.name,
-        parent: Named? = delegate.parent,
         properties: Map<Any, Any> = delegate.properties,
         children: List<RuntimeNode> = delegate.children,
         runner: (Test<*>, ParentContext<*>) -> Unit = delegate::runTest,
         onClose: () -> Unit = delegate::close
         ) :
-        this(name, parent, properties, children, runner, onClose)
+        this(name, properties, children, runner, onClose)
 
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
     override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
