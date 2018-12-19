@@ -3,6 +3,9 @@ package com.oneeyedmen.minutest.junit
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.andThen
+import com.oneeyedmen.minutest.internal.ParentContext
+import com.oneeyedmen.minutest.internal.RootContext
 import org.junit.runner.Description
 import org.junit.runner.notification.RunNotifier
 import org.junit.runners.ParentRunner
@@ -20,7 +23,7 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode>(type) {
         return rootContext.children
     }
 
-    override fun runChild(child: RuntimeNode, notifier: RunNotifier) = run(child, notifier)
+    override fun runChild(child: RuntimeNode, notifier: RunNotifier) = run(child, RootContext, notifier)
 
     override fun describeChild(child: RuntimeNode) = child.toDescription()
 
@@ -35,19 +38,19 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode>(type) {
         }
     }
 
-    private fun run(node: RuntimeNode, notifier: RunNotifier) = when(node) {
-        is RuntimeTest -> run(node, notifier)
-        is RuntimeContext -> run(node, notifier)
+    private fun run(node: RuntimeNode, parentContext: ParentContext<*>, notifier: RunNotifier) = when(node) {
+        is RuntimeTest -> run(node, parentContext, notifier)
+        is RuntimeContext -> run(node, parentContext.andThen(node), notifier)
     }
 
-    private fun run(test: RuntimeTest, notifier: RunNotifier) {
-        runLeaf(test.asStatement(notifier), test.toDescription(), notifier)
+    private fun run(test: RuntimeTest, parentContext: ParentContext<*>, notifier: RunNotifier) {
+        runLeaf(test.asStatement(parentContext, notifier), test.toDescription(), notifier)
     }
 
-    private fun run(context: RuntimeContext, notifier: RunNotifier) {
+    private fun run(context: RuntimeContext, parentContext: ParentContext<*>, notifier: RunNotifier) {
         notifier.fireTestStarted(context.toDescription())
         context.children.forEach {
-            run(it, notifier)
+            run(it, parentContext, notifier)
         }
         context.close()
         notifier.fireTestFinished(context.toDescription())
@@ -63,10 +66,10 @@ private fun RuntimeNode.toDescription(): Description = when (this) {
     }
 }
 
-private fun RuntimeTest.asStatement(notifier: RunNotifier) = object : Statement() {
+private fun RuntimeTest.asStatement(parentContext: ParentContext<*>, notifier: RunNotifier) = object : Statement() {
     override fun evaluate() {
         try {
-            run()
+            runX(parentContext)
         } catch (aborted: TestAbortedException) {
             // JUnit 4 doesn't understand JUnit 5's convention
             notifier.fireTestIgnored(this@asStatement.toDescription())
