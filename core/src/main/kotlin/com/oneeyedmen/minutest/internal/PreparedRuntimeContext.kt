@@ -39,7 +39,7 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         parent.runTest(buildParentTest(test))
     }
 
-    override fun runTestX(test: Test<*>, parentContext: ParentContext<*>) {
+    override fun runTest(test: Test<*>, parentContext: ParentContext<*>) {
         (parentContext as ParentContext<PF>).runTest(buildParentTest(test as Test<F>))
     }
 

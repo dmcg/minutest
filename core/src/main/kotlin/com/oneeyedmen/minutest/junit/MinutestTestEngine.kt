@@ -109,7 +109,7 @@ class MinutestTestEngine : TestEngine {
     }
     
     private fun executeTest(node: RuntimeTest, parentContext: ParentContext<*>) {
-        node.runX(parentContext)
+        node.run(parentContext)
     }
     
     companion object {

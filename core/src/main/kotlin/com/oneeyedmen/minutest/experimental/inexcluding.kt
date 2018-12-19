@@ -60,7 +60,6 @@ private fun skipper(name: String,
     parent: Named?,
     properties: Map<Any, Any>
 ): LoadedRuntimeTest = LoadedRuntimeTest(name, parent, properties,
-    block = { throw TestAbortedException("skipped") },
     xRunner = { throw TestAbortedException("skipped") })
 
 private fun RuntimeContext.skipped() = LoadedRuntimeContext(this,

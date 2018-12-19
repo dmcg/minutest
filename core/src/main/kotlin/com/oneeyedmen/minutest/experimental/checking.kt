@@ -47,13 +47,9 @@ private fun loggingRuntimeContext(
 
 private fun loggingRuntimeTest(wrapped: RuntimeTest, log: MutableList<String>, indent: Int): RuntimeTest =
     LoadedRuntimeTest(wrapped,
-        block = {
-            log.add("${indent.tabs()}${wrapped.name}")
-            wrapped.run()
-        },
         xRunner = {
             log.add("${indent.tabs()}${wrapped.name}")
-            wrapped.runX(it)
+            wrapped.run(it)
         }
     )
 

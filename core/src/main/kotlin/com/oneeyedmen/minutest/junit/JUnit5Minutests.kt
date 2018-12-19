@@ -54,7 +54,7 @@ private fun Iterable<RuntimeNode>.toStreamOfDynamicNodes(parent: RuntimeContext,
 
 private fun RuntimeNode.toDynamicNode(parentContext: ParentContext<*>): DynamicNode = when (this) {
     is RuntimeTest -> dynamicTest(name) {
-        this.runX(parentContext)
+        this.run(parentContext)
     }
     is RuntimeContext -> dynamicContainer(name, this.toStreamOfDynamicNodes(parentContext))
 }

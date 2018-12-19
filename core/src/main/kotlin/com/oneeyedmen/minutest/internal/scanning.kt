@@ -13,7 +13,7 @@ internal data class ScannedPackageContext(
     override val properties: Map<Any, Any> = emptyMap()
 
 ) : RuntimeContext() {
-    override fun runTestX(test: Test<*>, parentContext: ParentContext<*>) {
+    override fun runTest(test: Test<*>, parentContext: ParentContext<*>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

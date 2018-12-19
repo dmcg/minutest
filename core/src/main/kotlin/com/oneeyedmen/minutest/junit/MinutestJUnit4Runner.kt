@@ -69,7 +69,7 @@ private fun RuntimeNode.toDescription(): Description = when (this) {
 private fun RuntimeTest.asStatement(parentContext: ParentContext<*>, notifier: RunNotifier) = object : Statement() {
     override fun evaluate() {
         try {
-            runX(parentContext)
+            run(parentContext)
         } catch (aborted: TestAbortedException) {
             // JUnit 4 doesn't understand JUnit 5's convention
             notifier.fireTestIgnored(this@asStatement.toDescription())
