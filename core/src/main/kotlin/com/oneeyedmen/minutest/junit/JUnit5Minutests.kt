@@ -5,9 +5,9 @@ import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.TopLevelContextBuilder
-import org.junit.jupiter.api.DynamicContainer
+import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
-import org.junit.jupiter.api.DynamicTest
+import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
 import java.util.stream.Stream
 import kotlin.streams.asStream
@@ -20,9 +20,11 @@ interface JUnit5Minutests {
      * Provided so that JUnit will run the tests
      */
     @TestFactory
-    fun tests(): Stream<out DynamicNode> = when {
-        tests != null -> tests!!.buildRootNode().toStreamOfDynamicNodes()
-        else -> this.rootContextFromMethods().toStreamOfDynamicNodes()
+    fun tests(): Stream<out DynamicNode> = tests.let { testsFromVal ->
+        when  {
+            testsFromVal != null -> testsFromVal.buildRootNode().toStreamOfDynamicNodes()
+            else -> this.rootContextFromMethods().toStreamOfDynamicNodes()
+        }
     }
 }
 
@@ -42,20 +44,12 @@ fun TopLevelContextBuilder<*>.toTestFactory() = testFactoryFor(this)
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-fun RuntimeNode.toStreamOfDynamicNodes(): Stream<out DynamicNode> =
-    if (this is RuntimeContext)
-    // don't create a vestigial single-child context
-        this.children.toStreamOfDynamicNodes(this)
-    else
-        Stream.of(this.toDynamicNode())
+private fun RuntimeContext.toStreamOfDynamicNodes(): Stream<out DynamicNode> = children.toStreamOfDynamicNodes(this)
 
 private fun RuntimeNode.toDynamicNode(): DynamicNode = when (this) {
-    is RuntimeTest -> DynamicTest.dynamicTest(name) { this.run() }
-    is RuntimeContext -> this.toDynamicContainer()
+    is RuntimeTest -> dynamicTest(name) { this.run() }
+    is RuntimeContext -> dynamicContainer(name, this.toStreamOfDynamicNodes())
 }
-
-private fun RuntimeContext.toDynamicContainer(): DynamicContainer =
-    DynamicContainer.dynamicContainer(name, children.toStreamOfDynamicNodes(this))
 
 private fun Iterable<RuntimeNode>.toStreamOfDynamicNodes(parent: RuntimeContext) =
     asSequence().map(RuntimeNode::toDynamicNode).asStream().onClose { parent.close() }
