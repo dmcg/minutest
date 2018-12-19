@@ -1,9 +1,6 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.NodeBuilder
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.*
 
 interface TestAnnotation {
 
@@ -20,6 +17,11 @@ interface TestAnnotation {
     operator fun plus(that: TestAnnotation) = listOf(this, that)
 
     operator fun <PF, F> minus(nodeBuilder: NodeBuilder<PF, F>): NodeBuilder<PF, F> =
+        nodeBuilder.also {
+            this.applyTo(it)
+        }
+
+    operator fun <F> minus(nodeBuilder: TopLevelContextBuilder<F>): TopLevelContextBuilder<F> =
         nodeBuilder.also {
             this.applyTo(it)
         }

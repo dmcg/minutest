@@ -9,7 +9,7 @@ import kotlin.reflect.jvm.kotlinFunction
 
 internal data class ScannedPackageContext(
     val packageName: String,
-    private val contextFuns: List<KFunction0<NodeBuilder<Unit, *>>>,
+    private val contextFuns: List<KFunction0<TopLevelContextBuilder<*>>>,
     override val properties: Map<Any, Any> = emptyMap()
 
 ) : RuntimeContext() {
@@ -19,10 +19,7 @@ internal data class ScannedPackageContext(
     override val children: List<RuntimeNode> by lazy {
         contextFuns.map { f ->
             val rootWithDefaultName = f().buildRootNode()
-            when (rootWithDefaultName) {
-                is RuntimeContext -> LoadedRuntimeContext(delegate = rootWithDefaultName, name = f.name)
-                is RuntimeTest -> LoadedRuntimeTest(delegate = rootWithDefaultName, name = f.name)
-            }
+            LoadedRuntimeContext(delegate = rootWithDefaultName, name = f.name)
         }
     }
     
@@ -58,14 +55,14 @@ internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo)
         .map { (packageName, functions) -> ScannedPackageContext(packageName, functions) }
 }
 
-private fun MethodInfo.toKotlinFunction(): KFunction0<NodeBuilder<Unit, *>>? {
+private fun MethodInfo.toKotlinFunction(): KFunction0<TopLevelContextBuilder<*>>? {
     @Suppress("UNCHECKED_CAST")
-    return loadClassAndGetMethod().kotlinFunction as? KFunction0<NodeBuilder<Unit, *>>
+    return loadClassAndGetMethod().kotlinFunction as? KFunction0<TopLevelContextBuilder<*>>
 }
 
 private fun MethodInfo.definesTopLevelContext() =
     isStatic && isPublic && parameterInfo.isEmpty() && !isBridge
-        && typeSignatureOrTypeDescriptor.resultType.name() == NodeBuilder::class.java.name
+        && typeSignatureOrTypeDescriptor.resultType.name() == TopLevelContextBuilder::class.java.name
 
 private fun TypeSignature.name() =
     (this as? ClassRefTypeSignature)?.baseClassName

@@ -1,7 +1,10 @@
 
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.TopLevelContextBuilder
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest
@@ -11,7 +14,7 @@ import kotlin.streams.asStream
 
 interface JUnit5Minutests {
 
-    val tests: NodeBuilder<Unit, *>? get() = null // a clue to what to override
+    val tests: TopLevelContextBuilder<*>? get() = null // a clue to what to override
 
     /**
      * Provided so that JUnit will run the tests
@@ -28,14 +31,14 @@ interface JUnit5Minutests {
  *
  * @see [NodeBuilder<Unit>#testFactory()]
  */
-fun testFactoryFor(root: NodeBuilder<Unit, *>) = root.buildRootNode().toStreamOfDynamicNodes()
+fun testFactoryFor(root: TopLevelContextBuilder<*>) = root.buildRootNode().toStreamOfDynamicNodes()
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]
  *
  * @see [testFactoryFor(NodeBuilder<Unit>)]
  */
-fun NodeBuilder<Unit, *>.toTestFactory() = testFactoryFor(this)
+fun TopLevelContextBuilder<*>.toTestFactory() = testFactoryFor(this)
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 

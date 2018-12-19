@@ -9,4 +9,10 @@ interface NodeBuilder<ParentF, F> {
     fun buildNode(parent: ParentContext<ParentF>): RuntimeNode
 }
 
-fun NodeBuilder<Unit, *>.buildRootNode(): RuntimeNode = buildNode(RootContext)
+/**
+ * A NodeBuilder that yields a top level context - one with no parent.
+ */
+interface TopLevelContextBuilder<F> : NodeBuilder<Unit, F> {
+    fun buildRootNode(): RuntimeContext = buildNode(RootContext) as RuntimeContext
+}
+

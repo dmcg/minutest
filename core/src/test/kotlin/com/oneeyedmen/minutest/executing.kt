@@ -19,7 +19,7 @@ fun executeTests(tests: Stream<out DynamicNode>) {
     }
 }
 
-fun executeTests(root: NodeBuilder<Unit, *>) = executeTests(root.toTestFactory())
+fun executeTests(root: TopLevelContextBuilder<*>) = executeTests(root.toTestFactory())
 
 fun assertLogged(log: List<String>, vararg expected: String) {
     assertEquals(expected.toList(), log)
