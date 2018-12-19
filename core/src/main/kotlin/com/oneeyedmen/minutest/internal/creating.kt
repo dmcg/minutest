@@ -22,11 +22,11 @@ fun <F> topLevelContextBuilder(
 
     override val properties: MutableMap<Any, Any> = HashMap()
 
-    override fun buildNode(parent: ParentContext<Unit>): RuntimeNode {
+    override fun buildNode(): RuntimeNode {
         val topLevelContext = topLevelContext(name, type, builder)
         // we need to apply our annotations to the root, then run the transforms
         topLevelContext.properties.putAll(properties)
-        return topLevelContext.buildNode(parent).run(transform)
+        return topLevelContext.buildNode().run(transform)
     }
 }
 

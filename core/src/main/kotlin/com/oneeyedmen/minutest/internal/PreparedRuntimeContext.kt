@@ -28,7 +28,7 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
             properties: Map<Any, Any>
         ): PreparedRuntimeContext<PF, F> = mutableListOf<RuntimeNode>().let { kids ->
             PreparedRuntimeContext(name, kids, befores, afters, afterAlls, transforms, fixtureFactory, properties).apply {
-                kids.addAll(childBuilders.map { it.buildNode(this) })
+                kids.addAll(childBuilders.map { it.buildNode() })
             }
         }
     }
@@ -67,7 +67,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         return object : Test<PF>, Named by deepestTestPath {
             override fun invoke(parentFixture: PF): PF {
                 val transformedTest = applyTransformsTo(testWithPreparedFixture)
-                println("Fixture factory with " + testPath.fullName())
                 transformedTest(fixtureFactory(parentFixture, deepestTestPath))
                 return parentFixture
             }
