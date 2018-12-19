@@ -20,8 +20,8 @@ abstract class RuntimeTest: RuntimeNode() {
 
 fun <F> ParentContext<F>.andThen(nextContext: RuntimeContext): ParentContext<Any?> {
     return object: ParentContext<Any?> {
-        override val name = "thing"
-        override val parent = this
+        override val name = nextContext.name
+        override val parent = this@andThen
         override fun runTest(test: Test<Any?>) {
             nextContext.runTest(test, this@andThen)
         }

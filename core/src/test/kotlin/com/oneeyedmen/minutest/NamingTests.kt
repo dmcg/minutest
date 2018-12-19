@@ -11,8 +11,8 @@ class NamingTests {
         val log = mutableListOf<List<String>>()
         
         executeTests(rootContext<Unit> {
-            addTransform {
-                it.also { log.add(it.fullName()) }
+            addTransform { test ->
+                test.also { log.add(test.fullName()) }
             }
 
             context("outer") {

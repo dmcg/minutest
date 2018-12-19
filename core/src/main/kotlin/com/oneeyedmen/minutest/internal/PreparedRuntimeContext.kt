@@ -38,7 +38,7 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
     override fun runTest(test: Test<F>) = error("This is being removed")
 
     override fun runTest(test: Test<*>, parentContext: ParentContext<*>) {
-        (parentContext as ParentContext<PF>).runTest(buildParentTest(test as Test<F>))
+        (parentContext as ParentContext<PF>).runTest(buildParentTest(test as Test<F>, parentContext))
     }
 
     override fun close() {
@@ -47,8 +47,18 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         }
     }
 
-    private fun buildParentTest(test: Test<F>): Test<PF> {
-        val testWithPreparedFixture = object : Test<F>, Named by test {
+    private fun buildParentTest(test: Test<F>, parentContext: ParentContext<PF>): Test<PF> {
+
+        // The issue here is that as the invocation climbs up the parentContext stack, we loose bits of the test name
+        // So we latch at the longest name that we see.
+        val testPath: Named = object : Named {
+            override val name: String = test.name
+            override val parent = parentContext.andThen(this@PreparedRuntimeContext)
+        }
+        val deepestTestPath: Named = if (testPath.fullName().size > test.fullName().size)
+            testPath else test
+
+        val testWithPreparedFixture = object : Test<F>, Named by deepestTestPath {
             override fun invoke(initialFixture: F) =
                 applyBeforesTo(initialFixture)
                     .tryMap(test)
@@ -56,10 +66,11 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
                     .orThrow()
         }
 
-        return object : Test<PF>, Named by test {
+        return object : Test<PF>, Named by deepestTestPath {
             override fun invoke(parentFixture: PF): PF {
                 val transformedTest = applyTransformsTo(testWithPreparedFixture)
-                transformedTest(fixtureFactory(parentFixture, this))
+                println("Fixture factory with " + testPath.fullName())
+                transformedTest(fixtureFactory(parentFixture, deepestTestPath))
                 return parentFixture
             }
         }
