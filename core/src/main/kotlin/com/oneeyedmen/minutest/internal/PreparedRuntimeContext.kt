@@ -14,7 +14,7 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
     private val transforms: List<TestTransform<F>>,
     private val fixtureFactory: (PF, TestDescriptor) -> F,
     override val properties: Map<Any, Any>
-) : RuntimeContext(), ParentContext<F> {
+) : RuntimeContext() {
 
     companion object {
         operator fun <PF, F> invoke(
@@ -32,8 +32,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
             }
         }
     }
-
-    override fun runTest(test: Test<F>) = error("This is being removed")
 
     override fun runTest(test: Test<*>, parentContext: ParentContext<*>) {
         (parentContext as ParentContext<PF>).runTest(buildParentTest(test as Test<F>, parentContext))
