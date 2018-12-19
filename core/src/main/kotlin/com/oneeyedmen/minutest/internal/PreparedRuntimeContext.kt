@@ -35,9 +35,7 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         }
     }
 
-    override fun runTest(test: Test<F>) {
-        parent.runTest(buildParentTest(test))
-    }
+    override fun runTest(test: Test<F>) = error("This is being removed")
 
     override fun runTest(test: Test<*>, parentContext: ParentContext<*>) {
         (parentContext as ParentContext<PF>).runTest(buildParentTest(test as Test<F>))
