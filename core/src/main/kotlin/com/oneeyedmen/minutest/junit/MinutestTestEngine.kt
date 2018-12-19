@@ -3,30 +3,17 @@ package com.oneeyedmen.minutest.junit
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
-import org.junit.platform.engine.DiscoveryFilter
-import org.junit.platform.engine.DiscoverySelector
-import org.junit.platform.engine.EngineDiscoveryRequest
-import org.junit.platform.engine.EngineExecutionListener
-import org.junit.platform.engine.ExecutionRequest
-import org.junit.platform.engine.Filter
-import org.junit.platform.engine.TestDescriptor
+import com.oneeyedmen.minutest.andThen
+import com.oneeyedmen.minutest.internal.ParentContext
+import com.oneeyedmen.minutest.internal.RootContext
+import org.junit.platform.engine.*
 import org.junit.platform.engine.TestDescriptor.Type.CONTAINER
 import org.junit.platform.engine.TestDescriptor.Type.TEST
-import org.junit.platform.engine.TestEngine
-import org.junit.platform.engine.TestExecutionResult
-import org.junit.platform.engine.TestSource
-import org.junit.platform.engine.TestTag
-import org.junit.platform.engine.UniqueId
-import org.junit.platform.engine.discovery.ClassNameFilter
-import org.junit.platform.engine.discovery.ClassSelector
-import org.junit.platform.engine.discovery.DirectorySelector
-import org.junit.platform.engine.discovery.MethodSelector
-import org.junit.platform.engine.discovery.PackageNameFilter
-import org.junit.platform.engine.discovery.PackageSelector
-import org.junit.platform.engine.discovery.UniqueIdSelector
+import org.junit.platform.engine.discovery.*
 import org.junit.platform.engine.support.descriptor.EngineDescriptor
 import org.opentest4j.IncompleteExecutionException
 import java.util.Optional
+import kotlin.collections.LinkedHashSet
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
@@ -42,24 +29,34 @@ class MinutestTestEngine : TestEngine {
     override fun execute(request: ExecutionRequest) {
         val root = request.rootTestDescriptor
         if (root is MinutestEngineDescriptor) {
-            execute(root, root.discoveryRequest, request.engineExecutionListener)
+            execute(root, RootContext, root.discoveryRequest, request.engineExecutionListener)
         }
         else {
             throw IllegalArgumentException("root descriptor is not a ${MinutestEngineDescriptor::class.jvmName}")
         }
     }
     
-    private fun execute(descriptor: TestDescriptor, request: EngineDiscoveryRequest, listener: EngineExecutionListener) {
+    private fun execute(
+        descriptor: TestDescriptor,
+        parentContext: ParentContext<*>,
+        request: EngineDiscoveryRequest,
+        listener: EngineExecutionListener
+    ) {
         listener.executionStarted(descriptor)
         val result = try {
             if (descriptor is MinutestNodeDescriptor) {
                 when (descriptor.node) {
-                    is RuntimeContext -> executeDynamicChildren(descriptor, request, listener)
-                    is RuntimeTest -> executeTest(descriptor.node)
+                    is RuntimeContext -> executeDynamicChildren(
+                        descriptor,
+                        parentContext.andThen(descriptor.node),
+                        request,
+                        listener
+                    )
+                    is RuntimeTest -> executeTest(descriptor.node, parentContext)
                 }
             }
             else {
-                executeStaticChildren(descriptor, request, listener)
+                executeStaticChildren(descriptor, parentContext, request, listener)
             }
             
             TestExecutionResult.successful()
@@ -74,12 +71,17 @@ class MinutestTestEngine : TestEngine {
         listener.executionFinished(descriptor, result)
     }
     
-    private fun executeDynamicChildren(parent: MinutestNodeDescriptor, request: EngineDiscoveryRequest, listener: EngineExecutionListener) {
+    private fun executeDynamicChildren(
+        parent: MinutestNodeDescriptor,
+        parentContext: ParentContext<*>,
+        request: EngineDiscoveryRequest,
+        listener: EngineExecutionListener
+    ) {
         parent.childrenAsDescriptors().forEach { child ->
             if (request.selectsByUniqueId(child)) {
                 listener.dynamicTestRegistered(child)
                 parent.addChild(child)
-                execute(child, request, listener)
+                execute(child, parentContext, request, listener)
             }
         }
     }
@@ -93,16 +95,21 @@ class MinutestTestEngine : TestEngine {
         }
     
     
-    private fun executeStaticChildren(test: TestDescriptor, request: EngineDiscoveryRequest, listener: EngineExecutionListener) {
+    private fun executeStaticChildren(
+        test: TestDescriptor,
+        parentContext: ParentContext<*>,
+        request: EngineDiscoveryRequest,
+        listener: EngineExecutionListener
+    ) {
         test.children.forEach { child ->
             if (request.selectsByUniqueId(child)) {
-                execute(child, request, listener)
+                execute(child, parentContext, request, listener)
             }
         }
     }
     
-    private fun executeTest(node: RuntimeTest) {
-        node.run()
+    private fun executeTest(node: RuntimeTest, parentContext: ParentContext<*>) {
+        node.runX(parentContext)
     }
     
     companion object {
