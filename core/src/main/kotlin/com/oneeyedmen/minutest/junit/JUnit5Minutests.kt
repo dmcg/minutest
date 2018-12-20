@@ -1,9 +1,13 @@
 
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.andThen
 import com.oneeyedmen.minutest.internal.ParentContext
 import com.oneeyedmen.minutest.internal.RootContext
+import com.oneeyedmen.minutest.internal.TopLevelContextBuilder
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
@@ -21,7 +25,7 @@ interface JUnit5Minutests {
     @TestFactory
     fun tests(): Stream<out DynamicNode> = tests.let { testsFromVal ->
         when  {
-            testsFromVal != null -> testsFromVal.buildRootNode().toStreamOfDynamicNodes(RootContext)
+            testsFromVal != null -> testsFromVal.buildNode().toStreamOfDynamicNodes(RootContext)
             else -> this.rootContextFromMethods().toStreamOfDynamicNodes(RootContext)
         }
     }
@@ -32,7 +36,7 @@ interface JUnit5Minutests {
  *
  * @see [NodeBuilder<Unit>#testFactory()]
  */
-fun testFactoryFor(root: TopLevelContextBuilder<*>) = root.buildRootNode().toStreamOfDynamicNodes(RootContext)
+fun testFactoryFor(root: TopLevelContextBuilder<*>) = root.buildNode().toStreamOfDynamicNodes(RootContext)
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]

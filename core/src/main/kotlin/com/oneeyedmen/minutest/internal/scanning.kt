@@ -1,6 +1,9 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.LoadedRuntimeContext
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.Test
 import io.github.classgraph.*
 import kotlin.reflect.KFunction0
 import kotlin.reflect.KVisibility.PUBLIC
@@ -20,7 +23,7 @@ internal data class ScannedPackageContext(
     override val name: String get() = packageName
     override val children: List<RuntimeNode> by lazy {
         contextFuns.map { f ->
-            val rootWithDefaultName = f().buildRootNode()
+            val rootWithDefaultName = f().buildNode()
             LoadedRuntimeContext(delegate = rootWithDefaultName, name = f.name)
         }
     }

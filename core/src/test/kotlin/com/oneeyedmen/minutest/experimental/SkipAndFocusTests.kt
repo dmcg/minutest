@@ -1,8 +1,8 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.TopLevelContextBuilder
 import com.oneeyedmen.minutest.assertLogged
 import com.oneeyedmen.minutest.executeTests
+import com.oneeyedmen.minutest.internal.TopLevelContextBuilder
 import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Test
 import kotlin.test.fail

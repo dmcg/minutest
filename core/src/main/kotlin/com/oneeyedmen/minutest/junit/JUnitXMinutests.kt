@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.TopLevelContextBuilder
+import com.oneeyedmen.minutest.internal.TopLevelContextBuilder
 import kotlin.reflect.full.memberFunctions
 
 
@@ -17,5 +17,5 @@ internal fun Any.rootContextFromMethods(): RuntimeContext {
         testMethodsAsNodes.size > 1 -> error("More than one test method found")
         else -> testMethodsAsNodes.first()
     }
-    return singleNode.buildRootNode()
+    return singleNode.buildNode()
 }

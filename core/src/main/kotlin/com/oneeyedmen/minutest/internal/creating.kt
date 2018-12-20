@@ -2,31 +2,20 @@ package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.*
 
-
-inline fun <reified F> transformedTopLevelContext(
-    name: String,
-    noinline transform: (RuntimeNode) -> RuntimeNode,
-    noinline builder: Context<Unit, F>.() -> Unit
-): TopLevelContextBuilder<F> = topLevelContextBuilder(name, askType<F>(), builder, transform)
-
-/**
- * An object to hang top-level annotations onto.
- * It passes them on to the top level context and applies transforms to give the root node.
- */
-fun <F> topLevelContextBuilder(
-    name: String,
-    type: FixtureType,
-    builder: Context<Unit, F>.() -> Unit,
-    transform: (RuntimeNode) -> RuntimeNode
-) = object : TopLevelContextBuilder<F> {
+class TopLevelContextBuilder<F>(
+    private val name: String,
+    private val type: FixtureType,
+    private val builder: Context<Unit, F>.() -> Unit,
+    private val transform: (RuntimeNode) -> RuntimeNode
+) : NodeBuilder<Unit, F> {
 
     override val properties: MutableMap<Any, Any> = HashMap()
 
-    override fun buildNode(): RuntimeNode {
+    override fun buildNode(): RuntimeContext {
         val topLevelContext = topLevelContext(name, type, builder)
         // we need to apply our annotations to the root, then run the transforms
         topLevelContext.properties.putAll(properties)
-        return topLevelContext.buildNode().run(transform)
+        return topLevelContext.buildNode().run(transform) as RuntimeContext
     }
 }
 

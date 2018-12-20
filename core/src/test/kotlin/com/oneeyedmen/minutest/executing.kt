@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.internal.TopLevelContextBuilder
 import com.oneeyedmen.minutest.junit.toTestFactory
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DynamicContainer
