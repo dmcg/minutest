@@ -94,8 +94,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         private val test: Test<F>,
         override val name: String = test.name
     ) : Test<F> {
-        override val parent = null
-
         override fun invoke(initialFixture: F, testDescriptor: TestDescriptor) =
             applyBeforesTo(initialFixture)
                 .tryMap { f -> test(f, testDescriptor) }
@@ -108,7 +106,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         private val testWithPreparedFixture: Test<F>,
         val originalTestDescriptor: TestDescriptor
     ) : Test<PF> {
-        override val parent = null
         override fun invoke(parentFixture: PF, testDescriptor: TestDescriptor): PF {
             val transformedTest = applyTransformsTo(testWithPreparedFixture)
             transformedTest.invoke(fixtureFactory(parentFixture, originalTestDescriptor), originalTestDescriptor)
