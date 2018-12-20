@@ -10,5 +10,5 @@ interface ParentContext<F> : Named {
 internal object RootContext : ParentContext<Unit> {
     override val name = ""
     override val parent: Nothing? = null
-    override fun runTest(test: Test<Unit>) = test(Unit)
+    override fun runTest(test: Test<Unit>) = test(Unit, this)
 }

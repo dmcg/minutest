@@ -1,9 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.Named
-import com.oneeyedmen.minutest.Test
-import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.fullName
+import com.oneeyedmen.minutest.*
 import org.junit.rules.TestRule
 import org.junit.runner.Description.createTestDescription
 import org.junit.runners.model.Statement
@@ -24,10 +21,10 @@ fun <F : Any, R : TestRule> ruleApplyingTest(
     ruleExtractor: (F) -> R
 ): Test<F> =
     object : Test<F>, Named by test {
-        override fun invoke(fixture: F) =
+        override fun invoke(fixture: F, testDescriptor: TestDescriptor) =
             fixture.also {
                 val rule = ruleExtractor(fixture)
-                val wrappedTestAsStatement = test.asJUnitStatement(fixture)
+                val wrappedTestAsStatement = test.asJUnitStatement(fixture, testDescriptor)
                 val fullName = test.fullName()
                 rule.apply(
                     wrappedTestAsStatement,
@@ -36,8 +33,8 @@ fun <F : Any, R : TestRule> ruleApplyingTest(
             }
     }
 
-private fun <F : Any> Test<F>.asJUnitStatement(fixture: F) = object : Statement() {
+private fun <F : Any> Test<F>.asJUnitStatement(fixture: F, testDescriptor: TestDescriptor) = object : Statement() {
     override fun evaluate() {
-        this@asJUnitStatement(fixture)
+        this@asJUnitStatement(fixture, testDescriptor)
     }
 }

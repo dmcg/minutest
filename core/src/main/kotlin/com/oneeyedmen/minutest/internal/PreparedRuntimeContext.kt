@@ -55,17 +55,17 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
             testPath else test
 
         val testWithPreparedFixture = object : Test<F>, Named by deepestTestPath {
-            override fun invoke(initialFixture: F) =
+            override fun invoke(initialFixture: F, testDescriptor: TestDescriptor) =
                 applyBeforesTo(initialFixture)
-                    .tryMap(test)
+                    .tryMap { f -> test(f, testDescriptor) }
                     .onLastValue(::applyAftersTo)
                     .orThrow()
         }
 
         return object : Test<PF>, Named by deepestTestPath {
-            override fun invoke(parentFixture: PF): PF {
+            override fun invoke(parentFixture: PF, testDescriptor: TestDescriptor): PF {
                 val transformedTest = applyTransformsTo(testWithPreparedFixture)
-                transformedTest(fixtureFactory(parentFixture, deepestTestPath))
+                transformedTest.invoke(fixtureFactory(parentFixture, deepestTestPath), testDescriptor)
                 return parentFixture
             }
         }
