@@ -12,7 +12,10 @@ class NamingTests {
         
         executeTests(rootContext<Unit> {
             addTransform { test ->
-                test.also { log.add(test.fullName()) }
+                test.withAction { fixture, descriptor ->
+                    log.add(descriptor.fullName())
+                    test(fixture, descriptor)
+                }
             }
 
             context("outer") {

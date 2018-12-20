@@ -34,7 +34,8 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
     }
 
     override fun runTest(test: Test<*>, parentContext: ParentContext<*>) {
-        (parentContext as ParentContext<PF>).runTest(buildParentTest(test as Test<F>, parentContext))
+        (parentContext as ParentContext<PF>).runTest(buildTestForParentToRun(test as Test<F>, parentContext))
+        println()
     }
 
     override fun close() {
@@ -43,45 +44,19 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         }
     }
 
-    private fun buildParentTest(test: Test<F>, parentContext: ParentContext<PF>): Test<PF> {
+    private fun buildTestForParentToRun(test: Test<F>, parentContext: ParentContext<PF>): Test<PF> {
 
         // The issue here is that as the invocation climbs up the parentContext stack, we loose bits of the test name
-        // So we latch at the longest name that we see.
-        val testPath: Named = object : Named {
-            override val name: String = test.name
-            override val parent = parentContext.andThen(this@PreparedRuntimeContext)
-        }
-        val deepestTestPath: Named = if (testPath.fullName().size > test.fullName().size)
-            testPath else test
-
-        val testWithPreparedFixture = object : Test<F>, Named by deepestTestPath {
-            override fun invoke(initialFixture: F, testDescriptor: TestDescriptor) =
-                applyBeforesTo(initialFixture)
-                    .tryMap { f -> test(f, testDescriptor) }
-                    .onLastValue(::applyAftersTo)
-                    .orThrow()
+        // So we latch at the original one, which is when test is a proper test.
+        val originalTestDescriptor = when (test) {
+            is PreparedRuntimeContext<*, *>.TestForParentToRun -> test.originalTestDescriptor
+            else -> parentContext.andThen(this@PreparedRuntimeContext.name).andThen(test.name)
         }
 
-        return object : Test<PF>, Named by deepestTestPath {
-            override fun invoke(parentFixture: PF, testDescriptor: TestDescriptor): PF {
-                val transformedTest = applyTransformsTo(testWithPreparedFixture)
-                transformedTest.invoke(fixtureFactory(parentFixture, deepestTestPath), testDescriptor)
-                return parentFixture
-            }
-        }
+        return TestForParentToRun(test.name, TestWithPreparedFixture(test), originalTestDescriptor)
     }
 
-    // apply befores in order - if anything is thrown return it and the last successful value
-    private fun applyBeforesTo(fixture: F): OpResult<F> {
-        befores.forEach { beforeFn ->
-            try {
-                beforeFn(fixture)
-            } catch (t: Throwable) {
-                return OpResult(t, fixture)
-            }
-        }
-        return OpResult(null, fixture)
-    }
+
 
     private fun applyTransformsTo(test: Test<F>): Test<F> =
         transforms.fold(test) { acc, transform -> transform(acc) }
@@ -114,4 +89,47 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
 
     override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
+
+    inner class TestWithPreparedFixture(
+        private val test: Test<F>,
+        override val name: String = test.name
+    ) : Test<F> {
+        override val parent = null
+
+        override fun invoke(initialFixture: F, testDescriptor: TestDescriptor) =
+            applyBeforesTo(initialFixture)
+                .tryMap { f -> test(f, testDescriptor) }
+                .onLastValue(::applyAftersTo)
+                .orThrow()
+    }
+
+    inner class TestForParentToRun(
+        override val name: String,
+        private val testWithPreparedFixture: Test<F>,
+        val originalTestDescriptor: TestDescriptor
+    ) : Test<PF> {
+        override val parent = null
+        override fun invoke(parentFixture: PF, testDescriptor: TestDescriptor): PF {
+            val transformedTest = applyTransformsTo(testWithPreparedFixture)
+            transformedTest.invoke(fixtureFactory(parentFixture, originalTestDescriptor), originalTestDescriptor)
+            return parentFixture
+        }
+    }
+
+    // apply befores in order - if anything is thrown return it and the last successful value
+    private fun applyBeforesTo(fixture: F): OpResult<F> {
+        befores.forEach { beforeFn ->
+            try {
+                beforeFn(fixture)
+            } catch (t: Throwable) {
+                return OpResult(t, fixture)
+            }
+        }
+        return OpResult(null, fixture)
+    }
+}
+
+private fun Named.andThen(name: String): Named = object : Named {
+    override val name: String = name
+    override val parent = this@andThen
 }

@@ -25,7 +25,7 @@ fun <F : Any, R : TestRule> ruleApplyingTest(
             fixture.also {
                 val rule = ruleExtractor(fixture)
                 val wrappedTestAsStatement = test.asJUnitStatement(fixture, testDescriptor)
-                val fullName = test.fullName()
+                val fullName = testDescriptor.fullName()
                 rule.apply(
                     wrappedTestAsStatement,
                     createTestDescription(fullName.first(), fullName.drop(1).joinToString("."))
