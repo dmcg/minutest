@@ -9,8 +9,8 @@ import com.oneeyedmen.minutest.TestDescriptor
  */
 internal data class PreparedRuntimeTest<F>(
     override val name: String,
-    private val f: F.(TestDescriptor) -> F,
-    override val properties: Map<Any, Any>
+    override val properties: Map<Any, Any>,
+    private val f: F.(TestDescriptor) -> F
 ) : RuntimeTest(), Test<F> {
     
     override fun invoke(fixture: F, testDescriptor: TestDescriptor) = fixture.f(testDescriptor)

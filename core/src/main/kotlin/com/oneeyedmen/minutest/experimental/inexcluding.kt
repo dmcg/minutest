@@ -1,6 +1,10 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.LoadedRuntimeContext
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.internal.PreparedRuntimeTest
 import org.opentest4j.TestAbortedException
 
 
@@ -56,10 +60,9 @@ private fun RuntimeTest.inexcluded(defaultToSkip: Boolean) =
 
 private fun RuntimeTest.skipped() = skipper(name, properties)
 
-private fun skipper(name: String,
-    properties: Map<Any, Any>
-): LoadedRuntimeTest = LoadedRuntimeTest(name, properties,
-    xRunner = { throw TestAbortedException("skipped") })
+private fun skipper(name: String, properties: Map<Any, Any>) = PreparedRuntimeTest<Any>(name, properties) {
+    throw TestAbortedException("skipped")
+}
 
 private fun RuntimeContext.skipped() = LoadedRuntimeContext(this,
     children = listOf(skipper("skipping ${this.name}", emptyMap()))
