@@ -3,7 +3,6 @@ package com.oneeyedmen.minutest.junit
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
-import com.oneeyedmen.minutest.andThen
 import com.oneeyedmen.minutest.internal.ParentContext
 import com.oneeyedmen.minutest.internal.RootContext
 import org.junit.platform.engine.*
