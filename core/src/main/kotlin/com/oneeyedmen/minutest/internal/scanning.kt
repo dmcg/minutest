@@ -1,6 +1,5 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.LoadedRuntimeContext
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.Test
@@ -24,12 +23,12 @@ internal data class ScannedPackageContext(
     override val children: List<RuntimeNode> by lazy {
         contextFuns.map { f ->
             val rootWithDefaultName = f().buildNode()
-            LoadedRuntimeContext(delegate = rootWithDefaultName, name = f.name)
+            RuntimeContextWrapper(delegate = rootWithDefaultName, name = f.name)
         }
     }
     
     override fun withChildren(children: List<RuntimeNode>): RuntimeContext {
-        return LoadedRuntimeContext(name, emptyMap(), children, {_, _ -> Unit}, {})
+        return RuntimeContextWrapper(name, emptyMap(), children, { _, _ -> Unit }, {})
     }
     
     override fun close() {}

@@ -1,10 +1,10 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.LoadedRuntimeContext
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.internal.PreparedRuntimeTest
+import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
 import org.opentest4j.TestAbortedException
 
 
@@ -64,6 +64,6 @@ private fun skipper(name: String, properties: Map<Any, Any>) = PreparedRuntimeTe
     throw TestAbortedException("skipped")
 }
 
-private fun RuntimeContext.skipped() = LoadedRuntimeContext(this,
+private fun RuntimeContext.skipped() = RuntimeContextWrapper(this,
     children = listOf(skipper("skipping ${this.name}", emptyMap()))
 )

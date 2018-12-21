@@ -1,6 +1,10 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
+import com.oneeyedmen.minutest.internal.RuntimeTestWrapper
 
 fun checkedAgainst(check: (List<String>) -> Unit): (RuntimeNode) -> RuntimeNode = { node ->
     when (node) {
@@ -33,7 +37,7 @@ private fun loggingRuntimeContext(
     done: () -> Unit = {}
 ): RuntimeContext {
     val childrenLog = mutableListOf<String>()
-    return LoadedRuntimeContext(wrapped,
+    return RuntimeContextWrapper(wrapped,
         children = wrapped.children.map { it.loggedTo(childrenLog, indent + 1) },
         onClose = {
             log.add("${indent.tabs()}${wrapped.name}")
@@ -46,11 +50,10 @@ private fun loggingRuntimeContext(
 
 
 private fun loggingRuntimeTest(wrapped: RuntimeTest, log: MutableList<String>, indent: Int): RuntimeTest =
-    LoadedRuntimeTest(wrapped,
-        xRunner = {
-            log.add("${indent.tabs()}${wrapped.name}")
-            wrapped.run(it)
-        }
-    )
+    RuntimeTestWrapper(wrapped) {
+        log.add("${indent.tabs()}${wrapped.name}")
+        wrapped.run(it)
+    }
+
 
 private fun Int.tabs() = "\t".repeat(this)
