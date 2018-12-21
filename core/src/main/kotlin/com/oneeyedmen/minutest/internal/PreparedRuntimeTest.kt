@@ -11,11 +11,14 @@ internal data class PreparedRuntimeTest<F>(
     override val name: String,
     override val properties: Map<Any, Any>,
     private val f: F.(TestDescriptor) -> F
-) : RuntimeTest(), Test<F> {
-    
-    override fun invoke(fixture: F, testDescriptor: TestDescriptor) = fixture.f(testDescriptor)
+) : RuntimeTest() {
     
     override fun run(parentContext: ParentContext<*>) {
-        (parentContext as ParentContext<F>).runTest(this)
+        (parentContext as ParentContext<F>).runTest(this.asTest())
+    }
+
+    private fun asTest(): Test<F> = object : Test<F> {
+        override fun invoke(fixture: F, testDescriptor: TestDescriptor) = f(fixture, testDescriptor)
+        override val name get() = this@PreparedRuntimeTest.name
     }
 }
