@@ -17,8 +17,5 @@ internal data class PreparedRuntimeTest<F>(
         (parentContext as ParentContext<F>).runTest(this.asTest())
     }
 
-    private fun asTest(): Test<F> = object : Test<F> {
-        override fun invoke(fixture: F, testDescriptor: TestDescriptor) = f(fixture, testDescriptor)
-        override val name get() = this@PreparedRuntimeTest.name
-    }
+    private fun asTest() = Test(name, f)
 }

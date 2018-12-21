@@ -52,7 +52,7 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
             else -> parentContext.andThen(this@PreparedRuntimeContext.name).andThen(test.name)
         }
 
-        return TestForParentToRun(test.name, TestWithPreparedFixture(test), originalTestDescriptor)
+        return TestForParentToRun(test, originalTestDescriptor)
     }
 
     private fun applyTransformsTo(test: Test<F>): Test<F> =
@@ -82,26 +82,22 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         fixtureFactory,
         properties)
 
-    // TODO - make this a List<NodeBuilder> to make sure that we preserve the parent-child relationship
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
 
-    inner class TestWithPreparedFixture(
-        private val test: Test<F>,
-        override val name: String = test.name
-    ) : Test<F> {
-        override fun invoke(initialFixture: F, testDescriptor: TestDescriptor) =
-            applyBeforesTo(initialFixture)
-                .tryMap { f -> test(f, testDescriptor) }
-                .onLastValue(::applyAftersTo)
-                .orThrow()
-    }
-
+    // This is a class so that we can check whether a Test is one
     inner class TestForParentToRun(
-        override val name: String,
-        private val testWithPreparedFixture: Test<F>,
+        private val test: Test<F>,
         val originalTestDescriptor: TestDescriptor
     ) : Test<PF> {
+        override val name = test.name
+
         override fun invoke(parentFixture: PF, testDescriptor: TestDescriptor): PF {
+            val testWithPreparedFixture = Test<F>(test.name) { parentFixture1, testDescriptor1 ->
+                applyBeforesTo(parentFixture1)
+                    .tryMap { f -> test(f, testDescriptor1) }
+                    .onLastValue(::applyAftersTo)
+                    .orThrow()
+            }
             val transformedTest = applyTransformsTo(testWithPreparedFixture)
             transformedTest.invoke(fixtureFactory(parentFixture, originalTestDescriptor), originalTestDescriptor)
             return parentFixture
