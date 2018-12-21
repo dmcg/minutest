@@ -17,5 +17,5 @@ internal data class PreparedRuntimeTest<F>(
         (parentContext as ParentContext<F>).runTest(this.asTest(), name)
     }
 
-    private fun asTest() = Test(name, f)
+    private fun asTest() = Test(f)
 }

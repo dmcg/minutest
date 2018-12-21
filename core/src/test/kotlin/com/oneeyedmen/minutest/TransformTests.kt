@@ -13,7 +13,7 @@ class TransformTests {
             after { log.add("after") }
 
             addTransform { test ->
-                test.withAction { fixture, descriptor ->
+                Test { fixture: Unit, descriptor: TestDescriptor ->
                     log.add("entering transformed test")
                     test(fixture, descriptor)
                     log.add("leaving transformed test")
@@ -38,7 +38,7 @@ class TransformTests {
 
         executeTests(rootContext<Unit> {
             addTransform { test ->
-                test.withAction { fixture, descriptor ->
+                Test { fixture: Unit, descriptor: TestDescriptor ->
                     log.add("entering outer transformed test")
                     test(fixture,descriptor)
                     log.add("leaving outer transformed test")
@@ -50,7 +50,7 @@ class TransformTests {
 
             context("inner") {
                 addTransform { test ->
-                    test.withAction { fixture, descriptor ->
+                    Test { fixture: Unit, descriptor: TestDescriptor ->
                         log.add("entering inner transformed test")
                         test(fixture, descriptor)
                         log.add("leaving inner transformed test")
@@ -83,7 +83,7 @@ class TransformTests {
         
         executeTests(rootContext<Unit> {
             addTransform { test ->
-                test.withAction { _, _  -> /* no op */ }
+                Test { _: Unit, _: TestDescriptor -> /* no op */ }
             }
 
             test("the test") { log.add("the test was invoked, but should not have been") }
