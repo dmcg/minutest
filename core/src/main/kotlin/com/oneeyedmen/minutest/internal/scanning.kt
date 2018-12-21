@@ -32,12 +32,7 @@ internal data class ScannedPackageContext(
         return LoadedRuntimeContext(name, emptyMap(), children, {_, _ -> Unit}, {})
     }
     
-    override fun withProperties(properties: Map<Any, Any>): RuntimeNode {
-        return copy(properties = properties)
-    }
-    
-    override fun close() {
-    }
+    override fun close() {}
 }
 
 internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean = {true}): List<ScannedPackageContext> {

@@ -55,8 +55,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         return TestForParentToRun(test.name, TestWithPreparedFixture(test), originalTestDescriptor)
     }
 
-
-
     private fun applyTransformsTo(test: Test<F>): Test<F> =
         transforms.fold(test) { acc, transform -> transform(acc) }
 
@@ -86,8 +84,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
 
     // TODO - make this a List<NodeBuilder> to make sure that we preserve the parent-child relationship
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
-
-    override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
 
     inner class TestWithPreparedFixture(
         private val test: Test<F>,

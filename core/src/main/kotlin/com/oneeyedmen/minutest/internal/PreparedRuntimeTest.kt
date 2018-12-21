@@ -18,6 +18,4 @@ internal data class PreparedRuntimeTest<F>(
     override fun run(parentContext: ParentContext<*>) {
         (parentContext as ParentContext<F>).runTest(this)
     }
-
-    override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
 }

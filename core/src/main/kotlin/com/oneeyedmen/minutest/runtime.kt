@@ -5,7 +5,6 @@ import com.oneeyedmen.minutest.internal.ParentContext
 sealed class RuntimeNode {
     abstract val name: String
     abstract val properties: Map<Any, Any>
-    abstract fun withProperties(properties: Map<Any, Any>): RuntimeNode
 }
 
 abstract class RuntimeContext : RuntimeNode(), AutoCloseable {
@@ -43,8 +42,6 @@ data class LoadedRuntimeTest(
     ) :
         this(name, properties, xRunner)
 
-    override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
-
     override fun run(parentContext: ParentContext<*>) {
         xRunner(parentContext)
     }
@@ -70,7 +67,6 @@ data class LoadedRuntimeContext(
         this(name, properties, children, runner, onClose)
 
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
-    override fun withProperties(properties: Map<Any, Any>) = copy(properties = properties)
 
     override fun close() {
         onClose.invoke()
