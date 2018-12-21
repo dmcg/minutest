@@ -92,7 +92,7 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
     ) : Test<PF> {
 
         override fun invoke(parentFixture: PF, testDescriptor: TestDescriptor): PF {
-            val testWithPreparedFixture = Test<F> { parentFixture1, testDescriptor1 ->
+            val testWithPreparedFixture: Test<F> = { parentFixture1, testDescriptor1 ->
                 applyBeforesTo(parentFixture1)
                     .tryMap { f -> test(f, testDescriptor1) }
                     .onLastValue(::applyAftersTo)

@@ -22,7 +22,7 @@ inline fun <reified F : Any, R : TestRule> TestContext<F>.applyRule(
 fun <F : Any, R : TestRule> ruleApplyingTest(
     test: Test<F>,
     ruleExtractor: (F) -> R
-): Test<F> = Test { fixture, testDescriptor ->
+): Test<F> = { fixture, testDescriptor ->
     fixture.also {
         val rule = ruleExtractor(fixture)
         val wrappedTestAsStatement = test.asJUnitStatement(fixture, testDescriptor)

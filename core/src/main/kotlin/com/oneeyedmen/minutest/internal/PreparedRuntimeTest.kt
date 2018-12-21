@@ -1,7 +1,6 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.RuntimeTest
-import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestDescriptor
 
 /**
@@ -14,8 +13,6 @@ internal data class PreparedRuntimeTest<F>(
 ) : RuntimeTest() {
     
     override fun run(parentContext: ParentContext<*>) {
-        (parentContext as ParentContext<F>).runTest(this.asTest(), name)
+        (parentContext as ParentContext<F>).runTest(f, name)
     }
-
-    private fun asTest() = Test(f)
 }

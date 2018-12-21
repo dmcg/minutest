@@ -1,24 +1,25 @@
 package com.oneeyedmen.minutest
 
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Test as JUnitTest
 
 
 class TransformTests {
-    @Test
+    @JUnitTest
     fun `transforms wrap around application of before and after blocks`() {
         val log = mutableListOf<String>()
-        
+
+        val transform: TestTransform<Unit> = { test ->
+            { fixture: Unit, descriptor: TestDescriptor ->
+                log.add("entering transformed test")
+                test(fixture, descriptor)
+                log.add("leaving transformed test")
+            }
+        }
+
         executeTests(rootContext<Unit> {
             before { log.add("before") }
             after { log.add("after") }
-
-            addTransform { test ->
-                Test { fixture: Unit, descriptor: TestDescriptor ->
-                    log.add("entering transformed test")
-                    test(fixture, descriptor)
-                    log.add("leaving transformed test")
-                }
-            }
+            addTransform(transform)
 
             test("the test") { log.add("the test") }
         })
@@ -32,31 +33,34 @@ class TransformTests {
         )
     }
 
-    @Test
+    @JUnitTest
     fun `transforms nest, following nesting of contexts`() {
         val log = mutableListOf<String>()
 
-        executeTests(rootContext<Unit> {
-            addTransform { test ->
-                Test { fixture: Unit, descriptor: TestDescriptor ->
-                    log.add("entering outer transformed test")
-                    test(fixture,descriptor)
-                    log.add("leaving outer transformed test")
-                }
+        val outerTransform: TestTransform<Unit> = { test ->
+            { fixture: Unit, descriptor: TestDescriptor ->
+                log.add("entering outer transformed test")
+                test(fixture, descriptor)
+                log.add("leaving outer transformed test")
             }
+        }
 
+        val innerTransform: TestTransform<Unit> = { test ->
+            { fixture: Unit, descriptor: TestDescriptor ->
+                log.add("entering inner transformed test")
+                test(fixture, descriptor)
+                log.add("leaving inner transformed test")
+            }
+        }
+
+        executeTests(rootContext<Unit> {
+
+            addTransform(outerTransform)
             before { log.add("before outer") }
             after { log.add("after outer") }
 
             context("inner") {
-                addTransform { test ->
-                    Test { fixture: Unit, descriptor: TestDescriptor ->
-                        log.add("entering inner transformed test")
-                        test(fixture, descriptor)
-                        log.add("leaving inner transformed test")
-                    }
-                }
-
+                addTransform(innerTransform)
                 before { log.add("before inner") }
                 after { log.add("after inner") }
 
@@ -77,14 +81,15 @@ class TransformTests {
         )
     }
     
-    @Test
+    @JUnitTest
     fun `transforms can disable tests`() {
         val log = mutableListOf<String>()
-        
+        val transform: TestTransform<Unit> = {
+            { _: Unit, _: TestDescriptor -> /* no op */ }
+        }
+
         executeTests(rootContext<Unit> {
-            addTransform { test ->
-                Test { _: Unit, _: TestDescriptor -> /* no op */ }
-            }
+            addTransform(transform)
 
             test("the test") { log.add("the test was invoked, but should not have been") }
         })
