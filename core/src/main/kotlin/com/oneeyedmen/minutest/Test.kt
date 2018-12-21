@@ -5,6 +5,7 @@ package com.oneeyedmen.minutest
  */
 interface Test<F> : (F, TestDescriptor) -> F {
     val name: String
+    // TODO - I'm reasonably convinced that we don't need this name
 }
 
 fun <F> Test<F>.withAction(action: (F, TestDescriptor) -> F): Test<F> =
