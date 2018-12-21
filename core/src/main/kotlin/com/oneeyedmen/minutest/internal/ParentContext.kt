@@ -5,13 +5,13 @@ import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.Test
 
 interface ParentContext<F> : Named {
-    fun runTest(test: Test<F>)
+    fun runTest(test: Test<F>, testName: String)
 
     fun andThen(nextContext: RuntimeContext): ParentContext<Any?> = object: ParentContext<Any?> {
         override val name = nextContext.name
         override val parent = this@ParentContext
-        override fun runTest(test: Test<Any?>) {
-            nextContext.runTest(test, this@ParentContext)
+        override fun runTest(test: Test<Any?>, testName: String) {
+            nextContext.runTest(test, this@ParentContext, testName)
         }
     }
 }
@@ -19,5 +19,5 @@ interface ParentContext<F> : Named {
 internal object RootContext : ParentContext<Unit> {
     override val name = ""
     override val parent: Nothing? = null
-    override fun runTest(test: Test<Unit>) = test(Unit, this)
+    override fun runTest(test: Test<Unit>, testName: String) = test(Unit, this)
 }

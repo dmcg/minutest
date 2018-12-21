@@ -10,7 +10,7 @@ sealed class RuntimeNode {
 abstract class RuntimeContext : RuntimeNode(), AutoCloseable {
     abstract val children: List<RuntimeNode>
     abstract fun withChildren(children: List<RuntimeNode>): RuntimeContext
-    abstract fun runTest(test: Test<*>, parentContext: ParentContext<*>)
+    abstract fun runTest(test: Test<*>, parentContext: ParentContext<*>, testName: String)
 }
 
 abstract class RuntimeTest: RuntimeNode() {

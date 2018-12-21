@@ -33,8 +33,9 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         }
     }
 
-    override fun runTest(test: Test<*>, parentContext: ParentContext<*>) {
-        (parentContext as ParentContext<PF>).runTest(buildTestForParentToRun(test as Test<F>, parentContext))
+    override fun runTest(test: Test<*>, parentContext: ParentContext<*>, testName: String) {
+        (parentContext as ParentContext<PF>).runTest(
+            buildTestForParentToRun(test as Test<F>, parentContext, testName), testName)
     }
 
     override fun close() {
@@ -43,13 +44,13 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         }
     }
 
-    private fun buildTestForParentToRun(test: Test<F>, parentContext: ParentContext<PF>): Test<PF> {
+    private fun buildTestForParentToRun(test: Test<F>, parentContext: ParentContext<PF>, testName: String): Test<PF> {
 
         // The issue here is that as the invocation climbs up the parentContext stack, we loose bits of the test name
         // So we latch at the original one, which is when test is a proper test.
         val originalTestDescriptor = when (test) {
             is PreparedRuntimeContext<*, *>.TestForParentToRun -> test.originalTestDescriptor
-            else -> parentContext.andThen(this@PreparedRuntimeContext.name).andThen(test.name)
+            else -> parentContext.andThen(this@PreparedRuntimeContext.name).andThen(testName)
         }
 
         return TestForParentToRun(test, originalTestDescriptor)

@@ -14,7 +14,7 @@ internal data class PreparedRuntimeTest<F>(
 ) : RuntimeTest() {
     
     override fun run(parentContext: ParentContext<*>) {
-        (parentContext as ParentContext<F>).runTest(this.asTest())
+        (parentContext as ParentContext<F>).runTest(this.asTest(), name)
     }
 
     private fun asTest() = Test(name, f)

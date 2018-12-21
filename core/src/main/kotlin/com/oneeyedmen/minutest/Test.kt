@@ -4,8 +4,9 @@ package com.oneeyedmen.minutest
  * A test that can be invoked on a fixture.
  */
 interface Test<F> : (F, TestDescriptor) -> F {
-    // TODO - I'm reasonably convinced that we don't need this name
+
     val name: String
+    // We only need this name because we don't pass it in the TestDescriptor
 
     companion object {
         operator fun <F> invoke(name: String, block: (F, TestDescriptor) -> F) = object : Test<F> {
