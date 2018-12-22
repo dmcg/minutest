@@ -4,6 +4,7 @@ package com.oneeyedmen.minutest.junit
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.internal.ParentContext
 import com.oneeyedmen.minutest.internal.RootContext
 import com.oneeyedmen.minutest.internal.TopLevelContextBuilder
@@ -36,29 +37,29 @@ interface JUnit5Minutests {
  *
  * @see [NodeBuilder<Unit>#testFactory()]
  */
-fun testFactoryFor(root: TopLevelContextBuilder<*>) = root.buildNode().toStreamOfDynamicNodes(RootContext)
+fun <F> testFactoryFor(root: TopLevelContextBuilder<F>) = root.buildNode().toStreamOfDynamicNodes(RootContext)
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]
  *
  * @see [testFactoryFor(NodeBuilder<Unit>)]
  */
-fun TopLevelContextBuilder<*>.toTestFactory() = testFactoryFor(this)
+fun <F> TopLevelContextBuilder<F>.toTestFactory() = testFactoryFor(this)
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-private fun RuntimeContext.toStreamOfDynamicNodes(parentContext: ParentContext<*>): Stream<out DynamicNode> =
+private fun <PF, F> RuntimeContext<PF, F>.toStreamOfDynamicNodes(parentContext: ParentContext<PF>): Stream<out DynamicNode> =
     children.toStreamOfDynamicNodes(this, parentContext.andThen(this))
 
-private fun Iterable<RuntimeNode>.toStreamOfDynamicNodes(parent: RuntimeContext, parentContext: ParentContext<*>) =
+private fun <F> Iterable<RuntimeNode<F, *>>.toStreamOfDynamicNodes(parent: RuntimeContext<*, F>, parentContext: ParentContext<F>) =
     asSequence()
         .map { it.toDynamicNode(parentContext) }
         .asStream()
         .onClose { parent.close() }
 
-private fun RuntimeNode.toDynamicNode(parentContext: ParentContext<*>): DynamicNode = when (this) {
-    is RuntimeTest -> dynamicTest(name) {
-        (parentContext as ParentContext<Any?>).newRunTest(this, parentContext.andThenJust(this.name))
+private fun <PF, F> RuntimeNode<PF, F>.toDynamicNode(parentContext: ParentContext<PF>): DynamicNode = when (this) {
+    is RuntimeTest<*> -> dynamicTest(name) {
+        parentContext.newRunTest(this as Test<PF>, parentContext.andThenJust(this.name))
     }
     is RuntimeContext -> dynamicContainer(name, this.toStreamOfDynamicNodes(parentContext))
 }

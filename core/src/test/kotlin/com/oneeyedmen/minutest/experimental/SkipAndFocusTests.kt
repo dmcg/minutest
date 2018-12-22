@@ -14,7 +14,7 @@ class SkipAndFocusTests {
     private val noop: Unit.() -> Unit = {}
 
     @Test fun noop() {
-        val tests = rootContext<Unit>(skipAndFocus.then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
 
             test("t1", noop)
             test("t2", noop)
@@ -27,7 +27,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `skip test`() {
-        val tests = rootContext<Unit>(skipAndFocus.then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             SKIP - test("t1") { fail("t1 wasn't skipped") }
             test("t2", noop)
         }
@@ -39,7 +39,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `skip context`() {
-        val tests = rootContext<Unit>(skipAndFocus.then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             SKIP - context("c1") {
                 test("c1/t1") { fail("c1/t1 wasn't skipped") }
             }
@@ -54,7 +54,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `focus test skips unfocused`() {
-        val tests = rootContext<Unit>(skipAndFocus.then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             test("t1") { fail("t1 wasn't skipped") }
             FOCUS - test("t2", noop)
         }
@@ -66,7 +66,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `focus context skips unfocused`() {
-        val tests = rootContext<Unit>(skipAndFocus.then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             test("t1") { fail("t1 wasn't skipped") }
             FOCUS - context("c1") {
                 test("c1/t1", noop)
@@ -81,7 +81,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `focus downtree skips unfocused from root`() {
-        val tests = rootContext<Unit>(skipAndFocus.then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             test("t1") { fail("t1 wasn't skipped") }
             context("c1") {
                 FOCUS - test("c1/t1", noop)
@@ -96,7 +96,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `deep thing`() {
-        val tests = rootContext<Unit>(skipAndFocus.then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             test("t1") { fail("t1 wasn't skipped") }
             context("c1") {
                 FOCUS - test("c1/t1", noop)
@@ -123,7 +123,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `skip from root`() {
-        val tests = rootContext<Unit>(skipAndFocus.then(loggedTo(log))) {
+        val tests = rootContext(skipAndFocus<Unit>().then(loggedTo(log))) {
             annotateWith(SKIP)
             test("root was skipped") {
                 fail("root wasn't skipped")

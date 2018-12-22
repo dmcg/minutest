@@ -7,20 +7,16 @@ import com.oneeyedmen.minutest.*
  */
 internal data class PreparedRuntimeContext<PF, F> (
     override val name: String,
-    override val children: List<RuntimeNode>,
+    override val children: List<RuntimeNode<F, *>>,
     private val befores: List<(F) -> Unit>,
     private val afters: List<(F) -> Unit>,
     private var afterAlls: List<() -> Unit>,
     private val transforms: List<TestTransform<F>>,
     private val fixtureFactory: (PF, TestDescriptor) -> F,
     override val properties: Map<Any, Any>
-) : RuntimeContext() {
+) : RuntimeContext<PF, F>() {
 
-    override fun runTest(test: Test<*>, parentFixture: Any, testDescriptor: TestDescriptor): Any {
-        return runTestToo(test as Test<F>, parentFixture as PF, testDescriptor) as Any
-    }
-
-    private fun runTestToo(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): PF {
+    override fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): PF {
         val testWithPreparedFixture: Test<F> = { parentFixture1, testDescriptor1 ->
             applyBeforesTo(parentFixture1)
                 .tryMap { f -> test(f, testDescriptor1) }
@@ -47,7 +43,7 @@ internal data class PreparedRuntimeContext<PF, F> (
         }
     }
 
-    override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
+    override fun withChildren(children: List<RuntimeNode<F, *>>) = copy(children = children)
 
     // apply befores in order - if anything is thrown return it and the last successful value
     private fun applyBeforesTo(fixture: F): OpResult<F> {

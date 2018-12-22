@@ -10,35 +10,32 @@ import org.opentest4j.TestAbortedException
 object SKIP : TestAnnotation
 object FOCUS : TestAnnotation
 
-val skipAndFocus = ::inexclude
+fun <F> skipAndFocus(): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> = { inexclude(it) }
 
-fun inexclude(root: RuntimeNode) = when (root) {
-    is RuntimeTest -> root.inexcluded(defaultToSkip = false)
-    is RuntimeContext -> {
-        if (SKIP.appliesTo(root)) {
-            root.skipped()
-        } else {
-            val defaultToSkip = root.hasAFocusedChild()
-            root.withTransformedChildren { it.inexcluded(defaultToSkip) }
-        }
+fun <F> inexclude(root: RuntimeContext<Unit, F>): RuntimeContext<Unit, F> =
+    if (SKIP.appliesTo(root)) {
+        root.skipped()
+    } else {
+        val defaultToSkip = root.hasAFocusedChild()
+        root.withTransformedChildren { it.inexcluded(defaultToSkip) }
     }
-}
 
-private fun RuntimeNode.hasAFocusedChild(): Boolean = when (this) {
+
+private fun RuntimeNode<*, *>.hasAFocusedChild(): Boolean = when (this) {
     is RuntimeTest -> FOCUS.appliesTo(this)
     is RuntimeContext -> hasAFocusedChild()
 }
 
-private fun RuntimeContext.hasAFocusedChild() = FOCUS.appliesTo(this) || children.hasAFocusedChild()
+private fun RuntimeContext<*, *>.hasAFocusedChild() = FOCUS.appliesTo(this) || children.hasAFocusedChild()
 
-private fun List<RuntimeNode>.hasAFocusedChild() = find { it.hasAFocusedChild() } != null
+private fun List<RuntimeNode<*, *>>.hasAFocusedChild() = find { it.hasAFocusedChild() } != null
 
-private fun RuntimeNode.inexcluded(defaultToSkip: Boolean): RuntimeNode = when (this) {
-    is RuntimeTest -> inexcluded(defaultToSkip)
-    is RuntimeContext -> inexcluded(defaultToSkip)
+private fun <PF, F> RuntimeNode<PF, F>.inexcluded(defaultToSkip: Boolean): RuntimeNode<PF, F> = when (this) {
+    is RuntimeContext<*, *> -> (this as RuntimeContext<PF, F>).inexcluded(defaultToSkip)
+    is RuntimeTest<*> -> (this as RuntimeTest<F>).inexcluded(defaultToSkip) as RuntimeNode<PF, F>
 }
 
-private fun RuntimeContext.inexcluded(defaultToSkip: Boolean) =
+private fun <PF, F> RuntimeContext<PF, F>.inexcluded(defaultToSkip: Boolean): RuntimeContext<PF, F> =
     when {
         FOCUS.appliesTo(this) ->
             this.withTransformedChildren { it.inexcluded(defaultToSkip = false) }
@@ -50,19 +47,19 @@ private fun RuntimeContext.inexcluded(defaultToSkip: Boolean) =
             this.withTransformedChildren { it.inexcluded(defaultToSkip) }
     }
 
-private fun RuntimeTest.inexcluded(defaultToSkip: Boolean) =
+private fun <F> RuntimeTest<F>.inexcluded(defaultToSkip: Boolean): RuntimeTest<F> =
     when {
         FOCUS.appliesTo(this) -> this
         defaultToSkip || SKIP.appliesTo(this) -> this.skipped()
         else -> this
     }
 
-private fun RuntimeTest.skipped() = skipper(name, properties)
+private fun <F> RuntimeTest<F>.skipped() = skipper<F>(name, properties)
 
-private fun skipper(name: String, properties: Map<Any, Any>) = RuntimeTest(name, properties) { _, _ ->
+private fun <F> skipper(name: String, properties: Map<Any, Any>) = RuntimeTest<F>(name, properties) { _, _ ->
     throw TestAbortedException("skipped")
 }
 
-private fun RuntimeContext.skipped() = RuntimeContextWrapper(this,
+private fun <PF, F> RuntimeContext<PF, F>.skipped() = RuntimeContextWrapper(this,
     children = listOf(skipper("skipping ${this.name}", emptyMap()))
 )

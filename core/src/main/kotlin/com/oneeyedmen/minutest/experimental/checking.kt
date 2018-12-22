@@ -5,38 +5,35 @@ import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
 
-fun checkedAgainst(check: (List<String>) -> Unit): (RuntimeNode) -> RuntimeNode = { node ->
-    when (node) {
-        is RuntimeTest -> error("Can only check a context")
-        is RuntimeContext -> {
-            val log = mutableListOf<String>()
-            loggingRuntimeContext(node, log, 0) {
-                check(log)
-            }
-        }
+fun <F> checkedAgainst(check: (List<String>) -> Unit): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> = { node ->
+    val log = mutableListOf<String>()
+    loggingRuntimeContext(node, log, 0) {
+        check(log)
     }
 }
 
-fun loggedTo(log: MutableList<String>): (RuntimeNode) -> RuntimeNode = { node ->
-    node.loggedTo(log, 0)
-}
+fun <PF, F> loggedTo(log: MutableList<String>): (RuntimeContext<PF, F>) -> RuntimeContext<PF, F> =
+    { context: RuntimeContext<PF, F> ->
+        loggingRuntimeContext(context, log, 0)
+    }
 
 fun List<String>.withTabsExpanded(spaces: Int) = this.map { it.replace("\t", " ".repeat(spaces)) }
 
-private fun RuntimeNode.loggedTo(log: MutableList<String>, level: Int): RuntimeNode =
+private fun <PF, F> RuntimeNode<PF, F>.loggedTo(log: MutableList<String>, level: Int): RuntimeNode<PF, F> =
     when (this) {
-        is RuntimeContext -> loggingRuntimeContext(this, log, level)
-        is RuntimeTest -> loggingRuntimeTest(this, log, level)
+        is RuntimeContext<*, *> -> loggingRuntimeContext(this as RuntimeContext<PF, F>, log, level)
+        is RuntimeTest<*> -> loggingRuntimeTest(this as RuntimeTest<F>, log, level) as RuntimeNode<PF, F>
     }
 
-private fun loggingRuntimeContext(
-    wrapped: RuntimeContext,
+private fun <PF, F> loggingRuntimeContext(
+    wrapped: RuntimeContext<PF, F>,
     log: MutableList<String>,
     indent: Int,
     done: () -> Unit = {}
-): RuntimeContext {
+): RuntimeContext<PF, F> {
     val childrenLog = mutableListOf<String>()
-    return RuntimeContextWrapper(wrapped,
+    return RuntimeContextWrapper(
+        wrapped,
         children = wrapped.children.map { it.loggedTo(childrenLog, indent + 1) },
         onClose = {
             log.add("${indent.tabs()}${wrapped.name}")
@@ -48,7 +45,7 @@ private fun loggingRuntimeContext(
 }
 
 
-private fun loggingRuntimeTest(wrapped: RuntimeTest, log: MutableList<String>, indent: Int) = wrapped.copy(
+private fun <F> loggingRuntimeTest(wrapped: RuntimeTest<F>, log: MutableList<String>, indent: Int) = wrapped.copy(
     f = { fixture, testDescriptor ->
         log.add("${indent.tabs()}${wrapped.name}")
         wrapped(fixture, testDescriptor)

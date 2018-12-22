@@ -46,13 +46,13 @@ class MinutestTestEngine : TestEngine {
         val result = try {
             if (descriptor is MinutestNodeDescriptor) {
                 when (descriptor.node) {
-                    is RuntimeContext -> executeDynamicChildren(
+                    is RuntimeContext<*, *> -> executeDynamicChildren(
                         descriptor,
-                        parentContext.andThen(descriptor.node),
+                        TODO(), //parentContext.andThen(descriptor.node),
                         request,
                         listener
                     )
-                    is RuntimeTest -> executeTest(descriptor.node, parentContext)
+                    is RuntimeTest<*> -> executeTest(descriptor.node, parentContext)
                 }
             }
             else {
@@ -88,9 +88,9 @@ class MinutestTestEngine : TestEngine {
     
     private fun MinutestNodeDescriptor.childrenAsDescriptors() =
         when (node) {
-            is RuntimeContext ->
+            is RuntimeContext<*, *> ->
                 node.children.map { child -> MinutestNodeDescriptor(this, child) }
-            is RuntimeTest ->
+            is RuntimeTest<*> ->
                 emptyList()
         }
     
@@ -108,8 +108,10 @@ class MinutestTestEngine : TestEngine {
         }
     }
     
-    private fun executeTest(node: RuntimeTest, parentContext: ParentContext<*>) {
-        (parentContext as ParentContext<Any?>).newRunTest(node, parentContext.andThenJust(node.name))
+    private fun executeTest(node: RuntimeTest<*>, parentContext: ParentContext<*>) {
+        parentContext.newRunTest(
+            TODO(), //node as Test<Any?>,
+            parentContext.andThenJust(node.name))
     }
     
     companion object {
@@ -127,7 +129,7 @@ private const val testType = "minutest-test"
 
 private class MinutestNodeDescriptor(
     parent: TestDescriptor,
-    val node:RuntimeNode,
+    val node: RuntimeNode<*, *>,
     private val source: TestSource? = null
 
 ) : TestDescriptor {
@@ -179,7 +181,7 @@ private class MinutestNodeDescriptor(
 }
 
 
-private fun RuntimeNode.descriptorIdType(): String {
+private fun RuntimeNode<*, *>.descriptorIdType(): String {
     return when (this) {
         is RuntimeContext -> contextType
         is RuntimeTest -> testType

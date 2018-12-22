@@ -4,7 +4,6 @@ import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.internal.TopLevelContextBuilder
 
 interface TestAnnotation {
 
@@ -12,7 +11,7 @@ interface TestAnnotation {
         addTo(nodeBuilder.properties)
     }
 
-    fun appliesTo(runtimeNode: RuntimeNode) = runtimeNode.properties.containsKey(this)
+    fun appliesTo(runtimeNode: RuntimeNode<*, *>) = runtimeNode.properties.containsKey(this)
 
     fun addTo(properties: MutableMap<Any, Any>) {
         properties[this] = true
@@ -20,18 +19,13 @@ interface TestAnnotation {
 
     operator fun plus(that: TestAnnotation) = listOf(this, that)
 
-    operator fun <PF, F> minus(nodeBuilder: NodeBuilder<PF, F>): NodeBuilder<PF, F> =
-        nodeBuilder.also {
-            this.applyTo(it)
-        }
-
-    operator fun <F> minus(nodeBuilder: TopLevelContextBuilder<F>): TopLevelContextBuilder<F> =
+    operator fun <PF, F, NodeBuilderT: NodeBuilder<PF, F>> minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
         nodeBuilder.also {
             this.applyTo(it)
         }
 }
 
-operator fun <PF, F> Iterable<TestAnnotation>.minus(nodeBuilder: NodeBuilder<PF, F>): NodeBuilder<PF, F> =
+operator fun <PF, F, NodeBuilderT: NodeBuilder<PF, F>> Iterable<TestAnnotation>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT=
     nodeBuilder.also {
         this.forEach { annotation ->
             annotation.applyTo(nodeBuilder)
@@ -42,9 +36,11 @@ fun Context<*, *>.annotateWith(annotation: TestAnnotation) {
     annotation.applyTo(this as NodeBuilder<*, *>)
 }
 
-fun ((RuntimeNode) -> RuntimeNode).then(next: (RuntimeNode) -> RuntimeNode) = { node: RuntimeNode ->
-    next(this(node))
+fun <F> ((RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>).then(
+    next: (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>
+) = { context: RuntimeContext<Unit, F> ->
+    next(this(context))
 }
 
-fun RuntimeContext.withTransformedChildren(transform: (RuntimeNode) -> RuntimeNode) =
+fun <PF, F> RuntimeContext<PF, F>.withTransformedChildren(transform: (RuntimeNode<F, *>) -> RuntimeNode<F, *>) =
     withChildren(children.map(transform))

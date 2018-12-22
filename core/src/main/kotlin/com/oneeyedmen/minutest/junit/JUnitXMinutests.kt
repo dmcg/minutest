@@ -10,7 +10,7 @@ internal fun Any.testMethods(): List<TopLevelContextBuilder<*>> = this::class.me
     .filter { it.returnType.classifier == TopLevelContextBuilder::class }
     .map { it.call(this) as TopLevelContextBuilder<*> }
 
-internal fun Any.rootContextFromMethods(): RuntimeContext {
+internal fun Any.rootContextFromMethods(): RuntimeContext<Unit, *> {
     val testMethodsAsNodes: List<TopLevelContextBuilder<*>> = testMethods()
     val singleNode = when {
         testMethodsAsNodes.isEmpty() -> error("No test methods found")
