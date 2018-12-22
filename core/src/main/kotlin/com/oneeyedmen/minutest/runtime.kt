@@ -11,4 +11,8 @@ abstract class RuntimeContext : RuntimeNode(), AutoCloseable {
     abstract fun runTest(test: Test<*>, parentFixture: Any, testDescriptor: TestDescriptor): Any
 }
 
-abstract class RuntimeTest: RuntimeNode(), Test<Any?>
+data class RuntimeTest(
+    override val name: String,
+    override val properties: Map<Any, Any>,
+    private val f: Test<Any?>
+) : RuntimeNode(), Test<Any?> by f

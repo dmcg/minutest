@@ -4,7 +4,6 @@ import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
-import com.oneeyedmen.minutest.internal.RuntimeTestWrapper
 
 fun checkedAgainst(check: (List<String>) -> Unit): (RuntimeNode) -> RuntimeNode = { node ->
     when (node) {
@@ -49,11 +48,11 @@ private fun loggingRuntimeContext(
 }
 
 
-private fun loggingRuntimeTest(wrapped: RuntimeTest, log: MutableList<String>, indent: Int): RuntimeTest =
-    RuntimeTestWrapper(wrapped) { fixture, testDescriptor ->
+private fun loggingRuntimeTest(wrapped: RuntimeTest, log: MutableList<String>, indent: Int) = wrapped.copy(
+    f = { fixture, testDescriptor ->
         log.add("${indent.tabs()}${wrapped.name}")
         wrapped(fixture, testDescriptor)
     }
-
+)
 
 private fun Int.tabs() = "\t".repeat(this)
