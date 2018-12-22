@@ -62,10 +62,16 @@ internal class ContextBuilder<PF, F>(
         afterAlls.add(f)
     }
 
-    override fun buildNode() =
-        PreparedRuntimeContext(name, children, befores, afters, afterAlls, transforms,
-            resolvedFixtureFactory(),
-            properties)
+    override fun buildNode() = PreparedRuntimeContext(
+        name,
+        children.map { it.buildNode() },
+        befores,
+        afters,
+        afterAlls,
+        transforms,
+        resolvedFixtureFactory(),
+        properties
+    )
 
     @Suppress("UNCHECKED_CAST")
     private fun resolvedFixtureFactory(): (PF, TestDescriptor) -> F = when {

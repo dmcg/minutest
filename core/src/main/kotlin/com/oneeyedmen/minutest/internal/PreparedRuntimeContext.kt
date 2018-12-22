@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.*
 /**
  * The runtime representation of a context.
  */
-internal class PreparedRuntimeContext<PF, F> private constructor(
+internal data class PreparedRuntimeContext<PF, F> (
     override val name: String,
     override val children: List<RuntimeNode>,
     private val befores: List<(F) -> Unit>,
@@ -15,23 +15,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
     private val fixtureFactory: (PF, TestDescriptor) -> F,
     override val properties: Map<Any, Any>
 ) : RuntimeContext() {
-
-    companion object {
-        operator fun <PF, F> invoke(
-            name: String,
-            childBuilders: List<NodeBuilder<F, *>>,
-            befores: List<(F) -> Unit>,
-            afters: List<(F) -> Unit>,
-            afterAlls: List<() -> Unit>,
-            transforms: List<TestTransform<F>>,
-            fixtureFactory: (PF, TestDescriptor) -> F,
-            properties: Map<Any, Any>
-        ): PreparedRuntimeContext<PF, F> = mutableListOf<RuntimeNode>().let { kids ->
-            PreparedRuntimeContext(name, kids, befores, afters, afterAlls, transforms, fixtureFactory, properties).apply {
-                kids.addAll(childBuilders.map { it.buildNode() })
-            }
-        }
-    }
 
     override fun runTest(test: Test<*>, parentFixture: Any, testDescriptor: TestDescriptor): Any {
         return runTestToo(test as Test<F>, parentFixture as PF, testDescriptor) as Any
@@ -64,24 +47,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         }
     }
 
-    private fun copy(
-        name: String = this.name,
-        children: List<RuntimeNode> = this.children,
-        befores: List<(F) -> Unit> = this.befores,
-        afters: List<(F) -> Unit> = this.afters,
-        afterAlls: List<() -> Unit> = this.afterAlls,
-        transforms: List<TestTransform<F>> = this.transforms,
-        fixtureFactory: (PF, TestDescriptor) -> F = this.fixtureFactory,
-        properties: Map<Any, Any> = this.properties
-    ) = PreparedRuntimeContext(name,
-        children,
-        befores,
-        afters,
-        afterAlls,
-        transforms,
-        fixtureFactory,
-        properties)
-
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
 
     // apply befores in order - if anything is thrown return it and the last successful value
@@ -95,9 +60,4 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         }
         return OpResult(null, fixture)
     }
-}
-
-private fun Named.andThen(name: String): Named = object : Named {
-    override val name: String = name
-    override val parent = this@andThen
 }
