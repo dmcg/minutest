@@ -5,6 +5,7 @@ import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.internal.ParentContext
 import com.oneeyedmen.minutest.internal.RootContext
+import com.oneeyedmen.minutest.internal.andThenJust
 import org.junit.platform.engine.*
 import org.junit.platform.engine.TestDescriptor.Type.CONTAINER
 import org.junit.platform.engine.TestDescriptor.Type.TEST
@@ -108,7 +109,7 @@ class MinutestTestEngine : TestEngine {
     }
     
     private fun executeTest(node: RuntimeTest, parentContext: ParentContext<*>) {
-        node.run(parentContext)
+        (parentContext as ParentContext<Any?>).newRunTest(node, parentContext.andThenJust(node.name))
     }
     
     companion object {

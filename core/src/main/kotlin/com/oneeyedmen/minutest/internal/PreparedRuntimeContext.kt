@@ -33,17 +33,11 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         }
     }
 
-    override fun runTest(test: Test<*>, parentContext: ParentContext<*>, testName: String) {
-        error("Are we calling this?")
-        (parentContext as ParentContext<PF>).runTest(
-            buildTestForParentToRun(test as Test<F>, parentContext, testName), testName)
+    override fun runTest(test: Test<*>, parentFixture: Any, testDescriptor: TestDescriptor): Any {
+        return runTestToo(test as Test<F>, parentFixture as PF, testDescriptor) as Any
     }
 
-    override fun newRunTest(test: Test<*>, parentFixture: Any, testDescriptor: TestDescriptor): Any {
-        return runTest(test as Test<F>, parentFixture as PF, testDescriptor) as Any
-    }
-
-    fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): PF {
+    private fun runTestToo(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): PF {
         val testWithPreparedFixture: Test<F> = { parentFixture1, testDescriptor1 ->
             applyBeforesTo(parentFixture1)
                 .tryMap { f -> test(f, testDescriptor1) }
@@ -59,18 +53,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         afterAlls.forEach {
             it()
         }
-    }
-
-    private fun buildTestForParentToRun(test: Test<F>, parentContext: ParentContext<PF>, testName: String): Test<PF> {
-
-        // The issue here is that as the invocation climbs up the parentContext stack, we loose bits of the test name
-        // So we latch at the original one, which is when test is a proper test.
-        val originalTestDescriptor = when (test) {
-            is PreparedRuntimeContext<*, *>.TestForParentToRun -> test.originalTestDescriptor
-            else -> parentContext.andThen(this@PreparedRuntimeContext.name).andThen(testName)
-        }
-
-        return TestForParentToRun(test, originalTestDescriptor)
     }
 
     private fun applyTransformsTo(test: Test<F>): Test<F> =
@@ -101,25 +83,6 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
         properties)
 
     override fun withChildren(children: List<RuntimeNode>) = copy(children = children)
-
-    // This is a class so that we can check whether a Test is one
-    inner class TestForParentToRun(
-        private val test: Test<F>,
-        val originalTestDescriptor: TestDescriptor
-    ) : Test<PF> {
-
-        override fun invoke(parentFixture: PF, testDescriptor: TestDescriptor): PF {
-            val testWithPreparedFixture: Test<F> = { parentFixture1, testDescriptor1 ->
-                applyBeforesTo(parentFixture1)
-                    .tryMap { f -> test(f, testDescriptor1) }
-                    .onLastValue(::applyAftersTo)
-                    .orThrow()
-            }
-            val transformedTest = applyTransformsTo(testWithPreparedFixture)
-            transformedTest.invoke(fixtureFactory(parentFixture, originalTestDescriptor), originalTestDescriptor)
-            return parentFixture
-        }
-    }
 
     // apply befores in order - if anything is thrown return it and the last successful value
     private fun applyBeforesTo(fixture: F): OpResult<F> {

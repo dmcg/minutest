@@ -16,11 +16,7 @@ internal data class ScannedPackageContext(
     override val properties: Map<Any, Any> = emptyMap()
 
 ) : RuntimeContext() {
-    override fun newRunTest(test: Test<*>, parentFixture: Any, testDescriptor: TestDescriptor): Any {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun runTest(test: Test<*>, parentContext: ParentContext<*>, testName: String) {
+    override fun runTest(test: Test<*>, parentFixture: Any, testDescriptor: TestDescriptor): Any {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -33,7 +29,7 @@ internal data class ScannedPackageContext(
     }
     
     override fun withChildren(children: List<RuntimeNode>): RuntimeContext {
-        return RuntimeContextWrapper(name, emptyMap(), children, { _, _, _ -> Unit }, {_, _,_ -> Unit}, {})
+        return RuntimeContextWrapper(name, emptyMap(), children, {_, _,_ -> Unit}, {})
     }
     
     override fun close() {}

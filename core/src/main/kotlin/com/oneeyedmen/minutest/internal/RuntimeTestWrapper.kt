@@ -15,6 +15,4 @@ internal data class RuntimeTestWrapper(
         properties: Map<Any, Any> = delegate.properties,
         f: Test<Any?> = delegate
     ) : this(name, properties, f)
-
-    override fun run(parentContext: ParentContext<*>) = error("removed")
 }
