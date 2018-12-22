@@ -34,8 +34,25 @@ internal class PreparedRuntimeContext<PF, F> private constructor(
     }
 
     override fun runTest(test: Test<*>, parentContext: ParentContext<*>, testName: String) {
+        error("Are we calling this?")
         (parentContext as ParentContext<PF>).runTest(
             buildTestForParentToRun(test as Test<F>, parentContext, testName), testName)
+    }
+
+    override fun newRunTest(test: Test<*>, parentFixture: Any, testDescriptor: TestDescriptor): Any {
+        return runTest(test as Test<F>, parentFixture as PF, testDescriptor) as Any
+    }
+
+    fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): PF {
+        val testWithPreparedFixture: Test<F> = { parentFixture1, testDescriptor1 ->
+            applyBeforesTo(parentFixture1)
+                .tryMap { f -> test(f, testDescriptor1) }
+                .onLastValue(::applyAftersTo)
+                .orThrow()
+        }
+        val transformedTest = applyTransformsTo(testWithPreparedFixture)
+        transformedTest.invoke(fixtureFactory(parentFixture, testDescriptor), testDescriptor)
+        return parentFixture
     }
 
     override fun close() {

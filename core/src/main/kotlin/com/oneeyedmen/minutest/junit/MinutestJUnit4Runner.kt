@@ -5,6 +5,7 @@ import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.internal.ParentContext
 import com.oneeyedmen.minutest.internal.RootContext
+import com.oneeyedmen.minutest.internal.andThenJust
 import org.junit.runner.Description
 import org.junit.runner.notification.RunNotifier
 import org.junit.runners.ParentRunner
@@ -68,7 +69,7 @@ private fun RuntimeNode.toDescription(parentContext: ParentContext<*>): Descript
 private fun RuntimeTest.asStatement(parentContext: ParentContext<*>, notifier: RunNotifier) = object : Statement() {
     override fun evaluate() {
         try {
-            run(parentContext)
+            (parentContext as ParentContext<Any?>).newRunTest(this@asStatement, parentContext.andThenJust(this@asStatement.name))
         } catch (aborted: TestAbortedException) {
             // JUnit 4 doesn't understand JUnit 5's convention
             notifier.fireTestIgnored(this@asStatement.toDescription(parentContext))

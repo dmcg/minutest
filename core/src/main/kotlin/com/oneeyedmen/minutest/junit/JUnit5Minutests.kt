@@ -7,6 +7,7 @@ import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.internal.ParentContext
 import com.oneeyedmen.minutest.internal.RootContext
 import com.oneeyedmen.minutest.internal.TopLevelContextBuilder
+import com.oneeyedmen.minutest.internal.andThenJust
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
@@ -57,7 +58,7 @@ private fun Iterable<RuntimeNode>.toStreamOfDynamicNodes(parent: RuntimeContext,
 
 private fun RuntimeNode.toDynamicNode(parentContext: ParentContext<*>): DynamicNode = when (this) {
     is RuntimeTest -> dynamicTest(name) {
-        this.run(parentContext)
+        (parentContext as ParentContext<Any?>).newRunTest(this, parentContext.andThenJust(this.name))
     }
     is RuntimeContext -> dynamicContainer(name, this.toStreamOfDynamicNodes(parentContext))
 }

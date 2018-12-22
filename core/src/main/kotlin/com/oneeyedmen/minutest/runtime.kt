@@ -11,8 +11,11 @@ abstract class RuntimeContext : RuntimeNode(), AutoCloseable {
     abstract val children: List<RuntimeNode>
     abstract fun withChildren(children: List<RuntimeNode>): RuntimeContext
     abstract fun runTest(test: Test<*>, parentContext: ParentContext<*>, testName: String)
+
+    abstract fun newRunTest(test: Test<*>, parentFixture: Any, testDescriptor: TestDescriptor): Any
 }
 
-abstract class RuntimeTest: RuntimeNode() {
+abstract class RuntimeTest: RuntimeNode(), Test<Any?> {
+    // TODO - remove me
     abstract fun run(parentContext: ParentContext<*>)
 }

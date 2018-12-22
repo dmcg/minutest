@@ -50,9 +50,9 @@ private fun loggingRuntimeContext(
 
 
 private fun loggingRuntimeTest(wrapped: RuntimeTest, log: MutableList<String>, indent: Int): RuntimeTest =
-    RuntimeTestWrapper(wrapped) {
+    RuntimeTestWrapper(wrapped) { fixture, testDescriptor ->
         log.add("${indent.tabs()}${wrapped.name}")
-        wrapped.run(it)
+        wrapped(fixture, testDescriptor)
     }
 
 

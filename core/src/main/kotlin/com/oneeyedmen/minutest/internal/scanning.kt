@@ -3,6 +3,7 @@ package com.oneeyedmen.minutest.internal
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.Test
+import com.oneeyedmen.minutest.TestDescriptor
 import io.github.classgraph.*
 import kotlin.reflect.KFunction0
 import kotlin.reflect.KVisibility.PUBLIC
@@ -15,6 +16,10 @@ internal data class ScannedPackageContext(
     override val properties: Map<Any, Any> = emptyMap()
 
 ) : RuntimeContext() {
+    override fun newRunTest(test: Test<*>, parentFixture: Any, testDescriptor: TestDescriptor): Any {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun runTest(test: Test<*>, parentContext: ParentContext<*>, testName: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -28,7 +33,7 @@ internal data class ScannedPackageContext(
     }
     
     override fun withChildren(children: List<RuntimeNode>): RuntimeContext {
-        return RuntimeContextWrapper(name, emptyMap(), children, { _, _, _ -> Unit }, {})
+        return RuntimeContextWrapper(name, emptyMap(), children, { _, _, _ -> Unit }, {_, _,_ -> Unit}, {})
     }
     
     override fun close() {}
