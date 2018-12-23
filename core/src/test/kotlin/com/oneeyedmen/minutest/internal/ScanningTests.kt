@@ -2,33 +2,39 @@ package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.RuntimeTest
-import org.junit.jupiter.api.Disabled
+import com.oneeyedmen.minutest.assertLogged
 import org.junit.jupiter.api.Test
 
 class ScanningTests {
-    @Test
-    @Disabled("bug report")
-    fun `scanned tests have correct full names`() {
-        val scan = scan({whitelistPackages("example.a")})
 
-        // Can't do fullName any more
-//        val tests = scan.asSequence().tests().map { it.fullName().joinToString("/") }.toSet()
-//        assertEquals(
-//            setOf(
-//                "example.a/a failing test",
-//                "example.a/a passing test",
-//                "example.a/example skipped context",
-//                "example.a/a typed fixture test"
-//            ),
-//            tests
-//        )
+    @Test
+    fun `scanned tests have correct full names`() {
+        val scan: List<ScannedPackageContext> = scan({ whitelistPackages("example.a") })
+
+        val log = mutableListOf<String>()
+        scan.forEach {
+            it.visit(log, 0)
+        }
+
+        assertLogged(log,
+            "example.a",
+            "  example context",
+            "    a failing test",
+            "    a passing test",
+            "  example skipped context",
+            "    skipping example skipped context",
+            "  example typed context",
+            "    a typed fixture test"
+        )
     }
 }
 
-private fun Sequence<RuntimeNode<*, *>>.tests(): Sequence<RuntimeTest<*>> = flatMap { it.tests() }
+private fun RuntimeNode<*, *>.visit(log: MutableList<String>, indent: Int) {
+    log.add(indent.spaces() + this.name)
+    if (this is RuntimeContext) {
+        this.children.forEach { it.visit(log, indent + 2) }
+    }
 
-private fun RuntimeNode<*, *>.tests(): Sequence<RuntimeTest<*>> = when (this) {
-    is RuntimeTest -> sequenceOf(this)
-    is RuntimeContext -> children.asSequence().flatMap { it.tests() }
 }
+
+private fun Int.spaces() = " ".repeat(this)
