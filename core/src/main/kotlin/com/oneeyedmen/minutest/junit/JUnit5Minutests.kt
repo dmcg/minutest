@@ -4,11 +4,9 @@ package com.oneeyedmen.minutest.junit
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
-import com.oneeyedmen.minutest.Test
-import com.oneeyedmen.minutest.internal.RootContext
+import com.oneeyedmen.minutest.internal.RootExecutor
 import com.oneeyedmen.minutest.internal.TestExecutor
 import com.oneeyedmen.minutest.internal.TopLevelContextBuilder
-import com.oneeyedmen.minutest.internal.andThenJust
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
@@ -26,8 +24,8 @@ interface JUnit5Minutests {
     @TestFactory
     fun tests(): Stream<out DynamicNode> = tests.let { testsFromVal ->
         when  {
-            testsFromVal != null -> testsFromVal.buildNode().toStreamOfDynamicNodes(RootContext)
-            else -> this.rootContextFromMethods().toStreamOfDynamicNodes(RootContext)
+            testsFromVal != null -> testsFromVal.buildNode().toStreamOfDynamicNodes(RootExecutor)
+            else -> this.rootContextFromMethods().toStreamOfDynamicNodes(RootExecutor)
         }
     }
 }
@@ -37,7 +35,7 @@ interface JUnit5Minutests {
  *
  * @see [NodeBuilder<Unit>#testFactory()]
  */
-fun <F> testFactoryFor(root: TopLevelContextBuilder<F>) = root.buildNode().toStreamOfDynamicNodes(RootContext)
+fun <F> testFactoryFor(root: TopLevelContextBuilder<F>) = root.buildNode().toStreamOfDynamicNodes(RootExecutor)
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]
@@ -59,7 +57,7 @@ private fun <F> Iterable<RuntimeNode<F, *>>.toStreamOfDynamicNodes(parent: Runti
 
 private fun <PF, F> RuntimeNode<PF, F>.toDynamicNode(executor: TestExecutor<PF>): DynamicNode = when (this) {
     is RuntimeTest<*> -> dynamicTest(name) {
-        executor.runTest(this as Test<PF>, executor.andThenJust(this.name))
+        executor.runTest(this as RuntimeTest<PF>)
     }
     is RuntimeContext -> dynamicContainer(name, this.toStreamOfDynamicNodes(executor))
 }

@@ -3,9 +3,8 @@ package com.oneeyedmen.minutest.junit
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
-import com.oneeyedmen.minutest.internal.RootContext
+import com.oneeyedmen.minutest.internal.RootExecutor
 import com.oneeyedmen.minutest.internal.TestExecutor
-import com.oneeyedmen.minutest.internal.andThenJust
 import org.junit.runner.Description
 import org.junit.runner.notification.RunNotifier
 import org.junit.runners.ParentRunner
@@ -23,9 +22,9 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode<Unit, *>>(
         return rootContext.children as List<RuntimeNode<Unit, *>>
     }
 
-    override fun runChild(child: RuntimeNode<Unit, *>, notifier: RunNotifier) = child.run(RootContext, notifier)
+    override fun runChild(child: RuntimeNode<Unit, *>, notifier: RunNotifier) = child.run(RootExecutor, notifier)
 
-    override fun describeChild(child: RuntimeNode<Unit, *>) = child.toDescription(RootContext)
+    override fun describeChild(child: RuntimeNode<Unit, *>) = child.toDescription(RootExecutor)
 
     override fun classBlock(notifier: RunNotifier): Statement {
         // This is the only way that I've found to close the top level context
@@ -74,7 +73,7 @@ private fun RuntimeNode<*, *>.toDescription(executor: TestExecutor<*>): Descript
 private fun <F> RuntimeTest<F>.asStatement(executor: TestExecutor<F>, notifier: RunNotifier) = object : Statement() {
     override fun evaluate() {
         try {
-            executor.runTest(this@asStatement, executor.andThenJust(this@asStatement.name))
+            executor.runTest(this@asStatement)
         } catch (aborted: TestAbortedException) {
             // JUnit 4 doesn't understand JUnit 5's convention
             notifier.fireTestIgnored(this@asStatement.toDescription(executor))

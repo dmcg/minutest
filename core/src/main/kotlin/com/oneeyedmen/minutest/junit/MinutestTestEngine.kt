@@ -3,9 +3,8 @@ package com.oneeyedmen.minutest.junit
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
-import com.oneeyedmen.minutest.internal.RootContext
+import com.oneeyedmen.minutest.internal.RootExecutor
 import com.oneeyedmen.minutest.internal.TestExecutor
-import com.oneeyedmen.minutest.internal.andThenJust
 import org.junit.platform.engine.*
 import org.junit.platform.engine.TestDescriptor.Type.CONTAINER
 import org.junit.platform.engine.TestDescriptor.Type.TEST
@@ -29,7 +28,7 @@ class MinutestTestEngine : TestEngine {
     override fun execute(request: ExecutionRequest) {
         val root = request.rootTestDescriptor
         if (root is MinutestEngineDescriptor) {
-            execute(root, RootContext, root.discoveryRequest, request.engineExecutionListener)
+            execute(root, RootExecutor, root.discoveryRequest, request.engineExecutionListener)
         }
         else {
             throw IllegalArgumentException("root descriptor is not a ${MinutestEngineDescriptor::class.jvmName}")
@@ -109,9 +108,7 @@ class MinutestTestEngine : TestEngine {
     }
     
     private fun executeTest(node: RuntimeTest<*>, executor: TestExecutor<*>) {
-        executor.runTest(
-            TODO(), //node as Test<Any?>,
-            executor.andThenJust(node.name))
+        (executor as TestExecutor<Any>).runTest(node as RuntimeTest<Any>) // TODO fix me
     }
     
     companion object {

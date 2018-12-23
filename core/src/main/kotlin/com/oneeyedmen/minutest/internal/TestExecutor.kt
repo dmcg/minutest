@@ -1,11 +1,12 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Named
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.Test
-import com.oneeyedmen.minutest.TestDescriptor
+import com.oneeyedmen.minutest.*
 
 interface TestExecutor<F> : Named {
+
+    fun runTest(runtimeTest: RuntimeTest<F>) {
+        runTest(runtimeTest, this.andThenJust(runtimeTest.name))
+    }
 
     fun runTest(test: Test<F>, testDescriptor: TestDescriptor)
 
@@ -25,8 +26,14 @@ interface TestExecutor<F> : Named {
     }
 }
 
-internal object RootContext : TestExecutor<Unit> {
+internal object RootExecutor : TestExecutor<Unit> {
     override val name = ""
     override val parent: Nothing? = null
     override fun runTest(test: Test<Unit>, testDescriptor: TestDescriptor): Unit = test(Unit, testDescriptor)
 }
+
+private fun TestExecutor<*>.andThenJust(name: String): Named = object : Named {
+    override val name: String = name
+    override val parent = this@andThenJust
+}
+
