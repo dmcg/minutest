@@ -16,21 +16,21 @@ internal data class ScannedPackageContext<F>(
     override val properties: Map<Any, Any> = emptyMap()
 
 ) : RuntimeContext<Unit, F>() {
-    override fun runTest(test: Test<F>, parentFixture: Unit, testDescriptor: TestDescriptor) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     override val name: String get() = packageName
+
     override val children: List<RuntimeNode<F, *>> by lazy {
         contextFuns.map { f ->
             val rootWithDefaultName: RuntimeContext<Unit, F> = f().buildNode()
             RuntimeContextWrapper(delegate = rootWithDefaultName, name = f.name) as RuntimeNode<F, *>
         }
     }
-    
-    override fun withChildren(children: List<RuntimeNode<F, *>>): RuntimeContext<Unit, F> {
-        return RuntimeContextWrapper(name, emptyMap(), children, {_, _,_ -> Unit}, {})
-    }
+
+    override fun runTest(test: Test<F>, parentFixture: Unit, testDescriptor: TestDescriptor) =
+        TODO("not implemented")
+
+    override fun withChildren(children: List<RuntimeNode<F, *>>): RuntimeContext<Unit, F> =
+        TODO("not implemented")
     
     override fun close() {}
 }

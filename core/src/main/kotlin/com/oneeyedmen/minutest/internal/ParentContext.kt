@@ -17,6 +17,7 @@ interface ParentContext<F> : Named {
             // bottom of the stack.
             val testForParent: Test<F> = { fixture: F, _: TestDescriptor ->
                 nextContext.runTest(test, fixture, testDescriptor)
+                fixture
             }
             return parent.newRunTest(testForParent, testDescriptor)
         }

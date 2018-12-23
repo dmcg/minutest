@@ -8,7 +8,7 @@ sealed class RuntimeNode<PF, F> {
 abstract class RuntimeContext<PF, F> : RuntimeNode<PF, F>(), AutoCloseable {
     abstract val children: List<RuntimeNode<F, *>>
     abstract fun withChildren(children: List<RuntimeNode<F, *>>): RuntimeContext<PF, F>
-    abstract fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): PF
+    abstract fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): F
 }
 
 data class RuntimeTest<F>(

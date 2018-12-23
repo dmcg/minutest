@@ -16,7 +16,7 @@ internal data class PreparedRuntimeContext<PF, F> (
     override val properties: Map<Any, Any>
 ) : RuntimeContext<PF, F>() {
 
-    override fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): PF {
+    override fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): F {
         val testWithPreparedFixture: Test<F> = { parentFixture1, testDescriptor1 ->
             applyBeforesTo(parentFixture1)
                 .tryMap { f -> test(f, testDescriptor1) }
@@ -24,8 +24,7 @@ internal data class PreparedRuntimeContext<PF, F> (
                 .orThrow()
         }
         val transformedTest = applyTransformsTo(testWithPreparedFixture)
-        transformedTest.invoke(fixtureFactory(parentFixture, testDescriptor), testDescriptor)
-        return parentFixture
+        return transformedTest.invoke(fixtureFactory(parentFixture, testDescriptor), testDescriptor)
     }
 
     override fun close() {
