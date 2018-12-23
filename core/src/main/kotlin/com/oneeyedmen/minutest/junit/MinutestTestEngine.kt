@@ -3,8 +3,8 @@ package com.oneeyedmen.minutest.junit
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
-import com.oneeyedmen.minutest.internal.ParentContext
 import com.oneeyedmen.minutest.internal.RootContext
+import com.oneeyedmen.minutest.internal.TestExecutor
 import com.oneeyedmen.minutest.internal.andThenJust
 import org.junit.platform.engine.*
 import org.junit.platform.engine.TestDescriptor.Type.CONTAINER
@@ -38,7 +38,7 @@ class MinutestTestEngine : TestEngine {
     
     private fun execute(
         descriptor: TestDescriptor,
-        parentContext: ParentContext<*>,
+        executor: TestExecutor<*>,
         request: EngineDiscoveryRequest,
         listener: EngineExecutionListener
     ) {
@@ -52,11 +52,11 @@ class MinutestTestEngine : TestEngine {
                         request,
                         listener
                     )
-                    is RuntimeTest<*> -> executeTest(descriptor.node, parentContext)
+                    is RuntimeTest<*> -> executeTest(descriptor.node, executor)
                 }
             }
             else {
-                executeStaticChildren(descriptor, parentContext, request, listener)
+                executeStaticChildren(descriptor, executor, request, listener)
             }
             
             TestExecutionResult.successful()
@@ -73,7 +73,7 @@ class MinutestTestEngine : TestEngine {
     
     private fun executeDynamicChildren(
         parent: MinutestNodeDescriptor,
-        parentContext: ParentContext<*>,
+        executor: TestExecutor<*>,
         request: EngineDiscoveryRequest,
         listener: EngineExecutionListener
     ) {
@@ -81,7 +81,7 @@ class MinutestTestEngine : TestEngine {
             if (request.selectsByUniqueId(child)) {
                 listener.dynamicTestRegistered(child)
                 parent.addChild(child)
-                execute(child, parentContext, request, listener)
+                execute(child, executor, request, listener)
             }
         }
     }
@@ -97,21 +97,21 @@ class MinutestTestEngine : TestEngine {
     
     private fun executeStaticChildren(
         test: TestDescriptor,
-        parentContext: ParentContext<*>,
+        executor: TestExecutor<*>,
         request: EngineDiscoveryRequest,
         listener: EngineExecutionListener
     ) {
         test.children.forEach { child ->
             if (request.selectsByUniqueId(child)) {
-                execute(child, parentContext, request, listener)
+                execute(child, executor, request, listener)
             }
         }
     }
     
-    private fun executeTest(node: RuntimeTest<*>, parentContext: ParentContext<*>) {
-        parentContext.newRunTest(
+    private fun executeTest(node: RuntimeTest<*>, executor: TestExecutor<*>) {
+        executor.runTest(
             TODO(), //node as Test<Any?>,
-            parentContext.andThenJust(node.name))
+            executor.andThenJust(node.name))
     }
     
     companion object {

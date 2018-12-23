@@ -3,8 +3,8 @@ package com.oneeyedmen.minutest.junit
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
-import com.oneeyedmen.minutest.internal.ParentContext
 import com.oneeyedmen.minutest.internal.RootContext
+import com.oneeyedmen.minutest.internal.TestExecutor
 import com.oneeyedmen.minutest.internal.andThenJust
 import org.junit.runner.Description
 import org.junit.runner.notification.RunNotifier
@@ -38,9 +38,9 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode<Unit, *>>(
         }
     }
 
-    private fun <PF, F> RuntimeNode<PF, F>.run(parentContext: ParentContext<PF>, notifier: RunNotifier): Unit = when (this) {
-        is RuntimeTest<*> -> run1(this as RuntimeTest<PF>, parentContext, notifier)
-        is RuntimeContext -> run2(this, parentContext.andThen(this), notifier)
+    private fun <PF, F> RuntimeNode<PF, F>.run(executor: TestExecutor<PF>, notifier: RunNotifier): Unit = when (this) {
+        is RuntimeTest<*> -> run1(this as RuntimeTest<PF>, executor, notifier)
+        is RuntimeContext -> run2(this, executor.andThen(this), notifier)
     }
 
 //    private fun <PF, G> run(node: RuntimeNode<PF, G>, parentContext: ParentContext<PF>, notifier: RunNotifier) = when(node) {
@@ -48,36 +48,36 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode<Unit, *>>(
 //        is RuntimeContext -> run2(node, parentContext.andThen(node), notifier)
 //    }
 
-    private fun <F> run1(test: RuntimeTest<F>, parentContext: ParentContext<F>, notifier: RunNotifier) {
-        runLeaf(test.asStatement(parentContext, notifier), test.toDescription(parentContext), notifier)
+    private fun <F> run1(test: RuntimeTest<F>, executor: TestExecutor<F>, notifier: RunNotifier) {
+        runLeaf(test.asStatement(executor, notifier), test.toDescription(executor), notifier)
     }
 
-    private fun <PF, F> run2(context: RuntimeContext<PF, F>, parentContext: ParentContext<F>, notifier: RunNotifier) {
-        notifier.fireTestStarted(context.toDescription(parentContext))
+    private fun <PF, F> run2(context: RuntimeContext<PF, F>, executor: TestExecutor<F>, notifier: RunNotifier) {
+        notifier.fireTestStarted(context.toDescription(executor))
         context.children.forEach {
-            it.run(parentContext, notifier)
+            it.run(executor, notifier)
         }
         context.close()
-        notifier.fireTestFinished(context.toDescription(parentContext))
+        notifier.fireTestFinished(context.toDescription(executor))
     }
 }
 
-private fun RuntimeNode<*, *>.toDescription(parentContext: ParentContext<*>): Description = when (this) {
-    is RuntimeTest -> Description.createTestDescription(parentContext.name, this.name)
+private fun RuntimeNode<*, *>.toDescription(executor: TestExecutor<*>): Description = when (this) {
+    is RuntimeTest -> Description.createTestDescription(executor.name, this.name)
     is RuntimeContext -> Description.createSuiteDescription(this.name).apply {
         this@toDescription.children.forEach {
-            addChild(it.toDescription(parentContext))
+            addChild(it.toDescription(executor))
         }
     }
 }
 
-private fun <F> RuntimeTest<F>.asStatement(parentContext: ParentContext<F>, notifier: RunNotifier) = object : Statement() {
+private fun <F> RuntimeTest<F>.asStatement(executor: TestExecutor<F>, notifier: RunNotifier) = object : Statement() {
     override fun evaluate() {
         try {
-            parentContext.newRunTest(this@asStatement, parentContext.andThenJust(this@asStatement.name))
+            executor.runTest(this@asStatement, executor.andThenJust(this@asStatement.name))
         } catch (aborted: TestAbortedException) {
             // JUnit 4 doesn't understand JUnit 5's convention
-            notifier.fireTestIgnored(this@asStatement.toDescription(parentContext))
+            notifier.fireTestIgnored(this@asStatement.toDescription(executor))
         }
     }
 }
