@@ -1,7 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.platform.engine.TestExecutionResult
 import org.junit.platform.engine.discovery.ClassNameFilter.excludeClassNamePatterns
@@ -13,10 +12,8 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request
 import org.junit.platform.launcher.core.LauncherFactory
 
 
-@Disabled("for now")
 class MinutestTestEngineTests {
 
-    @Disabled("pending name fixes")
     @Test
     fun `selects tests by package`() {
         assertTestRun({ selectors(selectPackage("example.a")) },
@@ -28,6 +25,7 @@ class MinutestTestEngineTests {
             "registered: a failing test",
             "started: a failing test",
             "failed: a failing test",
+            "org.opentest4j.AssertionFailedError: example failure",
             "registered: a passing test",
             "started: a passing test",
             "successful: a passing test",
@@ -69,6 +67,7 @@ class MinutestTestEngineTests {
             "registered: a failing test",
             "started: a failing test",
             "failed: a failing test",
+            "org.opentest4j.AssertionFailedError: example failure",
             "registered: a passing test",
             "started: a passing test",
             "successful: a passing test",
@@ -79,7 +78,6 @@ class MinutestTestEngineTests {
         )
     }
 
-    @Disabled("pending name fixes")
     @Test
     fun `select tests by class name pattern`() {
         assertTestRun(
@@ -95,6 +93,7 @@ class MinutestTestEngineTests {
             "registered: a failing test",
             "started: a failing test",
             "failed: a failing test",
+            "org.opentest4j.AssertionFailedError: example failure",
             "registered: a passing test",
             "started: a passing test",
             "successful: a passing test",
@@ -111,7 +110,6 @@ class MinutestTestEngineTests {
         )
     }
 
-//    @Disabled("pending name fixes")
     @Test
     fun `filter tests by package name`() {
         assertTestRun(
@@ -127,6 +125,7 @@ class MinutestTestEngineTests {
             "registered: a failing test",
             "started: a failing test",
             "failed: a failing test",
+            "org.opentest4j.AssertionFailedError: example failure",
             "registered: a passing test",
             "started: a passing test",
             "successful: a passing test",
@@ -236,7 +235,8 @@ private class TestLogger : TestExecutionListener {
     
     override fun executionFinished(testIdentifier: TestIdentifier, testExecutionResult: TestExecutionResult) {
         log(testExecutionResult.status.name.toLowerCase(), testIdentifier)
-        
+        if (testExecutionResult.status == TestExecutionResult.Status.FAILED)
+            log(testExecutionResult.throwable.get().toString())
     }
     
     override fun executionSkipped(testIdentifier: TestIdentifier, reason: String?) {

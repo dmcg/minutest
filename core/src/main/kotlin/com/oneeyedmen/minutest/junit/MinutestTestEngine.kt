@@ -47,7 +47,7 @@ class MinutestTestEngine : TestEngine {
                 when (descriptor.node) {
                     is RuntimeContext<*, *> -> executeDynamicChildren(
                         descriptor,
-                        TODO(), //parentContext.andThen(descriptor.node),
+                        (executor as TestExecutor<Any>).andThen(descriptor.node as RuntimeContext<Any, *>),
                         request,
                         listener
                     )

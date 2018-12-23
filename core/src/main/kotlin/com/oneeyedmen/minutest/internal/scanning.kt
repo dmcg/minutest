@@ -10,32 +10,30 @@ import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.kotlinFunction
 
-internal data class ScannedPackageContext<F>(
+internal data class ScannedPackageContext(
     val packageName: String,
-    private val contextFuns: List<KFunction0<TopLevelContextBuilder<F>>>,
+    private val contextFuns: List<KFunction0<TopLevelContextBuilder<Unit>>>,
     override val properties: Map<Any, Any> = emptyMap()
-
-) : RuntimeContext<Unit, F>() {
+) : RuntimeContext<Unit, Unit>() {
 
     override val name: String get() = packageName
 
-    override val children: List<RuntimeNode<F, *>> by lazy {
+    override val children: List<RuntimeNode<Unit, *>> by lazy {
         contextFuns.map { f ->
-            val rootWithDefaultName: RuntimeContext<Unit, F> = f().buildNode()
-            RuntimeContextWrapper(delegate = rootWithDefaultName, name = f.name) as RuntimeNode<F, *>
+            f().copy(name = f.name).buildNode()
         }
     }
 
-    override fun runTest(test: Test<F>, parentFixture: Unit, testDescriptor: TestDescriptor) =
-        TODO("not implemented")
+    override fun runTest(test: Test<Unit>, parentFixture: Unit, testDescriptor: TestDescriptor) =
+        RootExecutor.runTest(test, testDescriptor)
 
-    override fun withChildren(children: List<RuntimeNode<F, *>>): RuntimeContext<Unit, F> =
+    override fun withChildren(children: List<RuntimeNode<Unit, *>>): RuntimeContext<Unit, Unit> =
         TODO("not implemented")
     
     override fun close() {}
 }
 
-internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean = {true}): List<ScannedPackageContext<*>> {
+internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean = {true}): List<ScannedPackageContext> {
     return ClassGraph()
         .enableClassInfo()
         .enableMethodInfo()
@@ -52,7 +50,7 @@ internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo)
         // Check Kotlin visibility because a public static Java method might have internal visibility in Kotlin
         .filter { it.visibility == PUBLIC }
         .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
-        .map { (packageName, functions) -> ScannedPackageContext(packageName, functions as List<KFunction0<TopLevelContextBuilder<Any>>>) }
+        .map { (packageName, functions) -> ScannedPackageContext(packageName, functions as List<KFunction0<TopLevelContextBuilder<Unit>>>) }
 }
 
 private fun MethodInfo.toKotlinFunction(): KFunction0<TopLevelContextBuilder<*>>? {

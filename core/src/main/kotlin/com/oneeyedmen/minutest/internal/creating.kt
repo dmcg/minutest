@@ -5,14 +5,14 @@ import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.TestDescriptor
 
-class TopLevelContextBuilder<F>(
+data class TopLevelContextBuilder<F>(
     private val name: String,
     private val type: FixtureType,
     private val builder: Context<Unit, F>.() -> Unit,
-    private val transform: (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>
+    private val transform: (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>,
+    override val properties: MutableMap<Any, Any> = HashMap()
 ) : NodeBuilder<Unit, F> {
 
-    override val properties: MutableMap<Any, Any> = HashMap()
 
     override fun buildNode(): RuntimeContext<Unit, F> {
         // we need to apply our annotations to the root, then run the transforms
