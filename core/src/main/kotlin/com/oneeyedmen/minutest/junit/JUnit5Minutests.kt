@@ -49,17 +49,17 @@ fun <F> TopLevelContextBuilder<F>.toTestFactory() = testFactoryFor(this)
 private fun <PF, F> RuntimeContext<PF, F>.toStreamOfDynamicNodes(executor: TestExecutor<PF>): Stream<out DynamicNode> =
     children.toStreamOfDynamicNodes(this, executor.andThen(this))
 
-private fun <F> Iterable<RuntimeNode<F, *>>.toStreamOfDynamicNodes(parent: RuntimeContext<*, F>, executor: TestExecutor<F>) =
+private fun <F> Iterable<RuntimeNode<F>>.toStreamOfDynamicNodes(parent: RuntimeContext<*, F>, executor: TestExecutor<F>) =
     asSequence()
         .map { it.toDynamicNode(executor) }
         .asStream()
         .onClose { parent.close() }
 
-private fun <PF, F> RuntimeNode<PF, F>.toDynamicNode(executor: TestExecutor<PF>): DynamicNode = when (this) {
-    is RuntimeTest<*> -> dynamicTest(name) {
-        executor.runTest(this as RuntimeTest<PF>)
+private fun <F> RuntimeNode<F>.toDynamicNode(executor: TestExecutor<F>): DynamicNode = when (this) {
+    is RuntimeTest<F> -> dynamicTest(name) {
+        executor.runTest(this)
     }
-    is RuntimeContext -> dynamicContainer(name, this.toStreamOfDynamicNodes(executor))
+    is RuntimeContext<F, *> -> dynamicContainer(name, this.toStreamOfDynamicNodes(executor))
 }
 
 

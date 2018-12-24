@@ -7,7 +7,7 @@ import com.oneeyedmen.minutest.*
  */
 internal data class PreparedRuntimeContext<PF, F> (
     override val name: String,
-    override val children: List<RuntimeNode<F, *>>,
+    override val children: List<RuntimeNode<F>>,
     private val befores: List<(F) -> Unit>,
     private val afters: List<(F) -> Unit>,
     private var afterAlls: List<() -> Unit>,
@@ -42,7 +42,7 @@ internal data class PreparedRuntimeContext<PF, F> (
         }
     }
 
-    override fun withChildren(children: List<RuntimeNode<F, *>>) = copy(children = children)
+    override fun withChildren(children: List<RuntimeNode<F>>) = copy(children = children)
 
     // apply befores in order - if anything is thrown return it and the last successful value
     private fun applyBeforesTo(fixture: F): OpResult<F> {

@@ -29,6 +29,6 @@ fun <ParentF, F> Context<ParentF, F>.fixtureInstrumented(factory: (Unit).(testDe
  *
  * Information on the current test is available as 'testDescriptor'.
  */
-fun <ParentF, F> Context<ParentF, F>.testInstrumented(name: String, f: F.(testDescriptor: TestDescriptor) -> F): NodeBuilder<F,F> =
+fun <ParentF, F> Context<ParentF, F>.testInstrumented(name: String, f: F.(testDescriptor: TestDescriptor) -> F): NodeBuilder<F> =
     (this as ContextBuilder<ParentF, F>).addChild(TestBuilder(name, f))
 

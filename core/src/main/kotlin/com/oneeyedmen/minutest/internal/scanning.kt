@@ -18,7 +18,7 @@ internal data class ScannedPackageContext(
 
     override val name: String get() = packageName
 
-    override val children: List<RuntimeNode<Unit, *>> by lazy {
+    override val children: List<RuntimeNode<Unit>> by lazy {
         contextFuns.map { f ->
             f().copy(name = f.name).buildNode()
         }
@@ -27,7 +27,7 @@ internal data class ScannedPackageContext(
     override fun runTest(test: Test<Unit>, parentFixture: Unit, testDescriptor: TestDescriptor) =
         RootExecutor.runTest(test, testDescriptor)
 
-    override fun withChildren(children: List<RuntimeNode<Unit, *>>): RuntimeContext<Unit, Unit> =
+    override fun withChildren(children: List<RuntimeNode<Unit>>): RuntimeContext<Unit, Unit> =
         TODO("not implemented")
     
     override fun close() {}

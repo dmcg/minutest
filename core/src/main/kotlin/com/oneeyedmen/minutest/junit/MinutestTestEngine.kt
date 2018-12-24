@@ -126,7 +126,7 @@ private const val testType = "minutest-test"
 
 private class MinutestNodeDescriptor(
     parent: TestDescriptor,
-    val node: RuntimeNode<*, *>,
+    val node: RuntimeNode<*>,
     private val source: TestSource? = null
 
 ) : TestDescriptor {
@@ -139,7 +139,7 @@ private class MinutestNodeDescriptor(
     override fun getUniqueId(): UniqueId = _uniqueId
     override fun getSource() = Optional.ofNullable(source)
     override fun getType() = when (node) {
-        is RuntimeContext -> CONTAINER
+        is RuntimeContext<*, *> -> CONTAINER
         is RuntimeTest -> TEST
     }
     
@@ -178,9 +178,9 @@ private class MinutestNodeDescriptor(
 }
 
 
-private fun RuntimeNode<*, *>.descriptorIdType(): String {
+private fun RuntimeNode<*>.descriptorIdType(): String {
     return when (this) {
-        is RuntimeContext -> contextType
+        is RuntimeContext<*, *> -> contextType
         is RuntimeTest -> testType
     }
 }

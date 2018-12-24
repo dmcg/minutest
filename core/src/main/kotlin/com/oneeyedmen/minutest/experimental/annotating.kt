@@ -7,11 +7,11 @@ import com.oneeyedmen.minutest.RuntimeNode
 
 interface TestAnnotation {
 
-    fun applyTo(nodeBuilder: NodeBuilder<*, *>) {
+    fun applyTo(nodeBuilder: NodeBuilder<*>) {
         addTo(nodeBuilder.properties)
     }
 
-    fun appliesTo(runtimeNode: RuntimeNode<*, *>) = runtimeNode.properties.containsKey(this)
+    fun appliesTo(runtimeNode: RuntimeNode<*>) = runtimeNode.properties.containsKey(this)
 
     fun addTo(properties: MutableMap<Any, Any>) {
         properties[this] = true
@@ -19,13 +19,13 @@ interface TestAnnotation {
 
     operator fun plus(that: TestAnnotation) = listOf(this, that)
 
-    operator fun <PF, F, NodeBuilderT: NodeBuilder<PF, F>> minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
+    operator fun <F, NodeBuilderT: NodeBuilder<F>> minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
         nodeBuilder.also {
             this.applyTo(it)
         }
 }
 
-operator fun <PF, F, NodeBuilderT: NodeBuilder<PF, F>> Iterable<TestAnnotation>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT=
+operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT=
     nodeBuilder.also {
         this.forEach { annotation ->
             annotation.applyTo(nodeBuilder)
@@ -33,7 +33,7 @@ operator fun <PF, F, NodeBuilderT: NodeBuilder<PF, F>> Iterable<TestAnnotation>.
     }
 
 fun Context<*, *>.annotateWith(annotation: TestAnnotation) {
-    annotation.applyTo(this as NodeBuilder<*, *>)
+    annotation.applyTo(this as NodeBuilder<*>)
 }
 
 fun <F> ((RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>).then(
@@ -42,5 +42,5 @@ fun <F> ((RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>).then(
     next(this(context))
 }
 
-fun <PF, F> RuntimeContext<PF, F>.withTransformedChildren(transform: (RuntimeNode<F, *>) -> RuntimeNode<F, *>) =
+fun <PF, F> RuntimeContext<PF, F>.withTransformedChildren(transform: (RuntimeNode<F>) -> RuntimeNode<F>) =
     withChildren(children.map(transform))

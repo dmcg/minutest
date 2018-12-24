@@ -12,7 +12,7 @@ abstract class Context<ParentF, F> {
     /**
      * Define a child-context, inheriting the fixture from the parent.
      */
-    abstract fun context(name: String, builder: Context<F, F>.() -> Unit): NodeBuilder<F, F>
+    abstract fun context(name: String, builder: Context<F, F>.() -> Unit): NodeBuilder<F>
 
     /**
      * Define a child-context with a different fixture type.
@@ -50,7 +50,7 @@ abstract class Context<ParentF, F> {
      * a new fixture to be processed by 'afters'.
      */
     @Suppress("FunctionName")
-    abstract fun test_(name: String, f: F.() -> F): NodeBuilder<F, F>
+    abstract fun test_(name: String, f: F.() -> F): NodeBuilder<F>
 
     /**
      * Apply an operation to the current fixture (accessible as the receiver 'this') before
@@ -100,7 +100,7 @@ abstract class Context<ParentF, F> {
         type: FixtureType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
         builder: Context<F, G>.() -> Unit
-    ): NodeBuilder<F, G>
+    ): NodeBuilder<F>
 
     abstract fun afterAll(f: () -> Unit)
 }

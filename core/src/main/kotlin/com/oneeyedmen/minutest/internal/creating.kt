@@ -11,8 +11,7 @@ data class TopLevelContextBuilder<F>(
     private val builder: Context<Unit, F>.() -> Unit,
     private val transform: (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>,
     override val properties: MutableMap<Any, Any> = HashMap()
-) : NodeBuilder<Unit, F> {
-
+) : NodeBuilder<Unit> {
 
     override fun buildNode(): RuntimeContext<Unit, F> {
         // we need to apply our annotations to the root, then run the transforms

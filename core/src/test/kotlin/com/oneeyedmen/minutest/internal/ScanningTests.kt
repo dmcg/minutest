@@ -29,9 +29,9 @@ class ScanningTests {
     }
 }
 
-private fun RuntimeNode<*, *>.visit(log: MutableList<String>, indent: Int) {
+private fun RuntimeNode<*>.visit(log: MutableList<String>, indent: Int) {
     log.add(indent.spaces() + this.name)
-    if (this is RuntimeContext) {
+    if (this is RuntimeContext<*, *>) {
         this.children.forEach { it.visit(log, indent + 2) }
     }
 

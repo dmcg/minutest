@@ -7,38 +7,37 @@ import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
 
 fun <F> checkedAgainst(check: (List<String>) -> Unit): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> = { node ->
     val log = mutableListOf<String>()
-    loggingRuntimeContext(node, log, 0) {
+    node.logged(log, 0) {
         check(log)
     }
 }
 
 fun <PF, F> loggedTo(log: MutableList<String>): (RuntimeContext<PF, F>) -> RuntimeContext<PF, F> =
     { context: RuntimeContext<PF, F> ->
-        loggingRuntimeContext(context, log, 0)
+        context.logged(log, 0)
     }
 
 fun List<String>.withTabsExpanded(spaces: Int) = this.map { it.replace("\t", " ".repeat(spaces)) }
 
-private fun <PF, F> RuntimeNode<PF, F>.loggedTo(log: MutableList<String>, level: Int): RuntimeNode<PF, F> =
+private fun <F> RuntimeNode<F>.loggedTo(log: MutableList<String>, level: Int): RuntimeNode<F> =
     when (this) {
-        is RuntimeContext<*, *> -> loggingRuntimeContext(this as RuntimeContext<PF, F>, log, level)
-        is RuntimeTest<*> -> loggingRuntimeTest(this as RuntimeTest<F>, log, level) as RuntimeNode<PF, F>
+        is RuntimeTest<F> -> loggingRuntimeTest(this, log, level)
+        is RuntimeContext<F, *> -> this.logged(log, level)
     }
 
-private fun <PF, F> loggingRuntimeContext(
-    wrapped: RuntimeContext<PF, F>,
+private fun <PF, F> RuntimeContext<PF, F>.logged(
     log: MutableList<String>,
     indent: Int,
     done: () -> Unit = {}
 ): RuntimeContext<PF, F> {
     val childrenLog = mutableListOf<String>()
     return RuntimeContextWrapper(
-        wrapped,
-        children = wrapped.children.map { it.loggedTo(childrenLog, indent + 1) },
+        this,
+        children = children.map { it.loggedTo(childrenLog, indent + 1) },
         onClose = {
-            log.add("${indent.tabs()}${wrapped.name}")
+            log.add("${indent.tabs()}$name")
             log.addAll(childrenLog)
-            wrapped.close()
+            close()
             done()
         }
     )

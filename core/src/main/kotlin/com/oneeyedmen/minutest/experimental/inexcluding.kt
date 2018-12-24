@@ -21,18 +21,18 @@ fun <F> inexclude(root: RuntimeContext<Unit, F>): RuntimeContext<Unit, F> =
     }
 
 
-private fun RuntimeNode<*, *>.hasAFocusedChild(): Boolean = when (this) {
+private fun RuntimeNode<*>.hasAFocusedChild(): Boolean = when (this) {
     is RuntimeTest -> FOCUS.appliesTo(this)
-    is RuntimeContext -> hasAFocusedChild()
+    is RuntimeContext<*, *> -> hasAFocusedChild()
 }
 
 private fun RuntimeContext<*, *>.hasAFocusedChild() = FOCUS.appliesTo(this) || children.hasAFocusedChild()
 
-private fun List<RuntimeNode<*, *>>.hasAFocusedChild() = find { it.hasAFocusedChild() } != null
+private fun List<RuntimeNode<*>>.hasAFocusedChild() = find { it.hasAFocusedChild() } != null
 
-private fun <PF, F> RuntimeNode<PF, F>.inexcluded(defaultToSkip: Boolean): RuntimeNode<PF, F> = when (this) {
-    is RuntimeContext<*, *> -> (this as RuntimeContext<PF, F>).inexcluded(defaultToSkip)
-    is RuntimeTest<*> -> (this as RuntimeTest<F>).inexcluded(defaultToSkip) as RuntimeNode<PF, F>
+private fun <F> RuntimeNode<F>.inexcluded(defaultToSkip: Boolean): RuntimeNode<F> = when (this) {
+    is RuntimeTest<F> -> this.inexcluded(defaultToSkip)
+    is RuntimeContext<F, *> -> this.inexcluded(defaultToSkip)
 }
 
 private fun <PF, F> RuntimeContext<PF, F>.inexcluded(defaultToSkip: Boolean): RuntimeContext<PF, F> =
