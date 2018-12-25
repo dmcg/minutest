@@ -3,15 +3,18 @@ package com.oneeyedmen.minutest.experimental
 import com.oneeyedmen.minutest.junit.JUnit4Minutests
 import com.oneeyedmen.minutest.rootContext
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.opentest4j.TestAbortedException
-import kotlin.test.assertEquals
-
 
 class MinutestJUnit4RunnerTests : JUnit4Minutests() {
 
-    fun tests() = rootContext<Unit>(loggedTo(testLog)) {
+    fun tests() = rootContext<String>(loggedTo(testLog)) {
 
-        test("test") {}
+        fixture { "banana" }
+
+        test("test") {
+            assertEquals("banana", fixture)
+        }
 
         context("context") {
             test("test x") {}
@@ -30,6 +33,10 @@ class MinutestJUnit4RunnerTests : JUnit4Minutests() {
             test("skipped") {
                 throw TestAbortedException("should be skipped")
             }
+        }
+
+        afterAll {
+            testLog.add("after all")
         }
     }
 }
@@ -51,7 +58,8 @@ class AMinutestJUnit4RunnerTestsVerifier {
             "        empty context",
             "        context whose name is wrong if you just run this test in IntelliJ",
             "            test",
-            "        skipped"),
+            "        skipped",
+            "after all"),
             testLog.withTabsExpanded(4))
     }
 }
