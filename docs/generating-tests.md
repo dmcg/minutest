@@ -79,7 +79,8 @@ class GeneratingExampleTests : JUnit5Minutests {
     }
 }
 
-private fun willRun(expectedLog: List<String>): (RuntimeNode) -> RuntimeNode = checkedAgainst { actualLog ->
-    assertEquals(expectedLog, actualLog.withTabsExpanded(4))
-}
+private fun <F> willRun(expectedLog: List<String>): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> =
+    checkedAgainst { actualLog ->
+        assertEquals(expectedLog, actualLog.withTabsExpanded(4))
+    }
 ```

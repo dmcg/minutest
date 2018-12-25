@@ -10,7 +10,7 @@ Enter Focus and Skip.
 class SkipAndFocusExampleTests : JUnit5Minutests {
 
     // Skip and Focus (currently) require a transform to be installed to work
-    override val tests = rootContext<Unit>(transform = skipAndFocus, builder = {
+    override val tests = rootContext<Unit>(transform = skipAndFocus(), builder = {
 
         // Apply the FOCUS annotation to a test
         FOCUS - test("this test is focused, only other focused things will be run") {}
