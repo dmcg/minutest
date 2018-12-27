@@ -2,6 +2,10 @@ package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.*
 
+/**
+ * The TestExecutor is built by running down the context tree. It can then run a test by asking the contexts up the
+ * tree to supply their fixture.
+ */
 interface TestExecutor<F> : TestDescriptor {
 
     fun runTest(runtimeTest: RuntimeTest<F>) {
