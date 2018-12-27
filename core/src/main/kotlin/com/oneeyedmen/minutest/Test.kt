@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest
 
 /**
- * A test that can be invoked on a fixture.
+ * A test that can be invoked on a fixture, with a testDescriptor describing the context.
  */
 typealias Test<F> = (F, TestDescriptor) -> F
 

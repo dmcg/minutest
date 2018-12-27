@@ -1,16 +1,35 @@
 package com.oneeyedmen.minutest
 
+
+/**
+ * RuntimeNodes form a tree of [RuntimeContext]s and [RuntimeTest]s.
+ *
+ * The generic type [F] is the type of the fixture that will be supplied *to* the node.
+ */
+@Suppress("unused")
 sealed class RuntimeNode<F> {
     abstract val name: String
     abstract val properties: Map<Any, Any>
 }
 
+/**
+ * A container for [RuntimeNode]s, which are accessed as [RuntimeContext.children].
+ *
+ * The generic type [PF] is the parent fixture type. [F] is the type of the children.
+ */
 abstract class RuntimeContext<PF, F> : RuntimeNode<PF>(), AutoCloseable {
     abstract val children: List<RuntimeNode<F>>
-    abstract fun withChildren(children: List<RuntimeNode<F>>): RuntimeContext<PF, F>
+
+    /**
+     * Invoke a [Test], converting a parent fixture [PF] to the type required by the test.
+     */
     abstract fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): F
+    abstract fun withChildren(children: List<RuntimeNode<F>>): RuntimeContext<PF, F>
 }
 
+/**
+ * A [Test] with additional name and properties.
+ */
 data class RuntimeTest<F>(
     override val name: String,
     override val properties: Map<Any, Any>,
