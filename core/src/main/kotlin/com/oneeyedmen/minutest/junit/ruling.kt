@@ -3,7 +3,6 @@ package com.oneeyedmen.minutest.junit
 import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.TestDescriptor
-import com.oneeyedmen.minutest.fullName
 import org.junit.rules.TestRule
 import org.junit.runner.Description.createTestDescription
 import org.junit.runners.model.Statement
