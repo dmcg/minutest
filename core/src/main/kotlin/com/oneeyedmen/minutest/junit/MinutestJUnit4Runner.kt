@@ -5,6 +5,7 @@ import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.internal.RootExecutor
 import com.oneeyedmen.minutest.internal.TestExecutor
+import org.junit.AssumptionViolatedException
 import org.junit.runner.Description
 import org.junit.runner.notification.RunNotifier
 import org.junit.runners.ParentRunner
@@ -25,7 +26,7 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeContext<Unit, *
 
     private fun <F> RuntimeNode<F>.run(executor: TestExecutor<F>, notifier: RunNotifier): Unit = when (this) {
         is RuntimeTest<F> -> {
-            runLeaf(this.asStatement(executor, notifier), this.toDescription(executor), notifier)
+            runLeaf(this.asStatement(executor), this.toDescription(executor), notifier)
         }
         is RuntimeContext<F, *> -> this.run(executor, notifier)
     }
@@ -49,13 +50,13 @@ private fun RuntimeNode<*>.toDescription(executor: TestExecutor<*>): Description
     }
 }
 
-private fun <F> RuntimeTest<F>.asStatement(executor: TestExecutor<F>, notifier: RunNotifier) = object : Statement() {
+private fun <F> RuntimeTest<F>.asStatement(executor: TestExecutor<F>) = object : Statement() {
     override fun evaluate() {
         try {
             executor.runTest(this@asStatement)
         } catch (aborted: TestAbortedException) {
             // JUnit 4 doesn't understand JUnit 5's convention
-            notifier.fireTestIgnored(this@asStatement.toDescription(executor))
+            throw AssumptionViolatedException(aborted.message)
         }
     }
 }
