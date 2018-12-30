@@ -7,12 +7,12 @@ interface TestDescriptor {
     val name: String
     val parent: TestDescriptor?
 
-    fun fullName() =
-        generateSequence(this, TestDescriptor::parent)
-            .filter { it !is RootDescriptor }
-            .map(TestDescriptor::name)
-            .toList()
-            .reversed()
+    fun path(): List<TestDescriptor> = generateSequence(this, TestDescriptor::parent)
+        .filter { it !is RootDescriptor }
+        .toList()
+        .reversed()
+
+    fun fullName(): List<String> = path().map(TestDescriptor::name)
 }
 
 interface RootDescriptor

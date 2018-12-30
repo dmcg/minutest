@@ -19,7 +19,7 @@ class MinutestJUnit4RunnerTests : JUnit4Minutests() {
         context("context") {
             test("test x") {}
             test("test 2") {
-//                fail("here")
+                //                fail("here")
             }
             context("another context") {
                 test("test y") {}
@@ -33,10 +33,6 @@ class MinutestJUnit4RunnerTests : JUnit4Minutests() {
             test("skipped") {
                 throw TestAbortedException("should be skipped")
             }
-        }
-
-        afterAll {
-            testLog.add("after all")
         }
     }
 }
@@ -55,12 +51,11 @@ class AMinutestJUnit4RunnerTestsVerifier {
             "        test 2",
             "        another context",
             "            test y",
-            "        empty context",
             "        context whose name is wrong if you just run this test in IntelliJ",
             "            test",
-            "        skipped",
-            "after all"),
-            testLog.withTabsExpanded(4))
+            "        skipped"),
+            testLog.withTabsExpanded(4)
+        )
     }
 }
 
