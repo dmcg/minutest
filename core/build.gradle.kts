@@ -47,7 +47,7 @@ tasks {
 
     create<Jar>("sourceJar") {
         classifier = "sources"
-        from(java.sourceSets["main"].allSource)
+        from(sourceSets["main"].allSource)
     }
 
     withType<Jar> {

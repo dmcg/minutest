@@ -1,14 +1,10 @@
 import java.io.File
 
 tasks {
-    val readme = create("readme") {
+    create("build") {
         doFirst {
             processMarkDown(project.projectDir.resolve("src"))
         }
-    }
-
-   "build" {
-        dependsOn(readme)
     }
 }
 
