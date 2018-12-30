@@ -5,7 +5,6 @@ import com.oneeyedmen.minutest.executeTests
 import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.io.IOException
 import kotlin.test.assertEquals
 
 
@@ -67,22 +66,6 @@ class LoggingTests {
         }
 
         assertThrows<AssertionError> {
-            executeTests(tests)
-        }
-    }
-
-    @Test fun `checks only after tests pass`() {
-
-        val expected = emptyList<String>()
-
-        val tests = rootContext<Unit>(
-            checkedAgainst { assertEquals(expected, it)}) {
-            test("test") {
-                throw IOException("deliberate")
-            }
-        }
-
-        assertThrows<IOException> {
             executeTests(tests)
         }
     }

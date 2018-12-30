@@ -112,7 +112,7 @@ class FixtureTests {
         }
     }
 
-    @Test fun `throws exception thrown from fixture`() {
+    @Test fun `throws exception thrown from fixture during execution`() {
         val tests = rootContext<Fixture> {
             fixture {
                 throw FileNotFoundException()
@@ -122,8 +122,6 @@ class FixtureTests {
                 assertEquals("banana", fruit)
             }
         }
-        assertThrows<FileNotFoundException> {
-            executeTests(tests)
-        }
+        checkItems(executeTests(tests), { it is FileNotFoundException })
     }
 }

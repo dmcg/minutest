@@ -1,10 +1,11 @@
 package com.oneeyedmen.minutest
 
 import com.oneeyedmen.minutest.junit.toTestFactory
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.io.FileNotFoundException
+import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.fail
 import java.io.IOException
 
 
@@ -101,13 +102,10 @@ class BeforeAndAfterTests {
 
             test("test") {
                 add("test")
-                throw IOException("deliberate")
+                throw Exception("in test")
             }
         }
-
-        assertThrows<IOException>("in test") {
-            executeTests(test)
-        }
+        checkItems(executeTests(test), { it.message == "in test" })
         expectedLog = listOf("test", "after")
     }
 
@@ -131,9 +129,7 @@ class BeforeAndAfterTests {
             }
         }
 
-        assertThrows<IOException>("in before") {
-            executeTests(test)
-        }
+        checkItems(executeTests(test), { it is IOException })
         expectedLog = listOf("before", "after")
     }
 
@@ -156,7 +152,7 @@ class BeforeAndAfterTests {
                 context("inner") {
                     fixture {
                         log.add("inner")
-                        error("deliberate")
+                        throw Exception("in inner fixture")
                     }
 
                     test("wont run") {
@@ -176,10 +172,7 @@ class BeforeAndAfterTests {
                 }
             }
         }
-
-        assertThrows<IllegalStateException>("in before") {
-            executeTests(test)
-        }
+        checkItems(executeTests(test), { it.message == "in inner fixture" })
         expectedLog = listOf("top", "outer", "inner", "after outer")
     }
 
@@ -197,7 +190,7 @@ class BeforeAndAfterTests {
 
             after {
                 log.add("after 2")
-                throw IOException("deliberate")
+                throw Exception("in after 2")
             }
 
             after {
@@ -205,9 +198,7 @@ class BeforeAndAfterTests {
             }
         }
 
-        assertThrows<IOException>("in after") {
-            executeTests(test)
-        }
+        checkItems(executeTests(test), { it.message == "in after 2" })
         expectedLog = listOf("test", "after 1", "after 2")
     }
 
@@ -218,19 +209,16 @@ class BeforeAndAfterTests {
 
             test_("test") {
                 log.add("test")
-                throw IOException("deliberate")
+                throw Exception("in test")
             }
 
             after {
-                throw FileNotFoundException("deliberate")
+                throw Exception("in after")
             }
 
         }
 
-        assertThrows<FileNotFoundException>("in after") {
-            executeTests(test)
-        }
+        checkItems(executeTests(test), { it.message == "in after" })
         expectedLog = listOf("test")
     }
 }
-

@@ -5,27 +5,27 @@ import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
 
-fun <F> checkedAgainst(check: (List<String>) -> Unit): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> = { node ->
+fun <F> checkedAgainst(check: (List<String>) -> Unit): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> = { context ->
     val log = mutableListOf<String>()
-    node.logged(log, 0) {
+    context.loggedTo(log, 0) {
         check(log)
     }
 }
 
 fun <PF, F> loggedTo(log: MutableList<String>): (RuntimeContext<PF, F>) -> RuntimeContext<PF, F> =
     { context: RuntimeContext<PF, F> ->
-        context.logged(log, 0)
+        context.loggedTo(log, 0)
     }
 
 fun List<String>.withTabsExpanded(spaces: Int) = this.map { it.replace("\t", " ".repeat(spaces)) }
 
 private fun <F> RuntimeNode<F>.loggedTo(log: MutableList<String>, level: Int): RuntimeNode<F> =
     when (this) {
-        is RuntimeTest<F> -> loggingRuntimeTest(this, log, level)
-        is RuntimeContext<F, *> -> this.logged(log, level)
+        is RuntimeTest<F> -> this.loggedTo(log, level)
+        is RuntimeContext<F, *> -> this.loggedTo(log, level)
     }
 
-private fun <PF, F> RuntimeContext<PF, F>.logged(
+private fun <PF, F> RuntimeContext<PF, F>.loggedTo(
     log: MutableList<String>,
     indent: Int,
     done: () -> Unit = {}
@@ -44,10 +44,10 @@ private fun <PF, F> RuntimeContext<PF, F>.logged(
 }
 
 
-private fun <F> loggingRuntimeTest(wrapped: RuntimeTest<F>, log: MutableList<String>, indent: Int) = wrapped.copy(
+private fun <F> RuntimeTest<F>.loggedTo(log: MutableList<String>, indent: Int) = copy(
     f = { fixture, testDescriptor ->
-        log.add("${indent.tabs()}${wrapped.name}")
-        wrapped(fixture, testDescriptor)
+        log.add("${indent.tabs()}$name")
+        this(fixture, testDescriptor)
     }
 )
 
