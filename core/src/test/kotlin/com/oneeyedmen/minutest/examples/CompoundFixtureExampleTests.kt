@@ -2,8 +2,8 @@ package com.oneeyedmen.minutest.examples
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.rootContext
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class ControlPanel(
     val keySwitch: () -> Boolean,

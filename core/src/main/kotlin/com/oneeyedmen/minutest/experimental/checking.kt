@@ -52,3 +52,4 @@ private fun <F> loggingRuntimeTest(wrapped: RuntimeTest<F>, log: MutableList<Str
 )
 
 private fun Int.tabs() = "\t".repeat(this)
+
