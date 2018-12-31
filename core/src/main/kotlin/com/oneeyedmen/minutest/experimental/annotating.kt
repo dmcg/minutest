@@ -8,14 +8,14 @@ import com.oneeyedmen.minutest.RuntimeNode
 interface TestAnnotation {
 
     fun applyTo(nodeBuilder: NodeBuilder<*>) {
-        addTo(nodeBuilder.properties)
+        addTo(nodeBuilder.annotations)
     }
 
-    fun appliesTo(runtimeNode: RuntimeNode<*>) = runtimeNode.properties.containsKey(this)
-
-    fun addTo(properties: MutableMap<Any, Any>) {
-        properties[this] = true
+    fun addTo(properties: MutableList<TestAnnotation>) {
+        properties.add(this)
     }
+
+    fun appliesTo(runtimeNode: RuntimeNode<*>) = runtimeNode.annotations.contains(this)
 
     operator fun plus(that: TestAnnotation) = listOf(this, that)
 

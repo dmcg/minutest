@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.experimental.TestAnnotation
 import com.oneeyedmen.minutest.internal.FixtureType
 import com.oneeyedmen.minutest.internal.MinutestMarker
 import com.oneeyedmen.minutest.internal.askType
@@ -90,7 +91,7 @@ abstract class Context<ParentF, F> {
     /**
      * An experimental map of properties that will be made available later in the test run.
      */
-    val properties: MutableMap<Any, Any> = HashMap()
+    val annotations: MutableList<TestAnnotation> = mutableListOf()
 
     /**
      * Internal implementation, only public to be accessible to inline functions.

@@ -1,5 +1,7 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.experimental.TestAnnotation
+
 
 /**
  * RuntimeNodes form a tree of [RuntimeContext]s and [RuntimeTest]s.
@@ -9,7 +11,7 @@ package com.oneeyedmen.minutest
 @Suppress("unused")
 sealed class RuntimeNode<F> {
     abstract val name: String
-    abstract val properties: Map<Any, Any>
+    abstract val annotations: List<TestAnnotation>
 }
 
 /**
@@ -32,6 +34,6 @@ abstract class RuntimeContext<PF, F> : RuntimeNode<PF>(), AutoCloseable {
  */
 data class RuntimeTest<F>(
     override val name: String,
-    override val properties: Map<Any, Any>,
+    override val annotations: List<TestAnnotation>,
     private val f: Test<F>
 ) : RuntimeNode<F>(), Test<F> by f

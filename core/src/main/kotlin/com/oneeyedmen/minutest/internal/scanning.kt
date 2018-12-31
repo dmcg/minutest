@@ -4,6 +4,7 @@ import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestDescriptor
+import com.oneeyedmen.minutest.experimental.TestAnnotation
 import io.github.classgraph.*
 import kotlin.reflect.KFunction0
 import kotlin.reflect.KVisibility.PUBLIC
@@ -13,7 +14,7 @@ import kotlin.reflect.jvm.kotlinFunction
 internal data class ScannedPackageContext(
     val packageName: String,
     private val contextFuns: List<KFunction0<TopLevelContextBuilder<Unit>>>,
-    override val properties: Map<Any, Any> = emptyMap()
+    override val annotations: List<TestAnnotation> = emptyList()
 ) : RuntimeContext<Unit, Unit>() {
 
     override val name: String get() = packageName

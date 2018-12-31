@@ -70,7 +70,7 @@ internal class ContextBuilder<PF, F>(
         afterAlls,
         transforms,
         resolvedFixtureFactory(),
-        properties
+        annotations
     )
 
     @Suppress("UNCHECKED_CAST")

@@ -4,10 +4,11 @@ import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.TestDescriptor
+import com.oneeyedmen.minutest.experimental.TestAnnotation
 
 internal data class RuntimeContextWrapper<PF, F>(
     override val name: String,
-    override val properties: Map<Any, Any>,
+    override val annotations: List<TestAnnotation>,
     override val children: List<RuntimeNode<F>>,
     val runner: (Test<F>, parentFixture: PF, TestDescriptor) -> F,
     val onClose: () -> Unit
@@ -15,7 +16,7 @@ internal data class RuntimeContextWrapper<PF, F>(
     constructor(
         delegate: RuntimeContext<PF, F>,
         name: String = delegate.name,
-        properties: Map<Any, Any> = delegate.properties,
+        properties: List<TestAnnotation> = delegate.annotations,
         children: List<RuntimeNode<F>> = delegate.children,
         runner: (Test<F>, parentFixture: PF, TestDescriptor) -> F = delegate::runTest,
         onClose: () -> Unit = delegate::close

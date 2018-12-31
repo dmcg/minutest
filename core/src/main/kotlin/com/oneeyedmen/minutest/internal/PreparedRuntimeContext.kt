@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.experimental.TestAnnotation
 
 /**
  * The runtime representation of a context.
@@ -13,7 +14,7 @@ internal data class PreparedRuntimeContext<PF, F> (
     private var afterAlls: List<() -> Unit>,
     private val transforms: List<TestTransform<F>>,
     private val fixtureFactory: (PF, TestDescriptor) -> F,
-    override val properties: Map<Any, Any>
+    override val annotations: MutableList<TestAnnotation>
 ) : RuntimeContext<PF, F>() {
 
     override fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): F {

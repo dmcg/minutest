@@ -54,12 +54,12 @@ private fun <F> RuntimeTest<F>.inexcluded(defaultToSkip: Boolean): RuntimeTest<F
         else -> this
     }
 
-private fun <F> RuntimeTest<F>.skipped() = skipper<F>(name, properties)
+private fun <F> RuntimeTest<F>.skipped() = skipper<F>(name, annotations)
 
-private fun <F> skipper(name: String, properties: Map<Any, Any>) = RuntimeTest<F>(name, properties) { _, _ ->
+private fun <F> skipper(name: String, properties: List<TestAnnotation>) = RuntimeTest<F>(name, properties) { _, _ ->
     throw TestAbortedException("skipped")
 }
 
 private fun <PF, F> RuntimeContext<PF, F>.skipped() = RuntimeContextWrapper(this,
-    children = listOf(skipper("skipping ${this.name}", emptyMap()))
+    children = listOf(skipper("skipping ${this.name}", emptyList()))
 )
