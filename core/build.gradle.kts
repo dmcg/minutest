@@ -29,8 +29,8 @@ dependencies {
     testCompile("org.junit.vintage:junit-vintage-engine:5.3.2")
     testCompile("junit:junit:4.12")
     testCompile("io.github.classgraph:classgraph:4.6.6")
-    testCompile("org.junit.jupiter:junit-jupiter-engine:+")
-    testCompile("org.junit.platform:junit-platform-launcher:+") {
+    testCompile("org.junit.jupiter:junit-jupiter-engine:5.3.2")
+    testCompile("org.junit.platform:junit-platform-launcher:1.3.2") {
         because("enables running in IntelliJ using JUnit runner")
     }
 }
