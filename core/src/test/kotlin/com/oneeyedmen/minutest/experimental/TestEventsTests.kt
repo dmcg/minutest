@@ -30,7 +30,8 @@ class TestEventsTests {
 
     @Test fun firesEvents() {
 
-        val tests = rootContext<Unit>(transform = telling(listener)) {
+        val tests = rootContext<Unit> {
+            annotateWith(Telling(listener))
             test("in root") {}
             context("outer") {
                 test("in outer") {}

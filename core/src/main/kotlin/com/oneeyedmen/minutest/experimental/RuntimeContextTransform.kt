@@ -4,9 +4,10 @@ import com.oneeyedmen.minutest.RuntimeContext
 
 
 interface RuntimeContextTransform<PF, F> {
-    fun apply(context: RuntimeContext<PF, F>): RuntimeContext<PF, F>
+    fun applyTo(context: RuntimeContext<PF, F>): RuntimeContext<PF, F>
     fun then(next: (RuntimeContextTransform<PF, F>)): RuntimeContextTransform<PF, F> = object: RuntimeContextTransform<PF, F> {
-        override fun apply(context: RuntimeContext<PF, F>): RuntimeContext<PF, F> = next.apply(this.apply(context))
+        override fun applyTo(context: RuntimeContext<PF, F>): RuntimeContext<PF, F> =
+            next.applyTo(this@RuntimeContextTransform.applyTo(context))
     }
 }
 
@@ -15,6 +16,6 @@ fun <PF, F> RuntimeContext<PF, F>.transformedBy(annotations: List<TestAnnotation
     return if (transforms.isEmpty())
         this
     else {
-        transforms.reduce(RuntimeContextTransform<PF, F>::then).apply(this)
+        transforms.reduce(RuntimeContextTransform<PF, F>::then).applyTo(this)
     }
 }

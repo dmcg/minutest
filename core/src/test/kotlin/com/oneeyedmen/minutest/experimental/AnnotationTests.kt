@@ -9,7 +9,7 @@ import kotlin.test.fail
 
 class AnnotationTests : JUnit5Minutests {
 
-    override val tests: TopLevelContextBuilder<Unit> = SKIP - rootContext(skipAndFocus()) {
+    override val tests: TopLevelContextBuilder<Unit> = SKIP - rootContext {
         isNodeBuilder(MyAnnotation - test("single annotation") {})
         isNodeBuilder(MyAnnotation - context("single annotation") {})
 

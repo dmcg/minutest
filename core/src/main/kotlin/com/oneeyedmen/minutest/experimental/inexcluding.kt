@@ -8,20 +8,22 @@ import org.opentest4j.TestAbortedException
 
 
 object SKIP : TestAnnotation, RuntimeTestTransform<Any?>, RuntimeContextTransform<Any?, Any?> {
-    override fun apply(test: RuntimeTest<Any?>): RuntimeTest<Any?> = test.skipped()
-    override fun apply(context: RuntimeContext<Any?, Any?>): RuntimeContext<Any?, Any?> = context.skipped()
+    override fun applyTo(test: RuntimeTest<Any?>): RuntimeTest<Any?> = test.skipped()
+    override fun applyTo(context: RuntimeContext<Any?, Any?>): RuntimeContext<Any?, Any?> = context.skipped()
 }
 
-object FOCUS : TestAnnotation
+object FOCUS : TestAnnotation, TopLevelContextTransform<Any?> {
+    override fun applyTo(test: RuntimeContext<Unit, Any?>): RuntimeContext<Unit, Any?> = skipAndFocus(test)
+}
 
-fun <F> skipAndFocus(): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> = { rootContext ->
+private fun <F> skipAndFocus(rootContext: (RuntimeContext<Unit, F>)): RuntimeContext<Unit, F> =
     if (SKIP.appliesTo(rootContext)) {
         rootContext.skipped()
     } else {
         val defaultToSkip = rootContext.hasAFocusedChild()
         rootContext.withTransformedChildren { it.inexcluded(defaultToSkip) }
     }
-}
+
 
 private fun RuntimeContext<*, *>.hasAFocusedChild() = this.hasA(FOCUS::appliesTo)
 

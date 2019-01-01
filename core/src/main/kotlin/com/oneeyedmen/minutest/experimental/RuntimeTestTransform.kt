@@ -5,9 +5,10 @@ import com.oneeyedmen.minutest.RuntimeTest
 
 
 interface RuntimeTestTransform<F> {
-    fun apply(test: RuntimeTest<F>): RuntimeTest<F>
+    fun applyTo(test: RuntimeTest<F>): RuntimeTest<F>
     fun then(next: (RuntimeTestTransform<F>)): RuntimeTestTransform<F> = object: RuntimeTestTransform<F> {
-        override fun apply(test: RuntimeTest<F>): RuntimeTest<F> = next.apply(this.apply(test))
+        override fun applyTo(test: RuntimeTest<F>): RuntimeTest<F> =
+            next.applyTo(this@RuntimeTestTransform.applyTo(test))
     }
 }
 
@@ -16,6 +17,6 @@ fun <F> RuntimeTest<F>.transformedBy(annotations: List<TestAnnotation>): Runtime
     return if (transforms.isEmpty())
         this
     else {
-        transforms.reduce(RuntimeTestTransform<F>::then).apply(this)
+        transforms.reduce(RuntimeTestTransform<F>::then).applyTo(this)
     }
 }

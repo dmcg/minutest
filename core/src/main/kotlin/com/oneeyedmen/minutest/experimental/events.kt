@@ -14,6 +14,10 @@ interface TestEventListener {
     fun <PF, F> contextClosed(runtimeContext: RuntimeContext<PF, F>)
 }
 
+class Telling(private val listener: TestEventListener) : TestAnnotation, RuntimeContextTransform<Unit, Any?> {
+    override fun applyTo(context: RuntimeContext<Unit, Any?>): RuntimeContext<Unit, Any?> = context.telling(listener)
+}
+
 fun <F> telling(listener: TestEventListener): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> = { context ->
     context.telling(listener)
 }
