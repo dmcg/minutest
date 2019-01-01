@@ -13,7 +13,7 @@ object SKIP : TestAnnotation, RuntimeTestTransform<Any?>, RuntimeContextTransfor
 }
 
 object FOCUS : TestAnnotation, TopLevelContextTransform<Any?> {
-    override fun applyTo(test: RuntimeContext<Unit, Any?>): RuntimeContext<Unit, Any?> = skipAndFocus(test)
+    override fun applyTo(context: RuntimeContext<Unit, Any?>): RuntimeContext<Unit, Any?> = skipAndFocus(context)
 }
 
 private fun <F> skipAndFocus(rootContext: (RuntimeContext<Unit, F>)): RuntimeContext<Unit, F> =
