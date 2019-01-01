@@ -5,13 +5,17 @@ import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
+import org.opentest4j.TestAbortedException
+import org.opentest4j.TestSkippedException
 
 
 interface TestEventListener {
-    fun <F> testStarting(fixture: F, testDescriptor: TestDescriptor)
-    fun <F> testComplete(fixture: F, testDescriptor: TestDescriptor)
-    fun <F> testFailed(fixture: F, testDescriptor: TestDescriptor, t: Throwable)
-    fun <PF, F> contextClosed(runtimeContext: RuntimeContext<PF, F>)
+    fun <F> testStarting(fixture: F, testDescriptor: TestDescriptor) {}
+    fun <F> testComplete(fixture: F, testDescriptor: TestDescriptor) {}
+    fun <F> testSkipped(fixture: F, testDescriptor: TestDescriptor, t: TestSkippedException) {}
+    fun <F> testAborted(fixture: F, testDescriptor: TestDescriptor, t: TestAbortedException) {}
+    fun <F> testFailed(fixture: F, testDescriptor: TestDescriptor, t: Throwable) {}
+    fun <PF, F> contextClosed(runtimeContext: RuntimeContext<PF, F>) {}
 }
 
 class Telling(private val listener: TestEventListener) : TestAnnotation, RuntimeContextTransform<Unit, Any?> {
@@ -35,6 +39,12 @@ private fun <F> RuntimeTest<F>.telling(listener: TestEventListener) = copy(
             this(fixture, testDescriptor).also {
                 listener.testComplete(fixture, testDescriptor)
             }
+        } catch (skipped: TestSkippedException) {
+            listener.testSkipped(fixture, testDescriptor, skipped)
+            throw skipped
+        } catch (aborted: TestAbortedException) {
+            listener.testAborted(fixture, testDescriptor, aborted)
+            throw aborted
         } catch (t: Throwable) {
             listener.testFailed(fixture, testDescriptor, t)
             throw t

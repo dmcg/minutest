@@ -1,8 +1,11 @@
 package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.*
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
+import org.opentest4j.TestAbortedException
+import org.opentest4j.TestSkippedException
 
 
 class TestEventsTests {
@@ -10,6 +13,10 @@ class TestEventsTests {
     val log = mutableListOf<String>()
 
     val listener = object : TestEventListener {
+
+        override fun <F> testStarting(fixture: F, testDescriptor: TestDescriptor) {
+            log.add("Starting " + testDescriptor.fullName())
+        }
 
         override fun <F> testComplete(fixture: F, testDescriptor: TestDescriptor) {
             log.add("Completed " + testDescriptor.fullName())
@@ -19,8 +26,12 @@ class TestEventsTests {
             log.add("Failed " + testDescriptor.fullName())
         }
 
-        override fun <F> testStarting(fixture: F, testDescriptor: TestDescriptor) {
-            log.add("Starting " + testDescriptor.fullName())
+        override fun <F> testAborted(fixture: F, testDescriptor: TestDescriptor, t: TestAbortedException) {
+            log.add("Aborted " + testDescriptor.fullName())
+        }
+
+        override fun <F> testSkipped(fixture: F, testDescriptor: TestDescriptor, t: TestSkippedException) {
+            log.add("Skipped " + testDescriptor.fullName())
         }
 
         override fun <PF, F> contextClosed(runtimeContext: RuntimeContext<PF, F>) {
@@ -40,6 +51,12 @@ class TestEventsTests {
                     test("fails") {
                         fail("Deliberate")
                     }
+                    test("skipped") {
+                        throw TestSkippedException()
+                    }
+                    test("aborted") {
+                        Assumptions.assumeFalse(true)
+                    }
                 }
             }
         }
@@ -53,6 +70,10 @@ class TestEventsTests {
             "Completed [root, outer, inner, in inner]",
             "Starting [root, outer, inner, fails]",
             "Failed [root, outer, inner, fails]",
+            "Starting [root, outer, inner, skipped]",
+            "Skipped [root, outer, inner, skipped]",
+            "Starting [root, outer, inner, aborted]",
+            "Aborted [root, outer, inner, aborted]",
             "Closed inner",
             "Closed outer",
             "Closed root"

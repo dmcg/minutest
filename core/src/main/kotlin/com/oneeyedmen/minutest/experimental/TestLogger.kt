@@ -2,6 +2,8 @@ package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.TestDescriptor
+import org.opentest4j.TestAbortedException
+import org.opentest4j.TestSkippedException
 
 class TestLogger(val log: MutableList<String> = mutableListOf()) : TestEventListener {
 
@@ -14,6 +16,14 @@ class TestLogger(val log: MutableList<String> = mutableListOf()) : TestEventList
     }
 
     override fun <F> testFailed(fixture: F, testDescriptor: TestDescriptor, t: Throwable) {
+        log(testDescriptor)
+    }
+
+    override fun <F> testAborted(fixture: F, testDescriptor: TestDescriptor, t: TestAbortedException) {
+        log(testDescriptor)
+    }
+
+    override fun <F> testSkipped(fixture: F, testDescriptor: TestDescriptor, t: TestSkippedException) {
         log(testDescriptor)
     }
 

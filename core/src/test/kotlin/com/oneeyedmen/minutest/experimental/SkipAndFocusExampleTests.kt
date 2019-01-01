@@ -7,7 +7,6 @@ import kotlin.test.fail
 
 class SkipAndFocusExampleTests : JUnit5Minutests {
 
-    // Skip and Focus (currently) require a transform to be installed to work
     override val tests = rootContext<Unit> {
 
         // Apply the FOCUS annotation to a test
