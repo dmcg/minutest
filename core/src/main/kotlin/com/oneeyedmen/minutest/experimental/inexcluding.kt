@@ -4,7 +4,6 @@ import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
-import org.opentest4j.TestAbortedException
 
 
 object SKIP : TestAnnotation, RuntimeTestTransform<Any?>, RuntimeContextTransform<Any?, Any?> {
@@ -53,10 +52,9 @@ private fun <F> RuntimeTest<F>.inexcluded(defaultToSkip: Boolean): RuntimeTest<F
 private fun <F> RuntimeTest<F>.skipped() = skipper<F>(name, annotations)
 
 private fun <F> skipper(name: String, properties: List<TestAnnotation>) = RuntimeTest<F>(name, properties) { _, _ ->
-    throw TestAbortedException("skipped")
+    throw MinutestSkippedException()
 }
 
 private fun <PF, F> RuntimeContext<PF, F>.skipped() = RuntimeContextWrapper(this,
     children = listOf(skipper("skipping ${this.name}", emptyList()))
 )
-

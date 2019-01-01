@@ -4,6 +4,7 @@ import com.oneeyedmen.minutest.*
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
+import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
 import org.opentest4j.TestSkippedException
 
@@ -30,7 +31,7 @@ class TestEventsTests {
             log.add("Aborted " + testDescriptor.fullName())
         }
 
-        override fun <F> testSkipped(fixture: F, testDescriptor: TestDescriptor, t: TestSkippedException) {
+        override fun <F> testSkipped(fixture: F, testDescriptor: TestDescriptor, t: IncompleteExecutionException) {
             log.add("Skipped " + testDescriptor.fullName())
         }
 
@@ -42,7 +43,9 @@ class TestEventsTests {
     @Test fun firesEvents() {
 
         val tests = rootContext<Unit> {
-            annotateWith(Telling(listener))
+            annotateWith(
+                Telling(listener)
+            )
             test("in root") {}
             context("outer") {
                 test("in outer") {}
@@ -51,8 +54,11 @@ class TestEventsTests {
                     test("fails") {
                         fail("Deliberate")
                     }
-                    test("skipped") {
+                    test("skipped with JUnit") {
                         throw TestSkippedException()
+                    }
+                    test("skipped with Minutest") {
+                        throw MinutestSkippedException()
                     }
                     test("aborted") {
                         Assumptions.assumeFalse(true)
@@ -70,8 +76,10 @@ class TestEventsTests {
             "Completed [root, outer, inner, in inner]",
             "Starting [root, outer, inner, fails]",
             "Failed [root, outer, inner, fails]",
-            "Starting [root, outer, inner, skipped]",
-            "Skipped [root, outer, inner, skipped]",
+            "Starting [root, outer, inner, skipped with JUnit]",
+            "Skipped [root, outer, inner, skipped with JUnit]",
+            "Starting [root, outer, inner, skipped with Minutest]",
+            "Skipped [root, outer, inner, skipped with Minutest]",
             "Starting [root, outer, inner, aborted]",
             "Aborted [root, outer, inner, aborted]",
             "Closed inner",

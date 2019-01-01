@@ -18,13 +18,13 @@ class TestLoggerTests {
         logger.testComplete(Unit, RootExecutor.then("root").then("test 3 in root"))
         assertLogged(log.withTabsExpanded(2),
             "root",
-            "  test in root",
-            "  test 2 in root",
+            "  ✓ test in root",
+            "  ✓ test 2 in root",
             "  outer",
-            "    test in outer",
+            "    ✓ test in outer",
             "    inner",
-            "      test in inner",
-            "  test 3 in root"
+            "      ✓ test in inner",
+            "  ✓ test 3 in root"
         )
     }
 }

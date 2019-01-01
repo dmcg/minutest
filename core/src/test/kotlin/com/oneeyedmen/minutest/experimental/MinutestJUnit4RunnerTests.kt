@@ -45,15 +45,15 @@ class AMinutestJUnit4RunnerTestsVerifier {
     @Test fun `check the other run`() {
         assertEquals(listOf(
             "root",
-            "    test",
+            "    ✓ test",
             "    context",
-            "        test x",
-            "        test 2",
+            "        ✓ test x",
+            "        ✓ test 2",
             "        another context",
-            "            test y",
+            "            ✓ test y",
             "        context whose name is wrong if you just run this test in IntelliJ",
-            "            test",
-            "        skipped"),
+            "            ✓ test",
+            "        - skipped"),
             testLog.withTabsExpanded(4)
         )
     }

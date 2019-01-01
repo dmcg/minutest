@@ -27,9 +27,9 @@ class LoggingTests {
 
         assertLogged(log.withTabsExpanded(2),
             "root",
-            "  top test",
+            "  ✓ top test",
             "  inner",
-            "    inner test"
+            "    ✓ inner test"
         )
     }
 
@@ -37,9 +37,9 @@ class LoggingTests {
 
         val expected = listOf(
             "root",
-            "  top test",
+            "  ✓ top test",
             "  inner",
-            "    inner test")
+            "    ✓ inner test")
 
         val tests = rootContext<Unit>(
             checkedAgainst { assertEquals(expected, it.withTabsExpanded(2))}

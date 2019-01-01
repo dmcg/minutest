@@ -5,6 +5,7 @@ import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
+import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
 import org.opentest4j.TestSkippedException
 
@@ -12,7 +13,7 @@ import org.opentest4j.TestSkippedException
 interface TestEventListener {
     fun <F> testStarting(fixture: F, testDescriptor: TestDescriptor) {}
     fun <F> testComplete(fixture: F, testDescriptor: TestDescriptor) {}
-    fun <F> testSkipped(fixture: F, testDescriptor: TestDescriptor, t: TestSkippedException) {}
+    fun <F> testSkipped(fixture: F, testDescriptor: TestDescriptor, t: IncompleteExecutionException) {}
     fun <F> testAborted(fixture: F, testDescriptor: TestDescriptor, t: TestAbortedException) {}
     fun <F> testFailed(fixture: F, testDescriptor: TestDescriptor, t: Throwable) {}
     fun <PF, F> contextClosed(runtimeContext: RuntimeContext<PF, F>) {}
@@ -40,6 +41,9 @@ private fun <F> RuntimeTest<F>.telling(listener: TestEventListener) = copy(
                 listener.testComplete(fixture, testDescriptor)
             }
         } catch (skipped: TestSkippedException) {
+            listener.testSkipped(fixture, testDescriptor, skipped)
+            throw skipped
+        } catch (skipped: MinutestSkippedException) {
             listener.testSkipped(fixture, testDescriptor, skipped)
             throw skipped
         } catch (aborted: TestAbortedException) {
