@@ -4,6 +4,7 @@ import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.TestTransform
+import com.oneeyedmen.minutest.experimental.transformedBy
 
 internal class ContextBuilder<PF, F>(
     private val name: String,
@@ -71,7 +72,7 @@ internal class ContextBuilder<PF, F>(
         transforms,
         resolvedFixtureFactory(),
         annotations
-    )
+    ).transformedBy(annotations)
 
     @Suppress("UNCHECKED_CAST")
     private fun resolvedFixtureFactory(): (PF, TestDescriptor) -> F = when {

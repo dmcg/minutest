@@ -7,18 +7,21 @@ import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
 import org.opentest4j.TestAbortedException
 
 
-object SKIP : TestAnnotation
+object SKIP : TestAnnotation, RuntimeTestTransform<Any?>, RuntimeContextTransform<Any?, Any?> {
+    override fun apply(test: RuntimeTest<Any?>): RuntimeTest<Any?> = test.skipped()
+    override fun apply(context: RuntimeContext<Any?, Any?>): RuntimeContext<Any?, Any?> = context.skipped()
+}
+
 object FOCUS : TestAnnotation
 
-fun <F> skipAndFocus(): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> = { inexclude(it) }
-
-fun <F> inexclude(root: RuntimeContext<Unit, F>): RuntimeContext<Unit, F> =
-    if (SKIP.appliesTo(root)) {
-        root.skipped()
+fun <F> skipAndFocus(): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> = { rootContext ->
+    if (SKIP.appliesTo(rootContext)) {
+        rootContext.skipped()
     } else {
-        val defaultToSkip = root.hasAFocusedChild()
-        root.withTransformedChildren { it.inexcluded(defaultToSkip) }
+        val defaultToSkip = rootContext.hasAFocusedChild()
+        rootContext.withTransformedChildren { it.inexcluded(defaultToSkip) }
     }
+}
 
 
 private fun RuntimeNode<*>.hasAFocusedChild(): Boolean = when (this) {
@@ -41,8 +44,7 @@ private fun <PF, F> RuntimeContext<PF, F>.inexcluded(defaultToSkip: Boolean): Ru
             this.withTransformedChildren { it.inexcluded(defaultToSkip = false) }
         hasAFocusedChild() ->
             this.withTransformedChildren { it.inexcluded(defaultToSkip) }
-        defaultToSkip || SKIP.appliesTo(this) ->
-            this.skipped()
+        defaultToSkip -> this.skipped()
         else ->
             this.withTransformedChildren { it.inexcluded(defaultToSkip) }
     }
@@ -50,7 +52,7 @@ private fun <PF, F> RuntimeContext<PF, F>.inexcluded(defaultToSkip: Boolean): Ru
 private fun <F> RuntimeTest<F>.inexcluded(defaultToSkip: Boolean): RuntimeTest<F> =
     when {
         FOCUS.appliesTo(this) -> this
-        defaultToSkip || SKIP.appliesTo(this) -> this.skipped()
+        defaultToSkip -> this.skipped()
         else -> this
     }
 
