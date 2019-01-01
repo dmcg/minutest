@@ -23,15 +23,7 @@ fun <F> skipAndFocus(): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> = {
     }
 }
 
-
-private fun RuntimeNode<*>.hasAFocusedChild(): Boolean = when (this) {
-    is RuntimeTest -> FOCUS.appliesTo(this)
-    is RuntimeContext<*, *> -> hasAFocusedChild()
-}
-
-private fun RuntimeContext<*, *>.hasAFocusedChild() = FOCUS.appliesTo(this) || children.hasAFocusedChild()
-
-private fun List<RuntimeNode<*>>.hasAFocusedChild() = find { it.hasAFocusedChild() } != null
+private fun RuntimeContext<*, *>.hasAFocusedChild() = this.hasA(FOCUS::appliesTo)
 
 private fun <F> RuntimeNode<F>.inexcluded(defaultToSkip: Boolean): RuntimeNode<F> = when (this) {
     is RuntimeTest<F> -> this.inexcluded(defaultToSkip)
@@ -42,7 +34,7 @@ private fun <PF, F> RuntimeContext<PF, F>.inexcluded(defaultToSkip: Boolean): Ru
     when {
         FOCUS.appliesTo(this) ->
             this.withTransformedChildren { it.inexcluded(defaultToSkip = false) }
-        hasAFocusedChild() ->
+        this.hasAFocusedChild() ->
             this.withTransformedChildren { it.inexcluded(defaultToSkip) }
         defaultToSkip -> this.skipped()
         else ->
@@ -65,3 +57,4 @@ private fun <F> skipper(name: String, properties: List<TestAnnotation>) = Runtim
 private fun <PF, F> RuntimeContext<PF, F>.skipped() = RuntimeContextWrapper(this,
     children = listOf(skipper("skipping ${this.name}", emptyList()))
 )
+
