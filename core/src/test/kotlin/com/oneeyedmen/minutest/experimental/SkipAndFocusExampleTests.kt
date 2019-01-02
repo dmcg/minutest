@@ -32,6 +32,12 @@ class SkipAndFocusExampleTests : JUnit5Minutests {
                 SKIP - test("skip overrides the focus") {
                     fail("should not have run")
                 }
+
+                SKIP - context("also applies to context") {
+                    test("will not be run") {
+                        fail("should not have run")
+                    }
+                }
             }
         }
     }

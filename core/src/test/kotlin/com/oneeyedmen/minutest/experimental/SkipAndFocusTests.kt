@@ -47,8 +47,7 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "root",
-            "    c1",
-            "        - skipping c1",
+            "    - c1",
             "    ✓ t2"
         )
     }
@@ -114,8 +113,7 @@ class SkipAndFocusTests {
             "    - t1",
             "    c1",
             "        ✓ c1/t1",
-            "        c1/c1",
-            "            - skipping c1/c1",
+            "        - c1/c1",
             "        c1/c2",
             "            ✓ c1/c2/t1",
             "            - c1/c2/t2"
@@ -130,8 +128,7 @@ class SkipAndFocusTests {
             }
         }
         checkLog(tests,
-            "root",
-            "    - skipping root"
+            "- root"
         )
     }
 

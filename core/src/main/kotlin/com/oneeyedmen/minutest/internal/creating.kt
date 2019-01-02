@@ -2,7 +2,7 @@ package com.oneeyedmen.minutest.internal
 
 import com.oneeyedmen.minutest.*
 import com.oneeyedmen.minutest.experimental.TestAnnotation
-import com.oneeyedmen.minutest.experimental.TopLevelContextTransform
+import com.oneeyedmen.minutest.experimental.TopLevelTransform
 
 data class TopLevelContextBuilder<F>(
     private val name: String,
@@ -18,20 +18,20 @@ data class TopLevelContextBuilder<F>(
             annotations.addAll(this@TopLevelContextBuilder.annotations)
         }
         val untransformed = topLevelContext.buildNode()
-        val transformsInTree: List<TopLevelContextTransform> = untransformed.findTopLevelTransforms()
-        val allTransforms: List<TopLevelContextTransform> = transformsInTree + transform.asTopLevelContextTransform()
+        val transformsInTree: List<TopLevelTransform> = untransformed.findTopLevelTransforms()
+        val allTransforms: List<TopLevelTransform> = transformsInTree + transform.asTopLevelTransform()
         val deduplicatedTransforms = LinkedHashSet(allTransforms)
         val transform = deduplicatedTransforms.reduce{ a, b ->
-            (a as TopLevelContextTransform).then(b as TopLevelContextTransform)
+            (a as TopLevelTransform).then(b as TopLevelTransform)
         }
-        return (transform as TopLevelContextTransform).applyTo(untransformed)
+        return (transform as TopLevelTransform).applyTo(untransformed)
     }
 }
 
-private fun ((RuntimeNode<Unit>) -> RuntimeNode<Unit>).asTopLevelContextTransform() =
-    object : TopLevelContextTransform {
+private fun ((RuntimeNode<Unit>) -> RuntimeNode<Unit>).asTopLevelTransform() =
+    object : TopLevelTransform {
         override fun applyTo(node: RuntimeNode<Unit>): RuntimeNode<Unit> =
-            this@asTopLevelContextTransform(node)
+            this@asTopLevelTransform(node)
     }
 
 private fun <F> topLevelContext(
@@ -47,8 +47,8 @@ private fun <F> fixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) ->
     } else null
 
 // TODO - this should probably be breadth-first
-private fun RuntimeNode<*>.findTopLevelTransforms(): List<TopLevelContextTransform> {
-    val myTransforms: List<TopLevelContextTransform> = annotations.filterIsInstance<TopLevelContextTransform>()
+private fun RuntimeNode<*>.findTopLevelTransforms(): List<TopLevelTransform> {
+    val myTransforms: List<TopLevelTransform> = annotations.filterIsInstance<TopLevelTransform>()
     return when (this) {
         is RuntimeTest<*> -> myTransforms
         is RuntimeContext<*, *> -> myTransforms + this.children.flatMap { it.findTopLevelTransforms() }

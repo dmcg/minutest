@@ -3,7 +3,6 @@ package com.oneeyedmen.minutest.experimental
 import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
-import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
 
 
 object SKIP : TestAnnotation, RuntimeNodeTransform {
@@ -13,8 +12,8 @@ object SKIP : TestAnnotation, RuntimeNodeTransform {
     }
 }
 
-object FOCUS : TestAnnotation, TopLevelContextTransform {
-    override fun applyTo(root: RuntimeNode<Unit>): RuntimeNode<Unit> = skipAndFocus<Unit>(root)
+object FOCUS : TestAnnotation, TopLevelTransform {
+    override fun applyTo(node: RuntimeNode<Unit>): RuntimeNode<Unit> = skipAndFocus<Unit>(node)
 }
 
 private fun <F> skipAndFocus(rootContext: (RuntimeNode<Unit>)): RuntimeNode<Unit> =
@@ -38,7 +37,7 @@ private fun <F> RuntimeNode<F>.inexcluded(defaultToSkip: Boolean): RuntimeNode<F
     is RuntimeContext<F, *> -> this.inexcluded(defaultToSkip)
 }
 
-private fun <PF, F> RuntimeContext<PF, F>.inexcluded(defaultToSkip: Boolean): RuntimeContext<PF, F> =
+private fun <PF, F> RuntimeContext<PF, F>.inexcluded(defaultToSkip: Boolean): RuntimeNode<PF> =
     when {
         FOCUS.appliesTo(this) ->
             this.withTransformedChildren { it.inexcluded(defaultToSkip = false) }
@@ -67,6 +66,4 @@ private fun <F> skipper(name: String, properties: List<TestAnnotation>) = Runtim
     throw MinutestSkippedException()
 }
 
-private fun <PF, F> RuntimeContext<PF, F>.skipped() = RuntimeContextWrapper(this,
-    children = listOf(skipper("skipping ${this.name}", emptyList()))
-)
+private fun <PF, F> RuntimeContext<PF, F>.skipped() = skipper<PF>(name, annotations)

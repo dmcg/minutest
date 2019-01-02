@@ -22,7 +22,6 @@ class ScanningTests {
             "    a failing test",
             "    a passing test",
             "  example skipped context",
-            "    skipping example skipped context",
             "  example typed context",
             "    a typed fixture test"
         )
