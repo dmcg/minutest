@@ -62,7 +62,7 @@ private fun <F> RuntimeNode<F>.skipped() = when (this) {
 
 private fun <F> RuntimeTest<F>.skipped() = skipper<F>(name, annotations)
 
-private fun <F> skipper(name: String, properties: List<TestAnnotation>) = RuntimeTest<F>(name, properties) { _, _ ->
+private fun <F> skipper(name: String, annotations: List<TestAnnotation>) = RuntimeTest<F>(name, annotations) { _, _ ->
     throw MinutestSkippedException()
 }
 

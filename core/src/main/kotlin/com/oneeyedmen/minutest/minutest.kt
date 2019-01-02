@@ -84,11 +84,6 @@ abstract class Context<ParentF, F> {
     val ParentF.parentFixture get() = this
 
     /**
-     * Add a transform to be applied to the tests in this context and its children.
-     */
-    abstract fun addTransform(transform: TestTransform<F>)
-
-    /**
      * An experimental map of properties that will be made available later in the test run.
      */
     val annotations: MutableList<TestAnnotation> = mutableListOf()

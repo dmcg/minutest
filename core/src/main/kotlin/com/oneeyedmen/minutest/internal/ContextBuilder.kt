@@ -1,6 +1,9 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.NodeBuilder
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.experimental.transformedBy
 
 internal class ContextBuilder<PF, F>(
@@ -13,7 +16,6 @@ internal class ContextBuilder<PF, F>(
     private val children = mutableListOf<NodeBuilder<F>>()
     private val befores = mutableListOf<(F) -> Unit>()
     private val afters = mutableListOf<(F) -> Unit>()
-    private val transforms = mutableListOf<TestTransform<F>>()
     private var afterAlls = mutableListOf<() -> Unit>()
 
     override fun deriveFixture(f: (PF).() -> F) = deriveInstrumentedFixture { parentFixture, _ ->  parentFixture.f() }
@@ -52,10 +54,6 @@ internal class ContextBuilder<PF, F>(
         return child
     }
     
-    override fun addTransform(transform: TestTransform<F>) {
-        transforms.add(transform)
-    }
-
     override fun afterAll(f: () -> Unit) {
         afterAlls.add(f)
     }
@@ -66,7 +64,6 @@ internal class ContextBuilder<PF, F>(
         befores,
         afters,
         afterAlls,
-        transforms,
         resolvedFixtureFactory(),
         annotations
     ).transformedBy(annotations)

@@ -7,40 +7,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 class NamingTests {
 
     @org.junit.jupiter.api.Test
-    fun `fully qualified name`() {
-        val log = mutableListOf<List<String>>()
-
-        val transform: TestTransform<Unit> = { test ->
-            { fixture, descriptor ->
-                log.add(descriptor.fullName())
-                test(fixture, descriptor)
-            }
-        }
-
-        executeTests(rootContext<Unit> {
-            addTransform(transform)
-
-            context("outer") {
-                test("outer test") {}
-
-                context("inner") {
-                    test("inner test 1") {}
-                    test("inner test 2") {}
-                }
-            }
-        })
-
-        assertEquals(
-            listOf(
-                listOf("root", "outer", "outer test"),
-                listOf("root", "outer", "inner", "inner test 1"),
-                listOf("root", "outer", "inner", "inner test 2")
-            ),
-            log
-        )
-    }
-
-    @org.junit.jupiter.api.Test
     fun `names are passed to deriveFixtureInstrumented`() {
         val log = mutableListOf<List<String>>()
 

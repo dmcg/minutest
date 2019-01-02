@@ -1,6 +1,9 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.*
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.Test
+import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.experimental.TestAnnotation
 
 /**
@@ -12,7 +15,6 @@ internal data class PreparedRuntimeContext<PF, F> (
     private val befores: List<(F) -> Unit>,
     private val afters: List<(F) -> Unit>,
     private var afterAlls: List<() -> Unit>,
-    private val transforms: List<TestTransform<F>>,
     private val fixtureFactory: (PF, TestDescriptor) -> F,
     override val annotations: MutableList<TestAnnotation>
 ) : RuntimeContext<PF, F>() {
@@ -24,8 +26,7 @@ internal data class PreparedRuntimeContext<PF, F> (
                 .onLastValue(::applyAftersTo)
                 .orThrow()
         }
-        val transformedTest = applyTransformsTo(testWithPreparedFixture)
-        return transformedTest.invoke(fixtureFactory(parentFixture, testDescriptor), testDescriptor)
+        return testWithPreparedFixture.invoke(fixtureFactory(parentFixture, testDescriptor), testDescriptor)
     }
 
     override fun close() {
@@ -33,9 +34,6 @@ internal data class PreparedRuntimeContext<PF, F> (
             it()
         }
     }
-
-    private fun applyTransformsTo(test: Test<F>): Test<F> =
-        transforms.fold(test) { acc, transform -> transform(acc) }
 
     private fun applyAftersTo(fixture: F) {
         afters.forEach { afterFn ->
