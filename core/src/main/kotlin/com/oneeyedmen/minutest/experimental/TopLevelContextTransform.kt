@@ -1,12 +1,14 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
 
 
-interface TopLevelContextTransform<F> {
-    fun applyTo(context: RuntimeContext<Unit, F>): RuntimeContext<Unit, F>
-    fun then(next: (TopLevelContextTransform<F>)): TopLevelContextTransform<F> = object: TopLevelContextTransform<F> {
-        override fun applyTo(context: RuntimeContext<Unit, F>): RuntimeContext<Unit, F> =
-            next.applyTo(this@TopLevelContextTransform.applyTo(context))
+interface TopLevelContextTransform {
+
+    fun applyTo(root: RuntimeNode<Unit>): RuntimeNode<Unit>
+
+    fun then(next: (TopLevelContextTransform)): TopLevelContextTransform = object: TopLevelContextTransform {
+        override fun applyTo(root: RuntimeNode<Unit>): RuntimeNode<Unit> =
+            next.applyTo(this@TopLevelContextTransform.applyTo(root))
     }
 }

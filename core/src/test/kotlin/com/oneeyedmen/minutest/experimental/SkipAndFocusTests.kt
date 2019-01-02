@@ -120,9 +120,6 @@ class SkipAndFocusTests {
             "            ✓ c1/c2/t1",
             "            - c1/c2/t2"
         )
-
-//        root,     - t1,     c1,         ✓ c1/t1,         c1/c1,             - skipping c1/c1,         c1/c2,             - c1/c2/t1,             - c1/c2/t2]>.
-
     }
 
     @Test fun `skip from root`() {

@@ -12,17 +12,17 @@ import org.junit.runners.ParentRunner
 import org.junit.runners.model.Statement
 import org.opentest4j.TestAbortedException
 
-class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeContext<Unit, *>>(type) {
+class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode<Unit>>(type) {
 
-    override fun getChildren(): List<RuntimeContext<Unit, *>> {
+    override fun getChildren(): List<RuntimeNode<Unit>> {
         val testInstance = (testClass.javaClass.newInstance() as? JUnit4Minutests) ?:
             error("${this::class.simpleName} should be applied to an instance of JUnit4Minutests")
         return listOf(testInstance.rootContextFromMethods())
     }
 
-    override fun runChild(child: RuntimeContext<Unit, *>, notifier: RunNotifier) = child.run(RootExecutor, notifier)
+    override fun runChild(child: RuntimeNode<Unit>, notifier: RunNotifier) = child.run(RootExecutor, notifier)
 
-    override fun describeChild(child: RuntimeContext<Unit, *>) = child.toDescription(RootExecutor)
+    override fun describeChild(child: RuntimeNode<Unit>) = child.toDescription(RootExecutor)
 
     private fun <F> RuntimeNode<F>.run(executor: TestExecutor<F>, notifier: RunNotifier): Unit = when (this) {
         is RuntimeTest<F> -> {

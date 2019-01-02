@@ -46,6 +46,11 @@ fun <F> TopLevelContextBuilder<F>.toTestFactory() = testFactoryFor(this)
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
+private fun <F> RuntimeNode<F>.toStreamOfDynamicNodes(executor: TestExecutor<F>) = when (this) {
+    is RuntimeContext<F, *> -> this.toStreamOfDynamicNodes(executor)
+    is RuntimeTest<F> -> Stream.of(this.toDynamicNode(executor))
+}
+
 private fun <PF, F> RuntimeContext<PF, F>.toStreamOfDynamicNodes(executor: TestExecutor<PF>): Stream<out DynamicNode> =
     children.toStreamOfDynamicNodes(this, executor.andThen(this))
 

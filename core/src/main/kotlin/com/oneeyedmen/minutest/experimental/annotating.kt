@@ -36,7 +36,5 @@ fun Context<*, *>.annotateWith(annotation: TestAnnotation) {
     annotation.applyTo(this as NodeBuilder<*>)
 }
 
-fun <T> ((T) -> T).then(next: (T) -> T): (T) -> T = { next(this(it)) }
-
 fun <PF, F> RuntimeContext<PF, F>.withTransformedChildren(transform: (RuntimeNode<F>) -> RuntimeNode<F>) =
     withChildren(children.map(transform))

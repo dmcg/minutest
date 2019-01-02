@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.experimental.checkedAgainst
 import com.oneeyedmen.minutest.experimental.withTabsExpanded
@@ -84,7 +84,7 @@ class GeneratingExampleTests : JUnit5Minutests {
     }
 }
 
-private fun <F> willRun(expectedLog: List<String>): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> =
+private fun willRun(expectedLog: List<String>): (RuntimeNode<Unit>) -> RuntimeNode<Unit> =
     checkedAgainst { actualLog ->
         assertEquals(expectedLog, actualLog.withTabsExpanded(4))
     }

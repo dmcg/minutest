@@ -8,30 +8,30 @@ data class TopLevelContextBuilder<F>(
     private val name: String,
     private val type: FixtureType,
     private val builder: Context<Unit, F>.() -> Unit,
-    private val transform: (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>,
+    private val transform: (RuntimeNode<Unit>) -> RuntimeNode<Unit>,
     override val annotations: MutableList<TestAnnotation> = mutableListOf()
 ) : NodeBuilder<Unit> {
 
-    override fun buildNode(): RuntimeContext<Unit, F> {
+    override fun buildNode(): RuntimeNode<Unit> {
         // we need to apply our annotations to the root, then run the transforms
         val topLevelContext = topLevelContext(name, type, builder).apply {
             annotations.addAll(this@TopLevelContextBuilder.annotations)
         }
         val untransformed = topLevelContext.buildNode()
-        val transformsInTree: List<TopLevelContextTransform<*>> = untransformed.findTopLevelTransforms()
-        val allTransforms: List<TopLevelContextTransform<*>> = transformsInTree + transform.asTopLevelContextTransform()
+        val transformsInTree: List<TopLevelContextTransform> = untransformed.findTopLevelTransforms()
+        val allTransforms: List<TopLevelContextTransform> = transformsInTree + transform.asTopLevelContextTransform()
         val deduplicatedTransforms = LinkedHashSet(allTransforms)
         val transform = deduplicatedTransforms.reduce{ a, b ->
-            (a as TopLevelContextTransform<Any?>).then(b as TopLevelContextTransform<Any?>)
+            (a as TopLevelContextTransform).then(b as TopLevelContextTransform)
         }
-        return (transform as TopLevelContextTransform<F>).applyTo(untransformed)
+        return (transform as TopLevelContextTransform).applyTo(untransformed)
     }
 }
 
-private fun <F> ((RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F>).asTopLevelContextTransform() =
-    object : TopLevelContextTransform<F> {
-        override fun applyTo(context: RuntimeContext<Unit, F>): RuntimeContext<Unit, F> =
-            this@asTopLevelContextTransform(context)
+private fun ((RuntimeNode<Unit>) -> RuntimeNode<Unit>).asTopLevelContextTransform() =
+    object : TopLevelContextTransform {
+        override fun applyTo(node: RuntimeNode<Unit>): RuntimeNode<Unit> =
+            this@asTopLevelContextTransform(node)
     }
 
 private fun <F> topLevelContext(
@@ -47,8 +47,8 @@ private fun <F> fixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) ->
     } else null
 
 // TODO - this should probably be breadth-first
-private fun RuntimeNode<*>.findTopLevelTransforms(): List<TopLevelContextTransform<*>> {
-    val myTransforms: List<TopLevelContextTransform<*>> = annotations.filterIsInstance<TopLevelContextTransform<*>>()
+private fun RuntimeNode<*>.findTopLevelTransforms(): List<TopLevelContextTransform> {
+    val myTransforms: List<TopLevelContextTransform> = annotations.filterIsInstance<TopLevelContextTransform>()
     return when (this) {
         is RuntimeTest<*> -> myTransforms
         is RuntimeContext<*, *> -> myTransforms + this.children.flatMap { it.findTopLevelTransforms() }

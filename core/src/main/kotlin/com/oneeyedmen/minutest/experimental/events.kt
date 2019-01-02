@@ -19,11 +19,11 @@ interface TestEventListener {
     fun <PF, F> contextClosed(runtimeContext: RuntimeContext<PF, F>) {}
 }
 
-class Telling(private val listener: TestEventListener) : TestAnnotation, RuntimeContextTransform<Unit, Any?> {
-    override fun applyTo(context: RuntimeContext<Unit, Any?>): RuntimeContext<Unit, Any?> = context.telling(listener)
+class Telling(private val listener: TestEventListener) : TestAnnotation, RuntimeNodeTransform {
+    override fun <F> applyTo(node: RuntimeNode<F>): RuntimeNode<F> = node.telling(listener)
 }
 
-fun <F> telling(listener: TestEventListener): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> = { context ->
+fun <F> telling(listener: TestEventListener): (RuntimeNode<F>) -> RuntimeNode<F> = { context ->
     context.telling(listener)
 }
 
