@@ -44,14 +44,14 @@ class GeneratingExampleTests : JUnit5Minutests {
     val summary = listOf(
         "root",
         "    an empty stack",
-        "        is empty",
-        "        can push",
-        "        cant pop",
+        "        ✓ is empty",
+        "        ✓ can push",
+        "        ✓ cant pop",
         "    a stack with one item",
-        "        is not empty",
-        "        can push",
-        "        can pop",
-        "        has the item on top"
+        "        ✓ is not empty",
+        "        ✓ can push",
+        "        ✓ can pop",
+        "        ✓ has the item on top"
     )
 
     override val tests = rootContext<StringStack>(willRun(summary)) {
@@ -79,7 +79,7 @@ class GeneratingExampleTests : JUnit5Minutests {
     }
 }
 
-private fun <F> willRun(expectedLog: List<String>): (RuntimeContext<Unit, F>) -> RuntimeContext<Unit, F> =
+private fun willRun(expectedLog: List<String>): (RuntimeNode<Unit>) -> RuntimeNode<Unit> =
     checkedAgainst { actualLog ->
         assertEquals(expectedLog, actualLog.withTabsExpanded(4))
     }

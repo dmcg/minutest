@@ -9,8 +9,7 @@ Enter Focus and Skip.
 ```kotlin
 class SkipAndFocusExampleTests : JUnit5Minutests {
 
-    // Skip and Focus (currently) require a transform to be installed to work
-    override val tests = rootContext<Unit>(transform = skipAndFocus(), builder = {
+    override val tests = rootContext<Unit> {
 
         // Apply the FOCUS annotation to a test
         FOCUS - test("this test is focused, only other focused things will be run") {}
@@ -35,9 +34,15 @@ class SkipAndFocusExampleTests : JUnit5Minutests {
                 SKIP - test("skip overrides the focus") {
                     fail("should not have run")
                 }
+
+                SKIP - context("also applies to context") {
+                    test("will not be run") {
+                        fail("should not have run")
+                    }
+                }
             }
         }
-    })
+    }
 }
 ```
 
