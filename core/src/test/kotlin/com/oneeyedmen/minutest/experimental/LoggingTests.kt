@@ -26,9 +26,9 @@ class LoggingTests {
         executeTests(tests)
 
         assertLogged(log.withTabsExpanded(2),
-            "root",
+            "▾ root",
             "  ✓ top test",
-            "  inner",
+            "  ▾ inner",
             "    ✓ inner test"
         )
     }
@@ -36,9 +36,9 @@ class LoggingTests {
     @Test fun checking() {
 
         val expected = listOf(
-            "root",
+            "▾ root",
             "  ✓ top test",
-            "  inner",
+            "  ▾ inner",
             "    ✓ inner test")
 
         val tests = rootContext<Unit>(

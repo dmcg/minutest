@@ -20,7 +20,7 @@ class SkipAndFocusTests {
             test("t2", noop)
         }
         checkLog(tests,
-            "root",
+            "▾ root",
             "    ✓ t1",
             "    ✓ t2"
         )
@@ -32,7 +32,7 @@ class SkipAndFocusTests {
             test("t2", noop)
         }
         checkLog(tests,
-            "root",
+            "▾ root",
             "    - t1",
             "    ✓ t2"
         )
@@ -46,7 +46,7 @@ class SkipAndFocusTests {
             test("t2", noop)
         }
         checkLog(tests,
-            "root",
+            "▾ root",
             "    - c1",
             "    ✓ t2"
         )
@@ -58,7 +58,7 @@ class SkipAndFocusTests {
             FOCUS - test("t2", noop)
         }
         checkLog(tests,
-            "root",
+            "▾ root",
             "    - t1",
             "    ✓ t2"
         )
@@ -72,9 +72,9 @@ class SkipAndFocusTests {
             }
         }
         checkLog(tests,
-            "root",
+            "▾ root",
             "    - t1",
-            "    c1",
+            "    ▾ c1",
             "        ✓ c1/t1"
         )
     }
@@ -87,9 +87,9 @@ class SkipAndFocusTests {
             }
         }
         checkLog(tests,
-            "root",
+            "▾ root",
             "    - t1",
-            "    c1",
+            "    ▾ c1",
             "        ✓ c1/t1"
         )
     }
@@ -109,12 +109,12 @@ class SkipAndFocusTests {
             }
         }
         checkLog(tests,
-            "root",
+            "▾ root",
             "    - t1",
-            "    c1",
+            "    ▾ c1",
             "        ✓ c1/t1",
             "        - c1/c1",
-            "        c1/c2",
+            "        ▾ c1/c2",
             "            ✓ c1/c2/t1",
             "            - c1/c2/t2"
         )
