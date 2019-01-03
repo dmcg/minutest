@@ -1,9 +1,7 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.TestContext
 import com.oneeyedmen.minutest.experimental.checkedAgainst
-import com.oneeyedmen.minutest.experimental.withTabsExpanded
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.*
@@ -47,19 +45,19 @@ private fun TestContext<StringStack>.cantPop() = test("cant pop") {
 class GeneratingExampleTests : JUnit5Minutests {
 
     val summary = listOf(
-        "▾ root",
-        "    ▾ an empty stack",
-        "        ✓ is empty",
-        "        ✓ can push",
-        "        ✓ cant pop",
-        "    ▾ a stack with one item",
-        "        ✓ is not empty",
-        "        ✓ can push",
-        "        ✓ can pop",
-        "        ✓ has the item on top"
+        "root",
+        "  an empty stack",
+        "    is empty",
+        "    can push",
+        "    cant pop",
+        "  a stack with one item",
+        "    is not empty",
+        "    can push",
+        "    can pop",
+        "    has the item on top"
     )
 
-    override val tests = rootContext<StringStack>(willRun(summary)) {
+    override val tests = rootContext<StringStack>(checkedAgainst { assertEquals(summary, it) }) {
 
         fixture { StringStack() }
 
@@ -84,7 +82,3 @@ class GeneratingExampleTests : JUnit5Minutests {
     }
 }
 
-private fun willRun(expectedLog: List<String>): (RuntimeNode<Unit>) -> RuntimeNode<Unit> =
-    checkedAgainst { actualLog ->
-        assertEquals(expectedLog, actualLog.withTabsExpanded(4))
-    }

@@ -1,6 +1,5 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.assertLogged
 import com.oneeyedmen.minutest.executeTests
 import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Test
@@ -8,38 +7,15 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 
-class LoggingTests {
-
-
-    @Test fun logging() {
-        val log = mutableListOf<String>()
-
-        val tests = rootContext<Unit>(loggedTo(log)) {
-
-            test("top test") {}
-
-            context("inner") {
-                test("inner test") {}
-            }
-        }
-
-        executeTests(tests)
-
-        assertLogged(log.withTabsExpanded(2),
-            "▾ root",
-            "  ✓ top test",
-            "  ▾ inner",
-            "    ✓ inner test"
-        )
-    }
+class CheckingTests {
 
     @Test fun checking() {
 
         val expected = listOf(
-            "▾ root",
-            "  ✓ top test",
-            "  ▾ inner",
-            "    ✓ inner test")
+            "root",
+            "  top test",
+            "  inner",
+            "    inner test")
 
         val tests = rootContext<Unit>(
             checkedAgainst { assertEquals(expected, it.withTabsExpanded(2))}

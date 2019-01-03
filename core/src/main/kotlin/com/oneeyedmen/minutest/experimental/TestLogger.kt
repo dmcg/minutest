@@ -7,6 +7,7 @@ import org.opentest4j.TestAbortedException
 
 class TestLogger(
     val log: MutableList<String> = mutableListOf(),
+    val indent: String = "\t",
     val prefixer: (NodeType) -> String = NodeType::prefix
 ) : TestEventListener {
 
@@ -46,7 +47,7 @@ class TestLogger(
         path.subList(commonPrefix.size, path.size).forEachIndexed { i, name ->
             val isContext = name != testDescriptor.name
             val icon = prefixer(if (isContext) NodeType.CONTEXT else nodeType)
-            log.add((commonPrefix.size + i).tabs() + icon + name)
+            log.add(indent.repeat(commonPrefix.size + i) + icon + name)
         }
         lastPath = path
     }
@@ -54,5 +55,3 @@ class TestLogger(
 
 private fun <E> List<E>.commonPrefix(that: List<E>): List<E> =
     this.zip(that).takeWhile { (a, b) -> a == b }.map { (a, _) -> a }
-
-private fun Int.tabs() = "\t".repeat(this)
