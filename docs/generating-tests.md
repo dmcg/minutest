@@ -42,12 +42,12 @@ private fun TestContext<StringStack>.cantPop() = test("cant pop") {
 class GeneratingExampleTests : JUnit5Minutests {
 
     val summary = listOf(
-        "root",
-        "    an empty stack",
+        "▾ root",
+        "    ▾ an empty stack",
         "        ✓ is empty",
         "        ✓ can push",
         "        ✓ cant pop",
-        "    a stack with one item",
+        "    ▾ a stack with one item",
         "        ✓ is not empty",
         "        ✓ can push",
         "        ✓ can pop",
