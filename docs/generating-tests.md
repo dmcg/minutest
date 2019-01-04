@@ -42,19 +42,19 @@ private fun TestContext<StringStack>.cantPop() = test("cant pop") {
 class GeneratingExampleTests : JUnit5Minutests {
 
     val summary = listOf(
-        "▾ root",
-        "    ▾ an empty stack",
-        "        ✓ is empty",
-        "        ✓ can push",
-        "        ✓ cant pop",
-        "    ▾ a stack with one item",
-        "        ✓ is not empty",
-        "        ✓ can push",
-        "        ✓ can pop",
-        "        ✓ has the item on top"
+        "root",
+        "  an empty stack",
+        "    is empty",
+        "    can push",
+        "    cant pop",
+        "  a stack with one item",
+        "    is not empty",
+        "    can push",
+        "    can pop",
+        "    has the item on top"
     )
 
-    override val tests = rootContext<StringStack>(willRun(summary)) {
+    override val tests = rootContext<StringStack>(checkedAgainst { assertEquals(summary, it) }) {
 
         fixture { StringStack() }
 
@@ -79,8 +79,4 @@ class GeneratingExampleTests : JUnit5Minutests {
     }
 }
 
-private fun willRun(expectedLog: List<String>): (RuntimeNode<Unit>) -> RuntimeNode<Unit> =
-    checkedAgainst { actualLog ->
-        assertEquals(expectedLog, actualLog.withTabsExpanded(4))
-    }
 ```
