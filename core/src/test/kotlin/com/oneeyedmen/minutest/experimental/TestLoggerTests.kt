@@ -14,7 +14,7 @@ class TestLoggerTests {
 
     @Test fun test() {
         doStuff(TestLogger(log))
-        assertLogged(log.withTabsExpanded(2),
+        assertLogged(log,
             "▾ root",
             "  ✓ test in root",
             "  ✓ test 2 in root",

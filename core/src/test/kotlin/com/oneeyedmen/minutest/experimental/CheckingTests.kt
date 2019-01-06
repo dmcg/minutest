@@ -18,7 +18,7 @@ class CheckingTests {
             "    inner test")
 
         val tests = rootContext<Unit>(
-            checkedAgainst { assertEquals(expected, it.withTabsExpanded(2))}
+            checkedAgainst { assertEquals(expected, it)}
         ) {
 
             test("top test") {}

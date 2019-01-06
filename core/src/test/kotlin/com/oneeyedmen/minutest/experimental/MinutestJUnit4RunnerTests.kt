@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest.experimental
 
+import com.oneeyedmen.minutest.assertLogged
 import com.oneeyedmen.minutest.junit.JUnit4Minutests
 import com.oneeyedmen.minutest.rootContext
 import org.junit.Test
@@ -43,18 +44,17 @@ private val testLog = mutableListOf<String>()
 class AMinutestJUnit4RunnerTestsVerifier {
 
     @Test fun `check the other run`() {
-        assertEquals(listOf(
+        assertLogged(testLog,
             "▾ root",
-            "    ✓ test",
-            "    ▾ context",
-            "        ✓ test x",
-            "        ✓ test 2",
-            "        ▾ another context",
-            "            ✓ test y",
-            "        ▾ context whose name is wrong if you just run this test in IntelliJ",
-            "            ✓ test",
-            "        - skipped"),
-            testLog.withTabsExpanded(4)
+            "  ✓ test",
+            "  ▾ context",
+            "    ✓ test x",
+            "    ✓ test 2",
+            "    ▾ another context",
+            "      ✓ test y",
+            "    ▾ context whose name is wrong if you just run this test in IntelliJ",
+            "      ✓ test",
+            "    - skipped"
         )
     }
 }

@@ -7,7 +7,7 @@ import org.opentest4j.TestAbortedException
 
 class TestLogger(
     val log: MutableList<String> = mutableListOf(),
-    val indent: String = "\t",
+    val indent: String = "  ",
     val prefixer: (NodeType) -> String = NodeType::prefix
 ) : TestEventListener {
 

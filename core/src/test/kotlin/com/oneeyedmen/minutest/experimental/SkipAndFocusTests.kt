@@ -21,8 +21,8 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "▾ root",
-            "    ✓ t1",
-            "    ✓ t2"
+            "  ✓ t1",
+            "  ✓ t2"
         )
     }
 
@@ -33,8 +33,8 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "▾ root",
-            "    - t1",
-            "    ✓ t2"
+            "  - t1",
+            "  ✓ t2"
         )
     }
 
@@ -47,8 +47,8 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "▾ root",
-            "    - c1",
-            "    ✓ t2"
+            "  - c1",
+            "  ✓ t2"
         )
     }
 
@@ -59,8 +59,8 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "▾ root",
-            "    - t1",
-            "    ✓ t2"
+            "  - t1",
+            "  ✓ t2"
         )
     }
 
@@ -73,9 +73,9 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "▾ root",
-            "    - t1",
-            "    ▾ c1",
-            "        ✓ c1/t1"
+            "  - t1",
+            "  ▾ c1",
+            "    ✓ c1/t1"
         )
     }
 
@@ -88,9 +88,9 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "▾ root",
-            "    - t1",
-            "    ▾ c1",
-            "        ✓ c1/t1"
+            "  - t1",
+            "  ▾ c1",
+            "    ✓ c1/t1"
         )
     }
 
@@ -110,13 +110,13 @@ class SkipAndFocusTests {
         }
         checkLog(tests,
             "▾ root",
-            "    - t1",
-            "    ▾ c1",
-            "        ✓ c1/t1",
-            "        - c1/c1",
-            "        ▾ c1/c2",
-            "            ✓ c1/c2/t1",
-            "            - c1/c2/t2"
+            "  - t1",
+            "  ▾ c1",
+            "    ✓ c1/t1",
+            "    - c1/c1",
+            "    ▾ c1/c2",
+            "      ✓ c1/c2/t1",
+            "      - c1/c2/t2"
         )
     }
 
@@ -134,6 +134,6 @@ class SkipAndFocusTests {
 
     private fun checkLog(tests: TopLevelContextBuilder<*>, vararg expected: String) {
         executeTests(tests)
-        assertLogged(log.withTabsExpanded(4), *expected)
+        assertLogged(log, *expected)
     }
 }

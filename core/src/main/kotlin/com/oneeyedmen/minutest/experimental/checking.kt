@@ -17,9 +17,6 @@ fun <F> checkedAgainst(
     }
 }
 
-fun <F> loggedTo(log: MutableList<String>): (RuntimeNode<F>) -> RuntimeNode<F> = { context ->
-    telling<F>(TestLogger(log))(context)
+fun <F> loggedTo(log: MutableList<String>): (RuntimeNode<F>) -> RuntimeNode<F> = { node ->
+    telling<F>(TestLogger(log))(node)
 }
-
-fun List<String>.withTabsExpanded(spaces: Int) = this.map { it.replace("\t", " ".repeat(spaces)) }
-
