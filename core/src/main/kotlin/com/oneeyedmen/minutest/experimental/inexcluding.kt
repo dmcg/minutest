@@ -6,27 +6,21 @@ import com.oneeyedmen.minutest.RuntimeTest
 
 
 object SKIP : TestAnnotation, RuntimeNodeTransform {
-    override fun <F> applyTo(node: RuntimeNode<F>): RuntimeNode<F> = when(node) {
-        is RuntimeTest -> node.skipped()
-        is RuntimeContext<F, *> -> node.skipped()
-    }
+    override fun <F> applyTo(node: RuntimeNode<F>): RuntimeNode<F> = node.skipped()
 }
 
 object FOCUS : TestAnnotation, TopLevelTransform {
-    override fun applyTo(node: RuntimeNode<Unit>): RuntimeNode<Unit> = skipAndFocus<Unit>(node)
+    override fun applyTo(node: RuntimeNode<Unit>): RuntimeNode<Unit> = skipAndFocus(node)
 }
 
-private fun <F> skipAndFocus(rootContext: (RuntimeNode<Unit>)): RuntimeNode<Unit> =
-    if (SKIP.appliesTo(rootContext)) {
-        rootContext.skipped()
-    } else {
-        when (rootContext) {
-            is RuntimeContext<Unit, *> -> {
-                val defaultToSkip = rootContext.hasAFocusedChild()
-                (rootContext as RuntimeContext<Unit, F>).withTransformedChildren { it.inexcluded(defaultToSkip) }
-            }
-            is RuntimeTest<Unit> -> TODO()
+@Suppress("UNCHECKED_CAST")
+private fun skipAndFocus(rootContext: (RuntimeNode<Unit>)): RuntimeNode<Unit> =
+    when (rootContext) {
+        is RuntimeContext<Unit, *> -> {
+            val defaultToSkip = rootContext.hasAFocusedChild()
+            (rootContext as RuntimeContext<Unit, Any?>).withTransformedChildren { it.inexcluded(defaultToSkip) }
         }
+        is RuntimeTest<Unit> -> TODO("skipAndFocus on root as test")
     }
 
 
@@ -55,15 +49,6 @@ private fun <F> RuntimeTest<F>.inexcluded(defaultToSkip: Boolean): RuntimeTest<F
         else -> this
     }
 
-private fun <F> RuntimeNode<F>.skipped() = when (this) {
-    is RuntimeTest<F> -> this.skipped()
-    is RuntimeContext<F, *> -> this.skipped()
-}
-
-private fun <F> RuntimeTest<F>.skipped() = skipper<F>(name, annotations)
-
-private fun <F> skipper(name: String, annotations: List<TestAnnotation>) = RuntimeTest<F>(name, annotations) { _, _ ->
+private fun <F> RuntimeNode<F>.skipped() = RuntimeTest<F>(name, annotations) { _, _ ->
     throw MinutestSkippedException()
 }
-
-private fun <PF, F> RuntimeContext<PF, F>.skipped() = skipper<PF>(name, annotations)
