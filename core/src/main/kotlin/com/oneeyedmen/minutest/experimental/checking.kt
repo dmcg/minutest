@@ -5,7 +5,7 @@ import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
 
 fun <F> checkedAgainst(
-    logger: TestLogger = TestLogger(mutableListOf(), indent = "  ", prefixer = TestLogger.noSymbols),
+    logger: TestLogger = TestLogger(mutableListOf(), prefixer = TestLogger.noSymbols),
     check: (List<String>) -> Unit
 ): (RuntimeNode<F>) -> RuntimeNode<F> = { node ->
     when (node) {
