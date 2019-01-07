@@ -10,19 +10,15 @@ object SKIP : TestAnnotation, RuntimeNodeTransform {
 }
 
 object FOCUS : TestAnnotation, TopLevelTransform {
-    override fun applyTo(node: RuntimeNode<Unit>): RuntimeNode<Unit> = skipAndFocus(node)
-}
-
-@Suppress("UNCHECKED_CAST")
-private fun skipAndFocus(rootContext: (RuntimeNode<Unit>)): RuntimeNode<Unit> =
-    when (rootContext) {
+    override fun applyTo(node: RuntimeNode<Unit>): RuntimeNode<Unit> = when (node) {
         is RuntimeContext<Unit, *> -> {
-            val defaultToSkip = rootContext.hasAFocusedChild()
-            (rootContext as RuntimeContext<Unit, Any?>).withTransformedChildren { it.inexcluded(defaultToSkip) }
+            val defaultToSkip = node.hasAFocusedChild()
+            @Suppress("UNCHECKED_CAST") //  we couldn't check in the is, Any? is fine
+            (node as RuntimeContext<Unit, Any?>).withTransformedChildren { it.inexcluded(defaultToSkip) }
         }
         is RuntimeTest<Unit> -> TODO("skipAndFocus on root as test")
     }
-
+}
 
 private fun RuntimeContext<*, *>.hasAFocusedChild() = this.hasA(FOCUS::appliesTo)
 
