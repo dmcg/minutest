@@ -21,10 +21,8 @@ data class TopLevelContextBuilder<F>(
         val transformsInTree: List<TopLevelTransform> = untransformed.findTopLevelTransforms()
         val allTransforms: List<TopLevelTransform> = transformsInTree + transform.asTopLevelTransform()
         val deduplicatedTransforms = LinkedHashSet(allTransforms)
-        val transform = deduplicatedTransforms.reduce{ a, b ->
-            (a as TopLevelTransform).then(b as TopLevelTransform)
-        }
-        return (transform as TopLevelTransform).applyTo(untransformed)
+        val transform = deduplicatedTransforms.reduce{ a, b -> a.then(b) }
+        return transform.applyTo(untransformed)
     }
 }
 
