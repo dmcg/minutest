@@ -1,33 +1,34 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.junit.JUnit4Minutests
-import example.junit4.AssumeInNestedContext
-import example.junit4.AssumeInRootContext
-import org.junit.Assert.assertTrue
+import example.junit5.AssumeInNestedContext
+import example.junit5.AssumeInRootContext
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.engine.JupiterTestEngine
 import org.junit.platform.engine.discovery.DiscoverySelectors
 import org.junit.platform.launcher.EngineFilter
 import org.junit.platform.launcher.LauncherDiscoveryRequest
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 import org.junit.platform.launcher.core.LauncherFactory
-import org.junit.vintage.engine.descriptor.VintageTestDescriptor
 import kotlin.reflect.KClass
 
 
-class AssumeJUnit4Tests : JUnit4Minutests() {
+class AssumeJUnit5Tests {
     private val listener = JUnit5TestLogger()
     
     @Test
     fun testRootContext() {
         run<AssumeInRootContext>()
-        assertTrue(listener.log.joinToString("\n"), listener.log.any { it.startsWith("test aborted") })
+        assertTrue(listener.log.any { it.startsWith("test aborted") }, this::reportLogOnFailure)
     }
     
     @Test
     fun testNestedContext() {
         run<AssumeInNestedContext>()
-        assertTrue(listener.log.joinToString("\n"), listener.log.any { it.startsWith("test aborted") })
+        assertTrue(listener.log.any { it.startsWith("test aborted") }, this::reportLogOnFailure)
     }
+    
+    private fun reportLogOnFailure() = listener.log.joinToString("\n")
     
     private inline fun <reified T : Any> run() {
         run(T::class)
@@ -39,8 +40,11 @@ class AssumeJUnit4Tests : JUnit4Minutests() {
     
     private fun discoveryRequest(testClass: KClass<*>): LauncherDiscoveryRequest {
         return LauncherDiscoveryRequestBuilder.request()
-            .filters(EngineFilter.includeEngines(VintageTestDescriptor.ENGINE_ID))
+            .filters(EngineFilter.includeEngines(JupiterTestEngine.ENGINE_ID))
             .selectors(DiscoverySelectors.selectClass(testClass.java))
             .build()
     }
 }
+
+
+
