@@ -5,7 +5,6 @@ import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.RuntimeTest
 import com.oneeyedmen.minutest.internal.RootExecutor
 import com.oneeyedmen.minutest.internal.TestExecutor
-import org.junit.AssumptionViolatedException
 import org.junit.runner.Description
 import org.junit.runner.notification.RunNotifier
 import org.junit.runners.ParentRunner
@@ -15,8 +14,8 @@ import org.opentest4j.TestAbortedException
 class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode<Unit>>(type) {
 
     override fun getChildren(): List<RuntimeNode<Unit>> {
-        val testInstance = (testClass.javaClass.newInstance() as? JUnit4Minutests) ?:
-            error("${this::class.simpleName} should be applied to an instance of JUnit4Minutests")
+        val testInstance = (testClass.javaClass.newInstance() as? JUnit4Minutests)
+            ?: error("${this::class.simpleName} should be applied to an instance of JUnit4Minutests")
         return listOf(testInstance.rootContextFromMethods())
     }
 
@@ -25,38 +24,54 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode<Unit>>(typ
     override fun describeChild(child: RuntimeNode<Unit>) = child.toDescription(RootExecutor)
 
     private fun <F> RuntimeNode<F>.run(executor: TestExecutor<F>, notifier: RunNotifier): Unit = when (this) {
-        is RuntimeTest<F> -> {
-            runLeaf(this.asStatement(executor), this.toDescription(executor), notifier)
-        }
+        is RuntimeTest<F> -> this.run(executor, notifier)
         is RuntimeContext<F, *> -> this.run(executor, notifier)
     }
 
+    private fun <F> RuntimeTest<F>.run(executor: TestExecutor<F>, notifier: RunNotifier) {
+        // We want to rely on runLeaf to fire events for us, but ignoring a test is a special case. So we run the test
+        // first - if it turns out to have been skipped we fire the event for that, otherwise we make a statement
+        // for runChild to chew on.
+        val thrown: Throwable? = exceptionIfAnyFromRunning(this, executor)
+        if (thrown is TestAbortedException)
+            notifier.fireTestIgnored(this.toDescription(executor))
+        else
+            runLeaf(thrown.asStatement(), this.toDescription(executor), notifier)
+    }
+
     private fun <PF, F> RuntimeContext<PF, F>.run(executor: TestExecutor<PF>, notifier: RunNotifier) {
-        notifier.fireTestStarted(toDescription(executor))
-        children.forEach {
-            it.run(executor.andThen(this), notifier)
+        val contextDescription = this.toDescription(executor)
+        notifier.fireTestStarted(contextDescription)
+        children.forEach { child ->
+            child.run(executor.andThen(this), notifier)
         }
         close()
-        notifier.fireTestFinished(toDescription(executor))
+        notifier.fireTestFinished(contextDescription)
     }
 }
 
-private fun RuntimeNode<*>.toDescription(executor: TestExecutor<*>): Description = when (this) {
+private fun <F> RuntimeNode<F>.toDescription(executor: TestExecutor<F>): Description = when (this) {
     is RuntimeTest -> Description.createTestDescription(executor.name, this.name)
-    is RuntimeContext<*, *> -> Description.createSuiteDescription(this.name).apply {
-        this@toDescription.children.forEach {
-            addChild(it.toDescription(executor))
-        }
-    }
+    is RuntimeContext<F, *> -> this.toDescription(executor)
 }
 
-private fun <F> RuntimeTest<F>.asStatement(executor: TestExecutor<F>) = object : Statement() {
-    override fun evaluate() {
-        try {
-            executor.runTest(this@asStatement)
-        } catch (aborted: TestAbortedException) {
-            // JUnit 4 doesn't understand JUnit 5's convention
-            throw AssumptionViolatedException(aborted.message)
+private fun <PF, F> RuntimeContext<PF, F>.toDescription(executor: TestExecutor<PF>) =
+    Description.createSuiteDescription(this.name).also { description ->
+        this.children.forEach {
+            description.addChild(it.toDescription(executor.andThen(this)))
         }
+    }
+
+private fun <F> exceptionIfAnyFromRunning(runtimeTest: RuntimeTest<F>, executor: TestExecutor<F>): Throwable? =
+    try {
+        executor.runTest(runtimeTest)
+        null
+    } catch (t: Throwable) {
+        t
+    }
+
+private fun Throwable?.asStatement() = object : Statement() {
+    override fun evaluate() {
+        this@asStatement?.let { throw it }
     }
 }
