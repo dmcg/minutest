@@ -35,9 +35,9 @@ class MinutestTestEngine : TestEngine {
         }
     }
     
-    private fun execute(
+    private fun <T> execute(
         descriptor: TestDescriptor,
-        executor: TestExecutor<*>,
+        executor: TestExecutor<T>,
         request: EngineDiscoveryRequest,
         listener: EngineExecutionListener
     ) {
@@ -45,13 +45,19 @@ class MinutestTestEngine : TestEngine {
         val result = try {
             if (descriptor is MinutestNodeDescriptor) {
                 when (descriptor.node) {
-                    is RuntimeContext<*, *> -> executeDynamicChildren(
-                        descriptor,
-                        (executor as TestExecutor<Any>).andThen(descriptor.node as RuntimeContext<Any, *>),
-                        request,
-                        listener
-                    )
-                    is RuntimeTest<*> -> executeTest(descriptor.node, executor)
+                    is RuntimeContext<*, *> ->
+                        executeDynamicChildren(
+                            descriptor,
+                            @Suppress("UNCHECKED_CAST")
+                            executor.andThen(descriptor.node as RuntimeContext<T, *>),
+                            request,
+                            listener
+                        )
+                    is RuntimeTest<*> ->
+                        @Suppress("UNCHECKED_CAST")
+                        executeTest(
+                            descriptor.node as RuntimeTest<T>,
+                            executor)
                 }
             }
             else {
@@ -107,8 +113,8 @@ class MinutestTestEngine : TestEngine {
         }
     }
     
-    private fun executeTest(node: RuntimeTest<*>, executor: TestExecutor<*>) {
-        (executor as TestExecutor<Any>).runTest(node as RuntimeTest<Any>) // TODO fix me
+    private fun <T> executeTest(node: RuntimeTest<T>, executor: TestExecutor<T>) {
+        executor.runTest(node)
     }
     
     companion object {
@@ -147,6 +153,7 @@ private class MinutestNodeDescriptor(
     override fun setParent(parent: TestDescriptor?) {
         _parent = parent
     }
+    
     override fun mayRegisterTests(): Boolean = true
     override fun getChildren() = _children.toMutableSet()
     

@@ -51,12 +51,12 @@ internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo)
         // Check Kotlin visibility because a public static Java method might have internal visibility in Kotlin
         .filter { it.visibility == PUBLIC }
         .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
-        .map { (packageName, functions) -> ScannedPackageContext(packageName, functions as List<KFunction0<TopLevelContextBuilder<Unit>>>) }
+        .map { (packageName, functions) -> ScannedPackageContext(packageName, functions) }
 }
 
-private fun MethodInfo.toKotlinFunction(): KFunction0<TopLevelContextBuilder<*>>? {
+private fun MethodInfo.toKotlinFunction(): KFunction0<TopLevelContextBuilder<Unit>>? {
     @Suppress("UNCHECKED_CAST")
-    return loadClassAndGetMethod().kotlinFunction as? KFunction0<TopLevelContextBuilder<*>>
+    return loadClassAndGetMethod().kotlinFunction as? KFunction0<TopLevelContextBuilder<Unit>>
 }
 
 private fun MethodInfo.definesTopLevelContext() =
