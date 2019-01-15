@@ -40,13 +40,13 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RuntimeNode<Unit>>(typ
     }
 
     private fun <PF, F> RuntimeContext<PF, F>.run(executor: TestExecutor<PF>, notifier: RunNotifier) {
-        val contextDescription = this.toDescription(executor)
-        notifier.fireTestStarted(contextDescription)
         children.forEach { child ->
             child.run(executor.andThen(this), notifier)
         }
         close()
-        notifier.fireTestFinished(contextDescription)
+// TODO - If we don't fire this event, IntelliJ gets confused and shows contexts still in progress.
+// If we do fire it, then RunListenerAdapter fires it again, confusing other things.
+//        notifier.fireTestFinished(toDescription(executor))
     }
 }
 
