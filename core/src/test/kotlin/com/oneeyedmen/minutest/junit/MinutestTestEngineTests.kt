@@ -16,10 +16,10 @@ class MinutestTestEngineTests {
 
     @Test
     fun `selects tests by package`() {
-        assertTestRun({ selectors(selectPackage("example.a")) },
+        assertTestRun({ selectors(selectPackage("samples.a")) },
             "plan started",
             "started: Minutest",
-            "started: example.a",
+            "started: samples.a",
             "registered: example context",
             "started: example context",
             "registered: a failing test",
@@ -39,7 +39,7 @@ class MinutestTestEngineTests {
             "started: a typed fixture test",
             "successful: a typed fixture test",
             "successful: example typed context",
-            "successful: example.a",
+            "successful: samples.a",
             "successful: Minutest",
             "plan finished"
         )
@@ -47,18 +47,18 @@ class MinutestTestEngineTests {
     
     @Test
     fun `initial test plan contains the packages discovered to declare top level contexts`() {
-        assertDiscovered({ selectors(selectPackage("example.a")) },
+        assertDiscovered({ selectors(selectPackage("samples.a")) },
             "Minutest",
-            "example.a"
+            "samples.a"
         )
     }
     
     @Test
     fun `select tests by class name`() {
-        assertTestRun({ selectors(selectClass("example.a.ExampleMinutest")) },
+        assertTestRun({ selectors(selectClass("samples.a.ExampleMinutest")) },
             "plan started",
             "started: Minutest",
-            "started: example.a",
+            "started: samples.a",
             "registered: example context",
             "started: example context",
             "registered: a failing test",
@@ -69,7 +69,7 @@ class MinutestTestEngineTests {
             "started: a passing test",
             "successful: a passing test",
             "successful: example context",
-            "successful: example.a",
+            "successful: samples.a",
             "successful: Minutest",
             "plan finished"
         )
@@ -79,12 +79,12 @@ class MinutestTestEngineTests {
     fun `select tests by class name pattern`() {
         assertTestRun(
             {
-                selectors(selectPackage("example.a"))
+                selectors(selectPackage("samples.a"))
                 filters(excludeClassNamePatterns(".*Typed.*"))
             },
             "plan started",
             "started: Minutest",
-            "started: example.a",
+            "started: samples.a",
             "registered: example context",
             "started: example context",
             "registered: a failing test",
@@ -98,7 +98,7 @@ class MinutestTestEngineTests {
             "registered: example skipped context",
             "started: example skipped context",
             "aborted: example skipped context",
-            "successful: example.a",
+            "successful: samples.a",
             "successful: Minutest",
             "plan finished"
         )
@@ -108,12 +108,12 @@ class MinutestTestEngineTests {
     fun `filter tests by package name`() {
         assertTestRun(
             {
-                selectors(selectPackage("example"))
-                filters(excludePackageNames("example.b"))
+                selectors(selectPackage("samples"))
+                filters(excludePackageNames("samples.b"))
             },
             "plan started",
             "started: Minutest",
-            "started: example.a",
+            "started: samples.a",
             "registered: example context",
             "started: example context",
             "registered: a failing test",
@@ -133,7 +133,7 @@ class MinutestTestEngineTests {
             "started: a typed fixture test",
             "successful: a typed fixture test",
             "successful: example typed context",
-            "successful: example.a",
+            "successful: samples.a",
             "successful: Minutest",
             "plan finished"
         )
@@ -141,24 +141,24 @@ class MinutestTestEngineTests {
     
     @Test
     fun `select tests by unique id`() {
-        val uniqueIdSelector = selectUniqueId("[engine:minutest]/[minutest-context:example.a]/[minutest-context:example context]/[minutest-test:a passing test]")
+        val uniqueIdSelector = selectUniqueId("[engine:minutest]/[minutest-context:samples.a]/[minutest-context:example context]/[minutest-test:a passing test]")
         
         assertDiscovered({ selectors(uniqueIdSelector) },
             "Minutest",
-            "example.a"
+            "samples.a"
         )
         
         assertTestRun({ selectors(uniqueIdSelector) },
             "plan started",
             "started: Minutest",
-            "started: example.a",
+            "started: samples.a",
             "registered: example context",
             "started: example context",
             "registered: a passing test",
             "started: a passing test",
             "successful: a passing test",
             "successful: example context",
-            "successful: example.a",
+            "successful: samples.a",
             "successful: Minutest",
             "plan finished"
         )

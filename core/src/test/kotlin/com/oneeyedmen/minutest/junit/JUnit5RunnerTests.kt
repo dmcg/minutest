@@ -2,9 +2,8 @@ package com.oneeyedmen.minutest.junit
 
 import com.oneeyedmen.minutest.rootContext
 import com.oneeyedmen.minutest.runTestsInClass
-import example.runners.JUnit5RunnersThing
-import example.runners.checkRunnersExampleLog
 import org.junit.jupiter.engine.JupiterTestEngine
+import samples.runners.JUnit5RunnersThing
 
 
 class JUnit5RunnerTests : JUnit5Minutests {

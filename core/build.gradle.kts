@@ -59,6 +59,18 @@ tasks {
     }
 }
 
+project.sourceSets {
+    create("samples") {
+        java.srcDir(file("src/samples/kotlin"))
+        compileClasspath += get("main").output + configurations.testRuntimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+    get("test").apply {
+        compileClasspath += get("samples").output
+        runtimeClasspath += get("samples").output
+    }
+}
+
 artifacts {
     add("archives", tasks["jar"])
     add("archives", tasks["sourceJar"])

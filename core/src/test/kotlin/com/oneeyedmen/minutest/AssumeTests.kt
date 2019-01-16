@@ -1,10 +1,10 @@
 package com.oneeyedmen.minutest
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import example.assumptions.JUnit4AssumptionsTest
-import example.assumptions.JUnit5AssumptionsTest
 import org.junit.jupiter.engine.JupiterTestEngine
 import org.junit.vintage.engine.descriptor.VintageTestDescriptor
+import samples.assumptions.JUnit4AssumptionsTest
+import samples.assumptions.JUnit5AssumptionsTest
 
 
 class AssumeTests : JUnit5Minutests {

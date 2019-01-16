@@ -1,4 +1,4 @@
-package example.assumptions
+package samples.assumptions
 
 import com.oneeyedmen.minutest.junit.JUnit4Minutests
 import com.oneeyedmen.minutest.rootContext

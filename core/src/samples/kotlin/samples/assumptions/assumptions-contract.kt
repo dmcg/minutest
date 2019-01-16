@@ -1,4 +1,4 @@
-package example.assumptions
+package samples.assumptions
 
 import com.oneeyedmen.minutest.TestContext
 import org.junit.Assert

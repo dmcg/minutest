@@ -1,7 +1,6 @@
-package example.runners
+package samples.runners
 
 import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.assertLogged
 
 fun TestContext<Unit>.runnersExample() {
 
@@ -20,22 +19,19 @@ fun TestContext<Unit>.runnersExample() {
 
 }
 
-fun checkRunnersExampleLog(log: List<String>,
-    engineName: String,
+fun expectedRunnersLog(engineName: String,
     testName: String,
     rootName: String,
-    noRegistration: Boolean = false
-) = assertLogged(log,
-    *runnersExampleExpectedLog
-        .map {
-            it.replace("ENGINE_NAME", engineName).replace("TEST_NAME", testName).replace("ROOT_NAME", rootName)
-        }
-        .filterNot {
-            noRegistration && it.startsWith("test registered")
-        }
-        .toTypedArray())
+    noRegistration: Boolean
+): List<String> = expected
+    .map {
+        it.replace("ENGINE_NAME", engineName).replace("TEST_NAME", testName).replace("ROOT_NAME", rootName)
+    }
+    .filterNot {
+        noRegistration && it.startsWith("test registered")
+    }
 
-val runnersExampleExpectedLog = listOf(
+private val expected = listOf(
     "plan started",
     "test started: ENGINE_NAME",
     "test started: TEST_NAME",

@@ -9,7 +9,7 @@ class ScanningTests {
 
     @Test
     fun `scanned tests have correct full names`() {
-        val scan: List<ScannedPackageContext> = scan({ whitelistPackages("example.a") })
+        val scan: List<ScannedPackageContext> = scan({ whitelistPackages("samples.a") })
 
         val log = mutableListOf<String>()
         scan.forEach {
@@ -17,7 +17,7 @@ class ScanningTests {
         }
 
         assertLogged(log,
-            "example.a",
+            "samples.a",
             "  example context",
             "    a failing test",
             "    a passing test",

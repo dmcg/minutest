@@ -1,4 +1,4 @@
-package example.a
+package samples.a
 
 import com.oneeyedmen.minutest.rootContext
 

@@ -1,4 +1,4 @@
-package example.runners
+package samples.runners
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.rootContext
