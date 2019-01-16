@@ -80,13 +80,10 @@ abstract class Context<ParentF, F> {
     val F.fixture get() = this
 
     /**
-     * Name the parentFixture improve communication.
+     * Name the parentFixture to improve communication.
      */
     val ParentF.parentFixture get() = this
 
-    /**
-     * An experimental map of properties that will be made available later in the test run.
-     */
     val annotations: MutableList<TestAnnotation> = mutableListOf()
 
     /**
@@ -99,5 +96,8 @@ abstract class Context<ParentF, F> {
         builder: Context<F, G>.() -> Unit
     ): NodeBuilder<F>
 
+    /**
+     * Apply an operation after all the tests and sub-contexts have completed.
+     */
     abstract fun afterAll(f: () -> Unit)
 }
