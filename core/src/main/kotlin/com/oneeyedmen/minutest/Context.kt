@@ -35,7 +35,7 @@ abstract class Context<ParentF, F> {
      * Apply an operation to the current fixture (accessible as the receiver 'this')
      * before running tests or sub-contexts.
      */
-    fun modifyFixture(operation: F.() -> Unit) = before(operation)
+    fun modifyFixture(operation: F.(TestDescriptor) -> Unit) = before(operation)
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts by
@@ -63,7 +63,7 @@ abstract class Context<ParentF, F> {
      * Apply an operation to the current fixture (accessible as the receiver 'this') before
      * running tests or sub-contexts.
      */
-    abstract fun before(operation: F.() -> Unit)
+    abstract fun before(operation: F.(TestDescriptor) -> Unit)
 
     /**
      * Apply an operation to the current fixture (accessible as 'this') after running tests.
@@ -72,7 +72,7 @@ abstract class Context<ParentF, F> {
      *
      * An exception thrown in an after will prevent later afters running.
      */
-    abstract fun after(operation: F.() -> Unit)
+    abstract fun after(operation: F.(TestDescriptor) -> Unit)
 
     /**
      * Name the fixture to improve communication.

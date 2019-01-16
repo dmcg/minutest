@@ -14,26 +14,22 @@ internal class ContextBuilder<PF, F>(
 ) : Context<PF, F>(), NodeBuilder<PF> {
 
     private val children = mutableListOf<NodeBuilder<F>>()
-    private val befores = mutableListOf<(F) -> Unit>()
-    private val afters = mutableListOf<(F) -> Unit>()
+    private val befores = mutableListOf<(F, TestDescriptor) -> Unit>()
+    private val afters = mutableListOf<(F, TestDescriptor) -> Unit>()
     private var afterAlls = mutableListOf<() -> Unit>()
 
-    override fun deriveFixture(f: (PF).(TestDescriptor) -> F) = deriveInstrumentedFixture { parentFixture, testDescriptor ->
-        parentFixture.f(testDescriptor)
-    }
-
-    fun deriveInstrumentedFixture(f: (parentFixture: PF, testDescriptor: TestDescriptor) -> F) {
+    override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
         if (explicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
         fixtureFactory = f
         explicitFixtureFactory = true
     }
 
-    override fun before(operation: F.() -> Unit) {
+    override fun before(operation: F.(TestDescriptor) -> Unit) {
         befores.add(operation)
     }
 
-    override fun after(operation: F.() -> Unit) {
+    override fun after(operation: F.(TestDescriptor) -> Unit) {
         afters.add(operation)
     }
 
@@ -55,7 +51,7 @@ internal class ContextBuilder<PF, F>(
         children.add(child)
         return child
     }
-    
+
     override fun afterAll(f: () -> Unit) {
         afterAlls.add(f)
     }
