@@ -1,6 +1,7 @@
 package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.TestDescriptor
 import java.io.File
 import java.io.IOException
@@ -9,15 +10,10 @@ import java.nio.file.Paths
 import kotlin.random.Random
 
 
-fun <ParentF, F> Context<ParentF, F>.randomTest(name: String, block: F.(rng: Random) -> F) =
-    randomTestInstrumented(name) { rng, _ ->
-        block(fixture, rng)
-    }
-
-fun <ParentF, F> Context<ParentF, F>.randomTestInstrumented(
+fun <ParentF, F> Context<ParentF, F>.randomTest(
     name: String,
     block: F.(rng: Random, testDescriptor: TestDescriptor) -> F
-) =
+): NodeBuilder<F> =
     test(name) { testDescriptor ->
         val seedFile = testDescriptor.testStateFile("random-seed")
         
@@ -27,7 +23,7 @@ fun <ParentF, F> Context<ParentF, F>.randomTestInstrumented(
                 seedFile.writeText(it.toString())
             }
         
-        block(fixture, Random(seed), testDescriptor)
+        block(Random(seed), testDescriptor)
             .also { seedFile.delete() }
     }
 

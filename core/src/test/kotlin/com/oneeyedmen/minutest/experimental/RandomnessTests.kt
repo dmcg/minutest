@@ -14,7 +14,7 @@ class RandomnessTests {
         val randomValues = mutableListOf<Int>()
         
         val tests = rootContext<Unit> {
-            randomTest("the test") { random ->
+            randomTest("the test") { random, _ ->
                 randomValues += random.nextInt()
                 assertTrue(testIsPassing)
             }
