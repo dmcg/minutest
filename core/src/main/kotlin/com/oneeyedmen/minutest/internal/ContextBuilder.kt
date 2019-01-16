@@ -18,7 +18,9 @@ internal class ContextBuilder<PF, F>(
     private val afters = mutableListOf<(F) -> Unit>()
     private var afterAlls = mutableListOf<() -> Unit>()
 
-    override fun deriveFixture(f: (PF).() -> F) = deriveInstrumentedFixture { parentFixture, _ ->  parentFixture.f() }
+    override fun deriveFixture(f: (PF).(TestDescriptor) -> F) = deriveInstrumentedFixture { parentFixture, testDescriptor ->
+        parentFixture.f(testDescriptor)
+    }
 
     fun deriveInstrumentedFixture(f: (parentFixture: PF, testDescriptor: TestDescriptor) -> F) {
         if (explicitFixtureFactory)
@@ -35,8 +37,8 @@ internal class ContextBuilder<PF, F>(
         afters.add(operation)
     }
 
-    override fun test_(name: String, f: F.() -> F): NodeBuilder<F> =
-        addChild(TestBuilder(name, f = {f()}))
+    override fun test_(name: String, f: F.(TestDescriptor) -> F): NodeBuilder<F> =
+        addChild(TestBuilder(name, f))
 
     override fun context(name: String, builder: Context<F, F>.() -> Unit) =
         // fixture factory is implicitly identity (return parent fixture (this)

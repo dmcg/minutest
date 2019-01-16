@@ -13,11 +13,10 @@ class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
                 emptyList()
             }
             test("is empty") {
-                // when the fixture is the subject, 'it' reads well
-                assertTrue(it.isEmpty())
+                assertTrue(fixture.isEmpty())
             }
             test("no head") {
-                assertNull(it.firstOrNull())
+                assertNull(fixture.firstOrNull())
             }
         }
 
@@ -27,10 +26,10 @@ class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
                 listOf("item")
             }
             test("is not empty") {
-                assertFalse(it.isEmpty())
+                assertFalse(fixture.isEmpty())
             }
             test("has head") {
-                assertEquals("item", it.firstOrNull())
+                assertEquals("item", fixture.firstOrNull())
             }
         }
     }

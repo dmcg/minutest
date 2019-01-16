@@ -27,8 +27,8 @@ class SimpleStackExampleTests : JUnit5Minutests {
 
         // another test will use a new fixture instance
         test("fixture is fresh") {
-            // you can also access the fixture as 'it' if it reads nicer
-            assertTrue(it.isEmpty())
+            // you can also access the fixture as 'fixture' if it reads nicer
+            assertTrue(fixture.isEmpty())
 
             // or use the implicit 'this'
             assertFalse(isNotEmpty())

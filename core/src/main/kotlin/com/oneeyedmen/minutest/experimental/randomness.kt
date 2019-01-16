@@ -14,8 +14,11 @@ fun <ParentF, F> Context<ParentF, F>.randomTest(name: String, block: F.(rng: Ran
         block(fixture, rng)
     }
 
-fun <ParentF, F> Context<ParentF, F>.randomTestInstrumented(name: String, block: F.(rng: Random, testDescriptor: TestDescriptor) -> F) =
-    testInstrumented(name) { testDescriptor ->
+fun <ParentF, F> Context<ParentF, F>.randomTestInstrumented(
+    name: String,
+    block: F.(rng: Random, testDescriptor: TestDescriptor) -> F
+) =
+    test(name) { testDescriptor ->
         val seedFile = testDescriptor.testStateFile("random-seed")
         
         val seed = seedFile.maybeReadInt()

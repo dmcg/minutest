@@ -27,7 +27,6 @@ class SugarTests : JUnit5Minutests {
 
             test("test") {
                 assertEquals("jam", this.type)
-                assertEquals("jam", it.type)
                 assertEquals("jam", fixture.type)
                 // Doesn't compile
                 // assertEquals("blackcurrent jam", parentFixture.fruit)

@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest.experimental
 
+import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.assertLogged
 import com.oneeyedmen.minutest.executeTests
 import com.oneeyedmen.minutest.internal.TopLevelContextBuilder
@@ -11,7 +12,7 @@ import kotlin.test.fail
 class SkipAndFocusTests {
 
     private val log = mutableListOf<String>()
-    private val noop: Unit.() -> Unit = {}
+    private val noop: Unit.(TestDescriptor) -> Unit = {}
 
     @Test fun noop() {
         val tests = rootContext<Unit>(loggedTo(log)) {

@@ -16,7 +16,7 @@ class StackExampleTests : JUnit5Minutests {
         }
 
         test("is empty") {
-            assertTrue(it.isEmpty())
+            assertTrue(fixture.isEmpty())
         }
 
         test("throws EmptyStackException when popped") {
@@ -37,17 +37,17 @@ class StackExampleTests : JUnit5Minutests {
             }
 
             test("is not empty") {
-                assertFalse(it.isEmpty())
+                assertFalse(fixture.isEmpty())
             }
 
             test("returns the element when popped and is empty") {
                 assertEquals("one", pop())
-                assertTrue(it.isEmpty())
+                assertTrue(fixture.isEmpty())
             }
 
             test("returns the element when peeked but remains not empty") {
                 assertEquals("one", peek())
-                assertFalse(it.isEmpty())
+                assertFalse(fixture.isEmpty())
             }
         }
     }

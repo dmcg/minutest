@@ -1,20 +1,19 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.experimental.deriveFixtureInstrumented
 import org.junit.jupiter.api.Assertions.assertEquals
-
+import org.junit.jupiter.api.Test as JupiterTest
 
 class NamingTests {
 
-    @org.junit.jupiter.api.Test
-    fun `names are passed to deriveFixtureInstrumented`() {
+    @JupiterTest
+    fun `names are passed to deriveFixture`() {
         val log = mutableListOf<List<String>>()
 
         class Fixture(val name: List<String>)
 
         executeTests(rootContext<Fixture> {
 
-            deriveFixtureInstrumented { testDescriptor ->
+            deriveFixture { testDescriptor ->
                 Fixture(testDescriptor.fullName())
             }
 
