@@ -1,4 +1,4 @@
-package samples.b
+package samples.minutestRunner.b
 
 import com.oneeyedmen.minutest.rootContext
 

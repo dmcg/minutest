@@ -1,7 +1,7 @@
 // explicit name for generated class so that tests are not coupled to the behaviour of the kotlin compiler
 @file:JvmName("ExampleSkippedMinutest")
 
-package samples.a
+package samples.minutestRunner.a
 
 import com.oneeyedmen.minutest.experimental.SKIP
 import com.oneeyedmen.minutest.rootContext

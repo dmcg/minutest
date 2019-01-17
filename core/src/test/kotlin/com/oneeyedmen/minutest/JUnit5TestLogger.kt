@@ -16,7 +16,6 @@ internal class JUnit5TestLogger : TestExecutionListener {
     }
     
     override fun dynamicTestRegistered(testIdentifier: TestIdentifier) {
-        log("test registered", testIdentifier)
     }
     
     override fun executionStarted(testIdentifier: TestIdentifier) {

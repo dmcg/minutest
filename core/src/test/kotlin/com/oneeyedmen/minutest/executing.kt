@@ -5,15 +5,17 @@ import com.oneeyedmen.minutest.junit.toTestFactory
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest
+import org.junit.platform.engine.DiscoverySelector
 import org.junit.platform.engine.discovery.DiscoverySelectors
 import org.junit.platform.launcher.EngineFilter
 import org.junit.platform.launcher.LauncherDiscoveryRequest
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 import org.junit.platform.launcher.core.LauncherFactory
 import java.util.stream.Stream
-import kotlin.reflect.KClass
 
-fun executeTests(tests: Stream<out DynamicNode>, exceptions: MutableList<Throwable> = mutableListOf()): List<Throwable> {
+fun executeTests(tests: Stream<out DynamicNode>,
+    exceptions: MutableList<Throwable> = mutableListOf()
+): List<Throwable> {
     tests.use {
         it.forEachOrdered { dynamicNode ->
             when (dynamicNode) {
@@ -31,18 +33,21 @@ fun executeTests(tests: Stream<out DynamicNode>, exceptions: MutableList<Throwab
 
 fun executeTests(root: TopLevelContextBuilder<*>) = executeTests(root.toTestFactory())
 
-inline fun <reified T : Any> runTestsInClass(engineID: String): List<String> = runTestsInClass(T::class, engineID)
+inline fun <reified T : Any> runTestsInClass(engineID: String): List<String> = runTestsInClass(
+    discoveryRequest(engineID, DiscoverySelectors.selectClass(T::class.java)))
 
-fun runTestsInClass(testClass: KClass<*>, engineID: String): List<String> {
+fun runTestsInClass(className: String, engineID: String): List<String> = runTestsInClass(
+    discoveryRequest(engineID, DiscoverySelectors.selectClass(className)))
+
+fun runTestsInClass(discoveryRequest: LauncherDiscoveryRequest): List<String> {
     val listener = JUnit5TestLogger()
-    LauncherFactory.create().execute(discoveryRequest(testClass, engineID), listener)
+    LauncherFactory.create().execute(discoveryRequest, listener)
     return listener.log
 }
 
-private fun discoveryRequest(testClass: KClass<*>, engineID: String): LauncherDiscoveryRequest {
-    return LauncherDiscoveryRequestBuilder.request()
+fun discoveryRequest(engineID: String, selector: DiscoverySelector): LauncherDiscoveryRequest =
+    LauncherDiscoveryRequestBuilder.request()
         .filters(EngineFilter.includeEngines(engineID))
-        .selectors(DiscoverySelectors.selectClass(testClass.java))
+        .selectors(selector)
         .build()
-}
 

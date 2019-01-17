@@ -15,15 +15,10 @@ class JUnit4RunnerTests : JUnit5Minutests {
             checkRunnersExampleLog(runTestsInClass<JUnit4RunnersThing>(VintageTestDescriptor.ENGINE_ID),
                 "JUnit Vintage",
                 "JUnit4RunnersThing",
-                "root",
-                noRegistration = true)
+                "root")
         }
     }
 }
 
-fun checkRunnersExampleLog(log: List<String>,
-    engineName: String,
-    testName: String,
-    rootName: String,
-    noRegistration: Boolean = false
-) = assertLogged(log, *expectedRunnersLog(engineName, testName, rootName, noRegistration).toTypedArray())
+fun checkRunnersExampleLog(log: List<String>, engineName: String, testName: String, rootName: String) =
+    assertLogged(log, *expectedRunnersLog(engineName, testName, rootName).toTypedArray())
