@@ -1,10 +1,14 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.*
-import com.oneeyedmen.minutest.experimental.RuntimeNodeTransform
+import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.RuntimeNodeTransform
+import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.Test
+import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.experimental.TestAnnotation
 import com.oneeyedmen.minutest.experimental.annotateWith
-import com.oneeyedmen.minutest.experimental.withTransformedChildren
 import org.junit.rules.TestRule
 import org.junit.runner.Description.createTestDescription
 import org.junit.runners.model.Statement
@@ -34,7 +38,8 @@ class ApplyRule<F, R : TestRule>(private val ruleExtractor: F.() -> R) : TestAnn
                 }
             }
         }
-        is RuntimeContext<F2, *> -> (node as RuntimeContext<F2, Any>).withTransformedChildren { this.applyTo(it) }
+        is RuntimeContext<F2, *> ->
+            node.withTransformedChildren(this)
     }
 }
 

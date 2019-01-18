@@ -1,6 +1,5 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.experimental.RuntimeNodeTransform
 import com.oneeyedmen.minutest.experimental.TestAnnotation
 
 
@@ -45,4 +44,14 @@ data class RuntimeTest<F>(
 ) : RuntimeNode<F>(), Test<F> by f {
     
     override fun withTransformedChildren(transform: RuntimeNodeTransform) = this
+}
+
+
+interface RuntimeNodeTransform {
+    fun <F> applyTo(node: RuntimeNode<F>): RuntimeNode<F>
+    
+    fun then(next: (RuntimeNodeTransform)): RuntimeNodeTransform = object: RuntimeNodeTransform {
+        override fun <F> applyTo(node: RuntimeNode<F>): RuntimeNode<F> =
+            next.applyTo(this@RuntimeNodeTransform.applyTo(node))
+    }
 }
