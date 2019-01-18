@@ -8,7 +8,6 @@ import com.oneeyedmen.minutest.experimental.TestAnnotation
  *
  * The generic type [F] is the type of the fixture that will be supplied *to* the node.
  */
-@Suppress("unused")
 sealed class RuntimeNode<F> {
     abstract val name: String
     abstract val annotations: List<TestAnnotation>
