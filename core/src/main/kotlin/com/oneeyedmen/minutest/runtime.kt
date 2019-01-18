@@ -12,6 +12,8 @@ import com.oneeyedmen.minutest.experimental.TestAnnotation
 sealed class RuntimeNode<F> {
     abstract val name: String
     abstract val annotations: List<TestAnnotation>
+    
+    abstract fun withTransformedChildren(transform: RuntimeNodeTransform): RuntimeNode<F>
 }
 
 /**
@@ -27,6 +29,9 @@ abstract class RuntimeContext<PF, F> : RuntimeNode<PF>(), AutoCloseable {
      */
     abstract fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): F
     abstract fun withChildren(children: List<RuntimeNode<F>>): RuntimeContext<PF, F>
+    
+    override fun withTransformedChildren(transform: RuntimeNodeTransform) =
+        this.withChildren(children.map { transform.applyTo(it) })
 }
 
 /**
@@ -36,4 +41,17 @@ data class RuntimeTest<F>(
     override val name: String,
     override val annotations: List<TestAnnotation>,
     private val f: Test<F>
-) : RuntimeNode<F>(), Test<F> by f
+) : RuntimeNode<F>(), Test<F> by f {
+    
+    override fun withTransformedChildren(transform: RuntimeNodeTransform) = this
+}
+
+
+interface RuntimeNodeTransform {
+    fun <F> applyTo(node: RuntimeNode<F>): RuntimeNode<F>
+    
+    fun then(next: (RuntimeNodeTransform)): RuntimeNodeTransform = object: RuntimeNodeTransform {
+        override fun <F> applyTo(node: RuntimeNode<F>): RuntimeNode<F> =
+            next.applyTo(this@RuntimeNodeTransform.applyTo(node))
+    }
+}
