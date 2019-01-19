@@ -128,7 +128,7 @@ This runs the following tests
 
 ![StackExampleTests](images/StackExampleTests.png)
 
-Tests for cooperating components will typically have one piece of state. In this case make the fixture encapsulate all the state. 
+Tests for cooperating components will typically have more than one piece of state. In this case, make the fixture hold all the state. 
 
 ```kotlin
 class ControlPanel(
