@@ -2,7 +2,6 @@ package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.NodeBuilder
-import com.oneeyedmen.minutest.RuntimeContext
 import com.oneeyedmen.minutest.RuntimeNode
 
 interface TestAnnotation {
@@ -35,6 +34,3 @@ operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation>.minus(no
 fun Context<*, *>.annotateWith(annotation: TestAnnotation) {
     annotation.applyTo(this as NodeBuilder<*>)
 }
-
-fun <PF, F> RuntimeContext<PF, F>.withTransformedChildren(transform: (RuntimeNode<F>) -> RuntimeNode<F>) =
-    withChildren(children.map(transform))

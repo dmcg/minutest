@@ -27,10 +27,11 @@ abstract class RuntimeContext<PF, F> : RuntimeNode<PF>(), AutoCloseable {
      * Invoke a [Test], converting a parent fixture [PF] to the type required by the test.
      */
     abstract fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): F
-    abstract fun withChildren(children: List<RuntimeNode<F>>): RuntimeContext<PF, F>
-    
+
     override fun withTransformedChildren(transform: RuntimeNodeTransform) =
         this.withChildren(children.map { transform.applyTo(it) })
+
+    protected abstract fun withChildren(children: List<RuntimeNode<F>>): RuntimeContext<PF, F>
 }
 
 /**
@@ -43,14 +44,4 @@ data class RuntimeTest<F>(
 ) : RuntimeNode<F>(), Test<F> by f {
     
     override fun withTransformedChildren(transform: RuntimeNodeTransform) = this
-}
-
-
-interface RuntimeNodeTransform {
-    fun <F> applyTo(node: RuntimeNode<F>): RuntimeNode<F>
-    
-    fun then(next: (RuntimeNodeTransform)): RuntimeNodeTransform = object: RuntimeNodeTransform {
-        override fun <F> applyTo(node: RuntimeNode<F>): RuntimeNode<F> =
-            next.applyTo(this@RuntimeNodeTransform.applyTo(node))
-    }
 }
