@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test as JUnitTest
 
 class AutoCloseTests {
 
-    @JUnitTest fun test() {
-        val log = mutableListOf<String>()
+    val log = mutableListOf<String>()
 
+    @JUnitTest fun test() {
         val tests = rootContext<Unit> {
 
             val resource by autoClose {
@@ -36,7 +36,6 @@ class AutoCloseTests {
         }
 
         executeTests(tests)
-
         assertLogged(log,
             "test 1", "resource created", "resource accessed",
             "test 2", "resource accessed",
@@ -44,8 +43,6 @@ class AutoCloseTests {
     }
 
     @JUnitTest fun `doesnt close if resource not accessed`() {
-        val log = mutableListOf<String>()
-
         val tests = rootContext<Unit> {
 
             @Suppress("UNUSED_VARIABLE")
@@ -67,8 +64,6 @@ class AutoCloseTests {
         }
 
         executeTests(tests)
-
         assertLogged(log, "test 1")
     }
-
 }
