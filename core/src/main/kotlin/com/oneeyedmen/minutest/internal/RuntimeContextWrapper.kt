@@ -20,7 +20,9 @@ internal data class RuntimeContextWrapper<PF, F>(
         children: List<RuntimeNode<F>> = delegate.children,
         runner: (Test<F>, parentFixture: PF, TestDescriptor) -> F = delegate::runTest,
         onClose: () -> Unit = delegate::close
-        ) : this(name, properties, children, runner, onClose)
+        ) : this(name, properties, children, runner, onCloseFor(delegate, onClose))
+
+
 
     override fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): F =
         runner(test, parentFixture, testDescriptor)
@@ -29,3 +31,12 @@ internal data class RuntimeContextWrapper<PF, F>(
 
     override fun close() = onClose.invoke()
 }
+
+// We always want to call close on the delegate, but only once
+private fun <PF, F> onCloseFor(delegate: RuntimeContext<PF, F>, specified: () -> Unit): () -> Unit =
+    if (specified == delegate::close) specified else {
+        {
+            delegate.close()
+            specified()
+        }
+    }

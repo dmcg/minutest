@@ -63,7 +63,16 @@ class TestEventsTests {
                     test("aborted") {
                         Assumptions.assumeFalse(true)
                     }
+                    afterAll {
+                        log.add("afterAll inner")
+                    }
                 }
+                afterAll {
+                    log.add("afterAll outer")
+                }
+            }
+            afterAll {
+                log.add("afterAll root")
             }
         }
         executeTests(tests)
@@ -82,8 +91,11 @@ class TestEventsTests {
             "Skipped [root, outer, inner, skipped with Minutest]",
             "Starting [root, outer, inner, aborted]",
             "Aborted [root, outer, inner, aborted]",
+            "afterAll inner",
             "Closed inner",
+            "afterAll outer",
             "Closed outer",
+            "afterAll root",
             "Closed root"
         )
     }
