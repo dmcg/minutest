@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.ContextBuilder
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -10,7 +10,7 @@ import java.util.*
 
 // To run the same tests against different implementations, first define a TestContext extension function
 // that defines the tests you want run.
-fun TestContext<MutableCollection<String>>.behavesAsMutableCollection() {
+fun ContextBuilder<MutableCollection<String>>.behavesAsMutableCollection() {
 
     context("behaves as MutableCollection") {
 

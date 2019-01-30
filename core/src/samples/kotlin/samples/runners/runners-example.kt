@@ -1,8 +1,8 @@
 package samples.runners
 
-import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.ContextBuilder
 
-fun TestContext<Unit>.runnersExample() {
+fun ContextBuilder<Unit>.runnersExample() {
 
     test("test in root") {}
 

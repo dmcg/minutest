@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.GeneralContextBuilder
 import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.TestDescriptor
 import java.io.File
@@ -10,7 +10,7 @@ import java.nio.file.Paths
 import kotlin.random.Random
 
 
-fun <ParentF, F> Context<ParentF, F>.randomTest(
+fun <ParentF, F> GeneralContextBuilder<ParentF, F>.randomTest(
     name: String,
     block: F.(rng: Random, testDescriptor: TestDescriptor) -> F
 ): NodeBuilder<F> =

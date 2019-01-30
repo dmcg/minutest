@@ -1,17 +1,17 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.GeneralContextBuilder
 import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.experimental.transformedBy
 
-internal class ContextBuilder<PF, F>(
+internal class TestContextBuilder<PF, F>(
     private val name: String,
     private val type: FixtureType,
     private var fixtureFactory: ((PF, TestDescriptor) -> F)?,
     private var explicitFixtureFactory: Boolean = false
-) : Context<PF, F>(), NodeBuilder<PF> {
+) : GeneralContextBuilder<PF, F>(), NodeBuilder<PF> {
 
     private val children = mutableListOf<NodeBuilder<F>>()
     private val befores = mutableListOf<(F, TestDescriptor) -> Unit>()
@@ -36,7 +36,7 @@ internal class ContextBuilder<PF, F>(
     override fun test_(name: String, f: F.(TestDescriptor) -> F): NodeBuilder<F> =
         addChild(TestBuilder(name, f))
 
-    override fun context(name: String, builder: Context<F, F>.() -> Unit) =
+    override fun context(name: String, builder: GeneralContextBuilder<F, F>.() -> Unit) =
         // fixture factory is implicitly identity (return parent fixture (this)
         internalCreateContext(name, type, { this }, builder)
 
@@ -44,8 +44,8 @@ internal class ContextBuilder<PF, F>(
         name: String,
         type: FixtureType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
-        builder: Context<F, G>.() -> Unit
-    ): NodeBuilder<F> = addChild(ContextBuilder(name, type, fixtureFactory).apply(builder))
+        builder: GeneralContextBuilder<F, G>.() -> Unit
+    ): NodeBuilder<F> = addChild(TestContextBuilder(name, type, fixtureFactory).apply(builder))
     
     fun <T: NodeBuilder<F>> addChild(child: T): T {
         children.add(child)

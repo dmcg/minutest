@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.GeneralContextBuilder
 import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.RuntimeNode
 
@@ -31,6 +31,6 @@ operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation>.minus(no
         }
     }
 
-fun Context<*, *>.annotateWith(annotation: TestAnnotation) {
+fun GeneralContextBuilder<*, *>.annotateWith(annotation: TestAnnotation) {
     annotation.applyTo(this as NodeBuilder<*>)
 }

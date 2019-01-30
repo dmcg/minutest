@@ -9,5 +9,5 @@ import com.oneeyedmen.minutest.internal.askType
 inline fun <reified F> rootContext(
     noinline transform: (RuntimeNode<Unit>) -> RuntimeNode<Unit> = { it },
     name: String = "root",
-    noinline builder: Context<Unit, F>.() -> Unit
+    noinline builder: GeneralContextBuilder<Unit, F>.() -> Unit
 ) = TopLevelContextBuilder(name, askType<F>(), builder, transform)

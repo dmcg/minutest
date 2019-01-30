@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest.examples
 
-import com.oneeyedmen.minutest.TestContext
+import com.oneeyedmen.minutest.ContextBuilder
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -46,7 +46,7 @@ fun fizzBuzz(i: Int): String = when {
     else -> i.toString()
 }
 
-fun <F> TestContext<*>.theory(fixture: F, name: String, condition: Condition<F>, check: (F) -> Unit) {
+fun <F> ContextBuilder<*>.theory(fixture: F, name: String, condition: Condition<F>, check: (F) -> Unit) {
     if (condition.appliesTo(fixture))
         try {
             check(fixture)

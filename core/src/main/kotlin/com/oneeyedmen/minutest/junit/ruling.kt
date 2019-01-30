@@ -1,12 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.RuntimeNodeTransform
-import com.oneeyedmen.minutest.RuntimeTest
-import com.oneeyedmen.minutest.Test
-import com.oneeyedmen.minutest.TestContext
-import com.oneeyedmen.minutest.TestDescriptor
+import com.oneeyedmen.minutest.*
 import com.oneeyedmen.minutest.experimental.TestAnnotation
 import com.oneeyedmen.minutest.experimental.annotateWith
 import org.junit.rules.TestRule
@@ -16,7 +10,7 @@ import org.junit.runners.model.Statement
 /**
  * Apply a JUnit test rule in a fixture
  */
-fun <F, R : TestRule> TestContext<F>.applyRule(ruleExtractor: F.() -> R) {
+fun <F, R : TestRule> ContextBuilder<F>.applyRule(ruleExtractor: F.() -> R) {
     annotateWith(
         ApplyRule(ruleExtractor)
     )

@@ -5,15 +5,18 @@ import com.oneeyedmen.minutest.internal.FixtureType
 import com.oneeyedmen.minutest.internal.MinutestMarker
 import com.oneeyedmen.minutest.internal.askType
 
-typealias TestContext<F> = Context<*, F>
+@Deprecated("TestContext is now ContextBuilder", replaceWith = ReplaceWith("ContextBuilder<OLD_FIXTURE_TYPE_HERE>"))
+typealias TestContext<F> = ContextBuilder<F>
+
+typealias ContextBuilder<F> = GeneralContextBuilder<*, F>
 
 @MinutestMarker
-abstract class Context<ParentF, F> {
+abstract class GeneralContextBuilder<ParentF, F> {
 
     /**
      * Define a child-context, inheriting the fixture from the parent.
      */
-    abstract fun context(name: String, builder: Context<F, F>.() -> Unit): NodeBuilder<F>
+    abstract fun context(name: String, builder: GeneralContextBuilder<F, F>.() -> Unit): NodeBuilder<F>
 
     /**
      * Define a child-context with a different fixture type.
@@ -21,7 +24,7 @@ abstract class Context<ParentF, F> {
      * You will have to call [deriveFixture] in the sub-context to convert from the parent
      * to the child fixture type.
      */
-    inline fun <reified G> derivedContext(name: String, noinline builder: Context<F, G>.() -> Unit) =
+    inline fun <reified G> derivedContext(name: String, noinline builder: GeneralContextBuilder<F, G>.() -> Unit) =
         internalCreateContext(name, askType<G>(), null, builder)
 
     /**
@@ -93,7 +96,7 @@ abstract class Context<ParentF, F> {
         name: String,
         type: FixtureType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
-        builder: Context<F, G>.() -> Unit
+        builder: GeneralContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F>
 
     /**
