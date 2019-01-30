@@ -7,11 +7,7 @@ import com.oneeyedmen.minutest.RuntimeNode
 interface TestAnnotation {
 
     fun applyTo(nodeBuilder: NodeBuilder<*>) {
-        addTo(nodeBuilder.annotations)
-    }
-
-    fun addTo(properties: MutableList<TestAnnotation>) {
-        properties.add(this)
+        nodeBuilder.annotations.add(this)
     }
 
     fun appliesTo(runtimeNode: RuntimeNode<*>) = runtimeNode.annotations.contains(this)

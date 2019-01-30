@@ -4,6 +4,7 @@ import com.oneeyedmen.minutest.GeneralContextBuilder
 import com.oneeyedmen.minutest.NodeBuilder
 import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.TestDescriptor
+import com.oneeyedmen.minutest.experimental.TestAnnotation
 import com.oneeyedmen.minutest.experimental.transformedBy
 
 internal class TestContextBuilder<PF, F>(
@@ -17,6 +18,8 @@ internal class TestContextBuilder<PF, F>(
     private val befores = mutableListOf<(F, TestDescriptor) -> Unit>()
     private val afters = mutableListOf<(F, TestDescriptor) -> Unit>()
     private var afterAlls = mutableListOf<() -> Unit>()
+
+    override val annotations: MutableList<TestAnnotation> = mutableListOf()
 
     override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
         if (explicitFixtureFactory)
@@ -47,7 +50,7 @@ internal class TestContextBuilder<PF, F>(
         builder: GeneralContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F> = addChild(TestContextBuilder(name, type, fixtureFactory).apply(builder))
     
-    fun <T: NodeBuilder<F>> addChild(child: T): T {
+    private fun <T: NodeBuilder<F>> addChild(child: T): T {
         children.add(child)
         return child
     }

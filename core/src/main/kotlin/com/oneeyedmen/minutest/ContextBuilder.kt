@@ -1,6 +1,5 @@
 package com.oneeyedmen.minutest
 
-import com.oneeyedmen.minutest.experimental.TestAnnotation
 import com.oneeyedmen.minutest.internal.FixtureType
 import com.oneeyedmen.minutest.internal.MinutestMarker
 import com.oneeyedmen.minutest.internal.askType
@@ -8,10 +7,16 @@ import com.oneeyedmen.minutest.internal.askType
 @Deprecated("TestContext is now ContextBuilder", replaceWith = ReplaceWith("ContextBuilder<OLD_FIXTURE_TYPE_HERE>"))
 typealias TestContext<F> = ContextBuilder<F>
 
+/**
+ * [ContextBuilder]s allow definition of tests and sub-contexts, all of which have the fixture type F
+ */
 typealias ContextBuilder<F> = GeneralContextBuilder<*, F>
 
+/**
+ * A [ContextBuilder] where the type of the parent fixture PF is also accessible.
+ */
 @MinutestMarker
-abstract class GeneralContextBuilder<ParentF, F> {
+abstract class GeneralContextBuilder<PF, F> {
 
     /**
      * Define a child-context, inheriting the fixture from the parent.
@@ -44,7 +49,7 @@ abstract class GeneralContextBuilder<ParentF, F> {
      * Define the fixture that will be used in this context's tests and sub-contexts by
      * transforming the parent fixture, accessible as the receiver 'this'.
      */
-    abstract fun deriveFixture(f: (ParentF).(testDescriptor: TestDescriptor) -> F)
+    abstract fun deriveFixture(f: (PF).(testDescriptor: TestDescriptor) -> F)
 
     /**
      * Define a test on the current fixture (accessible as 'this').
@@ -85,9 +90,12 @@ abstract class GeneralContextBuilder<ParentF, F> {
     /**
      * Name the parentFixture to improve communication.
      */
-    val ParentF.parentFixture get() = this
+    val PF.parentFixture get() = this
 
-    val annotations: MutableList<TestAnnotation> = mutableListOf()
+    /**
+     * Apply an operation after all the tests and sub-contexts have completed.
+     */
+    abstract fun afterAll(f: () -> Unit)
 
     /**
      * Internal implementation, only public to be accessible to inline functions.
@@ -99,8 +107,4 @@ abstract class GeneralContextBuilder<ParentF, F> {
         builder: GeneralContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F>
 
-    /**
-     * Apply an operation after all the tests and sub-contexts have completed.
-     */
-    abstract fun afterAll(f: () -> Unit)
 }
