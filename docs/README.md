@@ -63,8 +63,8 @@ class SimpleStackExampleTests : JUnit5Minutests {
 
         // another test will use a new fixture instance
         test("fixture is fresh") {
-            // you can also access the fixture as 'it' if it reads nicer
-            assertTrue(it.isEmpty())
+            // you can also access the fixture as 'fixture' if it reads nicer
+            assertTrue(fixture.isEmpty())
 
             // or use the implicit 'this'
             assertFalse(isNotEmpty())
@@ -86,7 +86,7 @@ class StackExampleTests : JUnit5Minutests {
         }
 
         test("is empty") {
-            assertTrue(it.isEmpty())
+            assertTrue(fixture.isEmpty())
         }
 
         test("throws EmptyStackException when popped") {
@@ -107,17 +107,17 @@ class StackExampleTests : JUnit5Minutests {
             }
 
             test("is not empty") {
-                assertFalse(it.isEmpty())
+                assertFalse(fixture.isEmpty())
             }
 
             test("returns the element when popped and is empty") {
                 assertEquals("one", pop())
-                assertTrue(it.isEmpty())
+                assertTrue(fixture.isEmpty())
             }
 
             test("returns the element when peeked but remains not empty") {
                 assertEquals("one", peek())
-                assertFalse(it.isEmpty())
+                assertFalse(fixture.isEmpty())
             }
         }
     }
@@ -128,7 +128,7 @@ This runs the following tests
 
 ![StackExampleTests](images/StackExampleTests.png)
 
-Tests for cooperating components will typically have more than one piece of state. In this case, make the fixture hold all the state. 
+Tests for cooperating components will typically have one piece of state. In this case make the fixture hold all the state. 
 
 ```kotlin
 class ControlPanel(
