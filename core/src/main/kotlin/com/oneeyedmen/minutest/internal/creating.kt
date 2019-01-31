@@ -7,7 +7,7 @@ import com.oneeyedmen.minutest.experimental.TopLevelTransform
 data class TopLevelContextBuilder<F>(
     private val name: String,
     private val type: FixtureType,
-    private val builder: GeneralContextBuilder<Unit, F>.() -> Unit,
+    private val builder: com.oneeyedmen.minutest.TestContextBuilder<Unit, F>.() -> Unit,
     private val transform: (RuntimeNode<Unit>) -> RuntimeNode<Unit>,
     override val annotations: MutableList<TestAnnotation> = mutableListOf()
 ) : NodeBuilder<Unit> {
@@ -35,8 +35,8 @@ private fun ((RuntimeNode<Unit>) -> RuntimeNode<Unit>).asTopLevelTransform() =
 private fun <F> topLevelContext(
     name: String,
     type: FixtureType,
-    builder: GeneralContextBuilder<Unit, F>.() -> Unit
-) = TestContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type)).apply(builder)
+    builder: com.oneeyedmen.minutest.TestContextBuilder<Unit, F>.() -> Unit
+) = MinutestContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type)).apply(builder)
 
 @Suppress("UNCHECKED_CAST")
 private fun <F> fixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) -> F)? =

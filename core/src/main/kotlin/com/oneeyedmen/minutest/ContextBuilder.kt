@@ -10,18 +10,18 @@ typealias TestContext<F> = ContextBuilder<F>
 /**
  * [ContextBuilder]s allow definition of tests and sub-contexts, all of which have the fixture type F
  */
-typealias ContextBuilder<F> = GeneralContextBuilder<*, F>
+typealias ContextBuilder<F> = TestContextBuilder<*, F>
 
 /**
  * A [ContextBuilder] where the type of the parent fixture PF is also accessible.
  */
 @MinutestMarker
-abstract class GeneralContextBuilder<PF, F> {
+abstract class TestContextBuilder<PF, F> {
 
     /**
      * Define a child-context, inheriting the fixture from the parent.
      */
-    abstract fun context(name: String, builder: GeneralContextBuilder<F, F>.() -> Unit): NodeBuilder<F>
+    abstract fun context(name: String, builder: TestContextBuilder<F, F>.() -> Unit): NodeBuilder<F>
 
     /**
      * Define a child-context with a different fixture type.
@@ -29,7 +29,7 @@ abstract class GeneralContextBuilder<PF, F> {
      * You will have to call [deriveFixture] in the sub-context to convert from the parent
      * to the child fixture type.
      */
-    inline fun <reified G> derivedContext(name: String, noinline builder: GeneralContextBuilder<F, G>.() -> Unit) =
+    inline fun <reified G> derivedContext(name: String, noinline builder: TestContextBuilder<F, G>.() -> Unit) =
         internalCreateContext(name, askType<G>(), null, builder)
 
     /**
@@ -104,7 +104,7 @@ abstract class GeneralContextBuilder<PF, F> {
         name: String,
         type: FixtureType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
-        builder: GeneralContextBuilder<F, G>.() -> Unit
+        builder: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F>
 
 }
