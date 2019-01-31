@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.Node
 import com.oneeyedmen.minutest.assertLogged
 import org.junit.jupiter.api.Test
 
@@ -28,9 +28,9 @@ class ScanningTests {
     }
 }
 
-private fun RuntimeNode<*>.visit(log: MutableList<String>, indent: Int) {
+private fun Node<*>.visit(log: MutableList<String>, indent: Int) {
     log.add(indent.spaces() + this.name)
-    if (this is RuntimeContext<*, *>) {
+    if (this is Context<*, *>) {
         this.children.forEach { it.visit(log, indent + 2) }
     }
 

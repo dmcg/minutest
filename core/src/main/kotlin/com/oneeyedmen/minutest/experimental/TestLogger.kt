@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.RuntimeContext
+import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.TestDescriptor
 import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
@@ -39,7 +39,7 @@ class TestLogger(
         log(NodeType.TEST_SKIPPED, testDescriptor)
     }
 
-    override fun <PF, F> contextClosed(runtimeContext: RuntimeContext<PF, F>) = Unit
+    override fun <PF, F> contextClosed(context: Context<PF, F>) = Unit
 
     private fun log(nodeType: NodeType, testDescriptor: TestDescriptor) {
         val path = testDescriptor.fullName()

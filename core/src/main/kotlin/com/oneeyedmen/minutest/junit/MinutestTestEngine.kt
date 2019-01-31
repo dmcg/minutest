@@ -1,8 +1,8 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.Node
+import com.oneeyedmen.minutest.Test
 import com.oneeyedmen.minutest.internal.RootExecutor
 import com.oneeyedmen.minutest.internal.TestExecutor
 import org.junit.platform.engine.*
@@ -45,18 +45,18 @@ class MinutestTestEngine : TestEngine {
         val result = try {
             if (descriptor is MinutestNodeDescriptor) {
                 when (descriptor.node) {
-                    is RuntimeContext<*, *> ->
+                    is Context<*, *> ->
                         executeDynamicChildren(
                             descriptor,
                             @Suppress("UNCHECKED_CAST")
-                            executor.andThen(descriptor.node as RuntimeContext<T, *>),
+                            executor.andThen(descriptor.node as Context<T, *>),
                             request,
                             listener
                         )
-                    is RuntimeTest<*> ->
+                    is Test<*> ->
                         @Suppress("UNCHECKED_CAST")
                         executeTest(
-                            descriptor.node as RuntimeTest<T>,
+                            descriptor.node as Test<T>,
                             executor)
                 }
             }
@@ -93,9 +93,9 @@ class MinutestTestEngine : TestEngine {
     
     private fun MinutestNodeDescriptor.childrenAsDescriptors() =
         when (node) {
-            is RuntimeContext<*, *> ->
+            is Context<*, *> ->
                 node.children.map { child -> MinutestNodeDescriptor(this, child) }
-            is RuntimeTest<*> ->
+            is Test<*> ->
                 emptyList()
         }
     
@@ -113,7 +113,7 @@ class MinutestTestEngine : TestEngine {
         }
     }
     
-    private fun <T> executeTest(node: RuntimeTest<T>, executor: TestExecutor<T>) {
+    private fun <T> executeTest(node: Test<T>, executor: TestExecutor<T>) {
         executor.runTest(node)
     }
     
@@ -132,7 +132,7 @@ private const val testType = "minutest-test"
 
 private class MinutestNodeDescriptor(
     parent: TestDescriptor,
-    val node: RuntimeNode<*>,
+    val node: Node<*>,
     private val source: TestSource? = null
 
 ) : TestDescriptor {
@@ -145,8 +145,8 @@ private class MinutestNodeDescriptor(
     override fun getUniqueId(): UniqueId = _uniqueId
     override fun getSource() = Optional.ofNullable(source)
     override fun getType() = when (node) {
-        is RuntimeContext<*, *> -> CONTAINER
-        is RuntimeTest -> TEST
+        is Context<*, *> -> CONTAINER
+        is Test -> TEST
     }
     
     override fun getParent() = Optional.ofNullable(_parent)
@@ -185,10 +185,10 @@ private class MinutestNodeDescriptor(
 }
 
 
-private fun RuntimeNode<*>.descriptorIdType(): String {
+private fun Node<*>.descriptorIdType(): String {
     return when (this) {
-        is RuntimeContext<*, *> -> contextType
-        is RuntimeTest -> testType
+        is Context<*, *> -> contextType
+        is Test -> testType
     }
 }
 

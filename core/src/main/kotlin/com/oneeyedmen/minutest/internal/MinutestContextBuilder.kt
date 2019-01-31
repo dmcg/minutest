@@ -1,12 +1,15 @@
 package com.oneeyedmen.minutest.internal
 
+import com.oneeyedmen.minutest.Node
 import com.oneeyedmen.minutest.NodeBuilder
-import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.TestContextBuilder
 import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.experimental.TestAnnotation
 import com.oneeyedmen.minutest.experimental.transformedBy
 
+/**
+ * Internal implementation of [TestContextBuilder] which hides the details and the [NodeBuilder]ness.
+ */
 internal class MinutestContextBuilder<PF, F>(
     private val name: String,
     private val type: FixtureType,
@@ -59,7 +62,7 @@ internal class MinutestContextBuilder<PF, F>(
         afterAlls.add(f)
     }
 
-    override fun buildNode(): RuntimeNode<PF> = PreparedRuntimeContext(
+    override fun buildNode(): Node<PF> = PreparedRuntimeContext(
         name,
         children.map { it.buildNode() },
         befores,

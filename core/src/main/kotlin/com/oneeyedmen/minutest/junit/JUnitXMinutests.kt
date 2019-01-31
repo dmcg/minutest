@@ -1,6 +1,6 @@
 package com.oneeyedmen.minutest.junit
 
-import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.Node
 import com.oneeyedmen.minutest.internal.TopLevelContextBuilder
 import kotlin.reflect.full.memberFunctions
 
@@ -10,7 +10,7 @@ internal fun Any.testMethods(): List<TopLevelContextBuilder<*>> = this::class.me
     .filter { it.returnType.classifier == TopLevelContextBuilder::class }
     .map { it.call(this) as TopLevelContextBuilder<*> }
 
-internal fun Any.rootContextFromMethods(): RuntimeNode<Unit> {
+internal fun Any.rootContextFromMethods(): Node<Unit> {
     val testMethodsAsNodes: List<TopLevelContextBuilder<*>> = testMethods()
     val singleNode = when {
         testMethodsAsNodes.isEmpty() -> error("No test methods found")

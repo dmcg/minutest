@@ -17,10 +17,10 @@ fun <F, R : TestRule> ContextBuilder<F>.applyRule(ruleExtractor: F.() -> R) {
 }
 
 // TODO - I think this will fail if you change the fixture type between declaration and the test
-class ApplyRule<F, R : TestRule>(private val ruleExtractor: F.() -> R) : TestAnnotation, RuntimeNodeTransform {
-    override fun <F2> applyTo(node: RuntimeNode<F2>): RuntimeNode<F2> = when (node) {
-        is RuntimeTest<F2> -> {
-            RuntimeTest(node.name, node.annotations) { fixture, testDescriptor ->
+class ApplyRule<F, R : TestRule>(private val ruleExtractor: F.() -> R) : TestAnnotation, NodeTransform {
+    override fun <F2> applyTo(node: Node<F2>): Node<F2> = when (node) {
+        is Test<F2> -> {
+            Test(node.name, node.annotations) { fixture, testDescriptor ->
                 fixture.also {
                     val rule = ruleExtractor(fixture as F)
                     val wrappedTestAsStatement = node.asJUnitStatement(fixture, testDescriptor)
@@ -32,13 +32,13 @@ class ApplyRule<F, R : TestRule>(private val ruleExtractor: F.() -> R) : TestAnn
                 }
             }
         }
-        is RuntimeContext<F2, *> ->
+        is Context<F2, *> ->
             node.withTransformedChildren(this)
     }
 }
 
 
-private fun <F> Test<F>.asJUnitStatement(fixture: F, testDescriptor: TestDescriptor) = object : Statement() {
+private fun <F> Testlet<F>.asJUnitStatement(fixture: F, testDescriptor: TestDescriptor) = object : Statement() {
     override fun evaluate() {
         this@asJUnitStatement(fixture, testDescriptor)
     }

@@ -1,32 +1,32 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.RuntimeNodeTransform
-import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.Node
+import com.oneeyedmen.minutest.NodeTransform
+import com.oneeyedmen.minutest.Test
 
 
-object SKIP : TestAnnotation, RuntimeNodeTransform {
-    override fun <F> applyTo(node: RuntimeNode<F>): RuntimeNode<F> = node.skipped()
+object SKIP : TestAnnotation, NodeTransform {
+    override fun <F> applyTo(node: Node<F>): Node<F> = node.skipped()
 }
 
 object FOCUS : TestAnnotation, TopLevelTransform {
-    override fun applyTo(node: RuntimeNode<Unit>): RuntimeNode<Unit> = when (node) {
-        is RuntimeContext<Unit, *> ->
+    override fun applyTo(node: Node<Unit>): Node<Unit> = when (node) {
+        is Context<Unit, *> ->
             node.withTransformedChildren(Inexcluded(defaultToSkip = node.hasAFocusedChild()))
-        is RuntimeTest<Unit> ->
+        is Test<Unit> ->
             TODO("skipAndFocus on root as test")
     }
 }
 
-private class Inexcluded(val defaultToSkip: Boolean) : RuntimeNodeTransform {
-    override fun <F> applyTo(node: RuntimeNode<F>): RuntimeNode<F> =
+private class Inexcluded(val defaultToSkip: Boolean) : NodeTransform {
+    override fun <F> applyTo(node: Node<F>): Node<F> =
         when (node) {
-            is RuntimeContext<F, *> -> applyToContext(node)
-            is RuntimeTest<F> -> applyToTest(node)
+            is Context<F, *> -> applyToContext(node)
+            is Test<F> -> applyToTest(node)
         }
     
-    private fun <PF, F> applyToContext(node: RuntimeContext<PF, F>): RuntimeNode<PF> =
+    private fun <PF, F> applyToContext(node: Context<PF, F>): Node<PF> =
         when {
             FOCUS.appliesTo(node) ->
                 node.withTransformedChildren(Inexcluded(defaultToSkip = false))
@@ -37,7 +37,7 @@ private class Inexcluded(val defaultToSkip: Boolean) : RuntimeNodeTransform {
                 node.withTransformedChildren(this)
         }
     
-    private fun <F> applyToTest(node: RuntimeTest<F>): RuntimeTest<F> =
+    private fun <F> applyToTest(node: Test<F>): Test<F> =
         when {
             FOCUS.appliesTo(node) -> node
             defaultToSkip -> node.skipped()
@@ -45,8 +45,8 @@ private class Inexcluded(val defaultToSkip: Boolean) : RuntimeNodeTransform {
         }
 }
 
-private fun RuntimeContext<*, *>.hasAFocusedChild() =
+private fun Context<*, *>.hasAFocusedChild() =
     this.hasA(FOCUS::appliesTo)
 
-private fun <F> RuntimeNode<F>.skipped() =
-    RuntimeTest<F>(name, annotations) { _, _ -> throw MinutestSkippedException() }
+private fun <F> Node<F>.skipped() =
+    Test<F>(name, annotations) { _, _ -> throw MinutestSkippedException() }

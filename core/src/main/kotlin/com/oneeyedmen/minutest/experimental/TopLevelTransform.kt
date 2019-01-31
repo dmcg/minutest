@@ -1,14 +1,14 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.RuntimeNode
+import com.oneeyedmen.minutest.Node
 
 
 interface TopLevelTransform {
 
-    fun applyTo(node: RuntimeNode<Unit>): RuntimeNode<Unit>
+    fun applyTo(node: Node<Unit>): Node<Unit>
 
     fun then(next: (TopLevelTransform)): TopLevelTransform = object: TopLevelTransform {
-        override fun applyTo(node: RuntimeNode<Unit>): RuntimeNode<Unit> =
+        override fun applyTo(node: Node<Unit>): Node<Unit> =
             next.applyTo(this@TopLevelTransform.applyTo(node))
     }
 }

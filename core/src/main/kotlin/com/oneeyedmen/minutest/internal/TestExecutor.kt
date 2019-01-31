@@ -8,24 +8,24 @@ import com.oneeyedmen.minutest.*
  */
 interface TestExecutor<F> : TestDescriptor {
 
-    fun runTest(runtimeTest: RuntimeTest<F>) {
-        runTest(runtimeTest, this.andThenJust(runtimeTest.name))
+    fun runTest(test: Test<F>) {
+        runTest(test, this.andThenJust(test.name))
     }
 
-    fun runTest(test: Test<F>, testDescriptor: TestDescriptor)
+    fun runTest(testlet: Testlet<F>, testDescriptor: TestDescriptor)
 
-    fun <G> andThen(nextContext: RuntimeContext<F, G>): TestExecutor<G> = object: TestExecutor<G> {
+    fun <G> andThen(nextContext: Context<F, G>): TestExecutor<G> = object: TestExecutor<G> {
         override val name = nextContext.name
         override val parent = this@TestExecutor
 
-        override fun runTest(test: Test<G>, testDescriptor: TestDescriptor) {
+        override fun runTest(testlet: Testlet<G>, testDescriptor: TestDescriptor) {
             // NB use the top testDescriptor so that we always see the longest path - the one from the
             // bottom of the stack.
-            val testForParent: Test<F> = { fixture, _ ->
-                nextContext.runTest(test, fixture, testDescriptor)
+            val testletForParent: Testlet<F> = { fixture, _ ->
+                nextContext.runTest(testlet, fixture, testDescriptor)
                 fixture
             }
-            return parent.runTest(testForParent, testDescriptor)
+            return parent.runTest(testletForParent, testDescriptor)
         }
     }
 }
@@ -33,7 +33,7 @@ interface TestExecutor<F> : TestDescriptor {
 internal object RootExecutor : TestExecutor<Unit>, RootDescriptor {
     override val name = ""
     override val parent: Nothing? = null
-    override fun runTest(test: Test<Unit>, testDescriptor: TestDescriptor): Unit = test(Unit, testDescriptor)
+    override fun runTest(testlet: Testlet<Unit>, testDescriptor: TestDescriptor): Unit = testlet(Unit, testDescriptor)
 }
 
 private fun TestExecutor<*>.andThenJust(name: String): TestDescriptor = object : TestDescriptor {

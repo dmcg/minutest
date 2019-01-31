@@ -35,8 +35,8 @@ class TestEventsTests {
             log.add("Skipped " + testDescriptor.fullName())
         }
 
-        override fun <PF, F> contextClosed(runtimeContext: RuntimeContext<PF, F>) {
-            log.add("Closed " + runtimeContext.name)
+        override fun <PF, F> contextClosed(context: Context<PF, F>) {
+            log.add("Closed " + context.name)
         }
     }
 

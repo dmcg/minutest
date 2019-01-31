@@ -1,9 +1,9 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.Test
+import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.Node
 import com.oneeyedmen.minutest.TestDescriptor
+import com.oneeyedmen.minutest.Testlet
 import com.oneeyedmen.minutest.experimental.TestAnnotation
 
 /**
@@ -11,18 +11,18 @@ import com.oneeyedmen.minutest.experimental.TestAnnotation
  */
 internal data class PreparedRuntimeContext<PF, F> (
     override val name: String,
-    override val children: List<RuntimeNode<F>>,
+    override val children: List<Node<F>>,
     private val befores: List<(F, TestDescriptor) -> Unit>,
     private val afters: List<(F, TestDescriptor) -> Unit>,
     private var afterAlls: List<() -> Unit>,
     private val fixtureFactory: (PF, TestDescriptor) -> F,
     override val annotations: MutableList<TestAnnotation>
-) : RuntimeContext<PF, F>() {
+) : Context<PF, F>() {
 
-    override fun runTest(test: Test<F>, parentFixture: PF, testDescriptor: TestDescriptor): F {
+    override fun runTest(testlet: Testlet<F>, parentFixture: PF, testDescriptor: TestDescriptor): F {
         val fixture = fixtureFactory(parentFixture, testDescriptor)
         return applyBeforesTo(fixture, testDescriptor)
-            .tryMap { f -> test(f, testDescriptor) }
+            .tryMap { f -> testlet(f, testDescriptor) }
             .onLastValue { applyAftersTo(it, testDescriptor) }
             .orThrow()
     }
@@ -39,7 +39,7 @@ internal data class PreparedRuntimeContext<PF, F> (
         }
     }
 
-    override fun withChildren(children: List<RuntimeNode<F>>) = copy(children = children)
+    override fun withChildren(children: List<Node<F>>) = copy(children = children)
 
     // apply befores in order - if anything is thrown return it and the last successful value
     private fun applyBeforesTo(fixture: F, testDescriptor: TestDescriptor): SequenceResult<F> {

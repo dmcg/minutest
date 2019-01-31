@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.experimental
 
+import com.oneeyedmen.minutest.Node
 import com.oneeyedmen.minutest.NodeBuilder
-import com.oneeyedmen.minutest.RuntimeNode
 import com.oneeyedmen.minutest.TestContextBuilder
 
 interface TestAnnotation {
@@ -10,7 +10,7 @@ interface TestAnnotation {
         nodeBuilder.annotations.add(this)
     }
 
-    fun appliesTo(runtimeNode: RuntimeNode<*>) = runtimeNode.annotations.contains(this)
+    fun appliesTo(node: Node<*>) = node.annotations.contains(this)
 
     operator fun plus(that: TestAnnotation) = listOf(this, that)
 

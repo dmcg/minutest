@@ -1,25 +1,25 @@
 package com.oneeyedmen.minutest.experimental
 
-import com.oneeyedmen.minutest.RuntimeContext
-import com.oneeyedmen.minutest.RuntimeNode
-import com.oneeyedmen.minutest.RuntimeNodeTransform
-import com.oneeyedmen.minutest.RuntimeTest
+import com.oneeyedmen.minutest.Context
+import com.oneeyedmen.minutest.Node
+import com.oneeyedmen.minutest.NodeTransform
+import com.oneeyedmen.minutest.Test
 
 
-fun <F> RuntimeNode<F>.transformedBy(annotations: List<TestAnnotation>): RuntimeNode<F> {
-    val transforms: List<RuntimeNodeTransform> = annotations.filterIsInstance<RuntimeNodeTransform>()
+fun <F> Node<F>.transformedBy(annotations: List<TestAnnotation>): Node<F> {
+    val transforms: List<NodeTransform> = annotations.filterIsInstance<NodeTransform>()
     return if (transforms.isEmpty())
         this
     else {
-        transforms.reduce(RuntimeNodeTransform::then).applyTo(this)
+        transforms.reduce(NodeTransform::then).applyTo(this)
     }
 }
 
-fun RuntimeNode<*>.hasA(predicate: (RuntimeNode<*>) -> Boolean): Boolean = when (this) {
-    is RuntimeTest<*> -> predicate(this)
-    is RuntimeContext<*, *> -> hasA(predicate)
+fun Node<*>.hasA(predicate: (Node<*>) -> Boolean): Boolean = when (this) {
+    is Test<*> -> predicate(this)
+    is Context<*, *> -> hasA(predicate)
 }
 
-fun RuntimeContext<*, *>.hasA(predicate: (RuntimeNode<*>) -> Boolean): Boolean {
+fun Context<*, *>.hasA(predicate: (Node<*>) -> Boolean): Boolean {
     return predicate(this) || children.find { it.hasA(predicate) } != null
 }
