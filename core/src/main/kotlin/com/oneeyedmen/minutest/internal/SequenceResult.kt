@@ -5,29 +5,24 @@ package com.oneeyedmen.minutest.internal
  * The result of applying a sequence of operations, where an operation might fail and we want to know the exception
  * thrown and the value before it was.
  */
-internal data class OpResult<F>(val t: Throwable?, val lastValue: F) {
-    fun flatMap(f: (F) -> OpResult<F>): OpResult<F> =
-        if (t != null) this
-        else f(this.lastValue)
+internal data class SequenceResult<F>(val t: Throwable?, val lastValue: F) {
+
+    fun flatMap(f: (F) -> SequenceResult<F>): SequenceResult<F> = if (t != null) this else f(this.lastValue)
 
     fun tryMap(f: (F) -> F) =
         flatMap {
             try {
-                OpResult(null, f(it))
+                SequenceResult(null, f(it))
             }
             catch (t: Throwable) {
-                OpResult(t, it)
+                SequenceResult(t, it)
             }
         }
 
-    fun maybeThrow() {
+    fun orThrow(): F {
         if (t != null) {
             throw t
         }
-    }
-    
-    fun orThrow(): F {
-        maybeThrow()
         return lastValue
     }
     

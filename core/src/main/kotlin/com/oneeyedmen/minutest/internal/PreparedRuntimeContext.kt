@@ -42,14 +42,14 @@ internal data class PreparedRuntimeContext<PF, F> (
     override fun withChildren(children: List<RuntimeNode<F>>) = copy(children = children)
 
     // apply befores in order - if anything is thrown return it and the last successful value
-    private fun applyBeforesTo(fixture: F, testDescriptor: TestDescriptor): OpResult<F> {
+    private fun applyBeforesTo(fixture: F, testDescriptor: TestDescriptor): SequenceResult<F> {
         befores.forEach { beforeFn ->
             try {
                 beforeFn(fixture, testDescriptor)
             } catch (t: Throwable) {
-                return OpResult(t, fixture)
+                return SequenceResult(t, fixture)
             }
         }
-        return OpResult(null, fixture)
+        return SequenceResult(null, fixture)
     }
 }
