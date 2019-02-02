@@ -6,7 +6,7 @@ import com.oneeyedmen.minutest.TestDescriptor
 import com.oneeyedmen.minutest.Testlet
 import com.oneeyedmen.minutest.experimental.TestAnnotation
 
-internal data class RuntimeContextWrapper<PF, F>(
+internal data class ContextWrapper<PF, F>(
     override val name: String,
     override val annotations: List<TestAnnotation>,
     override val children: List<Node<F>>,

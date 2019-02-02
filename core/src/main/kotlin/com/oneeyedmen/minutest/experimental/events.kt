@@ -1,7 +1,7 @@
 package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.*
-import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
+import com.oneeyedmen.minutest.internal.ContextWrapper
 import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
 import org.opentest4j.TestSkippedException
@@ -25,7 +25,7 @@ fun <F> telling(listener: TestEventListener): (Node<F>) -> Node<F> = { context -
 }
 
 private fun <PF, F> Context<PF, F>.telling(listener: TestEventListener): Context<PF, F> =
-    RuntimeContextWrapper(this,
+    ContextWrapper(this,
         children = children.map { it.telling(listener) },
         onClose = { listener.contextClosed(this@telling) }
     )

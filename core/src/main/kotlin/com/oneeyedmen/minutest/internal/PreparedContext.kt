@@ -9,7 +9,7 @@ import com.oneeyedmen.minutest.experimental.TestAnnotation
 /**
  * The runtime representation of a context.
  */
-internal data class PreparedRuntimeContext<PF, F> (
+internal data class PreparedContext<PF, F> (
     override val name: String,
     override val children: List<Node<F>>,
     private val befores: List<(F, TestDescriptor) -> Unit>,

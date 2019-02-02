@@ -62,7 +62,7 @@ internal class MinutestContextBuilder<PF, F>(
         afterAlls.add(f)
     }
 
-    override fun buildNode(): Node<PF> = PreparedRuntimeContext(
+    override fun buildNode(): Node<PF> = PreparedContext(
         name,
         children.map { it.buildNode() },
         befores,

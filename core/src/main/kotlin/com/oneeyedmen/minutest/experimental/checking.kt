@@ -2,7 +2,7 @@ package com.oneeyedmen.minutest.experimental
 
 import com.oneeyedmen.minutest.Context
 import com.oneeyedmen.minutest.Node
-import com.oneeyedmen.minutest.internal.RuntimeContextWrapper
+import com.oneeyedmen.minutest.internal.ContextWrapper
 
 fun <F> checkedAgainst(
     logger: TestLogger = TestLogger(mutableListOf(), prefixer = TestLogger.noSymbols),
@@ -11,7 +11,7 @@ fun <F> checkedAgainst(
     when (node) {
         is Context<F, *> -> {
             val telling: (Node<F>) -> Node<F> = telling(logger)
-            RuntimeContextWrapper(telling(node) as Context<F, Any?>, onClose = { check(logger.log) })
+            ContextWrapper(telling(node) as Context<F, Any?>, onClose = { check(logger.log) })
         }
         else -> TODO("checking when root is just a test")
     }
