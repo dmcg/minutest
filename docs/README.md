@@ -237,7 +237,7 @@ If you want to reuse the same tests for different concrete implementations, defi
 ```kotlin
 // To run the same tests against different implementations, first define a TestContext extension function
 // that defines the tests you want run.
-fun TestContext<MutableCollection<String>>.behavesAsMutableCollection() {
+fun ContextBuilder<MutableCollection<String>>.behavesAsMutableCollection() {
 
     context("behaves as MutableCollection") {
 

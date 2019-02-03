@@ -9,7 +9,7 @@ Go crazy and unleash the `Power of Kotlin` to generate your tests on the fly.
 
 private typealias StringStack = Stack<String>
 
-private fun TestContext<StringStack>.isEmpty(isEmpty: Boolean) =
+private fun ContextBuilder<StringStack>.isEmpty(isEmpty: Boolean) =
     test("is " + (if (isEmpty) "" else "not ") + "empty") {
         assertEquals(isEmpty, size == 0)
         if (isEmpty)
@@ -18,7 +18,7 @@ private fun TestContext<StringStack>.isEmpty(isEmpty: Boolean) =
             assertNotNull(peek())
     }
 
-private fun TestContext<StringStack>.canPush() = test("can push") {
+private fun ContextBuilder<StringStack>.canPush() = test("can push") {
     val initialSize = size
     val item = "*".repeat(initialSize + 1)
     push(item)
@@ -26,7 +26,7 @@ private fun TestContext<StringStack>.canPush() = test("can push") {
     assertEquals(initialSize + 1, size)
 }
 
-private fun TestContext<StringStack>.canPop() = test("can pop") {
+private fun ContextBuilder<StringStack>.canPop() = test("can pop") {
     val initialSize = size
     val top = peek()
     assertEquals(top, pop())
@@ -35,7 +35,7 @@ private fun TestContext<StringStack>.canPop() = test("can pop") {
         assertNotEquals(top, peek())
 }
 
-private fun TestContext<StringStack>.cantPop() = test("cant pop") {
+private fun ContextBuilder<StringStack>.cantPop() = test("cant pop") {
     assertThrows<EmptyStackException> { pop() }
 }
 
