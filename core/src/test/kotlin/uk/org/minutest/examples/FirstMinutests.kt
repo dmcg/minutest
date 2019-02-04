@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertNotEquals
 import uk.org.minutest.junit.JUnit5Minutests
 import uk.org.minutest.rootContext
 
-// Implement JUnit5Minutests to run Minutests with JUnit 5
+// Mix-in JUnit5Minutests to run Minutests with JUnit 5
 class FirstMinutests : JUnit5Minutests {
 
     // tests are grouped in a context
