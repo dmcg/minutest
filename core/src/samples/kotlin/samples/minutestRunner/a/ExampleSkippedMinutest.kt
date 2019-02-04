@@ -3,9 +3,9 @@
 
 package samples.minutestRunner.a
 
-import com.oneeyedmen.minutest.experimental.SKIP
-import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.fail
+import uk.org.minutest.experimental.SKIP
+import uk.org.minutest.rootContext
 
 
 fun `example skipped context`() = SKIP - rootContext<Unit> {

@@ -1,6 +1,6 @@
 package samples.minutestRunner.a
 
-import com.oneeyedmen.minutest.rootContext
+import uk.org.minutest.rootContext
 
 
 // This should not be picked up the the classpath scanner

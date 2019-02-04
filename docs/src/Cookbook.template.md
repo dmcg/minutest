@@ -15,7 +15,7 @@ See the [readme](README.md)
 #### Run Tests with JUnit 4
 
 There is experimental support for running tests with JUnit 4 - see 
-[JUnit4MinutestsTests](../core/src/test/kotlin/com/oneeyedmen/minutest/experimental/JUnit4MinutestsTests.kt)
+[JUnit4MinutestsTests](../core/src/test/kotlin/uk/org/minutest/experimental/JUnit4MinutestsTests.kt)
 
 #### Run Only Some Tests
 

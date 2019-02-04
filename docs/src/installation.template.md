@@ -16,7 +16,7 @@ You will need to include Minutest and JUnit 5 on your test compilation classpath
 
 ```groovy
 testCompile "org.junit.jupiter:junit-jupiter-api:+"
-testCompile "com.oneeyedmen:minutest:+"
+testCompile "uk.org.minutest:minutest:+"
 
 testRuntime "org.junit.jupiter:junit-jupiter-engine:+"
 testRuntime "org.junit.platform:junit-platform-launcher:+"

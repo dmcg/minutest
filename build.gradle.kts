@@ -4,7 +4,7 @@ plugins {
 }
 
 allprojects {
-    group = "com.oneeyedmen"
+    group = "uk.org.minutest"
     version = "0.43.0"
 
     repositories {

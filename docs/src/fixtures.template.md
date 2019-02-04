@@ -12,14 +12,14 @@ Here are some ways of using fixtures in Minutest.
 
 You don't have to have a fixture. The simplest tests can just have assertions.
 
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/NoFixtureExampleTests.kt
+```insert-kotlin core/src/test/kotlin/uk/org/minutest/examples/NoFixtureExampleTests.kt
 ```
 
 ### Subject Under Test as Fixture
 
 It makes sense to have the subject under test as the fixture if it has the only state in the test.
 
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/SubjectUnderTestFixtureExampleTests.kt
+```insert-kotlin core/src/test/kotlin/uk/org/minutest/examples/SubjectUnderTestFixtureExampleTests.kt
 ```
 
 Even if the subject is immutable then you can [inspect it in after blocks](immutable-fixtures.md).
@@ -28,7 +28,7 @@ Even if the subject is immutable then you can [inspect it in after blocks](immut
 
 If you are testing static functions, making the arguments the fixture can be expressive. 
 
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/ArgumentsAsFixtureExampleTests.kt
+```insert-kotlin core/src/test/kotlin/uk/org/minutest/examples/ArgumentsAsFixtureExampleTests.kt
 ```
 
 Again, where possible having the context name expressed in the fixture state, and vice-versa, keeps things honest.
@@ -37,21 +37,21 @@ Again, where possible having the context name expressed in the fixture state, an
 
 When testing a system that mediates between other components, it makes sense to bring them all into the fixture - this gives the test isolation and repeatability that is the point of the fixture.
 
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/CompoundFixtureExampleTests.kt
+```insert-kotlin core/src/test/kotlin/uk/org/minutest/examples/CompoundFixtureExampleTests.kt
 ```
 
 ### Parent Fixtures
 
 Fixtures are inherited from the parent context, and may be replaced or modified by children.
 
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/ParentFixtureExampleTests.kt
+```insert-kotlin core/src/test/kotlin/uk/org/minutest/examples/ParentFixtureExampleTests.kt
 ```
 
 ### Changing Fixture Type
 
 A context may change the type of its parent fixture.
 
-```insert-kotlin core/src/test/kotlin/com/oneeyedmen/minutest/examples/DerivedContextExampleTests.kt
+```insert-kotlin core/src/test/kotlin/uk/org/minutest/examples/DerivedContextExampleTests.kt
 ```
 
 
