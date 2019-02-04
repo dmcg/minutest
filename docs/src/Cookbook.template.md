@@ -2,48 +2,71 @@
 
 ## Cookbook
 
-How to
+### How do I
 
-### Write tests
-
-See the [readme](README.md)
-
-### Run Tests with JUnit 5
+#### Write tests
 
 See the [readme](README.md)
 
-### Run Tests with JUnit 4
+#### Run Tests with JUnit 5
+
+See the [readme](README.md)
+
+#### Run Tests with JUnit 4
 
 There is experimental support for running tests with JUnit 4 - see 
 [JUnit4MinutestsTests](../core/src/test/kotlin/com/oneeyedmen/minutest/experimental/JUnit4MinutestsTests.kt)
 
-### Run Only Some Tests
+#### Run Only Some Tests
 
 There is experimental support for skipping some tests and only running others - see 
 [SkipAndFocusExampleTests](../core/src/test/kotlin/com/oneeyedmen/minutest/experimental/SkipAndFocusExampleTests.kt)
 
-### Get Help
+#### Get Help
 
 The best bet for feedback and help is the [#minutest channel on the Kotlin Slack](https://kotlinlang.slack.com/messages/CCYE00YM6). See you there.
 
-## TODO
+#### Reuse Test Code
 
-### Reuse Test Code
+TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
-### Repeat a Test
+#### Repeat a Test
 
-### Manage Test Resources
+TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
-### Trace Test Execution
+#### Manage Test Resources
 
-### Mock Collaborators
+TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
-### Think about Fixtures and Contexts
+#### Trace Test Execution
 
-### Check a Value
+TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
-### Structure Tests
+#### Mock Collaborators
 
-### Extend Minutest
+TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
-### Migrate from JUnit
+#### Think about Fixtures and Contexts
+
+TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
+
+#### Check a Value
+
+TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
+
+#### Structure Tests
+
+TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
+
+#### Extend Minutest
+
+TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
+
+#### Migrate from JUnit
+
+TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
+
+#### Change the Fixture Type
+
+TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
+
