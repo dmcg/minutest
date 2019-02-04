@@ -1,5 +1,6 @@
-package com.oneeyedmen.minutest.junit
+package com.oneeyedmen.minutest.junit.experimental
 
+import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import com.oneeyedmen.minutest.rootContext
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.AfterAll
@@ -56,9 +57,9 @@ class JunitRulesTests : JUnit5Minutests {
             assertEquals(
                 listOf(
                     "test 1",
-                    "outer.apply rule fixture class.test 1(com.oneeyedmen.minutest.junit.JunitRulesTests)",
+                    "outer.apply rule fixture class.test 1(com.oneeyedmen.minutest.junit.experimental.JunitRulesTests)",
                     "test 2",
-                    "outer.apply rule test class.test 2(com.oneeyedmen.minutest.junit.JunitRulesTests)"),
+                    "outer.apply rule test class.test 2(com.oneeyedmen.minutest.junit.experimental.JunitRulesTests)"),
                 log)
         }
     }

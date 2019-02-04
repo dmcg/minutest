@@ -1,7 +1,7 @@
-package com.oneeyedmen.minutest.examples
+package com.oneeyedmen.minutest.examples.experimental
 
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
-import com.oneeyedmen.minutest.junit.applyRule
+import com.oneeyedmen.minutest.junit.experimental.applyRule
 import com.oneeyedmen.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.rules.TemporaryFolder

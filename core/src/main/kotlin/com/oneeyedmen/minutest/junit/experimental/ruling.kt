@@ -1,4 +1,4 @@
-package com.oneeyedmen.minutest.junit
+package com.oneeyedmen.minutest.junit.experimental
 
 import com.oneeyedmen.minutest.*
 import com.oneeyedmen.minutest.experimental.TestAnnotation

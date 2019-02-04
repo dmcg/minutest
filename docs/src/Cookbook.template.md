@@ -19,8 +19,15 @@ There is experimental support for running tests with JUnit 4 - see
 
 #### Run Only Some Tests
 
-There is experimental support for skipping some tests and only running others - see 
-[SkipAndFocusExampleTests](../core/src/test/kotlin/com/oneeyedmen/minutest/experimental/SkipAndFocusExampleTests.kt)
+There is experimental support for [skipping some tests and only running others](focus-and-skip.md)
+
+#### Generate tests on the fly
+
+[Generating tests](generating-tests.md)
+
+#### Use JUnit Rules
+
+JUnit Rules [mostly work](junit-rules.md).
 
 #### Get Help
 
@@ -69,4 +76,3 @@ TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM
 #### Change the Fixture Type
 
 TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
-
