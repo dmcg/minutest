@@ -66,6 +66,7 @@ If you want to reuse the same tests for different concrete implementations, defi
 * [Generating tests](generating-tests.md)
 * [Running only certain tests](focus-and-skip.md)
 * [JUnit rules](junit-rules.md)
+* [Cookbook](Cookbook.md)
 
 ## Support
 
