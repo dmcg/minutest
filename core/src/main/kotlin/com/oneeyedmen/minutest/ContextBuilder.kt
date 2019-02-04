@@ -4,9 +4,6 @@ import com.oneeyedmen.minutest.internal.FixtureType
 import com.oneeyedmen.minutest.internal.MinutestMarker
 import com.oneeyedmen.minutest.internal.askType
 
-@Deprecated("TestContext is now ContextBuilder", replaceWith = ReplaceWith("ContextBuilder<OLD_FIXTURE_TYPE_HERE>"))
-typealias TestContext<F> = ContextBuilder<F>
-
 /**
  * [ContextBuilder]s allow definition of tests and sub-contexts, all of which have the fixture type F
  */
