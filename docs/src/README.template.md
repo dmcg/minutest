@@ -2,12 +2,12 @@
 
 [ ![Download](https://api.bintray.com/packages/dmcg/oneeyedmen-mvn/minutest/images/download.svg) ](https://bintray.com/dmcg/oneeyedmen-mvn/minutest/_latestVersion)
 
-Minutest brings the power of Kotlin to JUnit 5, giving
+Minutest brings the power of Kotlin to JUnit, giving
 
 * Spec-style nested contexts and tests
 * Easy reuse of test code
 * On-the fly generation of tests
-* A level of expressiveness that has changed the way I write tests.
+* A level of expressiveness that should change the way you write tests.
 
 ## Installation
 
