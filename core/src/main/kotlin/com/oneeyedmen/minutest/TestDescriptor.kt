@@ -14,6 +14,3 @@ interface TestDescriptor {
 
     fun fullName(): List<String> = path().map(TestDescriptor::name)
 }
-
-interface RootDescriptor
-
