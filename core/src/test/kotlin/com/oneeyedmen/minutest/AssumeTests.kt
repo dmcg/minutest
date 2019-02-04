@@ -1,5 +1,6 @@
 package com.oneeyedmen.minutest
 
+import com.oneeyedmen.minutest.experimental.SKIP
 import com.oneeyedmen.minutest.junit.JUnit5Minutests
 import org.junit.jupiter.engine.JupiterTestEngine
 import org.junit.vintage.engine.descriptor.VintageTestDescriptor
@@ -14,10 +15,18 @@ class AssumeTests : JUnit5Minutests {
             test("with JUnit 4 assumptions") {
                 checkLog(runTestsInClass<JUnit4AssumptionsTest>(VintageTestDescriptor.ENGINE_ID))
             }
+            // TODO
+            SKIP - test("with JUnit 5 assumptions") {
+                checkLog(runTestsInClass<JUnit5AssumptionsTest>(VintageTestDescriptor.ENGINE_ID))
+            }
         }
         context("JUnit 5") {
             test("with JUnit 5 assumptions") {
                 checkLog(runTestsInClass<JUnit5AssumptionsTest>(JupiterTestEngine.ENGINE_ID))
+            }
+            // TODO
+            SKIP - test("with JUnit 4 assumptions") {
+                checkLog(runTestsInClass<JUnit4AssumptionsTest>(JupiterTestEngine.ENGINE_ID))
             }
         }
     }
