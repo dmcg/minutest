@@ -1,9 +1,6 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.Node
-import com.oneeyedmen.minutest.TestDescriptor
-import com.oneeyedmen.minutest.Testlet
+import com.oneeyedmen.minutest.*
 import com.oneeyedmen.minutest.experimental.TestAnnotation
 
 /**
@@ -39,7 +36,7 @@ internal data class PreparedContext<PF, F> (
         }
     }
 
-    override fun withChildren(children: List<Node<F>>) = copy(children = children)
+    override fun withTransformedChildren(transform: NodeTransform) = copy(children = transform.applyTo(children))
 
     // apply befores in order - if anything is thrown return it and the last successful value
     private fun applyBeforesTo(fixture: F, testDescriptor: TestDescriptor): SequenceResult<F> {

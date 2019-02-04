@@ -1,9 +1,6 @@
 package com.oneeyedmen.minutest.internal
 
-import com.oneeyedmen.minutest.Context
-import com.oneeyedmen.minutest.Node
-import com.oneeyedmen.minutest.TestDescriptor
-import com.oneeyedmen.minutest.Testlet
+import com.oneeyedmen.minutest.*
 import com.oneeyedmen.minutest.experimental.TestAnnotation
 
 internal data class ContextWrapper<PF, F>(
@@ -13,6 +10,7 @@ internal data class ContextWrapper<PF, F>(
     val runner: (Testlet<F>, parentFixture: PF, TestDescriptor) -> F,
     val onClose: () -> Unit
 ) : Context<PF, F>() {
+
     constructor(
         delegate: Context<PF, F>,
         name: String = delegate.name,
@@ -27,7 +25,8 @@ internal data class ContextWrapper<PF, F>(
     override fun runTest(testlet: Testlet<F>, parentFixture: PF, testDescriptor: TestDescriptor): F =
         runner(testlet, parentFixture, testDescriptor)
 
-    override fun withChildren(children: List<Node<F>>) = copy(children = children)
+    override fun withTransformedChildren(transform: NodeTransform) = copy(children = transform.applyTo(children))
+
 
     override fun close() = onClose.invoke()
 }

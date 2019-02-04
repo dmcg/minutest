@@ -11,7 +11,10 @@ import com.oneeyedmen.minutest.experimental.TestAnnotation
 sealed class Node<F> {
     abstract val name: String
     abstract val annotations: List<TestAnnotation>
-    
+
+    /**
+     * Return a copy of this node with any children transformed.
+     */
     abstract fun withTransformedChildren(transform: NodeTransform): Node<F>
 }
 
@@ -27,15 +30,10 @@ abstract class Context<PF, F> : Node<PF>(), AutoCloseable {
      * Invoke a [Testlet], converting a parent fixture [PF] to the type required by the test.
      */
     abstract fun runTest(testlet: Testlet<F>, parentFixture: PF, testDescriptor: TestDescriptor): F
-
-    override fun withTransformedChildren(transform: NodeTransform) =
-        this.withChildren(children.map { transform.applyTo(it) })
-
-    protected abstract fun withChildren(children: List<Node<F>>): Context<PF, F>
 }
 
 /**
- * A [Testlet] with additional name and properties.
+ * A [Node] that represents an executable test.
  */
 data class Test<F>(
     override val name: String,
@@ -44,14 +42,4 @@ data class Test<F>(
 ) : Node<F>(), Testlet<F> by f {
     
     override fun withTransformedChildren(transform: NodeTransform) = this
-}
-
-interface NodeTransform {
-
-    fun <F> applyTo(node: Node<F>): Node<F>
-
-    fun then(next: (NodeTransform)): NodeTransform = object: NodeTransform {
-        override fun <F> applyTo(node: Node<F>): Node<F> =
-            next.applyTo(this@NodeTransform.applyTo(node))
-    }
 }
