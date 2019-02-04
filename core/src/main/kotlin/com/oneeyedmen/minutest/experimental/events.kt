@@ -20,8 +20,8 @@ class Telling(private val listener: TestEventListener) : TestAnnotation, NodeTra
     override fun <F> applyTo(node: Node<F>): Node<F> = node.telling(listener)
 }
 
-fun <F> telling(listener: TestEventListener): (Node<F>) -> Node<F> = { context ->
-    context.telling(listener)
+fun <F> telling(listener: TestEventListener): (Node<F>) -> Node<F> = { node ->
+    node.telling(listener)
 }
 
 private fun <PF, F> Context<PF, F>.telling(listener: TestEventListener): Context<PF, F> =
