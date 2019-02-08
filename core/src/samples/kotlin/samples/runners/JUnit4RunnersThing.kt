@@ -1,7 +1,7 @@
 package samples.runners
 
-import uk.org.minutest.junit.JUnit4Minutests
-import uk.org.minutest.rootContext
+import dev.minutest.junit.JUnit4Minutests
+import dev.minutest.rootContext
 
 class JUnit4RunnersThing : JUnit4Minutests() {
 

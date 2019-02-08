@@ -1,0 +1,68 @@
+
+package dev.minutest.junit
+
+import dev.minutest.internal.RootExecutor
+import dev.minutest.internal.TestExecutor
+import dev.minutest.internal.TopLevelContextBuilder
+import org.junit.jupiter.api.DynamicContainer.dynamicContainer
+import org.junit.jupiter.api.DynamicNode
+import org.junit.jupiter.api.DynamicTest.dynamicTest
+import org.junit.jupiter.api.TestFactory
+import java.util.stream.Stream
+import kotlin.streams.asStream
+
+interface JUnit5Minutests {
+
+    val tests: TopLevelContextBuilder<*>? get() = null // a clue to what to override
+
+    /**
+     * Provided so that JUnit will run the tests
+     */
+    @TestFactory
+    fun tests(): Stream<out DynamicNode> = tests.let { testsFromVal ->
+        when  {
+            testsFromVal != null -> testsFromVal.buildNode().toStreamOfDynamicNodes(RootExecutor)
+            else -> this.rootContextFromMethods().toStreamOfDynamicNodes(RootExecutor)
+        }
+    }
+}
+
+/**
+ * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory].
+ *
+ * @see [NodeBuilder<Unit>#testFactory()]
+ */
+fun <F> testFactoryFor(root: TopLevelContextBuilder<F>) = root.buildNode().toStreamOfDynamicNodes(RootExecutor)
+
+/**
+ * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]
+ *
+ * @see [testFactoryFor(NodeBuilder<Unit>)]
+ */
+fun <F> TopLevelContextBuilder<F>.toTestFactory() = testFactoryFor(this)
+
+// These are defined as extensions to avoid taking a dependency on JUnit in the main package
+
+private fun <F> dev.minutest.Node<F>.toStreamOfDynamicNodes(executor: TestExecutor<F>) = when (this) {
+    is dev.minutest.Context<F, *> -> this.toStreamOfDynamicNodes(executor)
+    is dev.minutest.Test<F> -> Stream.of(this.toDynamicNode(executor))
+}
+
+private fun <PF, F> dev.minutest.Context<PF, F>.toStreamOfDynamicNodes(executor: TestExecutor<PF>): Stream<out DynamicNode> =
+    children.toStreamOfDynamicNodes(this, executor.andThen(this))
+
+private fun <F> Iterable<dev.minutest.Node<F>>.toStreamOfDynamicNodes(parent: dev.minutest.Context<*, F>, executor: TestExecutor<F>) =
+    asSequence()
+        .map { it.toDynamicNode(executor) }
+        .asStream()
+        .onClose { parent.close() }
+
+private fun <F> dev.minutest.Node<F>.toDynamicNode(executor: TestExecutor<F>): DynamicNode = when (this) {
+    is dev.minutest.Test<F> -> dynamicTest(name) {
+        executor.runTest(this)
+    }
+    is dev.minutest.Context<F, *> -> dynamicContainer(name, this.toStreamOfDynamicNodes(executor))
+}
+
+
+

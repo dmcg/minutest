@@ -1,8 +1,6 @@
+
 import com.jfrog.bintray.gradle.BintrayExtension
-import org.gradle.api.publish.maven.MavenPom
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 repositories {
@@ -96,7 +94,7 @@ bintray {
     setPublications("mavenJava")
     pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
         repo = "oneeyedmen-mvn"
-        name = "minutest"
+        name = "minutest.dev"
         version(delegateClosureOf<BintrayExtension.VersionConfig> {
             name = project.version as String
         })

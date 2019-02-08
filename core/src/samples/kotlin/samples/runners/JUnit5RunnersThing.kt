@@ -1,7 +1,7 @@
 package samples.runners
 
-import uk.org.minutest.junit.JUnit5Minutests
-import uk.org.minutest.rootContext
+import dev.minutest.junit.JUnit5Minutests
+import dev.minutest.rootContext
 
 class JUnit5RunnersThing : JUnit5Minutests {
 

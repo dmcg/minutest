@@ -1,8 +1,8 @@
 package samples.assumptions
 
+import dev.minutest.junit.JUnit5Minutests
+import dev.minutest.rootContext
 import org.junit.jupiter.api.Assumptions
-import uk.org.minutest.junit.JUnit5Minutests
-import uk.org.minutest.rootContext
 
 class JUnit5AssumptionsTest : JUnit5Minutests {
 

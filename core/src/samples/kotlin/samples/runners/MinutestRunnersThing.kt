@@ -1,7 +1,7 @@
 @file:JvmName("MinutestRunnersThing")
 package samples.runners
 
-import uk.org.minutest.rootContext
+import dev.minutest.rootContext
 
 fun tests() = rootContext<Unit> {
     runnersExample()

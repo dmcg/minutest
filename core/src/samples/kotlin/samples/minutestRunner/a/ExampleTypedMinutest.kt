@@ -2,8 +2,8 @@
 @file:JvmName("ExplicitTypedMinutest")
 package samples.minutestRunner.a
 
+import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions
-import uk.org.minutest.rootContext
 import java.util.*
 
 fun `example typed context`() = rootContext<Stack<String>> {

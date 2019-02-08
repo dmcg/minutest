@@ -4,8 +4,8 @@ plugins {
 }
 
 allprojects {
-    group = "uk.org.minutest"
-    version = "0.43.0"
+    group = "dev.minutest"
+    version = "0.45.0"
 
     repositories {
         mavenCentral()

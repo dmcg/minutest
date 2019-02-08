@@ -6,7 +6,7 @@ Once you have run some tests, you can point to them in IntelliJ's test output pa
 
 Enter Focus and Skip.
 
-```insert-kotlin core/src/test/kotlin/uk/org/minutest/experimental/SkipAndFocusExampleTests.kt
+```insert-kotlin core/src/test/kotlin/dev/minutest/experimental/SkipAndFocusExampleTests.kt
 ```
 
 To be honest, it's a bit arbitrary at the moment, but I find it useful, so you might too. Just don't rely on your intuition about how skip and focus interact if your tests do anything irreversible.

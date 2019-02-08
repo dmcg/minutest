@@ -2,7 +2,7 @@ package samples.assumptions
 
 import org.junit.Assert
 
-fun uk.org.minutest.ContextBuilder<Unit>.assumptionsContract(assumer: (Boolean) -> Unit) = context("assumptions skip tests") {
+fun dev.minutest.ContextBuilder<Unit>.assumptionsContract(assumer: (Boolean) -> Unit) = context("assumptions skip tests") {
 
     context("a context with assume in a fixture block") {
         modifyFixture {

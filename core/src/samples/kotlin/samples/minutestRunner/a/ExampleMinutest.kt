@@ -3,9 +3,9 @@
 
 package samples.minutestRunner.a
 
+import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
-import uk.org.minutest.rootContext
 
 fun `example context`() = rootContext<Unit> {
     test("a failing test") {

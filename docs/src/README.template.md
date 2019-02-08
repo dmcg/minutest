@@ -17,17 +17,17 @@ Minutest brings the power of Kotlin to JUnit, giving
 
 To just test simple functions, define your tests in a subclass of JUnit5Minutests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
 
-```insert-kotlin core/src/test/kotlin/uk/org/minutest/examples/FirstMinutests.kt
+```insert-kotlin core/src/test/kotlin/dev/minutest/examples/FirstMinutests.kt
 ```
 
 Most tests require access to some state. The collection of state required by the tests is called the test fixture. If you are testing a class, at simplest the fixture might be an instance of the class.
 
-```insert-kotlin core/src/test/kotlin/uk/org/minutest/examples/SimpleStackExampleTests.kt
+```insert-kotlin core/src/test/kotlin/dev/minutest/examples/SimpleStackExampleTests.kt
 ```
 
 Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
 
-```insert-kotlin core/src/test/kotlin/uk/org/minutest/examples/StackExampleTests.kt
+```insert-kotlin core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt
 ```
 
 This runs the following tests
@@ -36,7 +36,7 @@ This runs the following tests
 
 Tests for cooperating components will typically have one piece of state. In this case make the fixture hold all the state. 
 
-```insert-kotlin core/src/test/kotlin/uk/org/minutest/examples/CompoundFixtureExampleTests.kt
+```insert-kotlin core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt
 ```
 
 Understanding fixtures is key to Minutest - [read more](fixtures.md)
@@ -47,7 +47,7 @@ The key to Minutest is that by separating the fixture from the test code, both a
 
 For example, parameterised tests require [special handling](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests) in JUnit, but not in Minutest.
 
-```insert-kotlin core/src/test/kotlin/uk/org/minutest/examples/ParameterisedTests.kt
+```insert-kotlin core/src/test/kotlin/dev/minutest/examples/ParameterisedTests.kt
 ```
 
 ![ParameterisedTests](images/ParameterisedTests.png)
@@ -58,7 +58,7 @@ More complicated scenarios can be approached by writing your own function that r
  
 If you want to reuse the same tests for different concrete implementations, define a context with a function and call it for subclasses. Some people call this a contract.
 
-```insert-kotlin core/src/test/kotlin/uk/org/minutest/examples/ContractsExampleTests.kt
+```insert-kotlin core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt
 ```
 
 ## Other Features

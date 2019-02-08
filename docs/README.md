@@ -18,7 +18,7 @@ Minutest brings the power of Kotlin to JUnit, giving
 To just test simple functions, define your tests in a subclass of JUnit5Minutests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
 
 ```kotlin
-// Implement JUnit5Minutests to run Minutests with JUnit 5
+// Mix-in JUnit5Minutests to run Minutests with JUnit 5
 class FirstMinutests : JUnit5Minutests {
 
     // tests are grouped in a context
@@ -279,10 +279,7 @@ class LinkedListTests : JUnit5Minutests {
 
 ## Other Features
 
-* [Generating tests](generating-tests.md)
-* [Running only certain tests](focus-and-skip.md)
-* [JUnit rules](junit-rules.md)
-* [Cookbook](Cookbook.md)
+The [Cookbook](Cookbook.md) shows other ways to use Minutest. 
 
 ## Support
 
