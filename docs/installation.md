@@ -15,14 +15,16 @@ repositories {
 You will need to include Minutest and JUnit 5 on your test compilation classpath, and the JUnit engine on your test runtime classpath. 
 
 ```groovy
-testCompile "org.junit.jupiter:junit-jupiter-api:+"
-testCompile "dev.minutest:minutest:+"
-
-testRuntime "org.junit.jupiter:junit-jupiter-engine:+"
-testRuntime "org.junit.platform:junit-platform-launcher:+"
+dependencies {
+    ...
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.3.2"
+    testImplementation "dev.minutest:minutest:+"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.3.2"
+    testRuntime "org.junit.platform:junit-platform-launcher:1.3.2"
+}
 ```
 
-Finally you need to let test tasks know to use JUnit 5
+You now you need to let test tasks know to use JUnit 5
 
 ```groovy
 tasks {
@@ -32,6 +34,17 @@ tasks {
             events "skipped", "failed"
         }
     }
+}
+```
+
+This setup will allow you to use JUnit 5 [Assertions](https://junit.org/junit5/docs/current/user-guide/#writing-tests-assertions).
+If you want to use the kotlin.test assertions you will need to include them in your dependencies as well
+
+```groovy
+dependencies {
+    ...
+    testImplementation "org.jetbrains.kotlin:kotlin-test"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit"
 }
 ```
 
