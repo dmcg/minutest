@@ -1,8 +1,6 @@
 package dev.minutest.internal
 
-import dev.minutest.NodeTransform
-import dev.minutest.TestDescriptor
-import dev.minutest.Testlet
+import dev.minutest.*
 import dev.minutest.experimental.TestAnnotation
 import io.github.classgraph.*
 import kotlin.reflect.KFunction0
@@ -14,11 +12,11 @@ internal data class ScannedPackageContext(
     val packageName: String,
     private val contextFuns: List<KFunction0<TopLevelContextBuilder<Unit>>>,
     override val annotations: List<TestAnnotation> = emptyList()
-) : dev.minutest.Context<Unit, Unit>() {
+) : Context<Unit, Unit>() {
 
     override val name: String get() = packageName
 
-    override val children: List<dev.minutest.Node<Unit>> by lazy {
+    override val children: List<Node<Unit>> by lazy {
         contextFuns.map { f ->
             f().copy(name = f.name).buildNode()
         }

@@ -1,8 +1,6 @@
 package dev.minutest.internal
 
-import dev.minutest.RootDescriptor
-import dev.minutest.TestDescriptor
-import dev.minutest.Testlet
+import dev.minutest.*
 
 /**
  * The TestExecutor is built by running down the context tree. It can then run a test by asking the contexts up the
@@ -10,13 +8,13 @@ import dev.minutest.Testlet
  */
 interface TestExecutor<F> : TestDescriptor {
 
-    fun runTest(test: dev.minutest.Test<F>) {
+    fun runTest(test: Test<F>) {
         runTest(test, this.andThenJust(test.name))
     }
 
     fun runTest(testlet: Testlet<F>, testDescriptor: TestDescriptor)
 
-    fun <G> andThen(nextContext: dev.minutest.Context<F, G>): TestExecutor<G> = object: TestExecutor<G> {
+    fun <G> andThen(nextContext: Context<F, G>): TestExecutor<G> = object: TestExecutor<G> {
         override val name = nextContext.name
         override val parent = this@TestExecutor
 

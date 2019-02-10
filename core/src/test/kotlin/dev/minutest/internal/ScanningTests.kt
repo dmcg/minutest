@@ -1,5 +1,7 @@
 package dev.minutest.internal
 
+import dev.minutest.Context
+import dev.minutest.Node
 import dev.minutest.assertLogged
 import org.junit.jupiter.api.Test
 
@@ -26,9 +28,9 @@ class ScanningTests {
     }
 }
 
-private fun dev.minutest.Node<*>.visit(log: MutableList<String>, indent: Int) {
+private fun Node<*>.visit(log: MutableList<String>, indent: Int) {
     log.add(indent.spaces() + this.name)
-    if (this is dev.minutest.Context<*, *>) {
+    if (this is Context<*, *>) {
         this.children.forEach { it.visit(log, indent + 2) }
     }
 

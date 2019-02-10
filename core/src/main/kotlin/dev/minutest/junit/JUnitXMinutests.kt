@@ -1,5 +1,6 @@
 package dev.minutest.junit
 
+import dev.minutest.Node
 import dev.minutest.internal.TopLevelContextBuilder
 import kotlin.reflect.full.memberFunctions
 
@@ -9,7 +10,7 @@ internal fun Any.testMethods(): List<TopLevelContextBuilder<*>> = this::class.me
     .filter { it.returnType.classifier == TopLevelContextBuilder::class }
     .map { it.call(this) as TopLevelContextBuilder<*> }
 
-internal fun Any.rootContextFromMethods(): dev.minutest.Node<Unit> {
+internal fun Any.rootContextFromMethods(): Node<Unit> {
     val testMethodsAsNodes: List<TopLevelContextBuilder<*>> = testMethods()
     val singleNode = when {
         testMethodsAsNodes.isEmpty() -> error("No test methods found")

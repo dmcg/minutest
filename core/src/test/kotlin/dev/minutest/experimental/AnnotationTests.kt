@@ -1,5 +1,6 @@
 package dev.minutest.experimental
 
+import dev.minutest.NodeBuilder
 import dev.minutest.internal.TopLevelContextBuilder
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
@@ -30,4 +31,4 @@ object AnotherAnnotation : TestAnnotation
 object YetAnotherAnnotation : TestAnnotation
 
 // check that expression is a nodebuilder at compile time
-private fun <F> isNodeBuilder(nodeBuilder: dev.minutest.NodeBuilder<F>) = nodeBuilder
+private fun <F> isNodeBuilder(nodeBuilder: NodeBuilder<F>) = nodeBuilder

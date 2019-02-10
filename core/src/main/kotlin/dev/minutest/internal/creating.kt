@@ -1,18 +1,18 @@
 package dev.minutest.internal
 
-import dev.minutest.TestDescriptor
+import dev.minutest.*
 import dev.minutest.experimental.TestAnnotation
 import dev.minutest.experimental.TopLevelTransform
 
 data class TopLevelContextBuilder<F>(
     private val name: String,
     private val type: FixtureType,
-    private val builder: dev.minutest.TestContextBuilder<Unit, F>.() -> Unit,
-    private val transform: (dev.minutest.Node<Unit>) -> dev.minutest.Node<Unit>,
+    private val builder: TestContextBuilder<Unit, F>.() -> Unit,
+    private val transform: (Node<Unit>) -> Node<Unit>,
     override val annotations: MutableList<TestAnnotation> = mutableListOf()
-) : dev.minutest.NodeBuilder<Unit> {
+) : NodeBuilder<Unit> {
 
-    override fun buildNode(): dev.minutest.Node<Unit> {
+    override fun buildNode(): Node<Unit> {
         // we need to apply our annotations to the root, then run the transforms
         val topLevelContext = topLevelContext(name, type, builder).apply {
             annotations.addAll(this@TopLevelContextBuilder.annotations)
@@ -26,16 +26,16 @@ data class TopLevelContextBuilder<F>(
     }
 }
 
-private fun ((dev.minutest.Node<Unit>) -> dev.minutest.Node<Unit>).asTopLevelTransform() =
+private fun ((Node<Unit>) -> Node<Unit>).asTopLevelTransform() =
     object : TopLevelTransform {
-        override fun applyTo(node: dev.minutest.Node<Unit>): dev.minutest.Node<Unit> =
+        override fun applyTo(node: Node<Unit>): Node<Unit> =
             this@asTopLevelTransform(node)
     }
 
 private fun <F> topLevelContext(
     name: String,
     type: FixtureType,
-    builder: dev.minutest.TestContextBuilder<Unit, F>.() -> Unit
+    builder: TestContextBuilder<Unit, F>.() -> Unit
 ) = MinutestContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type)).apply(builder)
 
 @Suppress("UNCHECKED_CAST")
@@ -45,10 +45,10 @@ private fun <F> fixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) ->
     } else null
 
 // TODO - this should probably be breadth-first
-private fun dev.minutest.Node<*>.findTopLevelTransforms(): List<TopLevelTransform> {
+private fun Node<*>.findTopLevelTransforms(): List<TopLevelTransform> {
     val myTransforms: List<TopLevelTransform> = annotations.filterIsInstance<TopLevelTransform>()
     return when (this) {
-        is dev.minutest.Test<*> -> myTransforms
-        is dev.minutest.Context<*, *> -> myTransforms + this.children.flatMap { it.findTopLevelTransforms() }
+        is Test<*> -> myTransforms
+        is Context<*, *> -> myTransforms + this.children.flatMap { it.findTopLevelTransforms() }
     }
 }

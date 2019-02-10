@@ -1,6 +1,9 @@
 
 package dev.minutest.junit
 
+import dev.minutest.Context
+import dev.minutest.Node
+import dev.minutest.Test
 import dev.minutest.internal.RootExecutor
 import dev.minutest.internal.TestExecutor
 import dev.minutest.internal.TopLevelContextBuilder
@@ -43,25 +46,25 @@ fun <F> TopLevelContextBuilder<F>.toTestFactory() = testFactoryFor(this)
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-private fun <F> dev.minutest.Node<F>.toStreamOfDynamicNodes(executor: TestExecutor<F>) = when (this) {
-    is dev.minutest.Context<F, *> -> this.toStreamOfDynamicNodes(executor)
-    is dev.minutest.Test<F> -> Stream.of(this.toDynamicNode(executor))
+private fun <F> Node<F>.toStreamOfDynamicNodes(executor: TestExecutor<F>) = when (this) {
+    is Context<F, *> -> this.toStreamOfDynamicNodes(executor)
+    is Test<F> -> Stream.of(this.toDynamicNode(executor))
 }
 
-private fun <PF, F> dev.minutest.Context<PF, F>.toStreamOfDynamicNodes(executor: TestExecutor<PF>): Stream<out DynamicNode> =
+private fun <PF, F> Context<PF, F>.toStreamOfDynamicNodes(executor: TestExecutor<PF>): Stream<out DynamicNode> =
     children.toStreamOfDynamicNodes(this, executor.andThen(this))
 
-private fun <F> Iterable<dev.minutest.Node<F>>.toStreamOfDynamicNodes(parent: dev.minutest.Context<*, F>, executor: TestExecutor<F>) =
+private fun <F> Iterable<Node<F>>.toStreamOfDynamicNodes(parent: Context<*, F>, executor: TestExecutor<F>) =
     asSequence()
         .map { it.toDynamicNode(executor) }
         .asStream()
         .onClose { parent.close() }
 
-private fun <F> dev.minutest.Node<F>.toDynamicNode(executor: TestExecutor<F>): DynamicNode = when (this) {
-    is dev.minutest.Test<F> -> dynamicTest(name) {
+private fun <F> Node<F>.toDynamicNode(executor: TestExecutor<F>): DynamicNode = when (this) {
+    is Test<F> -> dynamicTest(name) {
         executor.runTest(this)
     }
-    is dev.minutest.Context<F, *> -> dynamicContainer(name, this.toStreamOfDynamicNodes(executor))
+    is Context<F, *> -> dynamicContainer(name, this.toStreamOfDynamicNodes(executor))
 }
 
 

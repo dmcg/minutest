@@ -1,29 +1,32 @@
 package dev.minutest.experimental
 
+import dev.minutest.Context
+import dev.minutest.Node
 import dev.minutest.NodeTransform
+import dev.minutest.Test
 
 
 object SKIP : TestAnnotation, NodeTransform {
-    override fun <F> applyTo(node: dev.minutest.Node<F>): dev.minutest.Node<F> = node.skipped()
+    override fun <F> applyTo(node: Node<F>): Node<F> = node.skipped()
 }
 
 object FOCUS : TestAnnotation, TopLevelTransform {
-    override fun applyTo(node: dev.minutest.Node<Unit>): dev.minutest.Node<Unit> = when (node) {
-        is dev.minutest.Context<Unit, *> ->
+    override fun applyTo(node: Node<Unit>): Node<Unit> = when (node) {
+        is Context<Unit, *> ->
             node.withTransformedChildren(Inexcluded(defaultToSkip = node.hasAFocusedChild()))
-        is dev.minutest.Test<Unit> ->
+        is Test<Unit> ->
             TODO("skipAndFocus on root as test")
     }
 }
 
 private class Inexcluded(val defaultToSkip: Boolean) : NodeTransform {
-    override fun <F> applyTo(node: dev.minutest.Node<F>): dev.minutest.Node<F> =
+    override fun <F> applyTo(node: Node<F>): Node<F> =
         when (node) {
-            is dev.minutest.Context<F, *> -> applyToContext(node)
-            is dev.minutest.Test<F> -> applyToTest(node)
+            is Context<F, *> -> applyToContext(node)
+            is Test<F> -> applyToTest(node)
         }
     
-    private fun <PF, F> applyToContext(node: dev.minutest.Context<PF, F>): dev.minutest.Node<PF> =
+    private fun <PF, F> applyToContext(node: Context<PF, F>): Node<PF> =
         when {
             FOCUS.appliesTo(node) ->
                 node.withTransformedChildren(Inexcluded(defaultToSkip = false))
@@ -34,7 +37,7 @@ private class Inexcluded(val defaultToSkip: Boolean) : NodeTransform {
                 node.withTransformedChildren(this)
         }
     
-    private fun <F> applyToTest(node: dev.minutest.Test<F>): dev.minutest.Test<F> =
+    private fun <F> applyToTest(node: Test<F>): Test<F> =
         when {
             FOCUS.appliesTo(node) -> node
             defaultToSkip -> node.skipped()
@@ -42,8 +45,8 @@ private class Inexcluded(val defaultToSkip: Boolean) : NodeTransform {
         }
 }
 
-private fun dev.minutest.Context<*, *>.hasAFocusedChild() =
+private fun Context<*, *>.hasAFocusedChild() =
     this.hasA(FOCUS::appliesTo)
 
-private fun <F> dev.minutest.Node<F>.skipped() =
-    dev.minutest.Test<F>(name, annotations) { _, _ -> throw MinutestSkippedException() }
+private fun <F> Node<F>.skipped() =
+    Test<F>(name, annotations) { _, _ -> throw MinutestSkippedException() }

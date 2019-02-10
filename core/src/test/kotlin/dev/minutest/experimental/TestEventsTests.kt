@@ -1,9 +1,6 @@
 package dev.minutest.experimental
 
-import dev.minutest.TestDescriptor
-import dev.minutest.assertLogged
-import dev.minutest.executeTests
-import dev.minutest.rootContext
+import dev.minutest.*
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
@@ -38,7 +35,7 @@ class TestEventsTests {
             log.add("Skipped " + testDescriptor.fullName())
         }
 
-        override fun <PF, F> contextClosed(context: dev.minutest.Context<PF, F>) {
+        override fun <PF, F> contextClosed(context: Context<PF, F>) {
             log.add("Closed " + context.name)
         }
     }

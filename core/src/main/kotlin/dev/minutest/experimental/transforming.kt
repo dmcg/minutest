@@ -1,9 +1,12 @@
 package dev.minutest.experimental
 
+import dev.minutest.Context
+import dev.minutest.Node
 import dev.minutest.NodeTransform
+import dev.minutest.Test
 
 
-fun <F> dev.minutest.Node<F>.transformedBy(annotations: List<TestAnnotation>): dev.minutest.Node<F> {
+fun <F> Node<F>.transformedBy(annotations: List<TestAnnotation>): Node<F> {
     val transforms: List<NodeTransform> = annotations.filterIsInstance<NodeTransform>()
     return if (transforms.isEmpty())
         this
@@ -12,11 +15,11 @@ fun <F> dev.minutest.Node<F>.transformedBy(annotations: List<TestAnnotation>): d
     }
 }
 
-fun dev.minutest.Node<*>.hasA(predicate: (dev.minutest.Node<*>) -> Boolean): Boolean = when (this) {
-    is dev.minutest.Test<*> -> predicate(this)
-    is dev.minutest.Context<*, *> -> hasA(predicate)
+fun Node<*>.hasA(predicate: (Node<*>) -> Boolean): Boolean = when (this) {
+    is Test<*> -> predicate(this)
+    is Context<*, *> -> hasA(predicate)
 }
 
-fun dev.minutest.Context<*, *>.hasA(predicate: (dev.minutest.Node<*>) -> Boolean): Boolean {
+fun Context<*, *>.hasA(predicate: (Node<*>) -> Boolean): Boolean {
     return predicate(this) || children.find { it.hasA(predicate) } != null
 }

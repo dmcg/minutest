@@ -1,5 +1,7 @@
 package dev.minutest.experimental
 
+import dev.minutest.ContextBuilder
+import dev.minutest.NodeBuilder
 import dev.minutest.TestDescriptor
 import java.io.File
 import java.io.IOException
@@ -8,10 +10,10 @@ import java.nio.file.Paths
 import kotlin.random.Random
 
 
-fun <F> dev.minutest.ContextBuilder<F>.randomTest(
+fun <F> ContextBuilder<F>.randomTest(
     name: String,
     block: F.(rng: Random, testDescriptor: TestDescriptor) -> F
-): dev.minutest.NodeBuilder<F> =
+): NodeBuilder<F> =
     test(name) { testDescriptor ->
         val seedFile = testDescriptor.testStateFile("random-seed")
         

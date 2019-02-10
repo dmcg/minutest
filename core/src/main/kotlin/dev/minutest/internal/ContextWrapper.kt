@@ -1,24 +1,21 @@
 package dev.minutest.internal
 
-import dev.minutest.NodeTransform
-import dev.minutest.TestDescriptor
-import dev.minutest.Testlet
-import dev.minutest.applyTo
+import dev.minutest.*
 import dev.minutest.experimental.TestAnnotation
 
 internal data class ContextWrapper<PF, F>(
     override val name: String,
     override val annotations: List<TestAnnotation>,
-    override val children: List<dev.minutest.Node<F>>,
+    override val children: List<Node<F>>,
     val runner: (Testlet<F>, parentFixture: PF, TestDescriptor) -> F,
     val onClose: () -> Unit
-) : dev.minutest.Context<PF, F>() {
+) : Context<PF, F>() {
 
     constructor(
-        delegate: dev.minutest.Context<PF, F>,
+        delegate: Context<PF, F>,
         name: String = delegate.name,
         properties: List<TestAnnotation> = delegate.annotations,
-        children: List<dev.minutest.Node<F>> = delegate.children,
+        children: List<Node<F>> = delegate.children,
         runner: (Testlet<F>, parentFixture: PF, TestDescriptor) -> F = delegate::runTest,
         onClose: () -> Unit = delegate::close
         ) : this(name, properties, children, runner, onCloseFor(delegate, onClose))
@@ -35,7 +32,7 @@ internal data class ContextWrapper<PF, F>(
 }
 
 // We always want to call close on the delegate, but only once
-private fun <PF, F> onCloseFor(delegate: dev.minutest.Context<PF, F>, specified: () -> Unit): () -> Unit =
+private fun <PF, F> onCloseFor(delegate: Context<PF, F>, specified: () -> Unit): () -> Unit =
     if (specified == delegate::close) specified else {
         {
             delegate.close()
