@@ -1,7 +1,6 @@
 package dev.minutest.experimental
 
-import dev.minutest.NodeTransform
-import dev.minutest.TestDescriptor
+import dev.minutest.*
 import dev.minutest.internal.ContextWrapper
 import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
@@ -14,24 +13,24 @@ interface TestEventListener {
     fun <F> testSkipped(fixture: F, testDescriptor: TestDescriptor, t: IncompleteExecutionException) {}
     fun <F> testAborted(fixture: F, testDescriptor: TestDescriptor, t: TestAbortedException) {}
     fun <F> testFailed(fixture: F, testDescriptor: TestDescriptor, t: Throwable) {}
-    fun <PF, F> contextClosed(context: dev.minutest.Context<PF, F>) {}
+    fun <PF, F> contextClosed(context: Context<PF, F>) {}
 }
 
 class Telling(private val listener: TestEventListener) : TestAnnotation, NodeTransform {
-    override fun <F> applyTo(node: dev.minutest.Node<F>): dev.minutest.Node<F> = node.telling(listener)
+    override fun <F> applyTo(node: Node<F>): Node<F> = node.telling(listener)
 }
 
-fun <F> telling(listener: TestEventListener): (dev.minutest.Node<F>) -> dev.minutest.Node<F> = { node ->
+fun <F> telling(listener: TestEventListener): (Node<F>) -> Node<F> = { node ->
     node.telling(listener)
 }
 
-private fun <PF, F> dev.minutest.Context<PF, F>.telling(listener: TestEventListener): dev.minutest.Context<PF, F> =
+private fun <PF, F> Context<PF, F>.telling(listener: TestEventListener): Context<PF, F> =
     ContextWrapper(this,
         children = children.map { it.telling(listener) },
         onClose = { listener.contextClosed(this@telling) }
     )
 
-private fun <F> dev.minutest.Test<F>.telling(listener: TestEventListener) = copy(
+private fun <F> Test<F>.telling(listener: TestEventListener) = copy(
     f = { fixture, testDescriptor ->
         listener.testStarting(fixture, testDescriptor)
         try {
@@ -54,9 +53,9 @@ private fun <F> dev.minutest.Test<F>.telling(listener: TestEventListener) = copy
     }
 )
 
-private fun <F> dev.minutest.Node<F>.telling(listener: TestEventListener): dev.minutest.Node<F> =
+private fun <F> Node<F>.telling(listener: TestEventListener): Node<F> =
     when (this) {
-        is dev.minutest.Test<F> -> this.telling(listener)
-        is dev.minutest.Context<F, *> -> this.telling(listener)
+        is Test<F> -> this.telling(listener)
+        is Context<F, *> -> this.telling(listener)
     }
 
