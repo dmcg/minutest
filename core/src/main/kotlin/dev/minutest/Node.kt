@@ -10,12 +10,12 @@ import dev.minutest.experimental.TestAnnotation
  */
 sealed class Node<F> {
     abstract val name: String
-    abstract val annotations: List<TestAnnotation>
+    internal abstract val annotations: List<TestAnnotation>
 
     /**
      * Return a copy of this node with any children transformed.
      */
-    abstract fun withTransformedChildren(transform: NodeTransform): Node<F>
+    internal abstract fun withTransformedChildren(transform: NodeTransform): Node<F>
 }
 
 /**
