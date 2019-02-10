@@ -97,7 +97,7 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Internal implementation, only public to be accessible to inline functions.
      */
-    abstract fun <G> internalCreateContext(
+    @PublishedApi internal abstract fun <G> internalCreateContext(
         name: String,
         type: FixtureType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
