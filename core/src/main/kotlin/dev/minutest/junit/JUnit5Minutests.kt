@@ -22,7 +22,7 @@ interface JUnit5Minutests {
      * Provided so that JUnit will run the tests
      */
     @TestFactory
-    fun tests(): Stream<out DynamicNode> = tests.let { testsFromVal ->
+    fun minutests(): Stream<out DynamicNode> = tests.let { testsFromVal ->
         when  {
             testsFromVal != null -> testsFromVal.buildNode().toStreamOfDynamicNodes(RootExecutor)
             else -> this.rootContextFromMethods().toStreamOfDynamicNodes(RootExecutor)

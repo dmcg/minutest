@@ -13,7 +13,7 @@ class JUnit5RunnerTests : JUnit5Minutests {
             checkRunnersExampleLog(runTestsInClass<JUnit5RunnersThing>(JupiterTestEngine.ENGINE_ID),
                 "JUnit Jupiter",
                 "JUnit5RunnersThing",
-                "tests()")
+                "minutests()")
         }
     }
 }
