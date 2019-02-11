@@ -1,7 +1,6 @@
 package dev.minutest
 
 import dev.minutest.internal.FixtureType
-import dev.minutest.internal.MinutestMarker
 import dev.minutest.internal.askType
 
 /**
@@ -12,7 +11,6 @@ typealias ContextBuilder<F> = TestContextBuilder<*, F>
 /**
  * A [ContextBuilder] where the type of the parent fixture PF is also accessible.
  */
-@MinutestMarker
 abstract class TestContextBuilder<PF, F> {
 
     /**
