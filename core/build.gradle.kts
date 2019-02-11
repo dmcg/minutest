@@ -11,7 +11,7 @@ plugins {
     kotlin("jvm")
     maven
     `maven-publish`
-    id("com.jfrog.bintray") version "1.8.1"
+    id("com.jfrog.bintray") version "1.8.4"
 }
 
 dependencies {
