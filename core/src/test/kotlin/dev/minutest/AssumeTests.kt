@@ -10,7 +10,7 @@ import samples.assumptions.JUnit5AssumptionsTest
 
 class AssumeTests : JUnit5Minutests {
 
-    override val tests = rootContext<Unit> {
+    fun tests() = rootContext<Unit> {
         context("JUnit 4") {
             test("with JUnit 4 assumptions") {
                 checkLog(runTestsInClass<JUnit4AssumptionsTest>(VintageTestDescriptor.ENGINE_ID))

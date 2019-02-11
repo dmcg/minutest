@@ -14,7 +14,7 @@ class JunitRulesExampleTests : JUnit5Minutests {
         val testFolder = TemporaryFolder()
     }
 
-    override val tests = rootContext<Fixture> {
+    fun tests() = rootContext<Fixture> {
 
         fixture { Fixture() }
 

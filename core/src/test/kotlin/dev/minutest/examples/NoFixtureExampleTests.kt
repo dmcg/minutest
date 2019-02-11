@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 
 class NoFixtureExampleTests : JUnit5Minutests {
 
-    override val tests = rootContext<Unit> {
+    fun tests() = rootContext<Unit> {
 
         context("addition") {
             test("positive + positive") {

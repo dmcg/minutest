@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 
 class NullableFixtureTests : JUnit5Minutests {
 
-    override val tests = rootContext<String?> {
+    fun tests() = rootContext<String?> {
         fixture { null }
         test("fixture is null") {
             assertNull(this)

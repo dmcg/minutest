@@ -16,6 +16,7 @@ import kotlin.streams.asStream
 
 interface JUnit5Minutests {
 
+    @Deprecated("use a function returning the result of rootContext instead")
     val tests: RootContextBuilder<*>? get() = null // a clue to what to override
 
     /**

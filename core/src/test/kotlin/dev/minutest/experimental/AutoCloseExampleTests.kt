@@ -10,7 +10,7 @@ class AutoCloseExampleTests : JUnit5Minutests {
 
     val tempFile = Files.createTempFile("temp", ".txt").toFile()
 
-    override val tests = rootContext<Unit> {
+    fun tests() = rootContext<Unit> {
 
         // autoclose values are lazily created and disposed after all tests in the context are complete
         val sharedResource: BufferedWriter by autoClose {

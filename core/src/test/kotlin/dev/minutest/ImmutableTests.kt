@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 
 class ImmutableTests : JUnit5Minutests {
 
-    override val tests = rootContext<List<String>> {
+    fun tests() = rootContext<List<String>> {
         fixture { emptyList() }
 
         after {

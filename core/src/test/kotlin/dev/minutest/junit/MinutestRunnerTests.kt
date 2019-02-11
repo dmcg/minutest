@@ -6,7 +6,7 @@ import dev.minutest.runTestsInClass
 
 class MinutestRunnerTests : JUnit5Minutests {
 
-    override val tests = rootContext<Unit> {
+    fun tests() = rootContext<Unit> {
         test("MinutestRunner runs tests") {
             checkRunnersExampleLog(
                 runTestsInClass("samples.runners.MinutestRunnersThing", MinutestTestEngine.engineId),

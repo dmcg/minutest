@@ -35,7 +35,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
         )
     }
 
-    override val tests = rootContext<Fixture> {
+    fun tests() = rootContext<Fixture> {
         fixture { Fixture() }
 
         context("key not turned") {

@@ -28,7 +28,7 @@ fun ContextBuilder<MutableCollection<String>>.behavesAsMutableCollection() {
 // Now tests can supply the fixture and invoke the function to create the tests to verify the contract.
 class ArrayListTests : JUnit5Minutests {
 
-    override val tests = rootContext<MutableCollection<String>> {
+    fun tests() = rootContext<MutableCollection<String>> {
         fixture {
             ArrayList()
         }
@@ -40,7 +40,7 @@ class ArrayListTests : JUnit5Minutests {
 // We can reuse the contract for different collections.
 class LinkedListTests : JUnit5Minutests {
 
-    override val tests = rootContext<MutableCollection<String>> {
+    fun tests() = rootContext<MutableCollection<String>> {
         fixture {
             LinkedList()
         }

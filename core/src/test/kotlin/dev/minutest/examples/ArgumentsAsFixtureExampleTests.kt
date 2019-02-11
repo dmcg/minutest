@@ -8,7 +8,7 @@ class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
 
     data class Arguments(val l: Int, val r: Int)
 
-    override val tests = rootContext<Arguments> {
+    fun tests() = rootContext<Arguments> {
 
         context("positive positive") {
             fixture {

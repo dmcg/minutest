@@ -9,7 +9,7 @@ class ParentFixtureExampleTests : JUnit5Minutests {
 
     data class Fixture(var fruit: String)
 
-    override val tests = rootContext<Fixture> {
+    fun tests() = rootContext<Fixture> {
         fixture {
             Fixture("banana")
         }

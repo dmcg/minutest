@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 
 class ReflectingTests : JUnit5Minutests {
 
-    override val tests = rootContext<Unit> {
+    fun tests() = rootContext<Unit> {
 
         context("asKType") {
             test("captures class") {

@@ -10,7 +10,7 @@ class DerivedContextTests : JUnit5Minutests {
 
     data class DerivedFixture(val fixture: Fixture, val thing: String)
 
-    override val tests = rootContext<Fixture> {
+    fun tests() = rootContext<Fixture> {
 
         fixture { Fixture("banana") }
 

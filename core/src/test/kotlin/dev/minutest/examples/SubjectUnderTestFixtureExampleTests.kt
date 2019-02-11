@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.*
 
 class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
 
-    override val tests = rootContext<List<String>> {
+    fun tests() = rootContext<List<String>> {
 
         context("empty") {
             fixture {

@@ -14,7 +14,7 @@ internal fun Any.rootContextFromMethods(): Node<Unit> {
     val testMethodsAsNodes: List<RootContextBuilder<*>> = testMethods()
     val singleNode = when {
         testMethodsAsNodes.isEmpty() -> error("No test methods found")
-        testMethodsAsNodes.size > 1 -> error("More than one test method found")
+        testMethodsAsNodes.size > 1 -> error("More that one test method is not yet supported")
         else -> testMethodsAsNodes.first()
     }
     return singleNode.buildNode()

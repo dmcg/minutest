@@ -10,7 +10,7 @@ import samples.runners.expectedRunnersLog
 
 class JUnit4RunnerTests : JUnit5Minutests {
 
-    override val tests = rootContext<Unit> {
+    fun tests() = rootContext<Unit> {
         test("JUnit 4 runs tests") {
             checkRunnersExampleLog(runTestsInClass<JUnit4RunnersThing>(VintageTestDescriptor.ENGINE_ID),
                 "JUnit Vintage",

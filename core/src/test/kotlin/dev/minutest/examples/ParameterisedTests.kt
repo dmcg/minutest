@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 
 class ParameterisedTests : JUnit5Minutests {
 
-    override val tests = rootContext<Unit> {
+    fun tests() = rootContext<Unit> {
 
         // Once we are in a context, running the same tests for multiple parameters is
         // as easy as calling `test()` for each one.

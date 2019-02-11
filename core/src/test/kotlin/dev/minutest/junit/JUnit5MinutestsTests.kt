@@ -19,7 +19,7 @@ class JUnit5TestsWithFunction : JUnit5Minutests {
 
 class JUnit5TestsWithPlainFixture : JUnit5Minutests {
 
-    override val tests = rootContext<String> {
+    fun tests() = rootContext<String> {
         fixture { "banana" }
 
         test("test") {
@@ -30,7 +30,7 @@ class JUnit5TestsWithPlainFixture : JUnit5Minutests {
 
 class JUnit5TestsWithGenericFixture : JUnit5Minutests {
 
-    override val tests = rootContext<Stack<String>> {
+    fun tests() = rootContext<Stack<String>> {
         fixture { Stack() }
 
         test("test") {
@@ -41,7 +41,7 @@ class JUnit5TestsWithGenericFixture : JUnit5Minutests {
 
 class JUnit5TestsWithNullableFixture : JUnit5Minutests {
 
-    override val tests = rootContext<String?> {
+    fun tests() = rootContext<String?> {
         fixture { "banana" }
 
         test("test") {

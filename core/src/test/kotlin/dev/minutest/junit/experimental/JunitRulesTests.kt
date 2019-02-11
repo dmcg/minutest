@@ -22,7 +22,7 @@ class JunitRulesTests : JUnit5Minutests {
         val rule = TestRule()
     }
 
-    override val tests = rootContext<Fixture>(name = javaClass.canonicalName) {
+    fun tests() = rootContext<Fixture>(name = javaClass.canonicalName) {
         fixture {
             Fixture()
         }

@@ -11,7 +11,7 @@ class DynamicTests : JUnit5Minutests {
         val log: MutableList<String> = mutableListOf()
     )
 
-    override val tests = rootContext<Fixture> {
+    fun tests() = rootContext<Fixture> {
         fixture { Fixture("banana") }
 
         context("same fixture for each") {

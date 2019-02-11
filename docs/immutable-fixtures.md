@@ -8,7 +8,7 @@ Are you a functional programmer slumming it with Kotlin? Minutest allows immutab
 class ImmutableExampleTests : JUnit5Minutests {
 
     // If you like this FP stuff, you may want to test an immutable fixture.
-    override val tests = rootContext<List<String>> {
+    fun tests() = rootContext<List<String>> {
 
         // List<String> is immutable
         fixture { emptyList() }

@@ -5,7 +5,7 @@ import dev.minutest.rootContext
 
 class JUnit5RunnersThing : JUnit5Minutests {
 
-    override val tests = rootContext<Unit> {
+    fun tests() = rootContext<Unit> {
         runnersExample()
     }
 }

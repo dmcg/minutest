@@ -8,7 +8,7 @@ import samples.runners.JUnit5RunnersThing
 
 class JUnit5RunnerTests : JUnit5Minutests {
 
-    override val tests = rootContext<Unit> {
+    fun tests() = rootContext<Unit> {
         test("JUnit 5 runs tests") {
             checkRunnersExampleLog(runTestsInClass<JUnit5RunnersThing>(JupiterTestEngine.ENGINE_ID),
                 "JUnit Jupiter",

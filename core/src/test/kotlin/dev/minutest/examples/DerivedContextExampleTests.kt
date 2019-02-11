@@ -13,7 +13,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
         override fun toString() = "${fruit.name} $name"
     }
 
-    override val tests = rootContext<Fruit> {
+    fun tests() = rootContext<Fruit> {
 
         fixture {
             Fruit("banana")

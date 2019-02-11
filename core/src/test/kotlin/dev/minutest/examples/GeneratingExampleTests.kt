@@ -57,7 +57,7 @@ class GeneratingExampleTests : JUnit5Minutests {
         "    has the item on top"
     )
 
-    override val tests = rootContext<StringStack>(checkedAgainst { assertEquals(summary, it) }) {
+    fun tests() = rootContext<StringStack>(checkedAgainst { assertEquals(summary, it) }) {
 
         fixture { StringStack() }
 

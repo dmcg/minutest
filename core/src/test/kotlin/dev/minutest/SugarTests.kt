@@ -9,7 +9,7 @@ class SugarTests : JUnit5Minutests {
     data class Fruit(val name: String)
     data class Conserve(val type: String, val fruit: Fruit)
 
-    override val tests = rootContext<Fruit> {
+    fun tests() = rootContext<Fruit> {
 
         fixture {
             Fruit("blackcurrent")
