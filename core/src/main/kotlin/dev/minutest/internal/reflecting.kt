@@ -5,13 +5,11 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
 
-inline fun <reified G> askType() = G::class.toFixtureType(null is G)
+@PublishedApi internal inline fun <reified G> askType() = FixtureType(G::class, null is G)
 
-data class FixtureType(internal val classifier: KClass<*>, internal val isMarkedNullable: Boolean)
+@PublishedApi internal data class FixtureType(internal val classifier: KClass<*>, internal val isMarkedNullable: Boolean)
 
-fun KClass<*>.toFixtureType(isNullable: Boolean) = FixtureType(this, isNullable)
-
-fun FixtureType.creator(): (() -> Any)? {
+internal fun FixtureType.creator(): (() -> Any)? {
     val classifier = this.classifier
     if (classifier == Unit::class) return { Unit } // shortcut as we do this a lot
     val objectInstance = try {
