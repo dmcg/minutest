@@ -1,7 +1,6 @@
 package dev.minutest.experimental
 
 import dev.minutest.*
-import dev.minutest.internal.ContextWrapper
 import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
 import org.opentest4j.TestSkippedException

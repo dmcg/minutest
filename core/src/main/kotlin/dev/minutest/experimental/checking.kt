@@ -2,7 +2,6 @@ package dev.minutest.experimental
 
 import dev.minutest.Context
 import dev.minutest.Node
-import dev.minutest.internal.ContextWrapper
 
 fun <F> checkedAgainst(
     logger: TestLogger = TestLogger(mutableListOf(), prefixer = TestLogger.noSymbols),

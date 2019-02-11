@@ -1,7 +1,6 @@
-package dev.minutest.internal
+package dev.minutest.experimental
 
 import dev.minutest.*
-import dev.minutest.experimental.TestAnnotation
 
 internal data class ContextWrapper<PF, F>(
     override val name: String,
