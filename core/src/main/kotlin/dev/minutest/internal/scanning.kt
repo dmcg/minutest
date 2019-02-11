@@ -10,7 +10,7 @@ import kotlin.reflect.jvm.kotlinFunction
 
 internal data class ScannedPackageContext(
     val packageName: String,
-    private val contextFuns: List<KFunction0<TopLevelContextBuilder<Unit>>>,
+    private val contextFuns: List<KFunction0<RootContextBuilder<Unit>>>,
     override val annotations: List<TestAnnotation> = emptyList()
 ) : Context<Unit, Unit>() {
 
@@ -18,7 +18,7 @@ internal data class ScannedPackageContext(
 
     override val children: List<Node<Unit>> by lazy {
         contextFuns.map { f ->
-            f().copy(name = f.name).buildNode()
+            (f() as MinutestRootContextBuilder<*>).copy(name = f.name).buildNode()
         }
     }
 
@@ -50,14 +50,14 @@ internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo)
         .map { (packageName, functions) -> ScannedPackageContext(packageName, functions) }
 }
 
-private fun MethodInfo.toKotlinFunction(): KFunction0<TopLevelContextBuilder<Unit>>? {
+private fun MethodInfo.toKotlinFunction(): KFunction0<RootContextBuilder<Unit>>? {
     @Suppress("UNCHECKED_CAST")
-    return loadClassAndGetMethod().kotlinFunction as? KFunction0<TopLevelContextBuilder<Unit>>
+    return loadClassAndGetMethod().kotlinFunction as? KFunction0<RootContextBuilder<Unit>>
 }
 
 private fun MethodInfo.definesTopLevelContext() =
     isStatic && isPublic && parameterInfo.isEmpty() && !isBridge
-        && typeSignatureOrTypeDescriptor.resultType.name() == TopLevelContextBuilder::class.java.name
+        && typeSignatureOrTypeDescriptor.resultType.name() == RootContextBuilder::class.java.name
 
 private fun TypeSignature.name() =
     (this as? ClassRefTypeSignature)?.baseClassName

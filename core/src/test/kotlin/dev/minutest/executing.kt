@@ -1,6 +1,5 @@
 package dev.minutest
 
-import dev.minutest.internal.TopLevelContextBuilder
 import dev.minutest.junit.toTestFactory
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicNode
@@ -31,7 +30,7 @@ fun executeTests(tests: Stream<out DynamicNode>,
     return exceptions
 }
 
-fun executeTests(root: TopLevelContextBuilder<*>) = executeTests(root.toTestFactory())
+fun executeTests(root: RootContextBuilder<*>) = executeTests(root.toTestFactory())
 
 inline fun <reified T : Any> runTestsInClass(engineID: String): List<String> = runTestsInClass(
     discoveryRequest(engineID, DiscoverySelectors.selectClass(T::class.java)))

@@ -2,6 +2,9 @@ package dev.minutest
 
 import dev.minutest.experimental.TestAnnotation
 
+/**
+ * Common interface for the DSL components that build [Node]s.
+ */
 interface NodeBuilder<F> {
     fun buildNode(): Node<F>
 
@@ -10,3 +13,8 @@ interface NodeBuilder<F> {
      */
     val annotations: MutableList<TestAnnotation>
 }
+
+/**
+ * Marker interface for the root [Context] builder.
+ */
+interface RootContextBuilder<F> : NodeBuilder<Unit>

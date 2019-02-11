@@ -1,17 +1,17 @@
 package dev.minutest.junit
 
 import dev.minutest.Node
-import dev.minutest.internal.TopLevelContextBuilder
+import dev.minutest.RootContextBuilder
 import kotlin.reflect.full.memberFunctions
 
 
 @Suppress("UNCHECKED_CAST")
-internal fun Any.testMethods(): List<TopLevelContextBuilder<*>> = this::class.memberFunctions
-    .filter { it.returnType.classifier == TopLevelContextBuilder::class }
-    .map { it.call(this) as TopLevelContextBuilder<*> }
+internal fun Any.testMethods(): List<RootContextBuilder<*>> = this::class.memberFunctions
+    .filter { it.returnType.classifier == RootContextBuilder::class }
+    .map { it.call(this) as RootContextBuilder<*> }
 
 internal fun Any.rootContextFromMethods(): Node<Unit> {
-    val testMethodsAsNodes: List<TopLevelContextBuilder<*>> = testMethods()
+    val testMethodsAsNodes: List<RootContextBuilder<*>> = testMethods()
     val singleNode = when {
         testMethodsAsNodes.isEmpty() -> error("No test methods found")
         testMethodsAsNodes.size > 1 -> error("More than one test method found")

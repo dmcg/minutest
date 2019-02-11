@@ -1,10 +1,6 @@
 package dev.minutest.experimental
 
-import dev.minutest.TestDescriptor
-import dev.minutest.assertLogged
-import dev.minutest.executeTests
-import dev.minutest.internal.TopLevelContextBuilder
-import dev.minutest.rootContext
+import dev.minutest.*
 import org.junit.jupiter.api.Test
 import kotlin.test.fail
 
@@ -133,7 +129,7 @@ class SkipAndFocusTests {
         )
     }
 
-    private fun checkLog(tests: TopLevelContextBuilder<*>, vararg expected: String) {
+    private fun checkLog(tests: RootContextBuilder<*>, vararg expected: String) {
         executeTests(tests)
         assertLogged(log, *expected)
     }

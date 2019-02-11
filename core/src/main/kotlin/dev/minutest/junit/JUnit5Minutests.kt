@@ -3,10 +3,10 @@ package dev.minutest.junit
 
 import dev.minutest.Context
 import dev.minutest.Node
+import dev.minutest.RootContextBuilder
 import dev.minutest.Test
 import dev.minutest.internal.RootExecutor
 import dev.minutest.internal.TestExecutor
-import dev.minutest.internal.TopLevelContextBuilder
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
@@ -16,7 +16,7 @@ import kotlin.streams.asStream
 
 interface JUnit5Minutests {
 
-    val tests: TopLevelContextBuilder<*>? get() = null // a clue to what to override
+    val tests: RootContextBuilder<*>? get() = null // a clue to what to override
 
     /**
      * Provided so that JUnit will run the tests
@@ -33,16 +33,16 @@ interface JUnit5Minutests {
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory].
  *
- * @see [NodeBuilder<Unit>#testFactory()]
+ * @see [RootContextBuilder#testFactory()]
  */
-fun <F> testFactoryFor(root: TopLevelContextBuilder<F>) = root.buildNode().toStreamOfDynamicNodes(RootExecutor)
+fun testFactoryFor(root: RootContextBuilder<*>): Stream<out DynamicNode> = root.buildNode().toStreamOfDynamicNodes(RootExecutor)
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]
  *
- * @see [testFactoryFor(NodeBuilder<Unit>)]
+ * @see [testFactoryFor(RootContextBuilder)]
  */
-fun <F> TopLevelContextBuilder<F>.toTestFactory() = testFactoryFor(this)
+fun RootContextBuilder<*>.toTestFactory() = testFactoryFor(this)
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 

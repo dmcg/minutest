@@ -4,24 +4,24 @@ import dev.minutest.*
 import dev.minutest.experimental.TestAnnotation
 import dev.minutest.experimental.TopLevelTransform
 
-data class TopLevelContextBuilder<F>(
+internal data class MinutestRootContextBuilder<F>(
     private val name: String,
     private val type: FixtureType,
     private val builder: TestContextBuilder<Unit, F>.() -> Unit,
     private val transform: (Node<Unit>) -> Node<Unit>,
     override val annotations: MutableList<TestAnnotation> = mutableListOf()
-) : NodeBuilder<Unit> {
+) : RootContextBuilder<F> {
 
     override fun buildNode(): Node<Unit> {
         // we need to apply our annotations to the root, then run the transforms
-        val topLevelContext = topLevelContext(name, type, builder).apply {
-            annotations.addAll(this@TopLevelContextBuilder.annotations)
+        val rootBuilder = rootBuilder(name, type, builder).apply {
+            annotations.addAll(this@MinutestRootContextBuilder.annotations)
         }
-        val untransformed = topLevelContext.buildNode()
+        val untransformed = rootBuilder.buildNode()
         val transformsInTree: List<TopLevelTransform> = untransformed.findTopLevelTransforms()
         val allTransforms: List<TopLevelTransform> = transformsInTree + transform.asTopLevelTransform()
         val deduplicatedTransforms = LinkedHashSet(allTransforms)
-        val transform = deduplicatedTransforms.reduce{ a, b -> a.then(b) }
+        val transform = deduplicatedTransforms.reduce { a, b -> a.then(b) }
         return transform.applyTo(untransformed)
     }
 }
@@ -32,11 +32,8 @@ private fun ((Node<Unit>) -> Node<Unit>).asTopLevelTransform() =
             this@asTopLevelTransform(node)
     }
 
-private fun <F> topLevelContext(
-    name: String,
-    type: FixtureType,
-    builder: TestContextBuilder<Unit, F>.() -> Unit
-) = MinutestContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type)).apply(builder)
+private fun <F> rootBuilder(name: String, type: FixtureType, builder: TestContextBuilder<Unit, F>.() -> Unit) =
+    MinutestContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type)).apply(builder)
 
 @Suppress("UNCHECKED_CAST")
 private fun <F> fixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) -> F)? =
