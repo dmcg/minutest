@@ -1,22 +1,19 @@
 package dev.minutest.junit.experimental
 
-import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.junit.checkRunnersExampleLog
-import dev.minutest.rootContext
 import dev.minutest.runTestsInClass
+import org.junit.jupiter.api.Test
 import org.junit.vintage.engine.descriptor.VintageTestDescriptor
-import samples.runners.JUnit4RunnersThing
+import samples.runners.JUnit4Sample
 
 
-class JUnit4RunnerTests : JUnit5Minutests {
+class JUnit4RunnerTests {
 
-    fun tests() = rootContext<Unit> {
-        test("JUnit 4 runs tests") {
-            checkRunnersExampleLog(runTestsInClass<JUnit4RunnersThing>(
-                VintageTestDescriptor.ENGINE_ID),
-                "JUnit Vintage",
-                "JUnit4RunnersThing",
-                "root")
-        }
+    @Test fun test() {
+        checkRunnersExampleLog(
+            runTestsInClass<JUnit4Sample>(VintageTestDescriptor.ENGINE_ID),
+            "JUnit Vintage",
+            "JUnit4Sample",
+            "root")
     }
 }

@@ -1,9 +1,9 @@
 package samples.runners
 
-import dev.minutest.junit.JUnit5Minutests
+import dev.minutest.junit.experimental.JUnit4Minutests
 import dev.minutest.rootContext
 
-class JUnit5RunnersThing : JUnit5Minutests {
+class JUnit4Sample : JUnit4Minutests() {
 
     fun tests() = rootContext<Unit> {
         runnersExample()

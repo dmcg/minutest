@@ -1,20 +1,18 @@
 package dev.minutest.junit.experimental
 
-import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.junit.checkRunnersExampleLog
 import dev.minutest.rootContext
 import dev.minutest.runTestsInClass
+import org.junit.jupiter.api.Test
 
 
-class MinutestRunnerTests : JUnit5Minutests {
+class MinutestRunnerTests {
 
-    fun tests() = rootContext<Unit> {
-        test("MinutestRunner runs tests") {
-            checkRunnersExampleLog(
-                runTestsInClass("samples.runners.MinutestRunnersThing", MinutestTestEngine.engineId),
-                "Minutest",
-                "samples.runners",
-                "tests")
-        }
+    @Test fun test() = rootContext<Unit> {
+        checkRunnersExampleLog(
+            runTestsInClass("samples.runners.MinutestSample", MinutestTestEngine.engineId),
+            "Minutest",
+            "samples.runners",
+            "tests")
     }
 }

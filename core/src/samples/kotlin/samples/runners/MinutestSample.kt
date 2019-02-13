@@ -1,4 +1,4 @@
-@file:JvmName("MinutestRunnersThing")
+@file:JvmName("MinutestSample")
 package samples.runners
 
 import dev.minutest.rootContext
