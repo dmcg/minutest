@@ -1,5 +1,7 @@
-package dev.minutest.junit
+package dev.minutest.junit.experimental
 
+import dev.minutest.junit.JUnit5Minutests
+import dev.minutest.junit.checkRunnersExampleLog
 import dev.minutest.rootContext
 import dev.minutest.runTestsInClass
 
