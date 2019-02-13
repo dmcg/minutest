@@ -10,15 +10,15 @@ import kotlin.reflect.jvm.kotlinFunction
 
 internal data class ScannedPackageContext(
     val packageName: String,
-    private val contextFuns: List<KFunction0<RootContextBuilder<Unit>>>,
+    private val contextBuilderBuilders: List<() -> RootContextBuilder<*>>,
     override val annotations: List<TestAnnotation> = emptyList()
 ) : Context<Unit, Unit>() {
 
     override val name: String get() = packageName
 
     override val children: List<Node<Unit>> by lazy {
-        contextFuns.map { f ->
-            (f() as MinutestRootContextBuilder<*>).copy(name = f.name).buildNode()
+        contextBuilderBuilders.map { f ->
+            f().buildNode()
         }
     }
 
@@ -47,12 +47,12 @@ internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo)
         // Check Kotlin visibility because a public static Java method might have internal visibility in Kotlin
         .filter { it.visibility == PUBLIC }
         .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
-        .map { (packageName, functions) -> ScannedPackageContext(packageName, functions) }
+        .map { (packageName, functions) -> ScannedPackageContext(packageName, functions.renamed()) }
 }
 
-private fun MethodInfo.toKotlinFunction(): KFunction0<RootContextBuilder<Unit>>? {
+private fun MethodInfo.toKotlinFunction(): KFunction0<RootContextBuilder<*>>? {
     @Suppress("UNCHECKED_CAST")
-    return loadClassAndGetMethod().kotlinFunction as? KFunction0<RootContextBuilder<Unit>>
+    return loadClassAndGetMethod().kotlinFunction as? KFunction0<RootContextBuilder<*>>
 }
 
 private fun MethodInfo.definesTopLevelContext() =
@@ -62,3 +62,5 @@ private fun MethodInfo.definesTopLevelContext() =
 private fun TypeSignature.name() =
     (this as? ClassRefTypeSignature)?.baseClassName
 
+internal fun Iterable<KFunction0<RootContextBuilder<*>>>.renamed(): List<() -> RootContextBuilder<*>> =
+    this.map { f -> { RenamedRootContextBuilder(f(), f.name) } }
