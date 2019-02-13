@@ -16,19 +16,11 @@ import kotlin.streams.asStream
 
 interface JUnit5Minutests {
 
-    @Deprecated("use a function returning the result of rootContext instead")
-    val tests: RootContextBuilder<*>? get() = null // a clue to what to override
-
     /**
      * Provided so that JUnit will run the tests
      */
     @TestFactory
-    fun minutests(): Stream<out DynamicNode> = tests.let { testsFromVal ->
-        when  {
-            testsFromVal != null -> testsFromVal.buildNode().toStreamOfDynamicNodes(RootExecutor)
-            else -> this.rootContextFromMethods().toStreamOfDynamicNodes(RootExecutor)
-        }
-    }
+    fun minutests(): Stream<out DynamicNode> = this.rootContextFromMethods().toStreamOfDynamicNodes(RootExecutor)
 }
 
 /**
