@@ -1,6 +1,6 @@
 package samples.assumptions
 
-import dev.minutest.junit.JUnit4Minutests
+import dev.minutest.junit.experimental.JUnit4Minutests
 import dev.minutest.rootContext
 import org.junit.Assume
 

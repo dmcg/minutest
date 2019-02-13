@@ -16,3 +16,5 @@ class JUnit5RunnerTests : JUnit5Minutests {
         }
     }
 }
+
+

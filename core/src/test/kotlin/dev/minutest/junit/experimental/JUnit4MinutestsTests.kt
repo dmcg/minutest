@@ -1,7 +1,7 @@
-package dev.minutest.experimental
+package dev.minutest.junit.experimental
 
 import dev.minutest.assertLogged
-import dev.minutest.junit.JUnit4Minutests
+import dev.minutest.experimental.loggedTo
 import dev.minutest.rootContext
 import org.junit.AfterClass
 import org.junit.jupiter.api.Assertions.assertEquals
