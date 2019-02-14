@@ -11,6 +11,7 @@ typealias ContextBuilder<F> = TestContextBuilder<*, F>
 /**
  * A [ContextBuilder] where the type of the parent fixture PF is also accessible.
  */
+@MinutestFixture // It isn't of course - but see explanation there.
 abstract class TestContextBuilder<PF, F> {
 
     /**
