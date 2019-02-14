@@ -15,7 +15,7 @@ See the [readme](README.md)
 #### Run Tests with JUnit 4
 
 There is experimental support for running tests with JUnit 4 - see 
-[JUnit4MinutestsTests](../core/src/test/kotlin/dev/minutest/experimental/JUnit4MinutestsTests.kt)
+[JUnit4MinutestsTests](../core/src/test/kotlin/dev/minutest/junit/experimental/JUnit4MinutestsTests.kt)
 
 #### Run Only Some Tests
 
@@ -28,6 +28,10 @@ There is experimental support for [skipping some tests and only running others](
 #### Use JUnit Rules
 
 JUnit Rules [mostly work](junit-rules.md).
+
+#### Stop IntelliJ Showing Test Methods As Unused
+
+Annotate the method with `dev.minutest.Tests`, Alt-Enter on the greyed-out method and select `Suppress unused warning if annotated by 'dev.minutest.Tests'`. Now all `@Tests` methods should not be greyed out. 
 
 #### Get Help
 
