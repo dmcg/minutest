@@ -47,6 +47,16 @@ class TestFindingTests : JUnit5Minutests {
                 }
             }
         }
+
+        context("class with no public context methods") {
+            fixture { ClassWithNoPublicContextMethods() }
+
+            test("raises error") {
+                assertThrows<RuntimeException> {
+                    fixture.rootContextFromMethods()
+                }
+            }
+        }
     }
 }
 
@@ -68,3 +78,7 @@ class ClassWithTwoContextMethods {
 }
 
 class ClassWithNoContextMethods
+
+class ClassWithNoPublicContextMethods {
+    private fun tests() = rootContext<Unit> {}
+}
