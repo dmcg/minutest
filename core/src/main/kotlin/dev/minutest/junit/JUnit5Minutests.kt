@@ -7,6 +7,7 @@ import dev.minutest.RootContextBuilder
 import dev.minutest.Test
 import dev.minutest.internal.RootExecutor
 import dev.minutest.internal.TestExecutor
+import dev.minutest.internal.rootContextFromMethods
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest

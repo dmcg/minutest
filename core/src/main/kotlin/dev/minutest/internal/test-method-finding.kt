@@ -1,9 +1,7 @@
-package dev.minutest.junit
+package dev.minutest.internal
 
 import dev.minutest.Node
 import dev.minutest.RootContextBuilder
-import dev.minutest.internal.AmalgamatedRootContext
-import dev.minutest.internal.RenamedRootContextBuilder
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KVisibility

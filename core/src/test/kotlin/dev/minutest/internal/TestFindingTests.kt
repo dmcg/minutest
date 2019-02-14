@@ -3,7 +3,6 @@ package dev.minutest.internal
 import dev.minutest.Context
 import dev.minutest.Node
 import dev.minutest.junit.JUnit5Minutests
-import dev.minutest.junit.rootContextFromMethods
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.assertAll

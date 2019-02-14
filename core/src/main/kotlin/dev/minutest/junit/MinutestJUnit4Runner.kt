@@ -5,6 +5,7 @@ import dev.minutest.Node
 import dev.minutest.Test
 import dev.minutest.internal.RootExecutor
 import dev.minutest.internal.TestExecutor
+import dev.minutest.internal.rootContextFromMethods
 import org.junit.runner.Description
 import org.junit.runner.notification.RunNotifier
 import org.junit.runners.ParentRunner
