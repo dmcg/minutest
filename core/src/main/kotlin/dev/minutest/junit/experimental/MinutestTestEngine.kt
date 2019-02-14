@@ -198,7 +198,7 @@ private fun scan(root: MinutestEngineDescriptor, rq: EngineDiscoveryRequest): Li
         return emptyList()
     }
     
-    return dev.minutest.internal.scan(
+    return dev.minutest.internal.findRootContextPerPackage(
         scannerConfig = {
             rq.forEach<PackageSelector> { whitelistPackages(it.packageName) }
             rq.forEach<ClassSelector> { whitelistClasses(it.className) }

@@ -2,8 +2,8 @@ package dev.minutest.junit
 
 import dev.minutest.Node
 import dev.minutest.RootContextBuilder
+import dev.minutest.internal.AmalgamatedRootContext
 import dev.minutest.internal.RenamedRootContextBuilder
-import dev.minutest.internal.ScannedPackageContext
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KVisibility
@@ -15,7 +15,7 @@ internal fun Any.rootContextFromMethods(): Node<Unit> {
     return when {
         contextBuilderMethods.isEmpty() -> error("No test methods found")
         contextBuilderMethods.size == 1 -> contextBuilderMethods.first().invoke(this).buildNode()
-        else -> ScannedPackageContext(
+        else -> AmalgamatedRootContext(
             "root",
             contextBuilderMethods.map { method ->
                 {

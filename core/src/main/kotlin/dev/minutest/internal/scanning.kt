@@ -1,37 +1,16 @@
 package dev.minutest.internal
 
-import dev.minutest.*
-import dev.minutest.experimental.TestAnnotation
+import dev.minutest.Context
+import dev.minutest.RootContextBuilder
 import io.github.classgraph.*
 import kotlin.reflect.KFunction0
 import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.kotlinFunction
 
-internal data class ScannedPackageContext(
-    val packageName: String,
-    private val contextBuilderBuilders: List<() -> RootContextBuilder<*>>,
-    override val annotations: List<TestAnnotation> = emptyList()
-) : Context<Unit, Unit>() {
-
-    override val name: String get() = packageName
-
-    override val children: List<Node<Unit>> by lazy {
-        contextBuilderBuilders.map { f ->
-            f().buildNode()
-        }
-    }
-
-    override fun runTest(testlet: Testlet<Unit>, parentFixture: Unit, testDescriptor: TestDescriptor) =
-        RootExecutor.runTest(testlet, testDescriptor)
-
-    override fun withTransformedChildren(transform: NodeTransform) = TODO()
-
-    override fun close() {}
-}
-
-internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean = {true}): List<ScannedPackageContext> {
-    return ClassGraph()
+internal fun findRootContextPerPackage(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo) -> Boolean = { true })
+    : List<Context<Unit, Unit>> =
+    ClassGraph()
         .enableClassInfo()
         .enableMethodInfo()
         .disableJarScanning()
@@ -39,16 +18,16 @@ internal fun scan(scannerConfig: ClassGraph.() -> Unit, classFilter: (ClassInfo)
         .apply(scannerConfig)
         .scan()
         .allClasses
+        .asSequence()
         .filter { it.isStandardClass && !it.isAnonymousInnerClass && it.isPublic && !it.isSynthetic }
         .filter(classFilter)
-        .flatMap { it.declaredMethodInfo }
+        .flatMap { it.declaredMethodInfo.asSequence() }
         .filter { it.definesTopLevelContext() }
         .mapNotNull { it.toKotlinFunction() }
         // Check Kotlin visibility because a public static Java method might have internal visibility in Kotlin
         .filter { it.visibility == PUBLIC }
         .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
-        .map { (packageName, functions) -> ScannedPackageContext(packageName, functions.renamed()) }
-}
+        .map { (packageName, functions) -> AmalgamatedRootContext(packageName, functions.renamed()) }
 
 private fun MethodInfo.toKotlinFunction(): KFunction0<RootContextBuilder<*>>? {
     @Suppress("UNCHECKED_CAST")
@@ -62,5 +41,5 @@ private fun MethodInfo.definesTopLevelContext() =
 private fun TypeSignature.name() =
     (this as? ClassRefTypeSignature)?.baseClassName
 
-internal fun Iterable<KFunction0<RootContextBuilder<*>>>.renamed(): List<() -> RootContextBuilder<*>> =
+private fun Iterable<KFunction0<RootContextBuilder<*>>>.renamed(): List<() -> RootContextBuilder<*>> =
     this.map { f -> { RenamedRootContextBuilder(f(), f.name) } }

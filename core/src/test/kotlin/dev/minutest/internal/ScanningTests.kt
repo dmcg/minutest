@@ -9,7 +9,7 @@ class ScanningTests {
 
     @Test
     fun `scanned tests have correct full names`() {
-        val scan: List<ScannedPackageContext> = scan({ whitelistPackages("samples.minutestRunner.a") })
+        val scan: List<Node<*>> = findRootContextPerPackage({ whitelistPackages("samples.minutestRunner.a") })
 
         val log = mutableListOf<String>()
         scan.forEach {
