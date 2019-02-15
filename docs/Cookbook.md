@@ -21,6 +21,10 @@ There is experimental support for running tests with JUnit 4 - see
 
 There is experimental support for [skipping some tests and only running others](focus-and-skip.md)
 
+#### Repeat a Test
+
+[Repeating Tests](../core/src/test/kotlin/dev/minutest/examples/RepeatingExampleTests.kt)
+
 #### Generate tests on the fly
 
 [Generating tests](generating-tests.md)
@@ -41,9 +45,6 @@ The best bet for feedback and help is the [#minutest channel on the Kotlin Slack
 
 TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
-#### Repeat a Test
-
-TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
 #### Manage Test Resources
 
