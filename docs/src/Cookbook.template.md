@@ -25,6 +25,10 @@ There is experimental support for [skipping some tests and only running others](
 
 [Repeating Tests](../core/src/test/kotlin/dev/minutest/examples/RepeatingExampleTests.kt)
 
+#### Run a Test With Different Values
+
+[Parameterised Tests](../core/src/test/kotlin/dev/minutest/examples/ParameterisedTests.kt)
+
 #### Generate tests on the fly
 
 [Generating tests](generating-tests.md)
