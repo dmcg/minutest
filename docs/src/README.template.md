@@ -49,7 +49,7 @@ The key to Minutest is that by separating the fixture from the test code, both a
 
 For example, parameterised tests require [special handling](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests) in JUnit, but not in Minutest.
 
-```insert-kotlin core/src/test/kotlin/dev/minutest/examples/ParameterisedTests.kt
+```insert-kotlin core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt
 ```
 
 ![ParameterisedTests](images/ParameterisedTests.png)

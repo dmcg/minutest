@@ -203,14 +203,14 @@ The key to Minutest is that by separating the fixture from the test code, both a
 For example, parameterised tests require [special handling](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests) in JUnit, but not in Minutest.
 
 ```kotlin
-class ParameterisedTests : JUnit5Minutests {
+class ParameterisedExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<Unit>(checkedAgainst { Assertions.assertEquals(summary, it) }) {
 
         context("palindromes") {
 
-            // Once we are in a context, creating a test for each of multiple parameters is
-            // as easy as calling `test()` for each one.
+            // Creating a test for each of multiple parameters is as easy as
+            // calling `test()` for each one.
             listOf("a", "oo", "racecar", "able was I ere I saw elba").forEach { candidate ->
                 test("$candidate is a palindrome") {
                     assertTrue(candidate.isPalindrome())

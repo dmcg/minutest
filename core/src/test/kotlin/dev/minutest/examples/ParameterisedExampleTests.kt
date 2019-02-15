@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
-class ParameterisedTests : JUnit5Minutests {
+class ParameterisedExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<Unit>(checkedAgainst { Assertions.assertEquals(summary, it) }) {
 
         context("palindromes") {
 
-            // Once we are in a context, creating a test for each of multiple parameters is
-            // as easy as calling `test()` for each one.
+            // Creating a test for each of multiple parameters is as easy as
+            // calling `test()` for each one.
             listOf("a", "oo", "racecar", "able was I ere I saw elba").forEach { candidate ->
                 test("$candidate is a palindrome") {
                     assertTrue(candidate.isPalindrome())

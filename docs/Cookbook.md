@@ -27,7 +27,7 @@ There is experimental support for [skipping some tests and only running others](
 
 #### Run a Test With Different Values
 
-[Parameterised Tests](../core/src/test/kotlin/dev/minutest/examples/ParameterisedTests.kt)
+[Parameterised Tests](../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt)
 
 #### Generate tests on the fly
 
