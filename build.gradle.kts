@@ -5,7 +5,7 @@ plugins {
 
 allprojects {
     group = "dev.minutest"
-    version = "1.0.0-RC2"
+    version = "1.0.0"
 
     repositories {
         mavenCentral()
