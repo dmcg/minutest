@@ -13,14 +13,14 @@ import dev.minutest.experimental.transformedBy
 internal class MinutestContextBuilder<PF, F>(
     private val name: String,
     private val type: FixtureType,
-    private var fixtureFactory: ((PF, TestDescriptor) -> F)?,
-    private var explicitFixtureFactory: Boolean = false
+    private var fixtureFactory: ((PF, TestDescriptor) -> F)?
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
 
+    private var explicitFixtureFactory = false
     private val children = mutableListOf<NodeBuilder<F>>()
     private val befores = mutableListOf<(F, TestDescriptor) -> Unit>()
     private val afters = mutableListOf<(F, TestDescriptor) -> Unit>()
-    private var afterAlls = mutableListOf<() -> Unit>()
+    private val afterAlls = mutableListOf<() -> Unit>()
 
     override val annotations: MutableList<TestAnnotation> = mutableListOf()
 
@@ -43,7 +43,7 @@ internal class MinutestContextBuilder<PF, F>(
         addChild(TestBuilder(name, f))
 
     override fun context(name: String, builder: TestContextBuilder<F, F>.() -> Unit) =
-        // fixture factory is implicitly identity (return parent fixture (this)
+        // fixture factory is implicitly identity (return parent fixture (this))
         internalCreateContext(name, type, { this }, builder)
 
     override fun <G> internalCreateContext(
