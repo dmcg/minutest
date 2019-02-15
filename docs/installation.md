@@ -24,7 +24,7 @@ dependencies {
 }
 ```
 
-`dev.minutest:minutest:+` will build against the latest version of minutest - if you want a more stability use a particular version label instead - eg `dev.minutest:minutest:1.0.0`
+`dev.minutest:minutest:+` will build against the latest version of minutest - if you want more stability use a particular version label instead - eg `dev.minutest:minutest:1.0.0`
 
 You now you need to let test tasks know to use JUnit 5
 
