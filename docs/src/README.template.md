@@ -52,8 +52,6 @@ For example, parameterised tests require [special handling](https://junit.org/ju
 ```insert-kotlin core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt
 ```
 
-![ParameterisedTests](images/ParameterisedTests.png)
-
 ## Reusing Tests
 
 More complicated scenarios can be approached by writing your own function that returns a test or a context.

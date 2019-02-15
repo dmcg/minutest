@@ -245,8 +245,6 @@ fun String.isPalindrome(): Boolean =
     else (0 until length / 2).find { index -> this[index] != this[length - index - 1] } == null
 ```
 
-![ParameterisedTests](images/ParameterisedTests.png)
-
 ## Reusing Tests
 
 More complicated scenarios can be approached by writing your own function that returns a test or a context.
