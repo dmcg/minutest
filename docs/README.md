@@ -17,7 +17,7 @@ If you were previously using `com.oneeyedmen.minutest` I've screwed up - please 
 
 ## Usage
 
-To just test simple functions, define your tests in a subclass of JUnit5Minutests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
+To just test simple functions, define your tests in class which mixes-in JUnit5Minutests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
 
 ```kotlin
 // Mix-in JUnit5Minutests to run Minutests with JUnit 5
@@ -80,7 +80,7 @@ Minutests can be defined in a Spec style, with nested contexts and tests. The JU
 ```kotlin
 class StackExampleTests : JUnit5Minutests {
 
-    fun tests() = rootContext<Stack<String>> {
+    fun tests() = rootContext<Stack<String>>("when new") {
 
         // The tests in the root context run with this empty stack
         fixture {
