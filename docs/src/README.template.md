@@ -17,7 +17,7 @@ If you were previously using `com.oneeyedmen.minutest` I've screwed up - please 
 
 ## Usage
 
-To just test simple functions, define your tests in a subclass of JUnit5Minutests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
+To just test simple functions, define your tests in class which mixes-in JUnit5Minutests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
 
 ```insert-kotlin core/src/test/kotlin/dev/minutest/examples/FirstMinutests.kt
 ```
