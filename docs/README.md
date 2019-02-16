@@ -298,8 +298,12 @@ class LinkedListTests : JUnit5Minutests {
 
 The [Cookbook](Cookbook.md) shows other ways to use Minutest. 
 
-## Support
+## Evolution
 
-Minutest is still feeling its way towards a humane API. Until we reach version 1 this is subject to change - we're trying to balance not breaking things with getting better quickly. Please do let us know what is working and what isn't, either physically or conceptually.
+We're pretty happy with the core Minutest language and expect not to make any breaking changes without a major version update. Features like JUnit 4 support and test annotations are public but experimental - if you use anything in an `experimental` package you should expect it to change between minor releases, and move completely once adopted into the stable core.
+
+Note that we aim for source and not binary compatibility. Some implementation may move from  methods to extension functions, or from constructors to top level or companion-object functions.
+
+## Support
 
 The best bet for feedback and help is the [#minutest channel on the Kotlin Slack](https://kotlinlang.slack.com/messages/CCYE00YM6). See you there.
