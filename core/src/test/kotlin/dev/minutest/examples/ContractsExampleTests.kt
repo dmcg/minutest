@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
 
 
-// To run the same tests against different implementations, first define a TestContext extension function
+// To run the same tests against different implementations, first define a ContextBuilder extension function
 // that defines the tests you want run.
 fun ContextBuilder<MutableCollection<String>>.behavesAsMutableCollection() {
 

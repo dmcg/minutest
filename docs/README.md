@@ -252,7 +252,7 @@ More complicated scenarios can be approached by writing your own function that r
 If you want to reuse the same tests for different concrete implementations, define a context with a function and call it for subclasses. Some people call this a contract.
 
 ```kotlin
-// To run the same tests against different implementations, first define a TestContext extension function
+// To run the same tests against different implementations, first define a ContextBuilder extension function
 // that defines the tests you want run.
 fun ContextBuilder<MutableCollection<String>>.behavesAsMutableCollection() {
 
