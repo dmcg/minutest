@@ -232,7 +232,10 @@ class ParentFixtureExampleTests : JUnit5Minutests {
 A context may change the type of its parent fixture.
 
 ```kotlin
+// You can change the fixture type as you go down the context tree.
 class DerivedContextExampleTests : JUnit5Minutests {
+
+    // Fruit and FruitDrink are our 2 fixture types
 
     data class Fruit(val name: String)
 
@@ -240,27 +243,33 @@ class DerivedContextExampleTests : JUnit5Minutests {
         override fun toString() = "${fruit.name} $name"
     }
 
-    fun tests() = rootContext<Fruit> {
+    // Our root fixture type is Fruit
+    fun tests() = rootContext<Fruit>(name = "Fruit Context") {
 
         fixture {
             Fruit("banana")
         }
 
-        test("takes Fixture") {
-            assertEquals("banana", name)
+        test("takes Fruit") {
+            Assertions.assertTrue(fixture is Fruit)
         }
 
         // To change fixture type use derivedContext
-        derivedContext<FruitDrink>("change in fixture type") {
+        derivedContext<FruitDrink>("FruitDrink Context") {
 
-            // We have to specify how to convert a Fruit to a FruitDrink
+            // deriveFixture specifies how to convert a Fruit to a FruitDrink
             deriveFixture {
                 FruitDrink(parentFixture, "smoothie")
             }
 
             test("takes FruitDrink") {
-                assertEquals("banana smoothie", this.toString())
+                Assertions.assertTrue(fixture is FruitDrink)
             }
+
+            // If you don't need access to the parent fixture, this would do
+            // fixture {
+            //     FruitDrink(Fruit("kumquat"), "milkshake")
+            // }
         }
     }
 }

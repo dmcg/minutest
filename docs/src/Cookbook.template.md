@@ -33,6 +33,10 @@ There is experimental support for [skipping some tests and only running others](
 
 [Generating tests](generating-tests.md)
 
+#### Change the Fixture Type Between Contexts
+
+[Derived Contexts](../core/src/test/kotlin/dev/minutest/examples/DerivedContextExampleTests.kt)
+
 #### Use JUnit Rules
 
 JUnit Rules [mostly work](junit-rules.md).
@@ -79,9 +83,5 @@ TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM
 TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
 #### Migrate from JUnit
-
-TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
-
-#### Change the Fixture Type
 
 TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
