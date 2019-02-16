@@ -4,6 +4,14 @@
 
 ### How do I
 
+#### Pronounce Minutest
+
+The name originally came from a trawl of [words containing test](https://www.thefreedictionary.com/words-containing-test) - and *should* be pronounced as if it has the sense 'smallest'. 
+
+However, when @DuncanMcG read back his first message on the subject `I'd like to run my new test framework past you`, he realised that there was another pronunciation - 'MyNewTest'.
+
+That is the emphasis that seems to have stuck, at least with Duncan, but of course it is true for him. We're interested to see if it ever becomes talked about enough in real life to be an issue.  
+
 #### Write tests
 
 See the [readme](README.md)
