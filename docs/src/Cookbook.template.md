@@ -33,6 +33,15 @@ There is experimental support for [skipping some tests and only running others](
 
 [Repeating Tests](../core/src/test/kotlin/dev/minutest/examples/RepeatingExampleTests.kt)
 
+#### TDD with Minutest
+
+[Test Driven to Specification with Minutest - Part 1](http://oneeyedmen.com/test-driven-to-specification-with-minutest-part1.html)
+
+#### Specs with Minutest
+
+[Test Driven to Specification with Minutest - Part 2](http://oneeyedmen.com/test-driven-to-specification-with-minutest-part2.html)
+
+
 #### Run a Test With Different Values
 
 [Parameterised Tests](../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt)
@@ -60,7 +69,6 @@ The best bet for feedback and help is the [#minutest channel on the Kotlin Slack
 #### Reuse Test Code
 
 TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
-
 
 #### Manage Test Resources
 
