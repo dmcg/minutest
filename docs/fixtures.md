@@ -233,6 +233,7 @@ A context may change the type of its parent fixture.
 
 ```kotlin
 // You can change the fixture type as you go down the context tree.
+@Suppress("USELESS_IS_CHECK")
 class DerivedContextExampleTests : JUnit5Minutests {
 
     // Fruit and FruitDrink are our 2 fixture types
@@ -251,7 +252,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
         }
 
         test("takes Fruit") {
-            Assertions.assertTrue(fixture is Fruit)
+            assertTrue(fixture is Fruit)
         }
 
         // To change fixture type use derivedContext
@@ -263,7 +264,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
             }
 
             test("takes FruitDrink") {
-                Assertions.assertTrue(fixture is FruitDrink)
+                assertTrue(fixture is FruitDrink)
             }
 
             // If you don't need access to the parent fixture, this would do
