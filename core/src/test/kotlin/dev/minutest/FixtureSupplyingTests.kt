@@ -1,38 +1,44 @@
 package dev.minutest
 
-import dev.minutest.junit.toTestFactory
+import dev.minutest.junit.JUnit5Minutests
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.Assertions.assertSame
 
 
-class FixtureSupplyingTests {
+class FixtureSupplyingTests : JUnit5Minutests {
 
-    @TestFactory fun `supply fixture at top`() = rootContext<String> {
+    fun `supply fixture at top`() = rootContext<String> {
         fixture { "banana" }
         context("parent had fixture") {
             test("test") {
                 assertEquals("banana", this)
             }
         }
-    }.toTestFactory()
+    }
 
-    @TestFactory fun `supply fixture in derivedContext`() = rootContext<Unit> {
+    fun `supply fixture in sub-context`() = rootContext<String> {
         derivedContext<String>("parent had no fixture") {
             fixture { "banana" }
             test("test") {
                 assertEquals("banana", this)
             }
         }
-    }.toTestFactory()
+    }
 
-    @TestFactory fun `copes with no fixture if context has no operations`() = rootContext<Pair<Int, String>> {
-        context("supplies the fixture") {
-            fixture {
-                42 to "the answer"
-            }
+    fun `supply fixture in derivedContext`() = rootContext<Unit> {
+        derivedContext<String>("parent had no fixture") {
+            fixture { "banana" }
             test("test") {
-                assertEquals(42, this.first)
+                assertEquals("banana", this)
             }
         }
-    }.toTestFactory()
+    }
+
+    fun `need not specify Unit fixture`() = rootContext<Unit> {
+        test("test") {
+            assertSame(Unit, fixture)
+        }
+    }
+
+
 }
