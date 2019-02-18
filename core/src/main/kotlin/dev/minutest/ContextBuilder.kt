@@ -25,18 +25,15 @@ abstract class TestContextBuilder<PF, F> {
      * You will have to call [deriveFixture] in the sub-context to convert from the parent
      * to the child fixture type.
      */
-    inline fun <reified G> derivedContext(name: String, noinline builder: TestContextBuilder<F, G>.() -> Unit) =
-        internalCreateContext(
-            name = name,
-            type = askType<G>(),
-            fixtureFactory = null, // subContext can't have parent fixture factory because the types have changed
-            builder = builder
-        )
+    inline fun <reified G> derivedContext(name: String, noinline builder: TestContextBuilder<F, G>.() -> Unit)
+        : NodeBuilder<F> = internalDerivedContext(name = name, type = askType<G>(), builder = builder)
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
+     *
+     * The strange parameter type keeps compatibility with the other fixture methods, that have
      */
-    fun fixture(factory: (Unit).(testDescriptor: TestDescriptor) -> F) = deriveFixture { testDescriptor ->
+    fun fixture(factory: (Unit).(testDescriptor: TestDescriptor) -> F): Unit = deriveFixture { testDescriptor ->
         Unit.factory(testDescriptor)
     }
 
@@ -44,7 +41,7 @@ abstract class TestContextBuilder<PF, F> {
      * Apply an operation to the current fixture (accessible as the receiver 'this')
      * before running tests or sub-contexts.
      */
-    fun modifyFixture(operation: F.(TestDescriptor) -> Unit) = before(operation)
+    fun modifyFixture(operation: F.(TestDescriptor) -> Unit): Unit = before(operation)
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts by
@@ -55,11 +52,12 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Define a test on the current fixture (accessible as 'this').
      */
-    fun test(name: String, f: F.(testDescriptor: TestDescriptor) -> Unit) = test_(name) { testDescriptor ->
-        this.apply {
-            f(testDescriptor)
+    fun test(name: String, f: F.(testDescriptor: TestDescriptor) -> Unit): NodeBuilder<F> =
+        test_(name) { testDescriptor ->
+            this.apply {
+                f(testDescriptor)
+            }
         }
-    }
 
     /**
      * Define a test on the current fixture (accessible as the receiver 'this'), returning
@@ -86,12 +84,12 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Name the fixture to improve communication.
      */
-    val F.fixture get() = this
+    val F.fixture: F get() = this
 
     /**
      * Name the parentFixture to improve communication.
      */
-    val PF.parentFixture get() = this
+    val PF.parentFixture: PF get() = this
 
     /**
      * Apply an operation after all the tests and sub-contexts have completed.
@@ -101,10 +99,9 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Internal implementation, only public to be accessible to inline functions.
      */
-    @PublishedApi internal abstract fun <G> internalCreateContext(
+    @PublishedApi internal abstract fun <G> internalDerivedContext(
         name: String,
         type: FixtureType,
-        fixtureFactory: (F.(TestDescriptor) -> G)?,
         builder: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F>
 

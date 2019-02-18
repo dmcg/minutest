@@ -43,13 +43,24 @@ internal class MinutestContextBuilder<PF, F>(
         addChild(TestBuilder(name, f))
 
     override fun context(name: String, builder: TestContextBuilder<F, F>.() -> Unit) =
-        internalCreateContext(
+        newContext(
             name = name,
             type = type,
             fixtureFactory = { fixture }, // sub-context fixtureFactory defaults to the fixture of the parent
             builder = builder)
 
-    override fun <G> internalCreateContext(
+    override fun <G> internalDerivedContext(
+        name: String,
+        type: FixtureType,
+        builder: TestContextBuilder<F, G>.() -> Unit
+    ): NodeBuilder<F> = newContext(
+        name = name,
+        type = type,
+        fixtureFactory = null, // subContext can't have parent fixture factory because the types have changed
+        builder = builder
+    )
+
+    private fun <G> newContext(
         name: String,
         type: FixtureType,
         fixtureFactory: (F.(TestDescriptor) -> G)?,
