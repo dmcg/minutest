@@ -33,13 +33,7 @@ private fun ((Node<Unit>) -> Node<Unit>).asTopLevelTransform() =
     }
 
 private fun <F> rootBuilder(name: String, type: FixtureType, builder: TestContextBuilder<Unit, F>.() -> Unit) =
-    MinutestContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type)).apply(builder)
-
-@Suppress("UNCHECKED_CAST")
-private fun <F> fixtureFactoryFor(type: FixtureType): FixtureFactory<Unit, F>? =
-    if (type.classifier == Unit::class) {
-        FixtureFactory(type) { _, _ -> Unit as F }
-    } else null
+    MinutestContextBuilder<Unit, F>(name, type, rootFixtureFactoryHack()).apply(builder)
 
 // TODO - this should probably be breadth-first
 private fun Node<*>.findTopLevelTransforms(): List<TopLevelTransform> {

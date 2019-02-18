@@ -37,13 +37,14 @@ class FixtureNotSpecifiedTests {
     }
 
     @Test fun `fails at execute-time if a sub-context does not provide a fixture`() {
-        val tests = rootContext<String> {
-            context("dd") {
-                test("dd") {
+        assertThrows<IllegalStateException> {
+            rootContext<String> {
+                context("dd") {
+                    test("dd") {
+                    }
                 }
-            }
-        }.toTestFactory()
-        checkItems(executeTests(tests), { it is ClassCastException })
+            }.toTestFactory()
+        }
     }
 
     @Test fun `throws exception thrown from fixture during execution`() {
