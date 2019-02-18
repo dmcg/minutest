@@ -36,9 +36,9 @@ private fun <F> rootBuilder(name: String, type: FixtureType, builder: TestContex
     MinutestContextBuilder<Unit, F>(name, type, fixtureFactoryFor(type)).apply(builder)
 
 @Suppress("UNCHECKED_CAST")
-private fun <F> fixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) -> F)? =
+private fun <F> fixtureFactoryFor(type: FixtureType): FixtureFactory<Unit, F>? =
     if (type.classifier == Unit::class) {
-        { _, _ -> Unit as F }
+        FixtureFactory(type) { _, _ -> Unit as F }
     } else null
 
 // TODO - this should probably be breadth-first

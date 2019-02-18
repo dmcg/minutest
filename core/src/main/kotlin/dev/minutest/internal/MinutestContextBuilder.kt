@@ -13,7 +13,7 @@ import dev.minutest.experimental.transformedBy
 internal class MinutestContextBuilder<PF, F>(
     private val name: String,
     private val type: FixtureType,
-    private var fixtureFactory: ((PF, TestDescriptor) -> F)?
+    private var fixtureFactory: FixtureFactory<PF, F>?
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
 
     private var explicitFixtureFactory = false
@@ -27,7 +27,7 @@ internal class MinutestContextBuilder<PF, F>(
     override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
         if (explicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
-        fixtureFactory = f
+        fixtureFactory = FixtureFactory(type, f)
         explicitFixtureFactory = true
     }
 
@@ -46,7 +46,7 @@ internal class MinutestContextBuilder<PF, F>(
         newContext(
             name = name,
             type = type,
-            fixtureFactory = { fixture }, // sub-context fixtureFactory defaults to the fixture of the parent
+            fixtureFactory = { f, _ -> f }, // sub-context fixtureFactory defaults to the fixture of the parent
             builder = builder)
 
     override fun <G> internalDerivedContext(
@@ -63,9 +63,15 @@ internal class MinutestContextBuilder<PF, F>(
     private fun <G> newContext(
         name: String,
         type: FixtureType,
-        fixtureFactory: (F.(TestDescriptor) -> G)?,
+        fixtureFactory: ((F, TestDescriptor) -> G)?,
         builder: TestContextBuilder<F, G>.() -> Unit
-    ): NodeBuilder<F> = addChild(MinutestContextBuilder(name, type, fixtureFactory).apply(builder))
+    ): NodeBuilder<F> = addChild(
+        MinutestContextBuilder(
+            name,
+            type,
+            fixtureFactory?.let { FixtureFactory(type, fixtureFactory) }
+        ).apply(builder)
+    )
     
     private fun <T: NodeBuilder<F>> addChild(child: T): T {
         children.add(child)
