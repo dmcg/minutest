@@ -43,8 +43,11 @@ internal class MinutestContextBuilder<PF, F>(
         addChild(TestBuilder(name, f))
 
     override fun context(name: String, builder: TestContextBuilder<F, F>.() -> Unit) =
-        // fixture factory is implicitly identity (return parent fixture (this))
-        internalCreateContext(name, type, { this }, builder)
+        internalCreateContext(
+            name = name,
+            type = type,
+            fixtureFactory = { fixture }, // sub-context fixtureFactory defaults to the fixture of the parent
+            builder = builder)
 
     override fun <G> internalCreateContext(
         name: String,
@@ -87,3 +90,5 @@ internal class MinutestContextBuilder<PF, F>(
     private fun thisContextDoesntNeedAFixture() =
         befores.isEmpty() && afters.isEmpty() && children.filterIsInstance<TestBuilder<F>>().isEmpty()
 }
+
+

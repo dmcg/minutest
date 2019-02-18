@@ -26,7 +26,12 @@ abstract class TestContextBuilder<PF, F> {
      * to the child fixture type.
      */
     inline fun <reified G> derivedContext(name: String, noinline builder: TestContextBuilder<F, G>.() -> Unit) =
-        internalCreateContext(name, askType<G>(), null, builder)
+        internalCreateContext(
+            name = name,
+            type = askType<G>(),
+            fixtureFactory = null, // subContext can't have parent fixture factory because the types have changed
+            builder = builder
+        )
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
