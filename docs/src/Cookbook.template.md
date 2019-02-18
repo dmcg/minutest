@@ -54,6 +54,10 @@ There is experimental support for [skipping some tests and only running others](
 
 [Derived Contexts](../core/src/test/kotlin/dev/minutest/examples/DerivedContextExampleTests.kt)
 
+#### Interpret `ClassCastException: kotlin.Unit cannot be cast to xx`
+
+This can happen if you don't specify a fixture where a context needs one - see [this bug](https://github.com/dmcg/minutest/issues/24)
+
 #### Use JUnit Rules
 
 JUnit Rules [mostly work](junit-rules.md).
