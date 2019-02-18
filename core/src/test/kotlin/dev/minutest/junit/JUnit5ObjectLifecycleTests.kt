@@ -21,7 +21,7 @@ class JUnit5ClassLifecycleTests : JUnit5Minutests {
 
         @AfterAll @JvmStatic fun afterAll() {
             log.add("afterAll")
-            assertLogged(log, "beforeAll", "init", "beforeEach", "1", "2", "afterEach", "afferAll")
+            assertLogged(log, "beforeAll", "init", "beforeEach", "1", "2", "afterEach", "afterAll")
         }
     }
 
