@@ -74,12 +74,15 @@ internal class MinutestContextBuilder<PF, F>(
 
     @Suppress("UNCHECKED_CAST")
     private fun resolvedFixtureFactory(): (PF, TestDescriptor) -> F = when {
-        fixtureFactory != null -> fixtureFactory
-        thisContextDoesntNeedAFixture() -> { _, _ -> Unit as F }
+        fixtureFactory != null ->
+            fixtureFactory ?: error("concurrent modification of fixture factory")
+        thisContextDoesntNeedAFixture() ->
+            { _, _ -> Unit as F }
         // this is safe provided there are only fixture not replaceFixture calls in sub-contexts,
         // as we cannot provide a fixture here to act as receiver. TODO - check somehow
-        else -> error("Fixture has not been set in context \"$name\"")
-    }!!
+        else ->
+            error("Fixture has not been set in context \"$name\"")
+    }
 
     private fun thisContextDoesntNeedAFixture() =
         befores.isEmpty() && afters.isEmpty() && children.filterIsInstance<TestBuilder<F>>().isEmpty()
