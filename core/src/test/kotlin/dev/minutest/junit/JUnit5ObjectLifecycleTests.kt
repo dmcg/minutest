@@ -8,43 +8,50 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 
 private val log = mutableListOf<String>()
+private var hashCode: Int = 0
 
 /**
  * Just to remind me what is run and when.
  */
-class JUnit5ClassLifecycleTests : JUnit5Minutests {
+object JUnit5ObjectLifecycleTests : JUnit5Minutests {
 
-    companion object {
-        @BeforeAll @JvmStatic fun beforeAll() {
-            log.add("beforeAll")
-        }
+    @BeforeAll @JvmStatic fun beforeAll() {
+        println("beforeAll $hashCode ${System.identityHashCode(this@JUnit5ObjectLifecycleTests)}")
+        log.add("beforeAll")
+    }
 
-        @AfterAll @JvmStatic fun afterAll() {
-            log.add("afterAll")
-            assertLogged(log, "beforeAll", "init", "beforeEach", "1", "2", "afterEach", "afterAll")
-        }
+    @AfterAll @JvmStatic fun afterAll() {
+        println("afterAll $hashCode ${System.identityHashCode(this@JUnit5ObjectLifecycleTests)}")
+        log.add("afterAll")
+        assertLogged(log, "init", "beforeAll", "beforeEach", "1", "2", "afterEach", "afterAll")
     }
 
     init {
+        hashCode = System.identityHashCode(this@JUnit5ObjectLifecycleTests)
+        println("init $hashCode ${System.identityHashCode(this@JUnit5ObjectLifecycleTests)}")
         log.add("init")
     }
 
     @BeforeEach fun beforeEach() {
+        println("beforeEach $hashCode ${System.identityHashCode(this@JUnit5ObjectLifecycleTests)}")
         log.add("beforeEach")
     }
 
     @AfterEach fun afterEach() {
+        println("afterEach $hashCode ${System.identityHashCode(this@JUnit5ObjectLifecycleTests)}")
         log.add("afterEach")
     }
 
     fun tests1() = rootContext<Unit> {
         test("1") {
+            println("${it.fullName()} $hashCode ${System.identityHashCode(this@JUnit5ObjectLifecycleTests)}")
             log.add("1")
         }
     }
 
     fun tests2() = rootContext<Unit> {
         test("2") {
+            println("${it.fullName()} $hashCode ${System.identityHashCode(this@JUnit5ObjectLifecycleTests)}")
             log.add("2")
         }
     }

@@ -12,15 +12,17 @@ private val log = mutableListOf<String>()
 /**
  * Just to remind me what is run and when.
  */
-object JUnit5ObjectLifecycleTests : JUnit5Minutests {
+class JUnit5ClassLifecycleTests : JUnit5Minutests {
 
-    @BeforeAll @JvmStatic fun beforeAll() {
-        log.add("beforeAll")
-    }
+    companion object {
+        @BeforeAll @JvmStatic fun beforeAll() {
+            log.add("beforeAll")
+        }
 
-    @AfterAll @JvmStatic fun afterAll() {
-        log.add("afterAll")
-        assertLogged(log, "init", "beforeAll", "beforeEach", "1", "2", "afterEach", "afterAll")
+        @AfterAll @JvmStatic fun afterAll() {
+            log.add("afterAll")
+            assertLogged(log, "beforeAll", "init", "beforeEach", "1", "2", "afterEach", "afterAll")
+        }
     }
 
     init {
