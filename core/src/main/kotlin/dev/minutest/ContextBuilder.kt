@@ -73,6 +73,12 @@ abstract class TestContextBuilder<PF, F> {
     abstract fun before(operation: F.(TestDescriptor) -> Unit)
 
     /**
+     * Replace the current fixture (accessible as the receiver 'this') before
+     * running tests or sub-contexts.
+     */
+    abstract fun before_(f: F.(TestDescriptor) -> F)
+
+    /**
      * Apply an operation to the current fixture (accessible as 'this') after running tests.
      *
      * Will be invoked even if tests or 'befores' throw exceptions.

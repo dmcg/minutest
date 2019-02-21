@@ -19,7 +19,7 @@ class BeforeAndAfterTests {
         assertEquals(expectedLog, log)
     }
 
-    @TestFactory fun `plain before and after`() = rootContext<MutableList<String>> {
+    fun `plain before and after`() = rootContext<MutableList<String>> {
 
         expectedLog = listOf("before 1", "before 2", "test", "after 1", "after 2")
 
@@ -48,6 +48,33 @@ class BeforeAndAfterTests {
         test("test") {
             assertEquals(listOf("before 1", "before 2"), this)
             add("test")
+        }
+    }.toTestFactory()
+
+    @TestFactory fun `before_`() = rootContext<List<String>> {
+
+        expectedLog = listOf("before 1", "before 2", "test")
+
+        fixture { emptyList() }
+
+        before_ {
+            assertEquals(emptyList<String>(), this)
+            this + "before 1"
+        }
+
+        before_ {
+            assertEquals(listOf("before 1"), this)
+            this + "before 2"
+        }
+
+        after {
+            assertEquals(listOf("before 1", "before 2", "test"), this)
+            log.addAll(fixture)
+        }
+
+        test_("test") {
+            assertEquals(listOf("before 1", "before 2"), this)
+            this + "test"
         }
     }.toTestFactory()
 

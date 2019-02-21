@@ -18,7 +18,7 @@ internal class MinutestContextBuilder<PF, F>(
 
     private var explicitFixtureFactory = false
     private val children = mutableListOf<NodeBuilder<F>>()
-    private val befores = mutableListOf<(F, TestDescriptor) -> Unit>()
+    private val befores = mutableListOf<(F, TestDescriptor) -> F>()
     private val afters = mutableListOf<(F, TestDescriptor) -> Unit>()
     private val afterAlls = mutableListOf<() -> Unit>()
 
@@ -32,7 +32,14 @@ internal class MinutestContextBuilder<PF, F>(
     }
 
     override fun before(operation: F.(TestDescriptor) -> Unit) {
-        befores.add(operation)
+        before_ { testDescriptor ->
+            this.operation(testDescriptor)
+            this
+        }
+    }
+
+    override fun before_(f: F.(TestDescriptor) -> F) {
+        befores.add(f)
     }
 
     override fun after(operation: F.(TestDescriptor) -> Unit) {
