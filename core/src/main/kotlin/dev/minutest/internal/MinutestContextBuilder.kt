@@ -1,9 +1,6 @@
 package dev.minutest.internal
 
-import dev.minutest.Node
-import dev.minutest.NodeBuilder
-import dev.minutest.TestContextBuilder
-import dev.minutest.TestDescriptor
+import dev.minutest.*
 import dev.minutest.experimental.TestAnnotation
 import dev.minutest.experimental.transformedBy
 
@@ -19,7 +16,7 @@ internal class MinutestContextBuilder<PF, F>(
     private var explicitFixtureFactory = false
     private val children = mutableListOf<NodeBuilder<F>>()
     private val befores = mutableListOf<(F, TestDescriptor) -> F>()
-    private val afters = mutableListOf<(F, TestDescriptor) -> Unit>()
+    private val afters = mutableListOf<(FixtureValue<F>, TestDescriptor) -> Unit>()
     private val afterAlls = mutableListOf<() -> Unit>()
 
     override val annotations: MutableList<TestAnnotation> = mutableListOf()
@@ -43,6 +40,10 @@ internal class MinutestContextBuilder<PF, F>(
     }
 
     override fun after(operation: F.(TestDescriptor) -> Unit) {
+        afters.add { result, testDescriptor -> result.value.operation(testDescriptor) }
+    }
+
+    override fun after2(operation: FixtureValue<F>.(TestDescriptor) -> Unit) {
         afters.add(operation)
     }
 

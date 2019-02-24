@@ -10,7 +10,7 @@ internal data class PreparedContext<PF, F> (
     override val name: String,
     override val children: List<Node<F>>,
     private val befores: List<(F, TestDescriptor) -> F>,
-    private val afters: List<(F, TestDescriptor) -> Unit>,
+    private val afters: List<(FixtureValue<F>, TestDescriptor) -> Unit>,
     private var afterAlls: List<() -> Unit>,
     private val fixtureFactory: (PF, TestDescriptor) -> F,
     override val annotations: MutableList<TestAnnotation>
@@ -20,7 +20,7 @@ internal data class PreparedContext<PF, F> (
         val fixture = fixtureFactory(parentFixture, testDescriptor)
         return applyBeforesTo(fixture, testDescriptor)
             .tryMap { f -> testlet(f, testDescriptor) }
-            .onLastValue { applyAftersTo(it, testDescriptor) }
+            .also { applyAftersTo(it, testDescriptor) }
             .orThrow()
     }
 
@@ -30,22 +30,36 @@ internal data class PreparedContext<PF, F> (
         }
     }
 
-    private fun applyAftersTo(fixture: F, testDescriptor: TestDescriptor) {
+    private fun applyAftersTo(result: FixtureValue<F>, testDescriptor: TestDescriptor) {
         afters.forEach { afterFn ->
-            afterFn(fixture, testDescriptor)
+            afterFn(result, testDescriptor)
         }
     }
 
     override fun withTransformedChildren(transform: NodeTransform) = copy(children = transform.applyTo(children))
 
     // apply befores in order - if anything is thrown return it and the last successful value
-    private fun applyBeforesTo(fixture: F, testDescriptor: TestDescriptor): SequenceResult<F> =
-        befores.fold(SequenceResult(null, fixture)) { soFar: SequenceResult<F>, before: (F, TestDescriptor) -> F ->
-            try {
-                SequenceResult(null, before(soFar.lastValue, testDescriptor))
-            } catch (t: Throwable) {
-                // I'll get my coat
-                return SequenceResult(t, fixture)
+    private fun applyBeforesTo(fixture: F, testDescriptor: TestDescriptor): FixtureValue<F> =
+        befores.fold(FixtureValue(fixture)) { soFar: FixtureValue<F>, next: (F, TestDescriptor) -> F ->
+            soFar.tryMap {
+                next(it, testDescriptor)
             }
         }
 }
+
+private fun <F> FixtureValue<F>.orThrow(): F {
+    if (error != null) {
+        throw error
+    }
+    return value
+}
+
+private fun <F> FixtureValue<F>.tryMap(f: (F) -> F): FixtureValue<F> =
+    flatMap {
+        try {
+            FixtureValue(f(it), null)
+        }
+        catch (t: Throwable) {
+            FixtureValue(it, t)
+        }
+    }

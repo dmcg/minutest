@@ -87,6 +87,8 @@ abstract class TestContextBuilder<PF, F> {
      */
     abstract fun after(operation: F.(TestDescriptor) -> Unit)
 
+    abstract fun after2(operation: FixtureValue<F>.(TestDescriptor) -> Unit)
+
     /**
      * Name the fixture to improve communication.
      */
