@@ -56,6 +56,8 @@ fun <F> ContextBuilder<Sequence<F>>.tests_(name: String, f: F.(testDescriptor: T
             }
 
         }.toList().asSequence().also {
+            // The issue is that here, if there is any error, we throw away all the mapped fixtures, and the caller
+            // will just pass the previous Sequence<F> to after
             if (failures.isNotEmpty())
                 throw MultipleFailuresError("Test $name for ", failures)
         }
