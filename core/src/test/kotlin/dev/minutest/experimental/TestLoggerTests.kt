@@ -1,6 +1,5 @@
 package dev.minutest.experimental
 
-import dev.minutest.TestDescriptor
 import dev.minutest.assertLogged
 import dev.minutest.internal.RootExecutor
 import org.junit.jupiter.api.Test
@@ -56,9 +55,4 @@ class TestLoggerTests {
         logger.testAborted(Unit, RootExecutor.then("root").then("aborted test in root"), TestAbortedException())
         logger.testFailed(Unit, RootExecutor.then("root").then("failed test in root"), RuntimeException())
     }
-}
-
-private fun TestDescriptor.then(name: String): TestDescriptor = object : TestDescriptor {
-    override val name: String = name
-    override val parent = this@then
 }

@@ -9,12 +9,12 @@ import dev.minutest.*
 interface TestExecutor<F> : TestDescriptor {
 
     fun runTest(test: Test<F>) {
-        runTest(test, this.andThenJust(test.name))
+        runTest(test, this.then(test.name))
     }
 
     fun runTest(testlet: Testlet<F>, testDescriptor: TestDescriptor)
 
-    fun <G> andThen(nextContext: Context<F, G>): TestExecutor<G> = object: TestExecutor<G> {
+    fun <G> andThen(nextContext: Context<F, G>): TestExecutor<G> = object : TestExecutor<G> {
         override val name = nextContext.name
         override val parent = this@TestExecutor
 
@@ -36,8 +36,4 @@ internal object RootExecutor : TestExecutor<Unit>, RootDescriptor {
     override fun runTest(testlet: Testlet<Unit>, testDescriptor: TestDescriptor): Unit = testlet(Unit, testDescriptor)
 }
 
-private fun TestExecutor<*>.andThenJust(name: String): TestDescriptor = object : TestDescriptor {
-    override val name: String = name
-    override val parent = this@andThenJust
-}
 
