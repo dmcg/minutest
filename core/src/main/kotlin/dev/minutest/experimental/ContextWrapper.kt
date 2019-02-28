@@ -19,13 +19,10 @@ internal data class ContextWrapper<PF, F>(
         onClose: () -> Unit = delegate::close
         ) : this(name, properties, children, runner, onCloseFor(delegate, onClose))
 
-
-
     override fun runTest(testlet: Testlet<F>, parentFixture: PF, testDescriptor: TestDescriptor): F =
         runner(testlet, parentFixture, testDescriptor)
 
     override fun withTransformedChildren(transform: NodeTransform) = copy(children = transform.applyTo(children))
-
 
     override fun close() = onClose.invoke()
 }
