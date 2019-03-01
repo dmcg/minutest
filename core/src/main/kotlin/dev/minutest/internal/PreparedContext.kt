@@ -9,11 +9,11 @@ import dev.minutest.experimental.TestAnnotation
 internal data class PreparedContext<PF, F> (
     override val name: String,
     override val children: List<Node<F>>,
+    override val annotations: List<TestAnnotation>,
     private val befores: List<(F, TestDescriptor) -> F>,
     private val afters: List<(FixtureValue<F>, TestDescriptor) -> Unit>,
     private var afterAlls: List<() -> Unit>,
-    private val fixtureFactory: (PF, TestDescriptor) -> F,
-    override val annotations: MutableList<TestAnnotation>
+    private val fixtureFactory: (PF, TestDescriptor) -> F
 ) : Context<PF, F>() {
 
     override fun runTest(testlet: Testlet<F>, parentFixture: PF, testDescriptor: TestDescriptor): F {

@@ -102,11 +102,11 @@ internal class MinutestContextBuilder<PF, F>(
     override fun buildNode(): Node<PF> = PreparedContext(
         name,
         children.map { it.buildNode() },
+        annotations,
         befores,
         afters,
         afterAlls,
-        checkedFixtureFactory(),
-        annotations
+        checkedFixtureFactory()
     ).transformedBy(annotations)
 
     @Suppress("UNCHECKED_CAST")
