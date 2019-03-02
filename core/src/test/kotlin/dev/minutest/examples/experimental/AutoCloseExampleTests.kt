@@ -1,5 +1,6 @@
-package dev.minutest.experimental
+package dev.minutest.examples.experimental
 
+import dev.minutest.experimental.autoClose
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import java.io.BufferedWriter
