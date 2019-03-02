@@ -44,11 +44,16 @@ class TestLogger(
     private fun log(nodeType: NodeType, testDescriptor: TestDescriptor) {
         val path = testDescriptor.fullName()
         val commonPrefix = lastPath.commonPrefix(path)
-        path.subList(commonPrefix.size, path.size).forEachIndexed { i, name ->
-            val isContext = name != testDescriptor.name
-            val icon = prefixer(if (isContext) NodeType.CONTEXT else nodeType)
-            log.add(indent.repeat(commonPrefix.size + i) + icon + name)
+        if (path == lastPath) {
+            // copes with repeated tests with the same name
+            log.add(indent.repeat(testDescriptor.fullName().size - 1) + prefixer(nodeType) + testDescriptor.name)
         }
+        else
+            path.subList(commonPrefix.size, path.size).forEachIndexed { i, name ->
+                val isContext = name != testDescriptor.name
+                val icon = prefixer(if (isContext) NodeType.CONTEXT else nodeType)
+                log.add(indent.repeat(commonPrefix.size + i) + icon + name)
+            }
         lastPath = path
     }
 }
