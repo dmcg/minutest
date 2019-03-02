@@ -20,7 +20,7 @@ class FlatteningExampleTests : JUnit5Minutests {
             // flatten does the magic
             flatten()
 
-            after {
+            before {
                 // will be invoked with each item in the sequence
             }
 
