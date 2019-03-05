@@ -3,19 +3,20 @@ package dev.minutest.internal
 import dev.minutest.*
 import dev.minutest.experimental.TestAnnotation
 import dev.minutest.experimental.TopLevelTransform
+import dev.minutest.experimental.annotateWith
 
 internal data class MinutestRootContextBuilder<F>(
     private val name: String,
     private val type: FixtureType,
     private val builder: TestContextBuilder<Unit, F>.() -> Unit,
     private val transform: (Node<Unit>) -> Node<Unit>,
-    override val annotations: MutableList<TestAnnotation> = mutableListOf()
+    private val annotations: MutableList<TestAnnotation> = mutableListOf()
 ) : RootContextBuilder<F> {
 
     override fun buildNode(): Node<Unit> {
         // we need to apply our annotations to the root, then run the transforms
         val rootBuilder = rootBuilder(name, type, builder).apply {
-            annotations.addAll(this@MinutestRootContextBuilder.annotations)
+            annotateWith(this@MinutestRootContextBuilder.annotations)
         }
         val untransformed = rootBuilder.buildNode()
         val transformsInTree: List<TopLevelTransform> = untransformed.findTopLevelTransforms()
@@ -23,6 +24,10 @@ internal data class MinutestRootContextBuilder<F>(
         val deduplicatedTransforms = LinkedHashSet(allTransforms)
         val transform = deduplicatedTransforms.reduce { a, b -> a.then(b) }
         return transform.applyTo(untransformed)
+    }
+
+    override fun annotateWith(annotation: TestAnnotation) {
+        annotations.add(annotation)
     }
 }
 

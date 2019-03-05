@@ -14,7 +14,7 @@ interface TestAnnotation {
      */
     operator fun <F, NodeBuilderT: NodeBuilder<F>> minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
         nodeBuilder.also {
-            this.applyTo(it)
+            it.annotateWith(this)
         }
 
     /**
@@ -27,18 +27,14 @@ interface TestAnnotation {
 /**
  * Add a list of annotations to a context or test block.
  */
-operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT=
-    nodeBuilder.also {
-        this.forEach { annotation ->
-            annotation.applyTo(nodeBuilder)
-        }
-    }
+operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
+    nodeBuilder.also { it.annotateWith(this) }
 
 /**
  * Adds an annotation to a context block from the inside.
  */
 fun TestContextBuilder<*, *>.annotateWith(annotation: TestAnnotation) {
-    annotation.applyTo(this as NodeBuilder<*>)
+    (this as NodeBuilder<*>).annotateWith(annotation)
 }
 
 /**
@@ -46,7 +42,8 @@ fun TestContextBuilder<*, *>.annotateWith(annotation: TestAnnotation) {
  */
 fun TestAnnotation.appliesTo(node: Node<*>) = node.annotations.contains(this)
 
-
-private fun TestAnnotation.applyTo(nodeBuilder: NodeBuilder<*>) {
-    nodeBuilder.annotations.add(this)
+fun <F> NodeBuilder<F>.annotateWith(annotations: Iterable<TestAnnotation>) {
+    annotations.forEach {
+        this.annotateWith(it)
+    }
 }

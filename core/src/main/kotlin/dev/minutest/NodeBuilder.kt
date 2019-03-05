@@ -11,7 +11,7 @@ interface NodeBuilder<F> {
     /**
      * Experimental - see [TestAnnotation].
      */
-    val annotations: MutableList<TestAnnotation>
+    fun annotateWith(annotation: TestAnnotation)
 }
 
 /**
