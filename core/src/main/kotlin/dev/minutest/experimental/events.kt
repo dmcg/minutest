@@ -1,6 +1,9 @@
 package dev.minutest.experimental
 
-import dev.minutest.*
+import dev.minutest.Context
+import dev.minutest.Node
+import dev.minutest.Test
+import dev.minutest.TestDescriptor
 import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
 import org.opentest4j.TestSkippedException
@@ -15,8 +18,8 @@ interface TestEventListener {
     fun <PF, F> contextClosed(context: Context<PF, F>) {}
 }
 
-class Telling(private val listener: TestEventListener) : TestAnnotation, NodeTransform {
-    override fun <F> applyTo(node: Node<F>): Node<F> = node.telling(listener)
+class Telling(private val listener: TestEventListener) : TestAnnotation {
+    override fun <F> transform(node: Node<F>): Node<F> = node.telling(listener)
 }
 
 fun <F> telling(listener: TestEventListener): (Node<F>) -> Node<F> = { node ->

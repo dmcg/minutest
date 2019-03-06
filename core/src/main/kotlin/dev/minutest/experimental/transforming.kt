@@ -6,14 +6,11 @@ import dev.minutest.NodeTransform
 import dev.minutest.Test
 
 
-fun <F> Node<F>.transformedBy(annotations: List<TestAnnotation>): Node<F> {
-    val transforms: List<NodeTransform> = annotations.filterIsInstance<NodeTransform>()
-    return if (transforms.isEmpty())
+fun <F> Node<F>.transformedBy(annotations: List<TestAnnotation>): Node<F> =
+    if (annotations.isEmpty())
         this
-    else {
-        transforms.reduce(NodeTransform::then).applyTo(this)
-    }
-}
+    else
+        annotations.reduce(NodeTransform::then).transform(this)
 
 fun Node<*>.hasA(predicate: (Node<*>) -> Boolean): Boolean = when (this) {
     is Test<*> -> predicate(this)

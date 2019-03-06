@@ -2,12 +2,12 @@ package dev.minutest
 
 interface NodeTransform {
 
-    fun <F> applyTo(node: Node<F>): Node<F>
+    fun <F> transform(node: Node<F>): Node<F>
 
     fun then(next: (NodeTransform)): NodeTransform = object: NodeTransform {
-        override fun <F> applyTo(node: Node<F>): Node<F> =
-            next.applyTo(this@NodeTransform.applyTo(node))
+        override fun <F> transform(node: Node<F>): Node<F> =
+            next.transform(this@NodeTransform.transform(node))
     }
 }
 
-internal fun <F> NodeTransform.applyTo(nodes: Iterable<Node<F>>) = nodes.map { applyTo(it) }
+internal fun <F> NodeTransform.transform(nodes: Iterable<Node<F>>) = nodes.map { transform(it) }

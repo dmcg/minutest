@@ -17,8 +17,8 @@ fun <F, R : TestRule> ContextBuilder<F>.applyRule(ruleExtractor: F.() -> R) {
 }
 
 // TODO - I think this will fail if you change the fixture type between declaration and the test
-class ApplyRule<F, R : TestRule>(private val ruleExtractor: F.() -> R) : TestAnnotation, NodeTransform {
-    override fun <F2> applyTo(node: Node<F2>): Node<F2> = when (node) {
+class ApplyRule<F, R : TestRule>(private val ruleExtractor: F.() -> R) : TestAnnotation {
+    override fun <F2> transform(node: Node<F2>): Node<F2> = when (node) {
         is Test<F2> -> {
             Test(node.name, node.annotations) { fixture, testDescriptor ->
                 fixture.also {
