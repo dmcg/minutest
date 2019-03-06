@@ -6,7 +6,7 @@ import dev.minutest.experimental.TestAnnotation
 internal data class AmalgamatedRootContext(
     val packageName: String,
     private val contextBuilderBuilders: List<() -> RootContextBuilder<*>>,
-    override val annotations: List<TestAnnotation> = emptyList()
+    override val annotations: List<TestAnnotation<Unit>> = emptyList()
 ) : Context<Unit, Unit>() {
 
     override val name: String get() = packageName

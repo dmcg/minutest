@@ -10,7 +10,7 @@ import dev.minutest.experimental.TestAnnotation
  */
 sealed class Node<F> {
     abstract val name: String
-    internal abstract val annotations: List<TestAnnotation>
+    internal abstract val annotations: List<TestAnnotation<in F>>
 
     /**
      * Return a copy of this node with any children transformed.
@@ -37,7 +37,7 @@ abstract class Context<PF, F> : Node<PF>(), AutoCloseable {
  */
 data class Test<F>(
     override val name: String,
-    override val annotations: List<TestAnnotation>,
+    override val annotations: List<TestAnnotation<in F>>,
     private val f: Testlet<F>
 ) : Node<F>(), Testlet<F> by f {
     

@@ -19,7 +19,7 @@ internal class MinutestContextBuilder<PF, F>(
     private val afters = mutableListOf<(FixtureValue<F>, TestDescriptor) -> Unit>()
     private val afterAlls = mutableListOf<() -> Unit>()
 
-    private val annotations: MutableList<TestAnnotation> = mutableListOf()
+    private val annotations: MutableList<TestAnnotation<PF>> = mutableListOf()
 
     override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
         if (explicitFixtureFactory)
@@ -77,8 +77,8 @@ internal class MinutestContextBuilder<PF, F>(
        a FixtureBuilder with the parent type so that checkedFixtureFactory() can reject it, and error if it doesn't.
      */
 
-    override fun annotateWith(annotation: TestAnnotation) {
-        annotations.add(annotation)
+    override fun annotateWith(annotation: TestAnnotation<in PF>) {
+        annotations.add(annotation as TestAnnotation<PF>)
     }
 
     private fun <G> newContext(

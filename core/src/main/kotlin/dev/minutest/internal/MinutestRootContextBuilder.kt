@@ -10,8 +10,9 @@ internal data class MinutestRootContextBuilder<F>(
     private val type: FixtureType,
     private val builder: TestContextBuilder<Unit, F>.() -> Unit,
     private val transform: (Node<Unit>) -> Node<Unit>,
-    private val annotations: MutableList<TestAnnotation> = mutableListOf()
+    private val annotations: MutableList<TestAnnotation<Unit>> = mutableListOf()
 ) : RootContextBuilder<F> {
+
 
     override fun buildNode(): Node<Unit> {
         // we need to apply our annotations to the root, then run the transforms
@@ -26,8 +27,8 @@ internal data class MinutestRootContextBuilder<F>(
         return transform.transformRoot(untransformed)
     }
 
-    override fun annotateWith(annotation: TestAnnotation) {
-        annotations.add(annotation)
+    override fun annotateWith(annotation: TestAnnotation<in Unit>) {
+        annotations.add(annotation as TestAnnotation<Unit>)
     }
 
     // 1 - using the transforms in the tree first keeps tests passing, largely I think because it allows FOCUS to

@@ -41,5 +41,5 @@ inline fun <reified F> rootContext(
     type: FixtureType,
     builder: TestContextBuilder<Unit, F>.() -> Unit,
     transform: (Node<Unit>) -> Node<Unit>,
-    annotations: MutableList<TestAnnotation> = mutableListOf()
+    annotations: MutableList<TestAnnotation<Unit>> = mutableListOf()
 ): RootContextBuilder<F> = MinutestRootContextBuilder(name, type, builder, transform, annotations)

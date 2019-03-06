@@ -6,7 +6,7 @@ import dev.minutest.NodeTransform
 import dev.minutest.Test
 
 
-fun <F> Node<F>.transformedBy(annotations: List<TestAnnotation>): Node<F> =
+fun <F> Node<F>.transformedBy(annotations: List<TestAnnotation<F>>): Node<F> =
     if (annotations.isEmpty())
         this
     else

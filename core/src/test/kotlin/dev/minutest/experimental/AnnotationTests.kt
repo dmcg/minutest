@@ -25,9 +25,9 @@ class AnnotationTests : JUnit5Minutests {
     }
 }
 
-object MyAnnotation : TestAnnotation
-object AnotherAnnotation : TestAnnotation
-object YetAnotherAnnotation : TestAnnotation
+object MyAnnotation : TestAnnotation<Unit>
+object AnotherAnnotation : TestAnnotation<Unit>
+object YetAnotherAnnotation : TestAnnotation<Unit>
 
 // check that expression is a nodebuilder at compile time
 private fun <F> isNodeBuilder(nodeBuilder: NodeBuilder<F>) = nodeBuilder

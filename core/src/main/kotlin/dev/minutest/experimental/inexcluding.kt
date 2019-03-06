@@ -6,11 +6,11 @@ import dev.minutest.NodeTransform
 import dev.minutest.Test
 
 
-object SKIP : TestAnnotation {
+object SKIP : TestAnnotation<Any?> {
     override fun <F> transform(node: Node<F>): Node<F> = node.skipped()
 }
 
-object FOCUS : TestAnnotation, RootTransform {
+object FOCUS : TestAnnotation<Any?>, RootTransform {
     override fun transformRoot(node: Node<Unit>): Node<Unit> = when (node) {
         is Context<Unit, *> ->
             node.withTransformedChildren(Inexcluded(defaultToSkip = node.hasAFocusedChild()))

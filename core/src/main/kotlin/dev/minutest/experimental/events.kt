@@ -18,7 +18,7 @@ interface TestEventListener {
     fun <PF, F> contextClosed(context: Context<PF, F>) {}
 }
 
-class Telling(private val listener: TestEventListener) : TestAnnotation {
+class Telling(private val listener: TestEventListener) : TestAnnotation<Any?> {
     override fun <F> transform(node: Node<F>): Node<F> = node.telling(listener)
 }
 
