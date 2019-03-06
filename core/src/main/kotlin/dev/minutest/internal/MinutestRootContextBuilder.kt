@@ -19,9 +19,9 @@ internal data class MinutestRootContextBuilder<F>(
             annotateWith(this@MinutestRootContextBuilder.annotations)
         }
         val untransformed = rootBuilder.buildNode()
-        val transformsInTree: List<TopLevelTransform> = untransformed.findTopLevelTransforms()
-        val allTransforms: List<TopLevelTransform> = transformsInTree + transform.asTopLevelTransform()
-        val deduplicatedTransforms = LinkedHashSet(allTransforms)
+        val transformsInTree = untransformed.findTopLevelTransforms()
+        val topLevelTransform = transform.asTopLevelTransform()
+        val deduplicatedTransforms = (transformsInTree + topLevelTransform).toSet() // [1]
         val transform = deduplicatedTransforms.reduce { a, b -> a.then(b) }
         return transform.applyTo(untransformed)
     }
@@ -29,6 +29,9 @@ internal data class MinutestRootContextBuilder<F>(
     override fun annotateWith(annotation: TestAnnotation) {
         annotations.add(annotation)
     }
+
+    // 1 - using the transforms in the tree first keeps tests passing, largely I think because it allows FOCUS to
+    // be applied before logging.
 }
 
 private fun ((Node<Unit>) -> Node<Unit>).asTopLevelTransform() =
