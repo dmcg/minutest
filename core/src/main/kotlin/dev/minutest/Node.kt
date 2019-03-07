@@ -6,7 +6,7 @@ import dev.minutest.experimental.TestAnnotation
 /**
  * [Node]s form a tree of [Context]s and [Test]s.
  *
- * The generic type [F] is the type of the fixture that will be supplied *to* the node.
+ * [F] is the type of the fixture that will be supplied *to* the node.
  */
 sealed class Node<in F> {
     abstract val name: String
@@ -16,7 +16,8 @@ sealed class Node<in F> {
 /**
  * A container for [Node]s, which are accessed as [Context.children].
  *
- * The generic type [PF] is the parent fixture type. [F] is the type of the children.
+ * [PF] is the parent fixture type, which will be supplied to the context.
+ * [F] is the fixture type of the children - the context will supply this to them.
  */
 abstract class Context<PF, F> : Node<PF>(), AutoCloseable {
     abstract val children: List<Node<F>>
