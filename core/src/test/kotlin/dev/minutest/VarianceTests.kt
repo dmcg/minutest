@@ -7,18 +7,25 @@ import kotlin.test.assertTrue
 
 class VarianceTests : JUnit5Minutests {
 
-    fun `can supply subtype of fixture type`() = rootContext<Number> {
+    fun `can supply and return subtype of fixture type`() = rootContext<Number> {
 
         fixture { 42 }
 
-        test("test") {
-            // Not useless
-            assertTrue(this is Int)
-
+        test_("test") {
             @Suppress("USELESS_IS_CHECK")
             assertTrue(this is Number)
 
+            // Not useless
+            assertTrue(this is Int)
+
             assertEquals(42, this)
+            43
+        }
+
+        after {
+            assertTrue(this is Int)
+            assertEquals(43, this)
         }
     }
+
 }
