@@ -11,11 +11,6 @@ import dev.minutest.experimental.TestAnnotation
 sealed class Node<F> {
     abstract val name: String
     internal abstract val annotations: List<TestAnnotation<in F>>
-
-    /**
-     * Return a copy of this node with any children transformed.
-     */
-    internal abstract fun withTransformedChildren(transform: NodeTransform): Node<F>
 }
 
 /**
@@ -30,6 +25,11 @@ abstract class Context<PF, F> : Node<PF>(), AutoCloseable {
      * Invoke a [Testlet], converting a parent fixture [PF] to the type required by the test.
      */
     abstract fun runTest(testlet: Testlet<F>, parentFixture: PF, testDescriptor: TestDescriptor): F
+
+    /**
+     * Return a copy of this node with children transformed.
+     */
+    internal abstract fun withTransformedChildren(transform: NodeTransform): Context<PF, F>
 }
 
 /**
@@ -39,7 +39,4 @@ data class Test<F>(
     override val name: String,
     override val annotations: List<TestAnnotation<in F>>,
     private val f: Testlet<F>
-) : Node<F>(), Testlet<F> by f {
-    
-    override fun withTransformedChildren(transform: NodeTransform) = this
-}
+) : Node<F>(), Testlet<F> by f
