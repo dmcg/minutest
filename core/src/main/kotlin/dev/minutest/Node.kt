@@ -8,7 +8,7 @@ import dev.minutest.experimental.TestAnnotation
  *
  * The generic type [F] is the type of the fixture that will be supplied *to* the node.
  */
-sealed class Node<F> {
+sealed class Node<in F> {
     abstract val name: String
     internal abstract val annotations: List<TestAnnotation<in F>>
 }
@@ -29,7 +29,7 @@ abstract class Context<PF, F> : Node<PF>(), AutoCloseable {
     /**
      * Return a copy of this node with children transformed.
      */
-    internal abstract fun withTransformedChildren(transform: NodeTransform): Context<PF, F>
+    internal abstract fun withTransformedChildren(transform: NodeTransform<in F>): Context<PF, F>
 }
 
 /**

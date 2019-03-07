@@ -22,7 +22,7 @@ internal data class ContextWrapper<PF, F>(
     override fun runTest(testlet: Testlet<F>, parentFixture: PF, testDescriptor: TestDescriptor): F =
         runner(testlet, parentFixture, testDescriptor)
 
-    override fun withTransformedChildren(transform: NodeTransform) = copy(children = transform.transform(children))
+    override fun withTransformedChildren(transform: NodeTransform<in F>) = copy(children = transform.transformAll(children))
 
     override fun close() = onClose.invoke()
 }

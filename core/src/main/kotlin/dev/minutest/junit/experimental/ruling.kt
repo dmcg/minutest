@@ -13,8 +13,8 @@ import org.junit.runners.model.Statement
 fun <PF, F, R : TestRule> TestContextBuilder<PF, F>.applyRule(ruleExtractor: F.() -> R) {
     annotateWith(
         object : TestAnnotation<PF> {
-            override fun <F2> transform(node: Node<F2>): Node<F2> = when (node) {
-                is Test<F2> -> {
+            override fun transform(node: Node<PF>): Node<PF> = when (node) {
+                is Test<PF> -> {
                     Test(node.name, node.annotations) { fixture, testDescriptor ->
                         fixture.also {
                             val rule = ruleExtractor(fixture as F)
@@ -27,8 +27,8 @@ fun <PF, F, R : TestRule> TestContextBuilder<PF, F>.applyRule(ruleExtractor: F.(
                         }
                     }
                 }
-                is Context<F2, *> ->
-                    node.withTransformedChildren(this)
+                is Context<PF, *> ->
+                    node.withTransformedChildren(this as NodeTransform<Any?>)
             }
         }
     )

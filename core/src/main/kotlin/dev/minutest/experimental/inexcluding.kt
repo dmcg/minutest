@@ -7,7 +7,7 @@ import dev.minutest.Test
 
 
 object SKIP : TestAnnotation<Any?> {
-    override fun <F> transform(node: Node<F>): Node<F> = node.skipped()
+    override fun transform(node: Node<Any?>): Node<Any?> = node.skipped()
 }
 
 object FOCUS : TestAnnotation<Any?>, RootTransform {
@@ -19,14 +19,14 @@ object FOCUS : TestAnnotation<Any?>, RootTransform {
     }
 }
 
-private class Inexcluded(val defaultToSkip: Boolean) : NodeTransform {
-    override fun <F> transform(node: Node<F>): Node<F> =
+private class Inexcluded(val defaultToSkip: Boolean) : NodeTransform<Any?> {
+    override fun transform(node: Node<Any?>): Node<Any?> =
         when (node) {
-            is Context<F, *> -> applyToContext(node)
-            is Test<F> -> applyToTest(node)
+            is Context<Any?, *> -> applyToContext(node)
+            is Test<Any?> -> applyToTest(node)
         }
     
-    private fun <PF, F> applyToContext(node: Context<PF, F>): Node<PF> =
+    private fun applyToContext(node: Context<Any?, *>): Node<Any?> =
         when {
             FOCUS.appliesTo(node) ->
                 node.withTransformedChildren(Inexcluded(defaultToSkip = false))
