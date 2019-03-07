@@ -21,7 +21,7 @@ interface TestAnnotation<F> : NodeTransform<F> {
     /**
      * Groups annotations into a list.
      */
-    operator fun plus(that: TestAnnotation<F>) = listOf(this, that)
+    operator fun plus(that: TestAnnotation<in F>): List<TestAnnotation<in F>> = listOf(this, that)
 
     override fun transform(node: Node<F>): Node<F> = node
 }
@@ -29,7 +29,7 @@ interface TestAnnotation<F> : NodeTransform<F> {
 /**
  * Add a list of annotations to a context or test block.
  */
-operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation<F>>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
+operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation<in F>>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
     nodeBuilder.also { it.annotateWith(this) }
 
 /**

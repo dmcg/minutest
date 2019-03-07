@@ -118,8 +118,7 @@ class SkipAndFocusTests {
     }
 
     @Test fun `skip from root`() {
-        val tests = rootContext<Unit>(loggedTo(log)) {
-            annotateWith(SKIP)
+        val tests = SKIP - rootContext<Unit>(loggedTo(log)) {
             test("root was skipped") {
                 fail("root wasn't skipped")
             }

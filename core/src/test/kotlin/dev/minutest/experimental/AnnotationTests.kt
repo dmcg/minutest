@@ -1,32 +1,57 @@
 package dev.minutest.experimental
 
-import dev.minutest.NodeBuilder
-import dev.minutest.junit.JUnit5Minutests
-import dev.minutest.rootContext
-import kotlin.test.fail
+import dev.minutest.*
+import org.junit.jupiter.api.Test
 
 
-class AnnotationTests : JUnit5Minutests {
+class AnnotationTests {
 
-    fun tests() = SKIP - rootContext<Unit> {
-        isNodeBuilder(MyAnnotation - test("single annotation") {})
-        isNodeBuilder(MyAnnotation - context("single annotation") {})
+    val log = mutableListOf<String>()
 
-        isNodeBuilder(MyAnnotation + AnotherAnnotation - test("2 annotations") {})
-        isNodeBuilder(MyAnnotation + AnotherAnnotation + YetAnotherAnnotation - test("3 annotations") {})
-        isNodeBuilder(listOf(MyAnnotation, AnotherAnnotation, YetAnotherAnnotation) - test("3 annotations") {})
 
-        context("context") {
-            annotateWith(MyAnnotation)
+    @Test fun tests() {
+        val tests = rootContext<Unit>(loggedTo(log)) {
+            isNodeBuilder(test("no annotations") {})
+            isNodeBuilder(UnitAnnotation - test("single annotation") {})
+            isNodeBuilder(UnitAnnotation - context("single annotation") {
+                test("in single annotation") {}
+            })
+
+            isNodeBuilder(UnitAnnotation + AnyAnnotation - test("2 annotations") {})
+            isNodeBuilder(UnitAnnotation + AnyAnnotation + YetAnotherAnnotation - test("3 annotations") {})
+
+            // This would be nice, but variance isn't right yet
+            // isNodeBuilder(AnyAnnotation + UnitAnnotation - test("2 annotations") {})
+
+            // This would be nice, but listOf doesn't do the right thing
+            // isNodeBuilder(listOf(UnitAnnotation, AnyAnnotation, YetAnotherAnnotation) - test("3 annotations") {})
+
+            context("annotate with") {
+                annotateWith(UnitAnnotation)
+                test("in annotate with") {}
+            }
         }
-        test("top level skip works") {
-            fail("top level skip didn't work")
-        }
+        checkLog(tests,
+            "▾ root",
+            "  ✓ no annotations",
+            "  ✓ single annotation",
+            "    ✓ in single annotation",
+            "  ✓ 2 annotations",
+            "  ✓ 3 annotations",
+            "  ▾ annotate with",
+            "    ✓ in annotate with")
+        
+    }
+
+
+    private fun checkLog(tests: RootContextBuilder<*>, vararg expected: String) {
+        executeTests(tests)
+        assertLogged(log, *expected)
     }
 }
 
-object MyAnnotation : TestAnnotation<Unit>
-object AnotherAnnotation : TestAnnotation<Unit>
+object UnitAnnotation : TestAnnotation<Unit>
+object AnyAnnotation : TestAnnotation<Any?>
 object YetAnotherAnnotation : TestAnnotation<Unit>
 
 // check that expression is a nodebuilder at compile time
