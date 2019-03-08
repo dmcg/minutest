@@ -42,6 +42,7 @@ class PlainAnnotation<in F> : NewAnnotation<F> {
     override fun <F2 : F> transform(node: NewNode<F2>): NewNode<F2> = node
 }
 
+@Suppress("UNUSED_VARIABLE")
 private fun scope() {
 
     val stringNodeBuilder = NewNodeBuilder<String>()

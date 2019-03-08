@@ -2,6 +2,7 @@ package dev.minutest.examples.experimental
 
 import dev.minutest.experimental.FOCUS
 import dev.minutest.experimental.SKIP
+import dev.minutest.experimental.minus
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import kotlin.test.fail
