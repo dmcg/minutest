@@ -13,25 +13,26 @@ import org.junit.runners.model.Statement
 fun <PF, F, R : TestRule> TestContextBuilder<PF, F>.applyRule(ruleExtractor: F.() -> R) {
     annotateWith(
         object : TestAnnotation<PF> {
-            override fun transform(node: Node<PF>): Node<PF> = when (node) {
-                is Test<PF> -> {
-                    Test(node.name, node.annotations) { fixture, testDescriptor ->
-                        fixture.also {
-                            val rule = ruleExtractor(fixture as F)
-                            val wrappedTestAsStatement = node.asJUnitStatement(fixture, testDescriptor)
-                            val fullName = testDescriptor.fullName()
-                            rule.apply(
-                                wrappedTestAsStatement,
-                                createTestDescription(fullName.first(), fullName.drop(1).joinToString("."))
-                            ).evaluate()
+            override fun getTransform(): NodeTransform<PF> = NodeTransform { node ->
+                when (node) {
+                    is Test<PF> -> {
+                        Test(node.name, node.annotations) { fixture, testDescriptor ->
+                            fixture.also {
+                                val rule = ruleExtractor(fixture as F)
+                                val wrappedTestAsStatement = node.asJUnitStatement(fixture, testDescriptor)
+                                val fullName = testDescriptor.fullName()
+                                rule.apply(
+                                    wrappedTestAsStatement,
+                                    createTestDescription(fullName.first(), fullName.drop(1).joinToString("."))
+                                ).evaluate()
+                            }
                         }
                     }
+                    is Context<PF, *> ->
+                        node.withTransformedChildren(this.getTransform() as NodeTransform<Any?>)
                 }
-                is Context<PF, *> ->
-                    node.withTransformedChildren(this as NodeTransform<Any?>)
             }
-        }
-    )
+        })
 }
 
 private fun <F> Testlet<F>.asJUnitStatement(fixture: F, testDescriptor: TestDescriptor) = object : Statement() {

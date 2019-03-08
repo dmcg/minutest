@@ -1,9 +1,6 @@
 package dev.minutest.experimental
 
-import dev.minutest.Context
-import dev.minutest.Node
-import dev.minutest.Test
-import dev.minutest.TestDescriptor
+import dev.minutest.*
 import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
 import org.opentest4j.TestSkippedException
@@ -19,7 +16,7 @@ interface TestEventListener {
 }
 
 class Telling<F>(private val listener: TestEventListener) : TestAnnotation<F> {
-    override fun transform(node: Node<F>): Node<F> = node.telling(listener)
+    override fun getTransform(): NodeTransform<F> = NodeTransform { it.telling(listener) }
 }
 
 fun <F> telling(listener: TestEventListener): (Node<F>) -> Node<F> = { node ->

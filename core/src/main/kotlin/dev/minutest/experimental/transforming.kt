@@ -10,7 +10,10 @@ fun <F> Node<F>.transformedBy(annotations: List<TestAnnotation<F>>): Node<F> =
     if (annotations.isEmpty())
         this
     else
-        annotations.reduce { nodeTransform: NodeTransform<F>, next: NodeTransform<F> -> nodeTransform.then(next) }.transform(this)
+        annotations
+            .map(TestAnnotation<F>::getTransform)
+            .reduce { nodeTransform: NodeTransform<F>, next: NodeTransform<F> -> nodeTransform.then(next) }
+            .transform(this)
 
 fun Node<*>.hasA(predicate: (Node<*>) -> Boolean): Boolean = when (this) {
     is Test<*> -> predicate(this)

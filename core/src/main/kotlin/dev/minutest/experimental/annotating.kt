@@ -8,7 +8,7 @@ import dev.minutest.TestContextBuilder
 /**
  * An experimental feature that allows contexts and tests to be annotated in order to change their execution.
  */
-interface TestAnnotation<F> : NodeTransform<F> {
+interface TestAnnotation<F> {
 
     /**
      * Used (ironically) to *add* an annotation to a context or test block.
@@ -23,7 +23,9 @@ interface TestAnnotation<F> : NodeTransform<F> {
      */
     operator fun plus(that: TestAnnotation<in F>): List<TestAnnotation<in F>> = listOf(this, that)
 
-    override fun transform(node: Node<F>): Node<F> = node
+    fun getTransform(): NodeTransform<F> = object: NodeTransform<F> {
+        override fun transform(node: Node<F>) = node
+    }
 }
 
 /**

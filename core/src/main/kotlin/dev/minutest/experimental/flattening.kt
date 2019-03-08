@@ -15,9 +15,9 @@ fun <F> TestContextBuilder<Sequence<F>, F>.flatten() {
 
     annotateWith(object : TestAnnotation<Sequence<F>> {
         @Suppress("UNCHECKED_CAST")
-        override fun transform(node: Node<Sequence<F>>): Node<Sequence<F>> {
+        override fun getTransform() = NodeTransform<Sequence<F>> { node ->
             val wrapped = (node as? Context<Sequence<F>, F>) ?: error("Not a context")
-            return ContextWrapper(wrapped, runner = flatteningRunnerFor(wrapped))
+            ContextWrapper(wrapped, runner = flatteningRunnerFor(wrapped))
         }
     })
 }

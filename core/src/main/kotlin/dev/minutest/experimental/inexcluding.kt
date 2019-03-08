@@ -7,7 +7,7 @@ import dev.minutest.Test
 
 
 object SKIP : TestAnnotation<Any?> {
-    override fun transform(node: Node<Any?>): Node<Any?> = node.skipped()
+    override fun getTransform(): NodeTransform<Any?> = NodeTransform { it.skipped() }
 }
 
 object FOCUS : TestAnnotation<Any?>, RootTransform {
