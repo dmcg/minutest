@@ -27,8 +27,8 @@ internal data class MinutestRootContextBuilder<F>(
         return transform.transformRoot(untransformed)
     }
 
-    override fun annotateWith(annotation: TestAnnotation<in Unit>) {
-        annotations.add(annotation as TestAnnotation<Unit>)
+    override fun annotateWith(annotation: TestAnnotation<Unit>) {
+        annotations.add(annotation)
     }
 
     // 1 - using the transforms in the tree first keeps tests passing, largely I think because it allows FOCUS to

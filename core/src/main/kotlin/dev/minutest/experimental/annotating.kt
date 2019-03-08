@@ -8,36 +8,35 @@ import dev.minutest.TestContextBuilder
 /**
  * An experimental feature that allows contexts and tests to be annotated in order to change their execution.
  */
-interface TestAnnotation<F> {
+interface TestAnnotation<in F> {
 
     /**
      * Used (ironically) to *add* an annotation to a context or test block.
      */
     operator fun <F, NodeBuilderT: NodeBuilder<F>> minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
         nodeBuilder.also {
-            it.annotateWith(this as TestAnnotation<in F>)
+            it.annotateWith(this as TestAnnotation<F>)
         }
 
-    /**
-     * Groups annotations into a list.
-     */
-    operator fun plus(that: TestAnnotation<in F>): List<TestAnnotation<in F>> = listOf(this, that)
-
-    fun getTransform(): NodeTransform<F> = object: NodeTransform<F> {
-        override fun transform(node: Node<F>) = node
-    }
+    fun <F2: F> getTransform(): NodeTransform<F2> = NodeTransform { it }
 }
+
+/**
+ * Groups annotations into a list.
+ */
+operator fun <F, A: TestAnnotation<F>> A.plus(other: A): List<A> = listOf(this, other)
+
 
 /**
  * Add a list of annotations to a context or test block.
  */
-operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation<in F>>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
+operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation<F>>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
     nodeBuilder.also { it.annotateWith(this) }
 
 /**
  * Adds an annotation to a context block from the inside.
  */
-fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation<in PF>) {
+fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation<PF>) {
     (this as NodeBuilder<PF>).annotateWith(annotation)
 }
 
@@ -46,7 +45,7 @@ fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation<in
  */
 fun TestAnnotation<*>.appliesTo(node: Node<*>) = node.annotations.contains(this)
 
-fun <F> NodeBuilder<F>.annotateWith(annotations: Iterable<TestAnnotation<in F>>) {
+fun <F> NodeBuilder<F>.annotateWith(annotations: Iterable<TestAnnotation<F>>) {
     annotations.forEach {
         this.annotateWith(it)
     }

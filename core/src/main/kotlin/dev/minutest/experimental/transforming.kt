@@ -11,7 +11,7 @@ fun <F> Node<F>.transformedBy(annotations: List<TestAnnotation<F>>): Node<F> =
         this
     else
         annotations
-            .map(TestAnnotation<F>::getTransform)
+            .map { it.getTransform<F>() }
             .reduce { nodeTransform: NodeTransform<F>, next: NodeTransform<F> -> nodeTransform.then(next) }
             .transform(this)
 

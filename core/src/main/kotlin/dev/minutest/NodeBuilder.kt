@@ -11,7 +11,7 @@ interface NodeBuilder<F> {
     /**
      * Experimental - see [TestAnnotation].
      */
-    fun annotateWith(annotation: TestAnnotation<in F>)
+    fun annotateWith(annotation: TestAnnotation<F>)
 }
 
 /**
