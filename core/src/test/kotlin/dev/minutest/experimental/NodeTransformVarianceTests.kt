@@ -16,7 +16,7 @@ private fun scope() {
     // NodeTransform<Number> can act on Node<Int>, as the fixture will be Int, which is in compatible with Number
     val newIntNode2: Node<Int> = numberNodeTransform.transform(intNode)
 
-    // but not vv
+    // but not vv - can't make this not compile
     val fred: Node<Int> = intNodeTransform.transform(numberNode)
 
 }

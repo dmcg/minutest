@@ -3,19 +3,19 @@ package dev.minutest.experimental
 
 // Experiments with the typesystem outside the current types
 
-class NewNode<F>(
-    val annotations: List<NewAnnotation<in F>>
+class NewNode<in F>(
+    val annotations: List<NewAnnotation<F>>
 )
 
 class NewNodeBuilder<F> {
 
     private val annotations: MutableList<NewAnnotation<F>> = mutableListOf()
 
-    fun addAnnotation(a: NewAnnotation<in F>) {
-        annotations.add(a as NewAnnotation<F>)
+    fun addAnnotation(a: NewAnnotation<F>) {
+        annotations.add(a)
     }
 
-    fun build(): NewNode<out F> {
+    fun build(): NewNode<F> {
         val base = NewNode(annotations)
         return if (annotations.isEmpty())
             base
@@ -24,11 +24,23 @@ class NewNodeBuilder<F> {
     }
 }
 
-interface NewAnnotation<F> {
-    fun transform(node: NewNode<F>): NewNode<F> = node
+interface NodeTransform<F> {
+    fun transform(node: NewNode<F>): NewNode<F>
 }
 
-class PlainAnnotation<F> : NewAnnotation<F>
+interface NewAnnotation<in F> {
+    fun <F2: F> transform(): NodeTransform<F2>
+    fun <F2: F> transform(node: NewNode<F2>): NewNode<F2>
+}
+
+operator fun <F, A: NewAnnotation<F>> A.plus(other: A): List<A> = listOf(this, other)
+
+class PlainAnnotation<in F> : NewAnnotation<F> {
+    override fun <F2 : F> transform(): NodeTransform<F2> = object: NodeTransform<F2> {
+        override fun transform(node: NewNode<F2>): NewNode<F2> = node
+    }
+    override fun <F2 : F> transform(node: NewNode<F2>): NewNode<F2> = node
+}
 
 private fun scope() {
 
@@ -59,4 +71,19 @@ private fun scope() {
     // a number annotation can be attached to an int node
     val intNodeBuilder = NewNodeBuilder<Int>()
     intNodeBuilder.addAnnotation(PlainAnnotation<Number>())
+
+    val list1: List<NewAnnotation<String>> = stringAnnotation + stringAnnotation
+    val list2: List<NewAnnotation<Int>> = listOf(PlainAnnotation<Int>()) + PlainAnnotation<Number>()
+    val list3: List<NewAnnotation<Int>> = PlainAnnotation<Int>() + PlainAnnotation<Number>()
+    val list4: List<NewAnnotation<Int>> = PlainAnnotation<Int>() + PlainAnnotation<Any?>()
+    val list5: List<NewAnnotation<Int>> = PlainAnnotation<Any?>() + PlainAnnotation<Any?>()
+    val list6: List<NewAnnotation<Int>> = PlainAnnotation<Any?>() + PlainAnnotation<Int>()
+    val list7: List<NewAnnotation<*>> = PlainAnnotation<String>() + PlainAnnotation<Int>()
+//    val list8: List<NewAnnotation<Any?>> = PlainAnnotation<String>() + PlainAnnotation<Int>()
+
+    val list9: List<NewAnnotation<String>> = PlainAnnotation<String>() + PlainAnnotation<String>() + PlainAnnotation<String>()
+    val list10: List<NewAnnotation<Int>> = PlainAnnotation<Int>() + PlainAnnotation<Int>() + PlainAnnotation<Number>()
+    val list11: List<NewAnnotation<*>> = PlainAnnotation<Int>() + PlainAnnotation<Int>() + PlainAnnotation<String>()
+
+
 }
