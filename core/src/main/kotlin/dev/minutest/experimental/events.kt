@@ -19,8 +19,9 @@ class Telling<F>(private val listener: TestEventListener) : TestAnnotation<F> {
     override fun <F2: F> getTransform(): NodeTransform<F2> = NodeTransform { it.telling(listener) }
 }
 
-fun <F> telling(listener: TestEventListener): (Node<F>) -> Node<F> = { node ->
-    node.telling(listener)
+fun <F, NodeT: Node<F>> telling(listener: TestEventListener): (NodeT) -> NodeT = { node ->
+    @Suppress("UNCHECKED_CAST")
+    node.telling(listener) as NodeT
 }
 
 private fun <PF, F> Context<PF, F>.telling(listener: TestEventListener): Context<PF, F> =

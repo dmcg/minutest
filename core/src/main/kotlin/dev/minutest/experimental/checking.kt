@@ -9,13 +9,13 @@ fun <F> checkedAgainst(
 ): (Node<F>) -> Node<F> = { node ->
     when (node) {
         is Context<F, *> -> {
-            val telling: (Node<F>) -> Node<F> = telling(logger)
-            ContextWrapper(telling(node) as Context<F, Any?>, onClose = { check(logger.log) })
+            val telling: (Context<F, *>) -> Context<F, *> = telling(logger)
+            ContextWrapper(telling(node), onClose = { check(logger.log) })
         }
         else -> TODO("checking when root is just a test")
     }
 }
 
 fun <F> loggedTo(log: MutableList<String>): (Node<F>) -> Node<F> = { node ->
-    telling<F>(TestLogger(log))(node)
+    telling<F, Node<F>>(TestLogger(log))(node)
 }
