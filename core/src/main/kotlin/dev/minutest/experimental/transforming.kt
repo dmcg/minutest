@@ -11,8 +11,8 @@ fun <F> Node<F>.transformedBy(annotations: List<TestAnnotation<F>>): Node<F> =
         this
     else
         annotations
-            .map { it.getTransform<F>() }
-            .reduce { nodeTransform: NodeTransform<F>, next: NodeTransform<F> -> nodeTransform.then(next) }
+            .map { it.transformOfType<F>() }
+            .reduce(NodeTransform<F>::then)
             .transform(this)
 
 fun Node<*>.hasA(predicate: (Node<*>) -> Boolean): Boolean = when (this) {

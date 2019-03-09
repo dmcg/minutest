@@ -7,9 +7,16 @@ import dev.minutest.TestContextBuilder
 
 /**
  * An experimental feature that allows contexts and tests to be annotated in order to change their execution.
+ *
+ * [F] is the type of the fixture for the [Node] that the annotation applies to.
  */
 interface TestAnnotation<in F> {
-    fun <F2: F> getTransform(): NodeTransform<F2> = NodeTransform { it }
+    /**
+     * The [NodeTransform] that this annotation applies.
+     *
+     * The extra type parameter allows TestAnnotation to be contravariant, whilst NodeTransform is invariant.
+     */
+    fun <F2: F> transformOfType(): NodeTransform<F2> = NodeTransform { it }
 }
 
 /**
