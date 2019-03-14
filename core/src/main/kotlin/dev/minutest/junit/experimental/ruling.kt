@@ -36,6 +36,12 @@ private class TestRuleAnnotation<PF, F, R: TestRule>(
         fun(testlet: Testlet<F>, parentFixture: PF, testDescriptor: TestDescriptor) =
             context.runTest(magicTestlet(testlet), parentFixture, testDescriptor)
 
+    /**
+     * Returns a [Testlet] that
+     * 1. Intercepts the fixture and gets the TestRule from it
+     * 2. Executes the TestRule around a Statement representing the original Testlet [wrapped]
+     * 3. Returns the value returned by [wrapped]
+     */
     private fun magicTestlet(wrapped: Testlet<F>) = fun(fixture: F, testDescriptor: TestDescriptor): F {
 
         var fixureValue: F? = null // 1 - will be supplied at [2]
