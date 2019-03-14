@@ -22,11 +22,11 @@ private class TestRuleAnnotation<PF, F, R: TestRule>(
     private val ruleExtractor: F.() -> R
 ) : TestAnnotation<PF> {
 
-    override fun <F2 : PF> transformOfType(): NodeTransform<F2> = NodeTransform { node ->
+    override fun <PF2: PF> transformOfType(): NodeTransform<PF2> = NodeTransform { node ->
         when (node) {
-            is Context<F2, *> -> {
+            is Context<PF2, *> -> {
                 @Suppress("UNCHECKED_CAST")
-                ContextWrapper<PF, F>(node as Context<PF, F>, runner = magicRunnerFor(node))
+                ContextWrapper(node as Context<PF, F>, runner = magicRunnerFor(node))
             }
             else -> error("TestRuleAnnotation can only be applied to a context")
         }
