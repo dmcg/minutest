@@ -52,14 +52,3 @@ fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation<PF
     @Suppress("UNCHECKED_CAST")
     (this as NodeBuilder<PF>).annotateWith(annotation)
 }
-
-/**
- * For use by annotation transforms to establish if they should.
- */
-fun TestAnnotation<*>.appliesTo(node: Node<*>) = node.annotations.contains(this)
-
-fun <F> NodeBuilder<F>.annotateWith(annotations: Iterable<TestAnnotation<F>>) {
-    annotations.forEach {
-        this.annotateWith(it)
-    }
-}
