@@ -27,21 +27,15 @@ class JunitRulesTests : JUnit5Minutests {
             Fixture()
         }
 
-        context("outer") {
-            context("apply rule fixture class") {
-                applyRule { this.rule }
+        applyRule { this.rule }
 
-                test("test 1") {
-                    log.add("test 1")
-                }
-            }
+        test("test in root") {
+            log.add(it.name)
+        }
 
-            context("apply rule test class") {
-                applyRule(Fixture::rule)
-
-                test("test 2") {
-                    log.add("test 2")
-                }
+        context("context") {
+            test("test in context") {
+                log.add(it.name)
             }
         }
 
@@ -56,10 +50,10 @@ class JunitRulesTests : JUnit5Minutests {
         fun checkTestIsRun() {
             assertEquals(
                 listOf(
-                    "test 1",
-                    "outer.apply rule fixture class.test 1(dev.minutest.junit.experimental.JunitRulesTests)",
-                    "test 2",
-                    "outer.apply rule test class.test 2(dev.minutest.junit.experimental.JunitRulesTests)"),
+                    "test in root",
+                    "test in root(dev.minutest.junit.experimental.JunitRulesTests)",
+                    "test in context",
+                    "context.test in context(dev.minutest.junit.experimental.JunitRulesTests)"),
                 log)
         }
     }
