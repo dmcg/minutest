@@ -10,6 +10,7 @@ import org.junit.runner.Description
 private val log = mutableListOf<String>()
 
 class JunitRulesTests : JUnit5Minutests {
+
     class TestRule : TestWatcher() {
         var testDescription: String? = null
         
@@ -27,7 +28,7 @@ class JunitRulesTests : JUnit5Minutests {
             Fixture()
         }
 
-        applyRule { this.rule }
+        applyRule { fixture.rule }
 
         test("test in root") {
             log.add(it.name)
@@ -36,6 +37,32 @@ class JunitRulesTests : JUnit5Minutests {
         context("context") {
             test("test in context") {
                 log.add(it.name)
+            }
+        }
+
+        derivedContext<Unit>("unit context") {
+            deriveFixture { Unit }
+            test("test in unit context") {
+                log.add(it.name)
+            }
+        }
+
+        derivedContext<String?>("nullable context") {
+            deriveFixture { null }
+            context("null context") {
+                test("test in null context") {
+                    log.add(it.name)
+                }
+            }
+            context("not null context") {
+                deriveFixture { "banana" }
+                test_("test in not null context") {
+                    log.add(it.name)
+                    "kumquat"
+                }
+                after {
+                    assertEquals("kumquat", fixture)
+                }
             }
         }
 
@@ -53,7 +80,14 @@ class JunitRulesTests : JUnit5Minutests {
                     "test in root",
                     "test in root(dev.minutest.junit.experimental.JunitRulesTests)",
                     "test in context",
-                    "context.test in context(dev.minutest.junit.experimental.JunitRulesTests)"),
+                    "context.test in context(dev.minutest.junit.experimental.JunitRulesTests)",
+                    "test in unit context",
+                    "unit context.test in unit context(dev.minutest.junit.experimental.JunitRulesTests)",
+                    "test in null context",
+                    "nullable context.null context.test in null context(dev.minutest.junit.experimental.JunitRulesTests)",
+                    "test in not null context",
+                    "nullable context.not null context.test in not null context(dev.minutest.junit.experimental.JunitRulesTests)"
+                ),
                 log)
         }
     }
