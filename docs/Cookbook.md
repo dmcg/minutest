@@ -62,6 +62,12 @@ This can happen if you don't specify a fixture where a context needs one - see [
 
 JUnit Rules [mostly work](junit-rules.md).
 
+#### Do Approval Tests with Minutest
+
+It's easy to integrate [Okeydoke](https://github.com/dmcg/okey-doke/) - see [Minutest Examples](https://github.com/dmcg/minutest-examples/blob/master/src/test/kotlin/approvals/ApprovalsTest2.kt)
+
+JUnit Rules [mostly work](junit-rules.md).
+
 #### Stop IntelliJ Showing Test Methods As Unused
 
 Annotate the method with `dev.minutest.Tests`, Alt-Enter on the greyed-out method and select `Suppress unused warning if annotated by 'dev.minutest.Tests'`. Now all `@Tests` methods should not be greyed out. 
