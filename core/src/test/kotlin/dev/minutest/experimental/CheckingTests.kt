@@ -2,24 +2,25 @@ package dev.minutest.experimental
 
 import dev.minutest.executeTests
 import dev.minutest.rootContext
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.assertEquals
 
 
 class CheckingTests {
 
     @Test fun checking() {
 
-        val expected = listOf(
-            "root",
-            "  top test",
-            "  inner",
-            "    inner test")
+        val tests = rootContext<Unit> {
 
-        val tests = rootContext<Unit>(
-            checkedAgainst { assertEquals(expected, it)}
-        ) {
+            checkedAgainst(
+                listOf(
+                    "root",
+                    "  top test",
+                    "  inner",
+                    "    inner test"),
+                checker = ::assertEquals
+            )
 
             test("top test") {}
 
@@ -33,11 +34,8 @@ class CheckingTests {
 
     @Test fun `checking fails`() {
 
-        val expected = emptyList<String>()
-
-        val tests = rootContext<Unit>(
-            checkedAgainst { assertEquals(expected, it)})
-        {
+        val tests = rootContext<Unit> {
+            checkedAgainst(emptyList(), checker = ::assertEquals)
             test("test") {}
         }
 

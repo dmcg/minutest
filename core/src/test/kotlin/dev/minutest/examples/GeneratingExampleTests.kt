@@ -1,12 +1,12 @@
 package dev.minutest.examples
 
 import dev.minutest.ContextBuilder
-import dev.minutest.experimental.checkedAgainst
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertThrows
 import java.util.*
+import dev.minutest.experimental.checkedAgainst as willRun
 
 // We can define extension functions that return tests for later injection
 
@@ -44,20 +44,7 @@ private fun ContextBuilder<StringStack>.cantPop() = test("cant pop") {
 
 class GeneratingExampleTests : JUnit5Minutests {
 
-    val summary = listOf(
-        "root",
-        "  an empty stack",
-        "    is empty",
-        "    can push",
-        "    cant pop",
-        "  a stack with one item",
-        "    is not empty",
-        "    can push",
-        "    can pop",
-        "    has the item on top"
-    )
-
-    fun tests() = rootContext<StringStack>(checkedAgainst { assertEquals(summary, it) }) {
+    fun tests() = rootContext<StringStack> {
 
         fixture { StringStack() }
 
@@ -79,6 +66,19 @@ class GeneratingExampleTests : JUnit5Minutests {
                 assertEquals("one", peek())
             }
         }
+
+        willRun(
+            "root",
+            "  an empty stack",
+            "    is empty",
+            "    can push",
+            "    cant pop",
+            "  a stack with one item",
+            "    is not empty",
+            "    can push",
+            "    can pop",
+            "    has the item on top"
+        )
     }
 }
 
