@@ -9,7 +9,7 @@ interface NodeTransform<F> {
     }
 
     companion object {
-        fun <F> create(f: (Node<F>) -> Node<F>): NodeTransform<F> = object: NodeTransform<F> {
+        fun <F> create(f: (Node<F>) -> Node<F>): NodeTransform<F> = object : NodeTransform<F> {
             override fun transform(node: Node<F>): Node<F> = f(node)
         }
     }

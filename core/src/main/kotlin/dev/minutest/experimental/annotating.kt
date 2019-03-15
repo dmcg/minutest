@@ -12,11 +12,11 @@ import dev.minutest.TestContextBuilder
  */
 interface TestAnnotation<in F> {
     /**
-     * The [NodeTransform] that this annotation applies.
+     * Any [NodeTransform] that this annotation applies.
      *
      * The extra type parameter allows TestAnnotation to be contravariant, whilst NodeTransform is invariant.
      */
-    fun <F2: F> transformOfType(): NodeTransform<F2> = NodeTransform.create { it }
+    fun <F2: F> transformOfType(): NodeTransform<F2>? = null
 }
 
 /**
