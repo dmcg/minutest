@@ -16,7 +16,7 @@ interface TestEventListener {
 }
 
 class Telling<F>(private val listener: TestEventListener) : TestAnnotation<F> {
-    override fun <F2: F> transformOfType(): NodeTransform<F2> = NodeTransform { it.telling(listener) }
+    override fun <F2: F> transformOfType(): NodeTransform<F2> = NodeTransform.create { it.telling(listener) }
 }
 
 fun <F, NodeT: Node<F>> telling(listener: TestEventListener): (NodeT) -> NodeT = { node ->
