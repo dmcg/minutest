@@ -13,12 +13,10 @@ fun <F> TestContextBuilder<Sequence<F>, F>.flatten() {
         parentFixture.first()
     }
 
-    annotateWith(object : TestAnnotation<Sequence<F>> {
+    annotateWith(TransformingAnnotation { node: Node<Sequence<F>> ->
         @Suppress("UNCHECKED_CAST")
-        override fun <F2: Sequence<F>> transformOfType() = NodeTransform.create<F2> { node ->
-            val wrapped = (node as? Context<Sequence<F2>, F2>) ?: error("Not a context")
-            ContextWrapper(wrapped, runner = flatteningRunnerFor(wrapped)) as Node<Sequence<F>>
-        }
+        val wrapped = (node as? Context<Sequence<F>, F>) ?: error("Not a context")
+        ContextWrapper(wrapped, runner = flatteningRunnerFor(wrapped))
     })
 }
 
@@ -38,8 +36,8 @@ private fun <F> flatteningRunnerFor(wrapped: Context<Sequence<F>, F>) =
         if (!errors.isEmpty())
             throw MultipleFailuresError("Test ${testDescriptor.name} for ", errors.toList())
         else
-            return fixturesAndErrors.lastOrNull()?.first ?: error("There were unexpectedly no tests run - please report")
+            return fixturesAndErrors.lastOrNull()?.first
+                ?: error("There were unexpectedly no tests run - please report")
     }
-
 
 

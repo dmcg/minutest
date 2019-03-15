@@ -1,23 +1,7 @@
 package dev.minutest.experimental
 
-import dev.minutest.Node
 import dev.minutest.NodeBuilder
-import dev.minutest.NodeTransform
 import dev.minutest.TestContextBuilder
-
-/**
- * An experimental feature that allows contexts and tests to be annotated in order to change their execution.
- *
- * [F] is the type of the fixture for the [Node] that the annotation applies to.
- */
-interface TestAnnotation<in F> {
-    /**
-     * Any [NodeTransform] that this annotation applies.
-     *
-     * The extra type parameter allows TestAnnotation to be contravariant, whilst NodeTransform is invariant.
-     */
-    fun <F2: F> transformOfType(): NodeTransform<F2>? = null
-}
 
 /**
  * Used (ironically) to *add* an annotation to a context or test block.
@@ -31,7 +15,6 @@ operator fun <F, NodeBuilderT: NodeBuilder<F>> TestAnnotation<F>.minus(nodeBuild
  * Groups annotations into a list.
  */
 operator fun <F, A: TestAnnotation<F>> A.plus(other: A): List<A> = listOf(this, other)
-
 
 /**
  * Add a list of annotations to a context or test block.
