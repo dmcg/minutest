@@ -91,6 +91,20 @@ class SkipAndFocusTests {
         )
     }
 
+    @Test fun `focus doesn't resurrect a skipped context`() {
+        val tests = rootContext<Unit>(loggedTo(log)) {
+            SKIP - context("c1") {
+                FOCUS - test("c1/t1") {
+                    fail("was resurrected by focus despite skip")
+                }
+            }
+        }
+        checkLog(tests,
+            "▾ root",
+            "  - c1"
+        )
+    }
+
     @Test fun `deep thing`() {
         val tests = rootContext<Unit>(loggedTo(log)) {
             test("t1") { fail("t1 wasn't skipped") }
