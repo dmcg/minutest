@@ -2,6 +2,7 @@ package dev.minutest.experimental
 
 import dev.minutest.Context
 import dev.minutest.Node
+import dev.minutest.NodeTransform
 import dev.minutest.TestContextBuilder
 
 fun <PF, F> TestContextBuilder<PF, F>.checkedAgainst(
@@ -47,6 +48,6 @@ private fun <F> defaultChecker(expected: F, actual: F) {
     }
 }
 
-fun <F> loggedTo(log: MutableList<String>): (Node<F>) -> Node<F> = { node ->
+fun <F> loggedTo(log: MutableList<String>): NodeTransform<F> = NodeTransform.create{ node ->
     telling<F, Node<F>>(TestLogger(log))(node)
 }
