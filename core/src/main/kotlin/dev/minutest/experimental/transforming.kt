@@ -11,7 +11,7 @@ fun <F> Node<F>.transformedBy(annotations: List<TestAnnotation<F>>): Node<F> {
     return if (transforms.isEmpty())
         this
     else
-        transforms.reduce(NodeTransform<F>::then).transform(this)
+        transforms.reversed().reduce(NodeTransform<F>::then).transform(this)
 }
 
 fun Node<*>.hasA(predicate: (Node<*>) -> Boolean): Boolean = when (this) {

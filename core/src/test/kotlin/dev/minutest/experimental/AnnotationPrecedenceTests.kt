@@ -8,7 +8,7 @@ class AnnotationPrecedenceTests {
 
     val log = mutableListOf<String>()
 
-    @JUnitTest fun `leftmost transform is innermost`() {
+    @JUnitTest fun `first test transform is outer`() {
 
         executeTests(
             rootContext<Unit> {
@@ -16,13 +16,14 @@ class AnnotationPrecedenceTests {
             }
         )
         assertLogged(log,
-            "Enter 2",
             "Enter 1",
-            "Exit 1",
-            "Exit 2")
+            "Enter 2",
+            "Exit 2",
+            "Exit 1"
+        )
     }
 
-    @JUnitTest fun `preamble annotations are merged in order`() {
+    @JUnitTest fun `first context transform is outer`() {
 
         executeTests(
             Annotation("1") + Annotation("2") - rootContext<Unit> {
@@ -30,13 +31,14 @@ class AnnotationPrecedenceTests {
             }
         )
         assertLogged(log,
-            "Enter 2",
             "Enter 1",
-            "Exit 1",
-            "Exit 2")
+            "Enter 2",
+            "Exit 2",
+            "Exit 1"
+        )
     }
 
-    @JUnitTest fun `internal annotations are merged in order`() {
+    @JUnitTest fun `first internal transform is outer`() {
 
         executeTests(
             rootContext<Unit> {
@@ -46,44 +48,47 @@ class AnnotationPrecedenceTests {
             }
         )
         assertLogged(log,
-            "Enter 2",
             "Enter 1",
-            "Exit 1",
-            "Exit 2")
+            "Enter 2",
+            "Exit 2",
+            "Exit 1"
+        )
     }
 
-    @JUnitTest fun `internal annotations take precedence`() {
+    @JUnitTest fun `external annotations are outside internal`() {
 
         executeTests(
             rootContext<Unit> {
-                Annotation("2") - context("inner") {
-                    annotateWith(Annotation("1"))
+                Annotation("1") - context("inner") {
+                    annotateWith(Annotation("2"))
                     test("test") {}
                 }
             }
         )
         // this is because the builder block is invoked as part of the context call, and only then can minus be applied
         assertLogged(log,
-            "Enter 2",
             "Enter 1",
-            "Exit 1",
-            "Exit 2")
+            "Enter 2",
+            "Exit 2",
+            "Exit 1"
+        )
     }
 
-    @JUnitTest fun `internal annotations take precedence for rootContext`() {
+    @JUnitTest fun `external annotations are outside internal for rootContext`() {
 
         executeTests(
-            Annotation("2") - rootContext<Unit> {
-                annotateWith(Annotation("1"))
+            Annotation("1") - rootContext<Unit> {
+                annotateWith(Annotation("2"))
                 test("test") {}
             }
         )
         // rootContext is consistent with a nested context
         assertLogged(log,
-            "Enter 2",
             "Enter 1",
-            "Exit 1",
-            "Exit 2")
+            "Enter 2",
+            "Exit 2",
+            "Exit 1"
+        )
     }
 
     @Suppress("UNCHECKED_CAST")

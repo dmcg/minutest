@@ -3,7 +3,7 @@ package dev.minutest.internal
 import dev.minutest.*
 import dev.minutest.experimental.RootTransform
 import dev.minutest.experimental.TestAnnotation
-import dev.minutest.experimental.annotateWith
+import dev.minutest.experimental.prependAnnotations
 
 internal data class MinutestRootContextBuilder<F>(
     private val name: String,
@@ -17,7 +17,7 @@ internal data class MinutestRootContextBuilder<F>(
     override fun buildNode(): Node<Unit> {
         // we need to apply our annotations to the root, then run the transforms
         val rootBuilder = rootBuilder(name, type, builder).apply {
-            annotateWith(this@MinutestRootContextBuilder.annotations)
+            prependAnnotations(this@MinutestRootContextBuilder.annotations)
         }
         val untransformed = rootBuilder.buildNode()
         val transformsInTree = untransformed.findRootTransforms()
@@ -27,8 +27,12 @@ internal data class MinutestRootContextBuilder<F>(
         return transform.transformRoot(untransformed)
     }
 
-    override fun annotateWith(annotation: TestAnnotation<Unit>) {
+    override fun appendAnnotation(annotation: TestAnnotation<Unit>) {
         annotations.add(annotation)
+    }
+
+    override fun prependAnnotation(annotation: TestAnnotation<Unit>) {
+        annotations.add(0, annotation)
     }
 
     // 1 - using the transforms in the tree first keeps tests passing, largely I think because it allows FOCUS to

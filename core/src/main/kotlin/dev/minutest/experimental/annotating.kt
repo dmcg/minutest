@@ -8,7 +8,7 @@ import dev.minutest.TestContextBuilder
  */
 operator fun <F, NodeBuilderT: NodeBuilder<F>> TestAnnotation<F>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
     nodeBuilder.also {
-        it.annotateWith(this)
+        it.prependAnnotation(this)
     }
 
 /**
@@ -20,7 +20,7 @@ operator fun <F, A: TestAnnotation<F>> A.plus(other: A): List<A> = listOf(this, 
  * Add a list of annotations to a context or test block.
  */
 operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation<F>>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
-    nodeBuilder.also { it.annotateWith(this) }
+    nodeBuilder.also { it.prependAnnotations(this) }
 
 /**
  * If you are looking at this you are probably trying to add a mismatched set of [TestAnnotation]s to a test or context
@@ -33,5 +33,5 @@ operator fun <F> Iterable<*>.minus(@Suppress("UNUSED_PARAMETER") thing: NodeBuil
  */
 fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation<PF>) {
     @Suppress("UNCHECKED_CAST")
-    (this as NodeBuilder<PF>).annotateWith(annotation)
+    (this as NodeBuilder<PF>).appendAnnotation(annotation)
 }

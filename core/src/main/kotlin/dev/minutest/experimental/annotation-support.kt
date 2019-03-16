@@ -11,8 +11,8 @@ fun TestAnnotation<*>.appliesTo(node: Node<*>) = node.annotations.contains(this)
 /**
  * Add a list of annotations to a NodeBuilder.
  */
-fun <F> NodeBuilder<F>.annotateWith(annotations: Iterable<TestAnnotation<F>>) {
-    annotations.forEach {
-        this.annotateWith(it)
+fun <F> NodeBuilder<F>.prependAnnotations(annotations: Iterable<TestAnnotation<F>>) {
+    annotations.reversed().forEach {
+        this.prependAnnotation(it)
     }
 }
