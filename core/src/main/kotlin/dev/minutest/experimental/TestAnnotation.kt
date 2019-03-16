@@ -2,6 +2,7 @@ package dev.minutest.experimental
 
 import dev.minutest.Node
 import dev.minutest.NodeTransform
+import dev.minutest.RootTransform
 
 /**
  * An experimental feature that allows contexts and tests to be annotated in order to change their execution.

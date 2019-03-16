@@ -15,6 +15,7 @@ interface NodeTransform<F> {
     }
 }
 
+typealias RootTransform = NodeTransform<Unit>
 
 internal fun <F> NodeTransform<in F>.transformAll(nodes: Iterable<Node<F>>) = nodes.map { node ->
     @Suppress("UNCHECKED_CAST") // TODO - I haven't really worked out what this cast is telling me

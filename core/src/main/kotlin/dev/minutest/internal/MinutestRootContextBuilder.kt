@@ -1,7 +1,6 @@
 package dev.minutest.internal
 
 import dev.minutest.*
-import dev.minutest.experimental.RootTransform
 import dev.minutest.experimental.TestAnnotation
 import dev.minutest.experimental.prependAnnotations
 
@@ -24,7 +23,7 @@ internal data class MinutestRootContextBuilder<F>(
         val myRootTransform = transform.asRootTransform()
         val deduplicatedTransforms = (transformsInTree + myRootTransform).toSet() // [1]
         val transform = deduplicatedTransforms.reduce { a, b -> a.then(b) }
-        return transform.transformRoot(untransformed)
+        return transform.transform(untransformed)
     }
 
     override fun appendAnnotation(annotation: TestAnnotation<Unit>) {
@@ -41,7 +40,7 @@ internal data class MinutestRootContextBuilder<F>(
 
 private fun ((Node<Unit>) -> Node<Unit>).asRootTransform() =
     object : RootTransform {
-        override fun transformRoot(node: Node<Unit>): Node<Unit> =
+        override fun transform(node: Node<Unit>): Node<Unit> =
             this@asRootTransform(node)
     }
 
