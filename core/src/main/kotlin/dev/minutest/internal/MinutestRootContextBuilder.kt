@@ -50,7 +50,7 @@ private fun <F> rootBuilder(name: String, type: FixtureType, builder: TestContex
 
 // TODO - this should probably be breadth-first
 private fun Node<*>.findRootTransforms(): List<RootTransform> {
-    val myTransforms: List<RootTransform> = annotations.filterIsInstance<RootTransform>()
+    val myTransforms: List<RootTransform> = annotations.mapNotNull { it.rootTransform }
     return when (this) {
         is Test<*> -> myTransforms
         is Context<*, *> -> myTransforms + this.children.flatMap { it.findRootTransforms() }

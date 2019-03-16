@@ -16,4 +16,9 @@ interface TestAnnotation<in F> {
      * The extra type parameter allows TestAnnotation to be contravariant, whilst NodeTransform is invariant.
      */
     fun <F2: F> transformOfType(): NodeTransform<F2>? = null
+
+    /**
+     * Any [RootTransform] that this annotation applies
+     */
+    val rootTransform: RootTransform? get() = null
 }

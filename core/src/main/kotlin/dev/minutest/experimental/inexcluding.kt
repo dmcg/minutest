@@ -8,13 +8,16 @@ import dev.minutest.Test
 
 object SKIP : TransformingAnnotation<Any?>( { it.skipped() } )
 
-object FOCUS : TestAnnotation<Any?>, RootTransform {
-    override fun transformRoot(node: Node<Unit>): Node<Unit> = when (node) {
-        is Context<Unit, *> ->
-            node.withTransformedChildren(Inexcluded(defaultToSkip = node.hasAFocusedChild()))
-        is Test<Unit> ->
-            TODO("skipAndFocus on root as test")
-    }
+object FOCUS : TestAnnotation<Any?> {
+    override val rootTransform: RootTransform?
+        get() = object : RootTransform {
+            override fun transformRoot(node: Node<Unit>): Node<Unit> = when (node) {
+                is Context<Unit, *> ->
+                    node.withTransformedChildren(Inexcluded(defaultToSkip = node.hasAFocusedChild()))
+                is Test<Unit> ->
+                    TODO("skipAndFocus on root as test")
+            }
+        }
 }
 
 private class Inexcluded(val defaultToSkip: Boolean) : NodeTransform<Any?> {
