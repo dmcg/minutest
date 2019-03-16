@@ -12,17 +12,15 @@ internal data class MinutestRootContextBuilder<F>(
     private val annotations: MutableList<TestAnnotation<Unit>> = mutableListOf()
 ) : RootContextBuilder<F> {
 
-
     override fun buildNode(): Node<Unit> {
-        // we need to apply our annotations to the root, then run the transforms
-        val rootBuilder = rootBuilder(name, type, builder).apply {
-            prependAnnotations(this@MinutestRootContextBuilder.annotations)
-        }
-        val untransformed = rootBuilder.buildNode()
-        val transformsInTree = untransformed.findRootTransforms()
+        val rootContext = rootBuilder(name, type, builder).apply {
+            // my annotations are those for the root context
+            prependAnnotations(annotations)
+        }.buildNode()
+        val transformsInTree = rootContext.findRootTransforms()
         val deduplicatedTransforms = (transformsInTree + transform).toSet() // [1]
-        val transform = deduplicatedTransforms.reduce { a, b -> a.then(b) }
-        return transform.transform(untransformed)
+        val transform = deduplicatedTransforms.reduce(NodeTransform<Unit>::then)
+        return transform.transform(rootContext)
     }
 
     override fun appendAnnotation(annotation: TestAnnotation<Unit>) {
