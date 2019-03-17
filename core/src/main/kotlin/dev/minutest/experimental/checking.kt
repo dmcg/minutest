@@ -48,6 +48,13 @@ private fun <F> defaultChecker(expected: F, actual: F) {
     }
 }
 
-fun <F> loggedTo(log: MutableList<String>): NodeTransform<F> = NodeTransform.create{ node ->
+fun <PF, F> TestContextBuilder<PF, F>.logTo(
+    log: MutableList<String>
+) {
+    annotateWith(RootAnnotation<PF>( { node -> telling<Unit, Node<Unit>>(TestLogger(log))(node) }))
+}
+
+fun <F> logTo(log: MutableList<String>): NodeTransform<F> = NodeTransform.create{ node ->
     telling<F, Node<F>>(TestLogger(log))(node)
 }
+

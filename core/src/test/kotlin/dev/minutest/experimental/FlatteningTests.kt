@@ -17,7 +17,9 @@ class FlatteningTests {
     private val log = mutableListOf<String>()
 
     @Test fun `empty sequence`() {
-        val tests = rootContext<Sequence<String>>(loggedTo(log)) {
+        val tests = rootContext<Sequence<String>> {
+            logTo(log)
+
             fixture { emptySequence() }
             derivedContext<String>("flattened") {
 
@@ -36,7 +38,9 @@ class FlatteningTests {
     }
 
     @Test fun `each item is tested`() {
-        val tests = rootContext<Sequence<String>>(loggedTo(log)) {
+        val tests = rootContext<Sequence<String>> {
+            logTo(log)
+
             fixture { sequenceOf("one", "two", "three") }
             derivedContext<String>("flattened") {
 
@@ -75,7 +79,8 @@ class FlatteningTests {
     }
 
     @Test fun `throws single MultipleFailuresError with failures`() {
-        val tests = rootContext<Sequence<String>>(loggedTo(log)) {
+        val tests = rootContext<Sequence<String>> {
+            logTo(log)
             fixture { sequenceOf("one", "two", "three") }
             derivedContext<String>("flattened") {
 

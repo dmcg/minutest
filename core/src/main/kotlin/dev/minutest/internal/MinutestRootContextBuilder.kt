@@ -3,12 +3,12 @@ package dev.minutest.internal
 import dev.minutest.*
 import dev.minutest.experimental.TestAnnotation
 import dev.minutest.experimental.prependAnnotations
+import dev.minutest.experimental.transformedBy
 
 internal data class MinutestRootContextBuilder<F>(
     private val name: String,
     private val type: FixtureType,
     private val builder: TestContextBuilder<Unit, F>.() -> Unit,
-    private val transform: RootTransform,
     private val annotations: MutableList<TestAnnotation<Unit>> = mutableListOf()
 ) : RootContextBuilder<F> {
 
@@ -17,10 +17,8 @@ internal data class MinutestRootContextBuilder<F>(
             // my annotations are those for the root context
             prependAnnotations(annotations)
         }.buildNode()
-        val transformsInTree = rootContext.findRootTransforms()
-        val deduplicatedTransforms = (transformsInTree + transform).toSet() // [1]
-        val transform = deduplicatedTransforms.reduce(NodeTransform<Unit>::then)
-        return transform.transform(rootContext)
+        val deduplicatedTransformsInTree = rootContext.findRootTransforms().toSet()
+        return rootContext.transformedBy(deduplicatedTransformsInTree)
     }
 
     override fun appendAnnotation(annotation: TestAnnotation<Unit>) {
@@ -30,9 +28,6 @@ internal data class MinutestRootContextBuilder<F>(
     override fun prependAnnotation(annotation: TestAnnotation<Unit>) {
         annotations.add(0, annotation)
     }
-
-    // 1 - using the transforms in the tree first keeps tests passing, largely I think because it allows FOCUS to
-    // be applied before logging.
 }
 
 private fun <F> rootBuilder(name: String, type: FixtureType, builder: TestContextBuilder<Unit, F>.() -> Unit) =

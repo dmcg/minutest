@@ -1,7 +1,7 @@
 package dev.minutest.junit.experimental
 
 import dev.minutest.assertLogged
-import dev.minutest.experimental.loggedTo
+import dev.minutest.experimental.logTo
 import dev.minutest.rootContext
 import org.junit.AfterClass
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -9,7 +9,9 @@ import org.opentest4j.TestAbortedException
 
 class JUnit4MinutestsTests : JUnit4Minutests() {
 
-    fun tests() = rootContext<String>(loggedTo(testLog)) {
+    fun tests() = rootContext<String> {
+
+        logTo(testLog)
 
         fixture { "banana" }
 

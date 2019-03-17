@@ -10,7 +10,9 @@ class AnnotationTests {
 
 
     @Test fun tests() {
-        val tests = rootContext<Unit>(loggedTo(log)) {
+        val tests = rootContext<Unit> {
+            logTo(log)
+
             isNodeBuilder(test("no annotations") {})
             isNodeBuilder(UnitAnnotation - test("single annotation") {})
             isNodeBuilder(UnitAnnotation - context("single annotation") {
