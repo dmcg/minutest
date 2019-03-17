@@ -41,20 +41,7 @@ private fun ContextBuilder<StringStack>.cantPop() = test("cant pop") {
 
 class GeneratingExampleTests : JUnit5Minutests {
 
-    val summary = listOf(
-        "root",
-        "  an empty stack",
-        "    is empty",
-        "    can push",
-        "    cant pop",
-        "  a stack with one item",
-        "    is not empty",
-        "    can push",
-        "    can pop",
-        "    has the item on top"
-    )
-
-    fun tests() = rootContext<StringStack>(checkedAgainst { assertEquals(summary, it) }) {
+    fun tests() = rootContext<StringStack> {
 
         fixture { StringStack() }
 
@@ -76,6 +63,19 @@ class GeneratingExampleTests : JUnit5Minutests {
                 assertEquals("one", peek())
             }
         }
+
+        willRun(
+            "root",
+            "  an empty stack",
+            "    is empty",
+            "    can push",
+            "    cant pop",
+            "  a stack with one item",
+            "    is not empty",
+            "    can push",
+            "    can pop",
+            "    has the item on top"
+        )
     }
 }
 

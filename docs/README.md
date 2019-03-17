@@ -205,7 +205,7 @@ For example, parameterised tests require [special handling](https://junit.org/ju
 ```kotlin
 class ParameterisedExampleTests : JUnit5Minutests {
 
-    fun tests() = rootContext<Unit>(checkedAgainst { Assertions.assertEquals(summary, it) }) {
+    fun tests() = rootContext<Unit> {
 
         context("palindromes") {
 
@@ -224,20 +224,20 @@ class ParameterisedExampleTests : JUnit5Minutests {
                 }
             }
         }
-    }
 
-    val summary = listOf(
-        "root",
-        "  palindromes",
-        "    a is a palindrome",
-        "    oo is a palindrome",
-        "    racecar is a palindrome",
-        "    able was I ere I saw elba is a palindrome",
-        "  not palindromes",
-        "     is not a palindrome",
-        "    ab is not a palindrome",
-        "    a man a plan a canal pananma is not a palindrome"
-    )
+        willRun(
+            "root",
+            "  palindromes",
+            "    a is a palindrome",
+            "    oo is a palindrome",
+            "    racecar is a palindrome",
+            "    able was I ere I saw elba is a palindrome",
+            "  not palindromes",
+            "     is not a palindrome",
+            "    ab is not a palindrome",
+            "    a man a plan a canal pananma is not a palindrome"
+        )
+    }
 }
 
 fun String.isPalindrome(): Boolean =
