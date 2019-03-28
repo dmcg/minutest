@@ -4,42 +4,40 @@ import dev.minutest.Context
 import dev.minutest.Node
 import dev.minutest.Test
 
-
+/**
+ * [TestAnnotation] that will cause a [Test] or [Context] to be skipped.
+ */
 val SKIP = TransformingAnnotation<Any?> { it.skipped() }
 
+/**
+ * [TestAnnotation] that will cause a [Test] or [Context] to be run while those not marked [FOCUS] will
+ * be skipped.
+ */
 val FOCUS = RootAnnotation<Any?> { node ->
     when (node) {
-        is Context<Unit, *> ->
-            node.withTransformedChildren(Inexcluded(defaultToSkip = node.hasAFocusedChild()))
-        is Test<Unit> ->
-            TODO("skipAndFocus when root is a test")
+        is Context<Unit, *> -> node.inexcluded(node.hasAFocusedChild())
+        is Test<Unit> -> TODO("skipAndFocus when root is a test")
     }
 }
 
-private class Inexcluded(val defaultToSkip: Boolean) : (Node<*>) -> Node<Any?> {
-    override fun invoke(node: Node<*>): Node<Any?> =
-        when (node) {
-            is Context<*, *> -> applyToContext(node)
-            is Test<*> -> applyToTest(node)
-        } as Node<Any?> // TODO - this cast
+private fun <F> inexclude(skipIsDefault: Boolean): (Node<F>) -> Node<F> = { node ->
+    when (node) {
+        is Context<F, *> -> node.inexcluded(skipIsDefault)
+        is Test<F> -> node.inexcluded(skipIsDefault)
+    }
+}
 
-    private fun applyToContext(node: Context<*, *>): Node<Nothing> =
-        when {
-            FOCUS.appliesTo(node) ->
-                node.withTransformedChildren(Inexcluded(defaultToSkip = false))
-            node.hasAFocusedChild() ->
-                node.withTransformedChildren(this)
-            defaultToSkip -> node.skipped()
-            else ->
-                node.withTransformedChildren(this)
-        }
+private fun <PF, F> Context<PF, F>.inexcluded(skipIsDefault: Boolean): Node<PF> = when {
+    FOCUS.appliesTo(this) -> this.withTransformedChildren(inexclude(skipIsDefault = false))
+    this.hasAFocusedChild() -> this.withTransformedChildren(inexclude(skipIsDefault))
+    skipIsDefault -> this.skipped()
+    else -> this.withTransformedChildren(inexclude(skipIsDefault))
+}
 
-    private fun applyToTest(node: Test<*>): Node<Nothing> =
-        when {
-            FOCUS.appliesTo(node) -> node
-            defaultToSkip -> node.skipped()
-            else -> node
-        }
+private fun <F> Test<F>.inexcluded(skipIsDefault: Boolean): Test<F> = when {
+    FOCUS.appliesTo(this) -> this
+    skipIsDefault -> this.skipped()
+    else -> this
 }
 
 private fun Context<*, *>.hasAFocusedChild(): Boolean = this.hasA(FOCUS::appliesTo)
