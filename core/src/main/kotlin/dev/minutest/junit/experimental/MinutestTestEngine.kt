@@ -48,13 +48,11 @@ class MinutestTestEngine : TestEngine {
                     is Context<*, *> ->
                         executeDynamicChildren(
                             descriptor,
-                            @Suppress("UNCHECKED_CAST")
                             executor.andThen(descriptor.node as Context<T, *>),
                             request,
                             listener
                         )
                     is Test<*> ->
-                        @Suppress("UNCHECKED_CAST")
                         executeTest(
                             descriptor.node as Test<T>,
                             executor)

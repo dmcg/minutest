@@ -25,7 +25,7 @@ private class TestRuleAnnotation<PF, F, R: TestRule>(
     override fun <PF2: PF> transformOfType(): NodeTransform<PF2> = { node ->
         when (node) {
             is Context<PF2, *> -> {
-                @Suppress("UNCHECKED_CAST")
+                @Suppress("UNCHECKED_CAST") // might do better?
                 ContextWrapper(node as Context<PF, F>, runner = magicRunnerFor(node))
             }
             else -> error("TestRuleAnnotation can only be applied to a context")
@@ -55,7 +55,7 @@ private class TestRuleAnnotation<PF, F, R: TestRule>(
         // this is Statement.apply
         ruleExtractor(fixture).apply(wrappedTestAsStatement, testDescriptor.toTestDescription()).evaluate()
 
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST") // probably least worst solution
         return fixureValue as F // F may be nullable, so this can be initialised and still null, so cast not !!
     }
 

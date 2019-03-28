@@ -117,7 +117,6 @@ internal class MinutestContextBuilder<PF, F>(
         checkedFixtureFactory()
     ).transformedBy(annotations)
 
-    @Suppress("UNCHECKED_CAST")
     private fun checkedFixtureFactory(): (PF, TestDescriptor) -> F = when {
         // broken out for debugging
         thisContextDoesntNeedAFixture() ->

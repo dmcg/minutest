@@ -32,6 +32,6 @@ operator fun <F> Iterable<*>.minus(@Suppress("UNUSED_PARAMETER") thing: NodeBuil
  * Adds an annotation to a context block from the inside.
  */
 fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation<PF>) {
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST") // information hiding downcast
     (this as NodeBuilder<PF>).appendAnnotation(annotation)
 }

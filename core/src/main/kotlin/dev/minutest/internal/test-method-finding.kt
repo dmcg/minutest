@@ -23,7 +23,7 @@ internal fun Any.rootContextFromMethods(): Node<Unit> {
     }
 }
 
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST") // reflection
 private fun <T : Any> KClass<out T>.testMethods(): List<KFunction1<T, RootContextBuilder<*>>> =
     memberFunctions
         .filter { method ->

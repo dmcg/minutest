@@ -91,7 +91,7 @@ class AnnotationPrecedenceTests {
         )
     }
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST") // a bit suspicious but just a test
     inner class Annotation(private val marker: String) : TransformingAnnotation<Unit>({ node: Node<Unit> ->
         when (node) {
             is Test<Unit> -> node.copy { fixture, testDescriptor ->

@@ -30,7 +30,7 @@ internal fun findRootContextPerPackage(scannerConfig: ClassGraph.() -> Unit, cla
         .map { (packageName, functions) -> AmalgamatedRootContext(packageName, functions.renamed()) }
 
 private fun MethodInfo.toKotlinFunction(): KFunction0<RootContextBuilder<*>>? {
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST") // reflection
     return loadClassAndGetMethod().kotlinFunction as? KFunction0<RootContextBuilder<*>>
 }
 
