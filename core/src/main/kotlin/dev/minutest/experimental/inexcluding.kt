@@ -5,16 +5,16 @@ import dev.minutest.Node
 import dev.minutest.Test
 
 
-object SKIP : TransformingAnnotation<Any?>({ it.skipped() })
+val SKIP = TransformingAnnotation<Any?> { it.skipped() }
 
-object FOCUS : RootAnnotation<Any?>({ node ->
+val FOCUS = RootAnnotation<Any?> { node ->
     when (node) {
         is Context<Unit, *> ->
             node.withTransformedChildren(Inexcluded(defaultToSkip = node.hasAFocusedChild()))
         is Test<Unit> ->
             TODO("skipAndFocus when root is a test")
     }
-})
+}
 
 private class Inexcluded(val defaultToSkip: Boolean) : (Node<*>) -> Node<Any?> {
     override fun invoke(node: Node<*>): Node<Any?> =
@@ -42,6 +42,6 @@ private class Inexcluded(val defaultToSkip: Boolean) : (Node<*>) -> Node<Any?> {
         }
 }
 
-private fun Context<*, *>.hasAFocusedChild() = this.hasA(FOCUS::appliesTo)
+private fun Context<*, *>.hasAFocusedChild(): Boolean = this.hasA(FOCUS::appliesTo)
 
 private fun <F> Node<F>.skipped() = Test<F>(name, annotations) { _, _ -> throw MinutestSkippedException() }
