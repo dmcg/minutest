@@ -1,8 +1,6 @@
 package dev.minutest.experimental
 
 import dev.minutest.Context
-import dev.minutest.Node
-import dev.minutest.NodeTransform
 import dev.minutest.TestContextBuilder
 
 fun <PF, F> TestContextBuilder<PF, F>.checkedAgainst(
@@ -12,8 +10,7 @@ fun <PF, F> TestContextBuilder<PF, F>.checkedAgainst(
     annotateWith(TransformingAnnotation { node ->
         when (node) {
             is Context<PF, *> -> {
-                val telling: (Context<PF, *>) -> Context<PF, *> = telling(logger)
-                ContextWrapper(telling(node), onClose = { check(logger.log) })
+                ContextWrapper(node.telling(logger), onClose = { check(logger.log) })
             }
             else -> TODO("checking when root is just a test")
         }
@@ -48,13 +45,6 @@ private fun <F> defaultChecker(expected: F, actual: F) {
     }
 }
 
-fun <PF, F> TestContextBuilder<PF, F>.logTo(
-    log: MutableList<String>
-) {
-    annotateWith(RootAnnotation<PF>( { node -> telling<Unit, Node<Unit>>(TestLogger(log))(node) }))
+fun <PF, F> TestContextBuilder<PF, F>.logTo(log: MutableList<String>) {
+    annotateWith(RootAnnotation { node -> node.telling(TestLogger(log)) })
 }
-
-fun <F> logTo(log: MutableList<String>): NodeTransform<F> = { node ->
-    telling<F, Node<F>>(TestLogger(log))(node)
-}
-
