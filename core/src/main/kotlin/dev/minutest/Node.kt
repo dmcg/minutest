@@ -30,7 +30,7 @@ abstract class Context<in PF, F> : Node<PF>(), AutoCloseable {
     /**
      * Return a copy of this node with children transformed.
      */
-    internal abstract fun withTransformedChildren(transform: NodeTransform<in F>): Context<PF, F>
+    internal abstract fun withTransformedChildren(transform: NodeTransform<F>): Context<PF, F>
 }
 
 /**

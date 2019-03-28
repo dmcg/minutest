@@ -54,7 +54,7 @@ fun <PF, F> TestContextBuilder<PF, F>.logTo(
     annotateWith(RootAnnotation<PF>( { node -> telling<Unit, Node<Unit>>(TestLogger(log))(node) }))
 }
 
-fun <F> logTo(log: MutableList<String>): NodeTransform<F> = NodeTransform.create{ node ->
+fun <F> logTo(log: MutableList<String>): NodeTransform<F> = { node ->
     telling<F, Node<F>>(TestLogger(log))(node)
 }
 
