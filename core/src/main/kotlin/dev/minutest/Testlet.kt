@@ -5,6 +5,3 @@ package dev.minutest
  */
 typealias Testlet<F> = (F, TestDescriptor) -> F
 
-interface Testlet2<out F2, in F: F2> {
-  fun thing(f: F, t: TestDescriptor) : F2
-}
