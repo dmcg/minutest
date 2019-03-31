@@ -24,19 +24,19 @@ class NewNodeBuilder<F> {
     }
 }
 
-interface NodeTransform<F> {
+interface NewNodeTransform<F> {
     fun transform(node: NewNode<F>): NewNode<F>
 }
 
 interface NewAnnotation<in F> {
-    fun <F2: F> transform(): NodeTransform<F2>
+    fun <F2: F> transform(): NewNodeTransform<F2>
     fun <F2: F> transform(node: NewNode<F2>): NewNode<F2>
 }
 
 operator fun <F, A: NewAnnotation<F>> A.plus(other: A): List<A> = listOf(this, other)
 
 class PlainAnnotation<in F> : NewAnnotation<F> {
-    override fun <F2 : F> transform(): NodeTransform<F2> = object: NodeTransform<F2> {
+    override fun <F2 : F> transform(): NewNodeTransform<F2> = object: NewNodeTransform<F2> {
         override fun transform(node: NewNode<F2>): NewNode<F2> = node
     }
     override fun <F2 : F> transform(node: NewNode<F2>): NewNode<F2> = node
