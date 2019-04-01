@@ -13,10 +13,12 @@ interface TestAnnotation<in F> {
 
     /**
      * Any [NodeTransform] that this annotation will apply.
-     *
-     * The extra type parameter allows TestAnnotation to be contravariant, whilst NodeTransform is <out F> here.
      */
-    fun <F2: F> transformOfType(): NodeTransform<F2>? = null
+    val transform: NodeTransform<@UnsafeVariance F>? get() = null
+    // What I think that the @UnsafeVariance is saying is, yes, you *could* build a TestAnnotation that had a transform
+    // that was suss.
+    // But if the constructors of TestAnnotation only allow invariant F then this is safe, and they themselves take
+    // a NodeTransform, which is just passed back here, so is safe?
 
     /**
      * Any [RootTransform] that this annotation will apply

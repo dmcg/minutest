@@ -4,7 +4,7 @@ import dev.minutest.*
 
 
 fun <F> Node<F>.transformedBy(annotations: Iterable<TestAnnotation<F>>): Node<F> =
-    this.transformedBy(annotations.mapNotNull { it.transformOfType<F>() })
+    this.transformedBy(annotations.mapNotNull { it.transform })
 
 fun <F> Node<F>.transformedBy(transforms: Collection<NodeTransform<F>>): Node<F> =
     if (transforms.isEmpty())
