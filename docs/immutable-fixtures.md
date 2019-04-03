@@ -27,3 +27,7 @@ class ImmutableExampleTests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/ImmutableExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/ImmutableExampleTests.kt
+)
+

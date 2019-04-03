@@ -64,6 +64,7 @@ class GeneratingExampleTests : JUnit5Minutests {
             }
         }
 
+        // Minutest will check that the following tests are run
         willRun(
             "root",
             "  an empty stack",
@@ -80,3 +81,6 @@ class GeneratingExampleTests : JUnit5Minutests {
 }
 
 ```
+From [core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt
+)

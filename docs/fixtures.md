@@ -46,6 +46,9 @@ class NoFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/NoFixtureExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/NoFixtureExampleTests.kt
+)
 
 ## Subject Under Test as Fixture
 
@@ -83,6 +86,9 @@ class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/SubjectUnderTestFixtureExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/SubjectUnderTestFixtureExampleTests.kt
+)
 
 Even if the subject is immutable then you can [inspect it in after blocks](immutable-fixtures.md).
  
@@ -123,6 +129,9 @@ class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/ArgumentsAsFixtureExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/ArgumentsAsFixtureExampleTests.kt
+)
 
 Again, where possible having the context name expressed in the fixture state, and vice-versa, keeps things honest.
 
@@ -191,6 +200,9 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt
+)
 
 ## Parent Fixtures
 
@@ -236,6 +248,9 @@ class ParentFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/ParentFixtureExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/ParentFixtureExampleTests.kt
+)
 
 ## Changing Fixture Type
 
@@ -285,7 +300,11 @@ class DerivedContextExampleTests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/DerivedContextExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/DerivedContextExampleTests.kt
+)
 
 ## More Reading
 
 [My New Test Model](http://oneeyedmen.com/my-new-test-model.html) discusses fixtures and contexts in more detail.
+

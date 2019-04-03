@@ -26,3 +26,6 @@ class JunitRulesExampleTests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/experimental/JUnitRulesExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/experimental/JUnitRulesExampleTests.kt
+)

@@ -1,3 +1,6 @@
+import kotlin.text.RegexOption.DOT_MATCHES_ALL
+import kotlin.text.RegexOption.MULTILINE
+
 tasks {
     create("build") {
         doFirst {
@@ -13,20 +16,29 @@ fun processMarkDown(dir: File) {
 }
 
 fun processMarkDown(src: File, dest: File) {
-    val enhancedLines = src.readLines().map { line ->
-        "```insert-kotlin (.*)$".toRegex().find(line)?.groups?.get(1)?.value?.let { filename ->
-            (listOf("```kotlin") + linesFrom(filename).filtered()).joinToString("\n")
-        } ?: line
-    }
-    dest.writeText((headerFor(src) + enhancedLines).joinToString("\n"))
+    val text = src.readText()
+    val expandedText = expandCodeBlocks(text)
+    dest.writeText(headerFor(src) + expandedText)
 }
 
-fun Iterable<String>.filtered(): List<String> = this
-    .filter { ! it.startsWith("import") && ! it.startsWith("package") }
+fun Iterable<String>.withoutPreamble(): List<String> = this
+    .filter { !it.startsWith("import") && !it.startsWith("package") }
     .dropWhile { it.isEmpty() }
 
 fun linesFrom(filename: String) = File(filename).readLines()
 
-fun headerFor(file: File) = if (file.name.startsWith("README.")) emptyList() else listOf(header)
+fun headerFor(file: File) = if (file.name.startsWith("README.")) "" else header
 
-private val header = "[Minutest](README.md)\n"
+val codeBlockFinder = "^```insert-kotlin (.*?)^```".toRegex(setOf(DOT_MATCHES_ALL, MULTILINE))
+private val header = "[Minutest](README.md)\n\n"
+
+fun expandCodeBlocks(text: String): String =
+    codeBlockFinder.replace(text) { matchResult ->
+        matchResult.groups[1]?.value?.let { filename ->
+            (listOf("```kotlin") +
+                linesFrom(filename.trim()).withoutPreamble() +
+                "```" +
+                "From [$filename](../$filename)"
+                ).joinToString("\n")
+        } ?: error("No filename found for kotlin block")
+    }

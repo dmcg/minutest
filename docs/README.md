@@ -40,6 +40,9 @@ class FirstMinutests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/FirstMinutests.kt
+](../core/src/test/kotlin/dev/minutest/examples/FirstMinutests.kt
+)
 
 Most tests require access to some state. The collection of state required by the tests is called the test fixture. If you are testing a class, at simplest the fixture might be an instance of the class.
 
@@ -74,6 +77,9 @@ class SimpleStackExampleTests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/SimpleStackExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/SimpleStackExampleTests.kt
+)
 
 Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
 
@@ -125,6 +131,9 @@ class StackExampleTests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt
+)
 
 This runs the following tests
 
@@ -193,6 +202,9 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt
+)
 
 Understanding fixtures is key to Minutest - [read more](fixtures.md)
 
@@ -225,6 +237,7 @@ class ParameterisedExampleTests : JUnit5Minutests {
             }
         }
 
+        // Minutest will check that the following tests are run
         willRun(
             "root",
             "  palindromes",
@@ -244,6 +257,9 @@ fun String.isPalindrome(): Boolean =
     if (length == 0) false
     else (0 until length / 2).find { index -> this[index] != this[length - index - 1] } == null
 ```
+From [core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt
+)
 
 ## Reusing Tests
 
@@ -293,6 +309,9 @@ class LinkedListTests : JUnit5Minutests {
     }
 }
 ```
+From [core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt
+](../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt
+)
 
 ## Other Features
 
