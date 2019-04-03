@@ -28,6 +28,7 @@ class ParameterisedExampleTests : JUnit5Minutests {
             }
         }
 
+        // Minutest will check that the following tests are run
         willRun(
             "root",
             "  palindromes",

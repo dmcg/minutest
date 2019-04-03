@@ -30,6 +30,7 @@ class RepeatingExampleTests : JUnit5Minutests {
             }
         }
 
+        // Minutest will check that the following tests are run
         willRun(
             "root",
             "  check 1 is 1 - run 1",
