@@ -1,5 +1,3 @@
-import java.io.File
-
 tasks {
     create("build") {
         doFirst {
@@ -15,12 +13,12 @@ fun processMarkDown(dir: File) {
 }
 
 fun processMarkDown(src: File, dest: File) {
-    val newReadmeLines = src.readLines().map { line ->
+    val enhancedLines = src.readLines().map { line ->
         "```insert-kotlin (.*)$".toRegex().find(line)?.groups?.get(1)?.value?.let { filename ->
             (listOf("```kotlin") + linesFrom(filename).filtered()).joinToString("\n")
         } ?: line
     }
-    dest.writeText(newReadmeLines.joinToString("\n"))
+    dest.writeText((headerFor(src) + enhancedLines).joinToString("\n"))
 }
 
 fun Iterable<String>.filtered(): List<String> = this
@@ -28,3 +26,7 @@ fun Iterable<String>.filtered(): List<String> = this
     .dropWhile { it.isEmpty() }
 
 fun linesFrom(filename: String) = File(filename).readLines()
+
+fun headerFor(file: File) = if (file.name.startsWith("README.")) emptyList() else listOf(header)
+
+private val header = "[Minutest](README.md)\n"

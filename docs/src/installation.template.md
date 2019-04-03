@@ -1,6 +1,6 @@
-# [Minutest](README.md)
+# Installation
 
-## Installation
+If you were previously using `com.oneeyedmen.minutest` I've screwed up - please read [how to migrate](com.oneeyedmen.md) 
 
 I don't think that Minutest is ready for Android or KotlinJS or KotlinNative projects yet, sorry. If you prove me wrong please let me know.
 

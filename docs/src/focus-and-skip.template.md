@@ -1,6 +1,4 @@
-# [Minutest](README.md)
-
-## Focus and Skip [Experimental]
+# Focus and Skip [Experimental]
 
 Once you have run some tests, you can point to them in IntelliJ's test output pane and re-run individual tests. But sometimes you want to be able to signal in source that you only want to run some tests, or that one or more should be skipped.
 

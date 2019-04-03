@@ -9,11 +9,11 @@ Minutest brings the power of Kotlin to JUnit, giving
 * On-the fly generation of tests
 * A level of expressiveness that should change the way you write tests.
 
+[Why do we think a new test library is needed?](http://oneeyedmen.com/my-new-test-model.html) 
+
 ## Installation
 
 [Instructions](installation.md)
-
-If you were previously using `com.oneeyedmen.minutest` I've screwed up - please read [how to migrate](com.oneeyedmen.md) 
 
 ## Usage
 
