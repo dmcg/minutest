@@ -1,6 +1,6 @@
 [Minutest](README.md)
 
-git p# Fixtures
+# Fixtures
 
 ## What is a test fixture?
 

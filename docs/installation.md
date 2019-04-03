@@ -1,6 +1,6 @@
 [Minutest](README.md)
 
-git p# Installation
+# Installation
 
 If you were previously using `com.oneeyedmen.minutest` I've screwed up - please read [how to migrate](com.oneeyedmen.md) 
 

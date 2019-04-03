@@ -1,6 +1,6 @@
 [Minutest](README.md)
 
-git p# Cookbook
+# Cookbook
 
 ## Pronouncing Minutest
 

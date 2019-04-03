@@ -1,6 +1,6 @@
 [Minutest](README.md)
 
-git p# com.oneeyedmen.minutest
+# com.oneeyedmen.minutest
 
 Minutest was previously published as `com.oneeyedmen.minutest`. I have recently (2019-02-08) moved to its own domain `dev.minutest`, but in the process have lost the previous versions published on Bintray. 
 
