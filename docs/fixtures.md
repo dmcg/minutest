@@ -1,6 +1,6 @@
 [Minutest](README.md)
 
-# Fixtures
+git p# Fixtures
 
 ## What is a test fixture?
 
@@ -46,9 +46,9 @@ class NoFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-From [core/src/test/kotlin/dev/minutest/examples/NoFixtureExampleTests.kt
+<small>\[[core/src/test/kotlin/dev/minutest/examples/NoFixtureExampleTests.kt
 ](../core/src/test/kotlin/dev/minutest/examples/NoFixtureExampleTests.kt
-)
+)\]</small>
 
 ## Subject Under Test as Fixture
 
@@ -86,9 +86,9 @@ class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-From [core/src/test/kotlin/dev/minutest/examples/SubjectUnderTestFixtureExampleTests.kt
+<small>\[[core/src/test/kotlin/dev/minutest/examples/SubjectUnderTestFixtureExampleTests.kt
 ](../core/src/test/kotlin/dev/minutest/examples/SubjectUnderTestFixtureExampleTests.kt
-)
+)\]</small>
 
 Even if the subject is immutable then you can [inspect it in after blocks](immutable-fixtures.md).
  
@@ -129,9 +129,9 @@ class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-From [core/src/test/kotlin/dev/minutest/examples/ArgumentsAsFixtureExampleTests.kt
+<small>\[[core/src/test/kotlin/dev/minutest/examples/ArgumentsAsFixtureExampleTests.kt
 ](../core/src/test/kotlin/dev/minutest/examples/ArgumentsAsFixtureExampleTests.kt
-)
+)\]</small>
 
 Again, where possible having the context name expressed in the fixture state, and vice-versa, keeps things honest.
 
@@ -200,9 +200,9 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-From [core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt
+<small>\[[core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt
 ](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt
-)
+)\]</small>
 
 ## Parent Fixtures
 
@@ -248,9 +248,9 @@ class ParentFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-From [core/src/test/kotlin/dev/minutest/examples/ParentFixtureExampleTests.kt
+<small>\[[core/src/test/kotlin/dev/minutest/examples/ParentFixtureExampleTests.kt
 ](../core/src/test/kotlin/dev/minutest/examples/ParentFixtureExampleTests.kt
-)
+)\]</small>
 
 ## Changing Fixture Type
 
@@ -300,9 +300,9 @@ class DerivedContextExampleTests : JUnit5Minutests {
     }
 }
 ```
-From [core/src/test/kotlin/dev/minutest/examples/DerivedContextExampleTests.kt
+<small>\[[core/src/test/kotlin/dev/minutest/examples/DerivedContextExampleTests.kt
 ](../core/src/test/kotlin/dev/minutest/examples/DerivedContextExampleTests.kt
-)
+)\]</small>
 
 ## More Reading
 

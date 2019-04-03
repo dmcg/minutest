@@ -30,7 +30,7 @@ fun linesFrom(filename: String) = File(filename).readLines()
 fun headerFor(file: File) = if (file.name.startsWith("README.")) "" else header
 
 val codeBlockFinder = "^```insert-kotlin (.*?)^```".toRegex(setOf(DOT_MATCHES_ALL, MULTILINE))
-private val header = "[Minutest](README.md)\n\n"
+private val header = "[Minutest](README.md)\n\ngit p"
 
 fun expandCodeBlocks(text: String): String =
     codeBlockFinder.replace(text) { matchResult ->
@@ -38,7 +38,7 @@ fun expandCodeBlocks(text: String): String =
             (listOf("```kotlin") +
                 linesFrom(filename.trim()).withoutPreamble() +
                 "```" +
-                "From [$filename](../$filename)"
+                """<small>\[[$filename](../$filename)\]</small>"""
                 ).joinToString("\n")
         } ?: error("No filename found for kotlin block")
     }

@@ -1,6 +1,6 @@
 [Minutest](README.md)
 
-# Generating Tests
+git p# Generating Tests
 
 Go crazy and unleash the `Power of Kotlin` to generate your tests on the fly.
 
@@ -81,6 +81,6 @@ class GeneratingExampleTests : JUnit5Minutests {
 }
 
 ```
-From [core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt
+<small>\[[core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt
 ](../core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt
-)
+)\]</small>

@@ -1,6 +1,6 @@
 [Minutest](README.md)
 
-# Immutable Fixtures
+git p# Immutable Fixtures
 
 Are you a functional programmer slumming it with Kotlin? Minutest allows immutable fixtures.
 
@@ -27,7 +27,7 @@ class ImmutableExampleTests : JUnit5Minutests {
     }
 }
 ```
-From [core/src/test/kotlin/dev/minutest/examples/ImmutableExampleTests.kt
+<small>\[[core/src/test/kotlin/dev/minutest/examples/ImmutableExampleTests.kt
 ](../core/src/test/kotlin/dev/minutest/examples/ImmutableExampleTests.kt
-)
+)\]</small>
 

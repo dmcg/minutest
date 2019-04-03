@@ -1,6 +1,6 @@
 [Minutest](README.md)
 
-# JUnit Rules
+git p# JUnit Rules
 
 Are you a power JUnit 4 user? Minutest supports JUnit 4 TestRules. As far as I can tell, it does it better than JUnit 5!
 
@@ -26,6 +26,6 @@ class JunitRulesExampleTests : JUnit5Minutests {
     }
 }
 ```
-From [core/src/test/kotlin/dev/minutest/examples/experimental/JUnitRulesExampleTests.kt
+<small>\[[core/src/test/kotlin/dev/minutest/examples/experimental/JUnitRulesExampleTests.kt
 ](../core/src/test/kotlin/dev/minutest/examples/experimental/JUnitRulesExampleTests.kt
-)
+)\]</small>
