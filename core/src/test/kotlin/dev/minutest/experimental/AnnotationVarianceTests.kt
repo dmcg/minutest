@@ -36,6 +36,8 @@ private fun `annotations can only be applied if their fixture type is a supertyp
         // Don't compile
         // UnitAnnotation - test("") {}
         // StringAnnotation - test("") {}
+
+        // Doesn't compile because of the Iterable<*>.minus overload
         // AnyAnnotation + NumberAnnotation + StringAnnotation - test("") {}
     }
 }
