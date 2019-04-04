@@ -25,20 +25,22 @@ fun Iterable<String>.withoutPreamble(): List<String> = this
     .filter { !it.startsWith("import") && !it.startsWith("package") }
     .dropWhile { it.isEmpty() }
 
-fun linesFrom(filename: String) = File(filename).readLines()
-
 fun headerFor(file: File) = if (file.name.startsWith("README.")) "" else header
 
 val codeBlockFinder = "^```insert-kotlin (.*?)^```".toRegex(setOf(DOT_MATCHES_ALL, MULTILINE))
-private val header = "[Minutest](README.md)\n\n"
+val header = "[Minutest](README.md)\n\n"
+val root = project.rootProject.projectDir
 
 fun expandCodeBlocks(text: String): String =
     codeBlockFinder.replace(text) { matchResult ->
         matchResult.groups[1]?.value?.let { filename ->
-            (listOf("```kotlin") +
-                linesFrom(filename.trim()).withoutPreamble() +
-                "```" +
-                """<small>\[[$filename](../$filename)\]</small>"""
-                ).joinToString("\n")
+            expandCodeBlock(filename.trim())
         } ?: error("No filename found for kotlin block")
     }
+
+fun expandCodeBlock(filename: String): String = (
+    listOf("```kotlin") +
+        root.resolve(filename).readLines().withoutPreamble() +
+        "```" +
+        """<small>\[[$filename](../$filename)\]</small>"""
+    ).joinToString("\n")

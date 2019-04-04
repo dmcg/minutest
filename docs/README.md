@@ -40,9 +40,7 @@ class FirstMinutests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/FirstMinutests.kt
-](../core/src/test/kotlin/dev/minutest/examples/FirstMinutests.kt
-)\]</small>
+<small>\[[core/src/test/kotlin/dev/minutest/examples/FirstMinutests.kt](../core/src/test/kotlin/dev/minutest/examples/FirstMinutests.kt)\]</small>
 
 Most tests require access to some state. The collection of state required by the tests is called the test fixture. If you are testing a class, at simplest the fixture might be an instance of the class.
 
@@ -77,9 +75,7 @@ class SimpleStackExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/SimpleStackExampleTests.kt
-](../core/src/test/kotlin/dev/minutest/examples/SimpleStackExampleTests.kt
-)\]</small>
+<small>\[[core/src/test/kotlin/dev/minutest/examples/SimpleStackExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/SimpleStackExampleTests.kt)\]</small>
 
 Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
 
@@ -131,9 +127,7 @@ class StackExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt
-](../core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt
-)\]</small>
+<small>\[[core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt)\]</small>
 
 This runs the following tests
 
@@ -202,9 +196,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt
-](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt
-)\]</small>
+<small>\[[core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt)\]</small>
 
 Understanding fixtures is key to Minutest - [read more](fixtures.md)
 
@@ -257,9 +249,7 @@ fun String.isPalindrome(): Boolean =
     if (length == 0) false
     else (0 until length / 2).find { index -> this[index] != this[length - index - 1] } == null
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt
-](../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt
-)\]</small>
+<small>\[[core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt)\]</small>
 
 ## Reusing Tests
 
@@ -309,9 +299,7 @@ class LinkedListTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt
-](../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt
-)\]</small>
+<small>\[[core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt)\]</small>
 
 ## Other Features
 

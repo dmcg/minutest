@@ -81,6 +81,4 @@ class GeneratingExampleTests : JUnit5Minutests {
 }
 
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt
-](../core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt
-)\]</small>
+<small>\[[core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt)\]</small>

@@ -45,8 +45,6 @@ class SkipAndFocusExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/experimental/SkipAndFocusExampleTests.kt
-](../core/src/test/kotlin/dev/minutest/examples/experimental/SkipAndFocusExampleTests.kt
-)\]</small>
+<small>\[[core/src/test/kotlin/dev/minutest/examples/experimental/SkipAndFocusExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/experimental/SkipAndFocusExampleTests.kt)\]</small>
 
 To be honest, it's a bit arbitrary at the moment, but I find it useful, so you might too. Just don't rely on your intuition about how skip and focus interact if your tests do anything irreversible.
