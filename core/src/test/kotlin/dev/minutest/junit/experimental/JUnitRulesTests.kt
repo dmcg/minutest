@@ -9,7 +9,7 @@ import org.junit.runner.Description
 
 private val log = mutableListOf<String>()
 
-class JunitRulesTests : JUnit5Minutests {
+class JUnitRulesTests : JUnit5Minutests {
 
     class TestRule : TestWatcher() {
         var testDescription: String? = null
