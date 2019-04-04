@@ -59,6 +59,18 @@ class AnnotationTortureTests : JUnit5Minutests {
         doubleAnnotation + SKIP - test("test") {
             fail()
         }
+
+        checkedAgainst(
+            "root",
+            "  floatTests",
+            "    numberAnnotation + test",
+            "    anyAnnotation + test",
+            "    doubleAnnotation + test",
+            "    doubleAnnotation + numberAnnotation + test",
+            "    numberAnnotation + doubleAnnotation + test",
+            "    doubleAnnotation + test", // SKIP doesn't change the test name
+            "    doubleAnnotation + test"  // ditto
+        )
     }
 
     fun smokingGun() = rootContext<Double> {
