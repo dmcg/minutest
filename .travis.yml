@@ -8,13 +8,13 @@ sudo: false
 
 jdk:
   - oraclejdk8
-#  - oraclejdk9
-##  - oraclejdk10 now deprecated
-#  - oraclejdk11
-#  - openjdk8
-#  - openjdk9
-#  - openjdk10
-#  - openjdk11
+  - oraclejdk9
+#  - oraclejdk10 now deprecated
+  - oraclejdk11
+  - openjdk8
+  - openjdk9
+  - openjdk10
+  - openjdk11
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
