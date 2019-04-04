@@ -78,15 +78,15 @@ class JUnitRulesTests : JUnit5Minutests {
             assertEquals(
                 listOf(
                     "test in root",
-                    "test in root(dev.minutest.junit.experimental.JunitRulesTests)",
+                    "test in root(dev.minutest.junit.experimental.JUnitRulesTests)",
                     "test in context",
-                    "context.test in context(dev.minutest.junit.experimental.JunitRulesTests)",
+                    "context.test in context(dev.minutest.junit.experimental.JUnitRulesTests)",
                     "test in unit context",
-                    "unit context.test in unit context(dev.minutest.junit.experimental.JunitRulesTests)",
+                    "unit context.test in unit context(dev.minutest.junit.experimental.JUnitRulesTests)",
                     "test in null context",
-                    "nullable context.null context.test in null context(dev.minutest.junit.experimental.JunitRulesTests)",
+                    "nullable context.null context.test in null context(dev.minutest.junit.experimental.JUnitRulesTests)",
                     "test in not null context",
-                    "nullable context.not null context.test in not null context(dev.minutest.junit.experimental.JunitRulesTests)"
+                    "nullable context.not null context.test in not null context(dev.minutest.junit.experimental.JUnitRulesTests)"
                 ),
                 log)
         }
