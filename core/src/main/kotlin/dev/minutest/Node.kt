@@ -8,7 +8,7 @@ import dev.minutest.experimental.TestAnnotation
  *
  * [F] is the type of the fixture that will be supplied *to* the node.
  */
-sealed class Node<in F> {
+sealed class Node<F> {
     abstract val name: String
     internal abstract val annotations: List<TestAnnotation<F>>
 }
@@ -19,7 +19,7 @@ sealed class Node<in F> {
  * [PF] is the parent fixture type, which will be supplied to the context.
  * [F] is the fixture type of the children - the context will supply this to them.
  */
-abstract class Context<in PF, F> : Node<PF>(), AutoCloseable {
+abstract class Context<PF, F> : Node<PF>(), AutoCloseable {
     abstract val children: List<Node<F>>
 
     /**

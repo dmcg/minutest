@@ -22,7 +22,7 @@ private class TestRuleAnnotation<PF, F, R: TestRule>(
     private val ruleExtractor: F.() -> R
 ) : TestAnnotation<PF> {
 
-    override val transform: NodeTransform<@UnsafeVariance PF> = { node ->
+    override val transform: NodeTransform<PF> = { node ->
         when (node) {
             is Context<PF, *> -> {
                 @Suppress("UNCHECKED_CAST") // might do better?

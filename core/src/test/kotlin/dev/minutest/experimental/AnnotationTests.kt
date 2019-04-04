@@ -15,11 +15,11 @@ class AnnotationTests : JUnit5Minutests {
             test("in single annotation") {}
         })
 
-        isNodeBuilder(UnitAnnotation + AnyAnnotation - test("2 annotations") {})
-        isNodeBuilder(AnyAnnotation + UnitAnnotation - test("2 annotations again") {})
+//        isNodeBuilder(UnitAnnotation + AnyAnnotation - test("2 annotations") {})
+//        isNodeBuilder(AnyAnnotation + UnitAnnotation - test("2 annotations again") {})
 
-        isNodeBuilder(UnitAnnotation + AnyAnnotation + YetAnotherAnnotation - test("3 annotations") {})
-        isNodeBuilder(listOf(UnitAnnotation, AnyAnnotation, YetAnotherAnnotation) - test("3 annotations again") {})
+//        isNodeBuilder(UnitAnnotation + AnyAnnotation + YetAnotherAnnotation - test("3 annotations") {})
+//        isNodeBuilder(listOf(UnitAnnotation, AnyAnnotation, YetAnotherAnnotation) - test("3 annotations again") {})
 
         context("annotate with") {
             annotateWith(UnitAnnotation)
@@ -31,10 +31,10 @@ class AnnotationTests : JUnit5Minutests {
             "  no annotations",
             "  single annotation",
             "    in single annotation",
-            "  2 annotations",
-            "  2 annotations again",
-            "  3 annotations",
-            "  3 annotations again",
+//            "  2 annotations",
+//            "  2 annotations again",
+//            "  3 annotations",
+//            "  3 annotations again",
             "  annotate with",
             "    in annotate with"
         )

@@ -14,21 +14,15 @@ import dev.minutest.RootTransform
  * An annotation may have a [rootTransform] - if so the rootTransform is applied to root of the node tree before
  * tests are run.
  */
-interface TestAnnotation<in F> {
+interface TestAnnotation<F> {
 
     /**
      * Any [NodeTransform] that this annotation will apply.
      */
-    val transform: NodeTransform<@UnsafeVariance F>? get() = null // *
+    val transform: NodeTransform<F>? get() = null // *
 
     /**
      * Any [RootTransform] that this annotation will apply
      */
     val rootTransform: RootTransform? get() = null
-
-
-    // * - What I think that the @UnsafeVariance is saying is, yes, you *could* build a TestAnnotation that had a
-    // transform that was suss.
-    // But if the constructors of TestAnnotation only allow invariant F then this is safe, and they themselves take
-    // a NodeTransform, which is just passed back here, so is safe?
 }
