@@ -50,13 +50,13 @@ private fun `scope for looking at node variance`() {
     val anyNode: Node<Any> = HOLE()
 
     // Node is <in F> - the fixture object is passed in by the parent
-    val intNode2: Node<Int> = numberNode
+//    val intNode2: Node<Int> = numberNode
 //        val numberNode2: Node<Number> = intNode
 
     // NodeTransform is a function, (<in Node<F>>) -> <out Node<F>>
     val numberTransform1: NodeTransform<Number> = { node: Node<Number> -> numberNode }
     // So we can narrow the input and widen the output
-    val numberTransform2: NodeTransform<Number> = { node: Node<Int> -> anyNode }
+//    val numberTransform2: NodeTransform<Number> = { node: Node<Int> -> anyNode }
     // But not vv
     // val numberTransform3: NodeTransform<Number> = { node: Node<Number> -> intNode }
 
