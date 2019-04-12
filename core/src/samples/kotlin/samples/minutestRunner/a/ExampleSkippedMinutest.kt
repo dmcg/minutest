@@ -4,7 +4,6 @@
 package samples.minutestRunner.a
 
 import dev.minutest.experimental.SKIP
-import dev.minutest.experimental.minus
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.fail
 
@@ -14,4 +13,3 @@ fun `example skipped context`() = SKIP - rootContext<Unit> {
         fail("skip wasn't honoured")
     }
 }
-

@@ -14,9 +14,9 @@ private fun `annotations can only be applied if their fixture type is a supertyp
     rootContext<Number> {
         fixture { 42 }
         isNodeBuilder(NumberAnnotation - test("") {})
-        isNodeBuilder(AnyAnnotation - test("") {})
+//        isNodeBuilder(AnyAnnotation - test("") {})
 
-        isNodeBuilder(AnyAnnotation + NumberAnnotation - test("") {})
+//        isNodeBuilder(AnyAnnotation + NumberAnnotation - test("") {})
 
         // Don't compile
         // IntAnnotation - test("") {}
@@ -26,12 +26,12 @@ private fun `annotations can only be applied if their fixture type is a supertyp
 
     rootContext<Int> {
         fixture { 42 }
-        isNodeBuilder(NumberAnnotation - test("") {})
-        isNodeBuilder(AnyAnnotation - test("") {})
+//        isNodeBuilder(NumberAnnotation - test("") {})
+//        isNodeBuilder(AnyAnnotation - test("") {})
         isNodeBuilder(IntAnnotation - test("") {})
 
-        isNodeBuilder(AnyAnnotation + NumberAnnotation - test("") {})
-        isNodeBuilder(AnyAnnotation + NumberAnnotation + IntAnnotation - test("") {})
+//        isNodeBuilder(AnyAnnotation + NumberAnnotation - test("") {})
+//        isNodeBuilder(AnyAnnotation + NumberAnnotation + IntAnnotation - test("") {})
 
         // Don't compile
         // UnitAnnotation - test("") {}
@@ -50,19 +50,19 @@ private fun `scope for looking at node variance`() {
     val anyNode: Node<Any> = HOLE()
 
     // Node is <in F> - the fixture object is passed in by the parent
-    val intNode2: Node<Int> = numberNode
+//    val intNode2: Node<Int> = numberNode
 //        val numberNode2: Node<Number> = intNode
 
     // NodeTransform is a function, (<in Node<F>>) -> <out Node<F>>
     val numberTransform1: NodeTransform<Number> = { node: Node<Number> -> numberNode }
     // So we can narrow the input and widen the output
-    val numberTransform2: NodeTransform<Number> = { node: Node<Int> -> anyNode }
+//    val numberTransform2: NodeTransform<Number> = { node: Node<Int> -> anyNode }
     // But not vv
     // val numberTransform3: NodeTransform<Number> = { node: Node<Number> -> intNode }
 
     // Annotations only accept transforms that are contravariant
     val numberAnnotation1: TransformingAnnotation<Number> = TransformingAnnotation(HOLE<NodeTransform<Number>>())
-    val numberAnnotation2: TransformingAnnotation<Number> = TransformingAnnotation(HOLE<NodeTransform<Any>>())
+//    val numberAnnotation2: TransformingAnnotation<Number> = TransformingAnnotation(HOLE<NodeTransform<Any>>())
     // val numberAnnotation3: TransformingAnnotation<Number> = TransformingAnnotation(HOLE<NodeTransform<Int>>())
 
 }
