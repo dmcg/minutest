@@ -7,11 +7,6 @@ import org.opentest4j.TestAbortedException
 import org.opentest4j.TestSkippedException
 
 
-/**
- * [TestAnnotation] to mark that events within the scope should be notified to the [listener].
- */
-class Telling<F>(private val listener: TestEventListener) : TransformingAnnotation<F>( { it.telling(listener) } )
-
 fun <F> Node<F>.telling(listener: TestEventListener): Node<F> =
     when (this) {
         is Test<F> -> this.telling(listener)
