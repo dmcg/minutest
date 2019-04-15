@@ -29,14 +29,14 @@ interface JUnit5Minutests {
  *
  * @see [RootContextBuilder#testFactory()]
  */
-fun testFactoryFor(root: RootContextBuilder<*>): Stream<out DynamicNode> = root.buildNode().toStreamOfDynamicNodes(RootExecutor)
+fun testFactoryFor(root: RootContextBuilder): Stream<out DynamicNode> = root.buildNode().toStreamOfDynamicNodes(RootExecutor)
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]
  *
  * @see [testFactoryFor(RootContextBuilder)]
  */
-fun RootContextBuilder<*>.toTestFactory() = testFactoryFor(this)
+fun RootContextBuilder.toTestFactory() = testFactoryFor(this)
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 

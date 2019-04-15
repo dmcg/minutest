@@ -10,7 +10,7 @@ internal data class MinutestRootContextBuilder<F>(
     private val builder: TestContextBuilder<Unit, F>.() -> Unit,
     private val annotations: MutableList<TestAnnotation<Unit>> = mutableListOf(),
     override val transforms: MutableList<NodeTransform<Unit>> = mutableListOf()
-) : RootContextBuilder<F> {
+) : RootContextBuilder {
 
     override fun buildNode(): Node<Unit> {
         val rootContext = rootBuilder(name, type, builder).apply {

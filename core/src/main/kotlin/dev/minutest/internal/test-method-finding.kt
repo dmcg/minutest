@@ -24,11 +24,11 @@ internal fun Any.rootContextFromMethods(): Node<Unit> {
 }
 
 @Suppress("UNCHECKED_CAST") // reflection
-private fun <T : Any> KClass<out T>.testMethods(): List<KFunction1<T, RootContextBuilder<*>>> =
+private fun <T : Any> KClass<out T>.testMethods(): List<KFunction1<T, RootContextBuilder>> =
     memberFunctions
         .filter { method ->
             method.returnType.classifier == RootContextBuilder::class &&
                 method.parameters.size == 1 &&
                 method.visibility == KVisibility.PUBLIC
         }
-        .map { method -> method as KFunction1<T, RootContextBuilder<*>> }
+        .map { method -> method as KFunction1<T, RootContextBuilder> }

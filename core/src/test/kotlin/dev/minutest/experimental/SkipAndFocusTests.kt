@@ -150,7 +150,7 @@ class SkipAndFocusTests {
         )
     }
 
-    private fun checkLog(tests: RootContextBuilder<*>, vararg expected: String) {
+    private fun checkLog(tests: RootContextBuilder, vararg expected: String) {
         executeTests(tests)
         assertLogged(log, *expected)
     }

@@ -121,7 +121,7 @@ class FlatteningTests {
         )
     }
 
-    private fun checkLog(tests: RootContextBuilder<*>, vararg expected: String) =
+    private fun checkLog(tests: RootContextBuilder, vararg expected: String) =
         executeTests(tests).also {
             assertLogged(log, *expected)
         }
