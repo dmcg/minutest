@@ -1,6 +1,7 @@
 package dev.minutest.experimental
 
 import dev.minutest.NodeBuilder
+import dev.minutest.NodeTransform
 import dev.minutest.TestContextBuilder
 
 /**
@@ -34,4 +35,12 @@ operator fun <F> Iterable<*>.minus(@Suppress("UNUSED_PARAMETER") thing: NodeBuil
 fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation<PF>) {
     @Suppress("UNCHECKED_CAST") // information hiding downcast
     annotation.applyTo(this as NodeBuilder<PF>)
+}
+
+/**
+ * Adds a transform to a context block from the inside.
+ */
+fun <PF, F> TestContextBuilder<PF, F>.transformWith(transform: NodeTransform<PF>) {
+    @Suppress("UNCHECKED_CAST") // information hiding downcast
+    (this as NodeBuilder<PF>).transforms.add(0, transform)
 }
