@@ -12,7 +12,7 @@ interface NodeBuilder<F> {
     /**
      * Experimental - see [TestAnnotation].
      */
-    fun prependAnnotation(annotation: TestAnnotation<F>)
+    fun addAnnotation(annotation: TestAnnotation<F>)
 
     val transforms: MutableList<NodeTransform<F>>
 

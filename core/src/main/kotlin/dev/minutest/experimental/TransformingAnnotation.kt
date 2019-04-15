@@ -11,7 +11,7 @@ open class TransformingAnnotation<in F>(
 ) : TestAnnotation<F> {
 
     override fun applyTo(nodeBuilder: NodeBuilder<@UnsafeVariance F>) {
-        nodeBuilder.prependAnnotation(this)
+        nodeBuilder.addAnnotation(this)
         nodeBuilder.transforms.add(0,  transform)
     }
 }

@@ -17,7 +17,7 @@ import dev.minutest.RootTransform
 interface TestAnnotation<in F> {
 
     fun applyTo(nodeBuilder: NodeBuilder<@UnsafeVariance F>) {
-        nodeBuilder.prependAnnotation(this)
+        nodeBuilder.addAnnotation(this)
     }
 
     /**

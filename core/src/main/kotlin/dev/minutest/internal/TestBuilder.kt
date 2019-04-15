@@ -14,8 +14,8 @@ internal data class TestBuilder<F>(val name: String, val f: F.(TestDescriptor) -
 
     override fun buildNode() = Test(name, annotations, f).transformedBy(transforms)
 
-    override fun prependAnnotation(annotation: TestAnnotation<F>) {
-        annotations.add(0, annotation)
+    override fun addAnnotation(annotation: TestAnnotation<F>) {
+        annotations.add(annotation)
     }
 }
 
