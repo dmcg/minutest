@@ -1,6 +1,7 @@
 package dev.minutest.experimental
 
 import dev.minutest.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test as JUnitTest
 
 
@@ -38,6 +39,7 @@ class AnnotationPrecedenceTests {
         )
     }
 
+    @Disabled("TODO")
     @JUnitTest fun `first internal transform is outer`() {
 
         executeTests(

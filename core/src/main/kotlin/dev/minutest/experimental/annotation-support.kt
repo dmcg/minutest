@@ -13,6 +13,6 @@ fun TestAnnotation<*>.appliesTo(node: Node<*>) = node.annotations.contains(this)
  */
 fun <F> NodeBuilder<F>.prependAnnotations(annotations: Iterable<TestAnnotation<F>>) {
     annotations.reversed().forEach {
-        this.prependAnnotation(it)
+        it.applyTo(this)
     }
 }

@@ -9,7 +9,8 @@ internal data class MinutestRootContextBuilder<F>(
     private val name: String,
     private val type: FixtureType,
     private val builder: TestContextBuilder<Unit, F>.() -> Unit,
-    private val annotations: MutableList<TestAnnotation<Unit>> = mutableListOf()
+    private val annotations: MutableList<TestAnnotation<Unit>> = mutableListOf(),
+    override val transforms: MutableList<NodeTransform<Unit>> = mutableListOf()
 ) : RootContextBuilder<F> {
 
     override fun buildNode(): Node<Unit> {
@@ -19,10 +20,6 @@ internal data class MinutestRootContextBuilder<F>(
         }.buildNode()
         val deduplicatedTransformsInTree = rootContext.findRootTransforms().toSet()
         return rootContext.transformedBy(deduplicatedTransformsInTree)
-    }
-
-    override fun appendAnnotation(annotation: TestAnnotation<Unit>) {
-        annotations.add(annotation)
     }
 
     override fun prependAnnotation(annotation: TestAnnotation<Unit>) {

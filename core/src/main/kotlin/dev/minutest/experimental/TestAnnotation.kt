@@ -1,7 +1,7 @@
 package dev.minutest.experimental
 
 import dev.minutest.Node
-import dev.minutest.NodeTransform
+import dev.minutest.NodeBuilder
 import dev.minutest.RootTransform
 
 /**
@@ -16,10 +16,9 @@ import dev.minutest.RootTransform
  */
 interface TestAnnotation<in F> {
 
-    /**
-     * Any [NodeTransform] that this annotation will apply.
-     */
-    val transform: NodeTransform<@UnsafeVariance F>? get() = null // *
+    fun applyTo(nodeBuilder: NodeBuilder<@UnsafeVariance F>) {
+        nodeBuilder.prependAnnotation(this)
+    }
 
     /**
      * Any [RootTransform] that this annotation will apply
