@@ -7,14 +7,14 @@ fun <PF, F> TestContextBuilder<PF, F>.checkedAgainst(
     logger: TestLogger = defaultLogger(),
     check: (List<String>) -> Unit
 ) {
-    annotateWith(TransformingAnnotation { node ->
+    transformWith { node ->
         when (node) {
             is Context<PF, *> -> {
                 ContextWrapper(node.telling(logger), onClose = { check(logger.log) })
             }
             else -> TODO("checking when root is just a test")
         }
-    })
+    }
 }
 
 fun <PF, F> TestContextBuilder<PF, F>.checkedAgainst(

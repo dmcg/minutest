@@ -43,9 +43,9 @@ class TestEventsTests {
     @Test fun firesEvents() {
 
         val tests = rootContext<Unit> {
-            annotateWith(
-                Telling(listener)
-            )
+            transformWith { node ->
+                node.telling(listener)
+            }
             test("in root") {}
             context("outer") {
                 test("in outer") {}
