@@ -2,8 +2,7 @@ package dev.minutest.junit.experimental
 
 import dev.minutest.*
 import dev.minutest.experimental.ContextWrapper
-import dev.minutest.experimental.TestAnnotation
-import dev.minutest.experimental.annotateWith
+import dev.minutest.experimental.transformWith
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runner.Description.createTestDescription
@@ -13,20 +12,16 @@ import org.junit.runners.model.Statement
  * Apply a JUnit test rule in a fixture
  */
 fun <PF, F, R: TestRule> TestContextBuilder<PF, F>.applyRule(ruleExtractor: F.() -> R) {
-    annotateWith(
-        TestRuleAnnotation(ruleExtractor)
+    transformWith(
+        TestRuleTransform(ruleExtractor)
     )
 }
 
-private class TestRuleAnnotation<PF, F, R: TestRule>(
+private class TestRuleTransform<PF, F, R: TestRule>(
     private val ruleExtractor: F.() -> R
-) : TestAnnotation<PF> {
+) : NodeTransform<PF> {
 
-    override fun applyTo(nodeBuilder: NodeBuilder<PF>) {
-        nodeBuilder.transforms.add(0, transform)
-    }
-
-    val transform: NodeTransform<@UnsafeVariance PF> = { node ->
+    override fun invoke(node: Node<PF>): Node<PF> =
         when (node) {
             is Context<PF, *> -> {
                 @Suppress("UNCHECKED_CAST") // might do better?
@@ -34,7 +29,6 @@ private class TestRuleAnnotation<PF, F, R: TestRule>(
             }
             else -> error("TestRuleAnnotation can only be applied to a context")
         }
-    }
 
     private fun magicRunnerFor(context: Context<PF, F>) =
         fun(testlet: Testlet<F>, parentFixture: PF, testDescriptor: TestDescriptor) =
