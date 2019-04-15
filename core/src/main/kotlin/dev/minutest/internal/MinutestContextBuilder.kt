@@ -78,8 +78,8 @@ internal class MinutestContextBuilder<PF, F>(
        a FixtureBuilder with the parent type so that checkedFixtureFactory() can reject it, and error if it doesn't.
      */
 
-    override fun prependAnnotation(annotation: TestAnnotation<PF>) {
-        annotations.add(0, annotation)
+    override fun addAnnotation(annotation: TestAnnotation<PF>) {
+        annotations.add(annotation)
     }
 
     private fun <G> newContext(

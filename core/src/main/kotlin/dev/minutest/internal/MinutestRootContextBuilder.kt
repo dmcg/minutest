@@ -2,7 +2,6 @@ package dev.minutest.internal
 
 import dev.minutest.*
 import dev.minutest.experimental.TestAnnotation
-import dev.minutest.experimental.prependAnnotations
 import dev.minutest.experimental.transformedBy
 
 internal data class MinutestRootContextBuilder<F>(
@@ -16,14 +15,16 @@ internal data class MinutestRootContextBuilder<F>(
     override fun buildNode(): Node<Unit> {
         val rootContext = rootBuilder(name, type, builder).apply {
             // my annotations are those for the root context
-            prependAnnotations(annotations)
+            annotations.forEach {
+                it.applyTo(this)
+            }
         }.buildNode()
         val deduplicatedTransformsInTree = rootContext.findRootTransforms().toSet()
         return rootContext.transformedBy(deduplicatedTransformsInTree)
     }
 
-    override fun prependAnnotation(annotation: TestAnnotation<Unit>) {
-        annotations.add(0, annotation)
+    override fun addAnnotation(annotation: TestAnnotation<Unit>) {
+        annotations.add(annotation)
     }
 }
 
