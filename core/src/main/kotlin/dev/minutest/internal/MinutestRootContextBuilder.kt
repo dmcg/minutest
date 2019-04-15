@@ -26,6 +26,8 @@ internal data class MinutestRootContextBuilder<F>(
     override fun addAnnotation(annotation: TestAnnotation<Unit>) {
         annotations.add(annotation)
     }
+
+    override fun withName(newName: String) = copy(name = newName)
 }
 
 private fun <F> rootBuilder(name: String, type: FixtureType, builder: TestContextBuilder<Unit, F>.() -> Unit) =
