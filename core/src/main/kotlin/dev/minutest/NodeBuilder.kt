@@ -21,4 +21,4 @@ interface NodeBuilder<F> {
 /**
  * Marker interface for the root [Context] builder.
  */
-interface RootContextBuilder<F> : NodeBuilder<Unit>
+interface RootContextBuilder : NodeBuilder<Unit>
