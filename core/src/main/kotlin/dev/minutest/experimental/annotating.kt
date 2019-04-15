@@ -8,7 +8,7 @@ import dev.minutest.TestContextBuilder
  */
 operator fun <F, NodeBuilderT: NodeBuilder<F>> TestAnnotation<F>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
     nodeBuilder.also {
-        it.prependAnnotation(this)
+        this.applyTo(it)
     }
 
 /**
@@ -33,5 +33,5 @@ operator fun <F> Iterable<*>.minus(@Suppress("UNUSED_PARAMETER") thing: NodeBuil
  */
 fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation<PF>) {
     @Suppress("UNCHECKED_CAST") // information hiding downcast
-    (this as NodeBuilder<PF>).appendAnnotation(annotation)
+    annotation.applyTo(this as NodeBuilder<PF>)
 }
