@@ -13,11 +13,11 @@ fun <F> TestContextBuilder<Sequence<F>, F>.flatten() {
         parentFixture.first()
     }
 
-    annotateWith(TransformingAnnotation { node: Node<Sequence<F>> ->
+    transformWith { node: Node<Sequence<F>> ->
         @Suppress("UNCHECKED_CAST") // safe in context
         val wrapped = (node as? Context<Sequence<F>, F>) ?: error("Not a context")
         ContextWrapper(wrapped, runner = flatteningRunnerFor(wrapped))
-    })
+    }
 }
 
 
@@ -33,7 +33,7 @@ private fun <F> flatteningRunnerFor(wrapped: Context<Sequence<F>, F>) =
                 }
             }.toList()
         val errors: List<Throwable> = fixturesAndErrors.mapNotNull { it.second }
-        if (!errors.isEmpty())
+        if (errors.isNotEmpty())
             throw MultipleFailuresError("Test ${testDescriptor.name} for ", errors.toList())
         else
             return fixturesAndErrors.lastOrNull()?.first
