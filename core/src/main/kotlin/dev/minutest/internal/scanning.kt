@@ -42,4 +42,4 @@ private fun TypeSignature.name() =
     (this as? ClassRefTypeSignature)?.baseClassName
 
 private fun Iterable<KFunction0<RootContextBuilder>>.renamed(): List<() -> RootContextBuilder> =
-    this.map { f -> { RenamedRootContextBuilder(f(), f.name) } }
+    this.map { f -> { f().withName(f.name) } }

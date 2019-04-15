@@ -17,7 +17,7 @@ internal fun Any.rootContextFromMethods(): Node<Unit> {
             "root",
             contextBuilderMethods.map { method ->
                 {
-                    RenamedRootContextBuilder(method(this), method.name)
+                    method(this).withName(method.name)
                 }
             })
     }
