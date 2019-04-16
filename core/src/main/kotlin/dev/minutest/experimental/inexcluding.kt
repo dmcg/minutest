@@ -7,7 +7,7 @@ import dev.minutest.Test
 /**
  * [TestAnnotation] that will cause a [Test] or [Context] to be skipped.
  */
-val SKIP = TransformingAnnotation<Any?> { it.skipped() }
+val SKIP = TransformingAnnotation { it.skipped() }
 
 /**
  * [TestAnnotation] that will cause a [Test] or [Context] to be run while those not marked [FOCUS] will
