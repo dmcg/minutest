@@ -1,6 +1,7 @@
 package dev.minutest.internal
 
 import dev.minutest.*
+import dev.minutest.experimental.TestAnnotation
 import dev.minutest.experimental.transformedBy
 
 /**
@@ -30,7 +31,7 @@ internal data class MinutestRootContextBuilder<F>(
 
 // TODO - this should probably be breadth-first
 private fun Node<*>.findRootTransforms(): List<RootTransform> {
-    val myTransforms: List<RootTransform> = annotations.mapNotNull { it.rootTransform }
+    val myTransforms: List<RootTransform> = annotations.filterIsInstance<TestAnnotation<*>>().mapNotNull { it.rootTransform }
     return when (this) {
         is Test<*> -> myTransforms
         is Context<*, *> -> myTransforms + this.children.flatMap { it.findRootTransforms() }

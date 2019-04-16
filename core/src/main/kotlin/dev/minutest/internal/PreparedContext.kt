@@ -1,7 +1,6 @@
 package dev.minutest.internal
 
 import dev.minutest.*
-import dev.minutest.experimental.TestAnnotation
 
 /**
  * The runtime representation of a context.
@@ -9,7 +8,7 @@ import dev.minutest.experimental.TestAnnotation
 internal data class PreparedContext<PF, F> (
     override val name: String,
     override val children: List<Node<F>>,
-    override val annotations: List<TestAnnotation<PF>>,
+    override val annotations: List<Any>,
     private val befores: List<(F, TestDescriptor) -> F>,
     private val afters: List<(FixtureValue<F>, TestDescriptor) -> Unit>,
     private var afterAlls: List<() -> Unit>,
