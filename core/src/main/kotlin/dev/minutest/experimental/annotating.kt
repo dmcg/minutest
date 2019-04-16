@@ -7,7 +7,7 @@ import dev.minutest.TestContextBuilder
 /**
  * Used (ironically) to *add* an annotation to a context or test block.
  */
-operator fun <F, NodeBuilderT: NodeBuilder<F>> TestAnnotation<F>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
+operator fun <F, NodeBuilderT: NodeBuilder<F>> TestAnnotation.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
     nodeBuilder.also {
         this.applyTo(it)
     }
@@ -15,12 +15,12 @@ operator fun <F, NodeBuilderT: NodeBuilder<F>> TestAnnotation<F>.minus(nodeBuild
 /**
  * Groups annotations into a list.
  */
-operator fun <F, A: TestAnnotation<F>> A.plus(other: A): List<A> = listOf(this, other)
+operator fun <A: TestAnnotation> A.plus(other: A): List<A> = listOf(this, other)
 
 /**
  * Add a list of annotations to a context or test block.
  */
-operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation<F>>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
+operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
     nodeBuilder.also { it.prependAnnotations(this) }
 
 /**
@@ -32,7 +32,7 @@ operator fun <F> Iterable<*>.minus(@Suppress("UNUSED_PARAMETER") thing: NodeBuil
 /**
  * Adds an annotation to a context block from the inside.
  */
-fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation<PF>) {
+fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation) {
     @Suppress("UNCHECKED_CAST") // information hiding downcast
     annotation.applyTo(this as NodeBuilder<PF>)
 }

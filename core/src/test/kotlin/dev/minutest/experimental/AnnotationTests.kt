@@ -40,9 +40,9 @@ class AnnotationTests : JUnit5Minutests {
         )
     }
 
-    object UnitAnnotation : TestAnnotation<Unit>
-    object AnyAnnotation : TestAnnotation<Any?>
-    object YetAnotherAnnotation : TestAnnotation<Unit>
+    object UnitAnnotation : TestAnnotation
+    object AnyAnnotation : TestAnnotation
+    object YetAnotherAnnotation : TestAnnotation
 }
 
 // check that expression is a nodebuilder at compile time

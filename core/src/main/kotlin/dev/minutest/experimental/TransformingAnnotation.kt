@@ -6,11 +6,12 @@ import dev.minutest.NodeTransform
 /**
  * Convenience implementation of [TestAnnotation].
  */
-open class TransformingAnnotation<F>(
-    private val transform: NodeTransform<F>
-) : TestAnnotation<F> {
+class TransformingAnnotation(
+    private val transform: NodeTransform<*>
+) : TestAnnotation {
 
-    override fun applyTo(nodeBuilder: NodeBuilder<F>) {
-        nodeBuilder.transforms.add(0,  transform)
+    override fun applyTo(nodeBuilder: NodeBuilder<*>) {
+        val transforms = nodeBuilder.transforms as MutableList<NodeTransform<*>>
+        transforms.add(0, transform)
     }
 }

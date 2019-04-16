@@ -8,10 +8,9 @@ import dev.minutest.RootTransform
  */
 open class RootAnnotation(
     private val rootTransform: RootTransform
-) : TestAnnotation<Any?>, RootTransform by rootTransform {
+) : TestAnnotation, RootTransform by rootTransform {
 
-    override fun applyTo(nodeBuilder: NodeBuilder<Any?>) {
+    override fun applyTo(nodeBuilder: NodeBuilder<*>) {
         nodeBuilder.addAnnotation(this)
     }
-
 }
