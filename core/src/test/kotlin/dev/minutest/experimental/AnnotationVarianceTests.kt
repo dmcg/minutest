@@ -2,8 +2,6 @@
 
 package dev.minutest.experimental
 
-import dev.minutest.Node
-import dev.minutest.NodeTransform
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Test as JUnitTest
 
@@ -42,30 +40,6 @@ private fun `annotations can only be applied if their fixture type is a supertyp
     }
 }
 
-
-private fun `scope for looking at node variance`() {
-
-    val numberNode: Node<Number> = HOLE()
-    val intNode: Node<Int> = HOLE()
-    val anyNode: Node<Any> = HOLE()
-
-    // Node is <in F> - the fixture object is passed in by the parent
-//    val intNode2: Node<Int> = numberNode
-//        val numberNode2: Node<Number> = intNode
-
-    // NodeTransform is a function, (<in Node<F>>) -> <out Node<F>>
-    val numberTransform1: NodeTransform<Number> = { node: Node<Number> -> numberNode }
-    // So we can narrow the input and widen the output
-//    val numberTransform2: NodeTransform<Number> = { node: Node<Int> -> anyNode }
-    // But not vv
-    // val numberTransform3: NodeTransform<Number> = { node: Node<Number> -> intNode }
-
-    // Annotations only accept transforms that are contravariant
-    val numberAnnotation1: TransformingAnnotation<Number> = TransformingAnnotation(HOLE<NodeTransform<Number>>())
-    val numberAnnotation2: TransformingAnnotation<Number> = TransformingAnnotation(HOLE<NodeTransform<Any>>())
-    // val numberAnnotation3: TransformingAnnotation<Number> = TransformingAnnotation(HOLE<NodeTransform<Int>>())
-
-}
 
 private object UnitAnnotation : TestAnnotation<Unit>
 private object AnyAnnotation : TestAnnotation<Any?>
