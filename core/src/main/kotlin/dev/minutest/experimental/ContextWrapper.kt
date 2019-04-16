@@ -4,7 +4,7 @@ import dev.minutest.*
 
 internal data class ContextWrapper<PF, F>(
     override val name: String,
-    override val annotations: List<TestAnnotation<PF>>,
+    override val annotations: List<Any>,
     override val children: List<Node<F>>,
     val runner: (Testlet<F>, parentFixture: PF, TestDescriptor) -> F,
     val onClose: () -> Unit
@@ -13,7 +13,7 @@ internal data class ContextWrapper<PF, F>(
     constructor(
         delegate: Context<PF, F>,
         name: String = delegate.name,
-        properties: List<TestAnnotation<PF>> = delegate.annotations,
+        properties: List<Any> = delegate.annotations,
         children: List<Node<F>> = delegate.children,
         runner: (Testlet<F>, parentFixture: PF, TestDescriptor) -> F = delegate::runTest,
         onClose: () -> Unit = delegate::close

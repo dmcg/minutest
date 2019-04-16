@@ -1,7 +1,6 @@
 package dev.minutest.internal
 
 import dev.minutest.*
-import dev.minutest.experimental.TestAnnotation
 import dev.minutest.experimental.transformedBy
 
 /**
@@ -16,7 +15,7 @@ internal data class MinutestContextBuilder<PF, F>(
     private val befores: MutableList<(F, TestDescriptor) -> F> = mutableListOf(),
     private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
     private val afterAlls: MutableList<() -> Unit> = mutableListOf(),
-    private val annotations: MutableList<TestAnnotation<PF>> = mutableListOf(),
+    private val annotations: MutableList<Any> = mutableListOf(),
     override val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
 
@@ -78,7 +77,7 @@ internal data class MinutestContextBuilder<PF, F>(
        a FixtureBuilder with the parent type so that checkedFixtureFactory() can reject it, and error if it doesn't.
      */
 
-    override fun addAnnotation(annotation: TestAnnotation<PF>) {
+    override fun addAnnotation(annotation: Any) {
         annotations.add(annotation)
     }
 
