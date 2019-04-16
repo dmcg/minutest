@@ -13,7 +13,7 @@ val SKIP = TransformingAnnotation<Any?> { it.skipped() }
  * [TestAnnotation] that will cause a [Test] or [Context] to be run while those not marked [FOCUS] will
  * be skipped.
  */
-val FOCUS = RootAnnotation<Any?> { node ->
+val FOCUS = RootAnnotation { node ->
     when (node) {
         is Context<Unit, *> -> node.inexcluded(node.hasAFocusedChild())
         is Test<Unit> -> TODO("skipAndFocus when root is a test")
