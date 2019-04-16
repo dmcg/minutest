@@ -7,20 +7,20 @@ import dev.minutest.experimental.transformedBy
 /**
  * Internal implementation of [TestContextBuilder] which hides the details and the [NodeBuilder]ness.
  */
-internal class MinutestContextBuilder<PF, F>(
-    private val name: String,
+internal data class MinutestContextBuilder<PF, F>(
+    val name: String,
     private val type: FixtureType,
-    private var fixtureFactory: FixtureFactory<PF, F>
+    private var fixtureFactory: FixtureFactory<PF, F>,
+    private var explicitFixtureFactory: Boolean = false,
+    private val children: MutableList<NodeBuilder<F>> = mutableListOf(),
+    private val befores: MutableList<(F, TestDescriptor) -> F> = mutableListOf(),
+    private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
+    private val afterAlls: MutableList<() -> Unit> = mutableListOf(),
+    private val annotations: MutableList<TestAnnotation<PF>> = mutableListOf(),
+    override val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
 
-    private var explicitFixtureFactory = false
-    private val children = mutableListOf<NodeBuilder<F>>()
-    private val befores = mutableListOf<(F, TestDescriptor) -> F>()
-    private val afters = mutableListOf<(FixtureValue<F>, TestDescriptor) -> Unit>()
-    private val afterAlls = mutableListOf<() -> Unit>()
 
-    private val annotations: MutableList<TestAnnotation<PF>> = mutableListOf()
-    override val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
 
     override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
         if (explicitFixtureFactory)

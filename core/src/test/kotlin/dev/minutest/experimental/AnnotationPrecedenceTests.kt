@@ -76,6 +76,7 @@ class AnnotationPrecedenceTests {
         )
     }
 
+    @Disabled("TODO")
     @JUnitTest fun `external annotations are outside internal for rootContext`() {
 
         executeTests(

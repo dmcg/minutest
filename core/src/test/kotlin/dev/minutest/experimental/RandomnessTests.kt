@@ -8,28 +8,34 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 class RandomnessTests {
+
     @Test
     fun reuses_random_seed_until_test_passes() {
-        var testIsPassing = true
         val randomValues = mutableListOf<Int>()
-        
-        val tests = rootContext<Unit> {
-            randomTest("the test") { random, _ ->
-                randomValues += random.nextInt()
-                assertTrue(testIsPassing)
+
+        fun executeTests(shouldPass: Boolean) = executeTests( // *
+            rootContext<Unit> {
+                randomTest("the test") { random, _ ->
+                    randomValues += random.nextInt()
+                    assertTrue(shouldPass)
+                }
             }
-        }
-        
-        testIsPassing = false
-        executeTests(tests)
-        executeTests(tests)
-        
-        testIsPassing = true
-        executeTests(tests)
-        executeTests(tests)
-        
-        assertEquals(randomValues[0],randomValues[1])
-        
-        assertNotEquals(randomValues[2],randomValues[3])
+        )
+
+        // uses the same random values all the time the test is failing
+        executeTests(false)
+        executeTests(false)
+        assertEquals(randomValues[0], randomValues[1])
+
+        // until it passes
+        executeTests(true)
+        assertEquals(randomValues[1], randomValues[2])
+
+        // when it then uses different values
+        executeTests(true)
+        assertNotEquals(randomValues[2], randomValues[3])
     }
+
+    // * - we have to re-evaluate the root context for each test because it the test tree is built (indirectly)
+    // by executeTests and mutates state.
 }
