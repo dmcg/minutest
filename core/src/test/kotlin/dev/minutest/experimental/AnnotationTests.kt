@@ -10,19 +10,19 @@ class AnnotationTests : JUnit5Minutests {
     fun tests() = rootContext<Unit> {
 
         isNodeBuilder(test("no annotations") {})
-        isNodeBuilder(UnitAnnotation - test("single annotation") {})
-        isNodeBuilder(UnitAnnotation - context("single annotation") {
+        isNodeBuilder(unitAnnotation - test("single annotation") {})
+        isNodeBuilder(unitAnnotation - context("single annotation") {
             test("in single annotation") {}
         })
 
-        isNodeBuilder(UnitAnnotation + AnyAnnotation - test("2 annotations") {})
-        isNodeBuilder(AnyAnnotation + UnitAnnotation - test("2 annotations again") {})
+        isNodeBuilder(unitAnnotation + anyAnnotation - test("2 annotations") {})
+        isNodeBuilder(anyAnnotation + unitAnnotation - test("2 annotations again") {})
 
-        isNodeBuilder(UnitAnnotation + AnyAnnotation + YetAnotherAnnotation - test("3 annotations") {})
-        isNodeBuilder(listOf(UnitAnnotation, AnyAnnotation, YetAnotherAnnotation) - test("3 annotations again") {})
+        isNodeBuilder(unitAnnotation + anyAnnotation + yetAnotherAnnotation - test("3 annotations") {})
+        isNodeBuilder(listOf(unitAnnotation, anyAnnotation, yetAnotherAnnotation) - test("3 annotations again") {})
 
         context("annotate with") {
-            annotateWith(UnitAnnotation)
+            annotateWith(unitAnnotation)
             test("in annotate with") {}
         }
 
@@ -40,9 +40,9 @@ class AnnotationTests : JUnit5Minutests {
         )
     }
 
-    object UnitAnnotation : TestAnnotation
-    object AnyAnnotation : TestAnnotation
-    object YetAnotherAnnotation : TestAnnotation
+    private val unitAnnotation = MarkerAnnotation()
+    private val anyAnnotation = MarkerAnnotation()
+    private val yetAnotherAnnotation = MarkerAnnotation()
 }
 
 // check that expression is a nodebuilder at compile time
