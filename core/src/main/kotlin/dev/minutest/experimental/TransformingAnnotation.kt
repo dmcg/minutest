@@ -1,5 +1,6 @@
 package dev.minutest.experimental
 
+import dev.minutest.Node
 import dev.minutest.NodeBuilder
 import dev.minutest.NodeTransform
 
@@ -11,7 +12,6 @@ class TransformingAnnotation(
 ) : TestAnnotation {
 
     override fun applyTo(nodeBuilder: NodeBuilder<*>) {
-        val transforms = nodeBuilder.transforms as MutableList<NodeTransform<*>>
-        transforms.add(0, transform)
+        nodeBuilder.addTransform(transform as (Node<out Any?>) -> Nothing)
     }
 }

@@ -14,8 +14,7 @@ interface NodeBuilder<F> {
      */
     fun addAnnotation(annotation: Any)
 
-    val transforms: MutableList<NodeTransform<F>>
-
+    fun addTransform(transform: NodeTransform<F>)
 }
 
 /**

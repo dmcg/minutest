@@ -16,10 +16,8 @@ internal data class MinutestContextBuilder<PF, F>(
     private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
     private val afterAlls: MutableList<() -> Unit> = mutableListOf(),
     private val annotations: MutableList<Any> = mutableListOf(),
-    override val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
+    private val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
-
-
 
     override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
         if (explicitFixtureFactory)
@@ -79,6 +77,10 @@ internal data class MinutestContextBuilder<PF, F>(
 
     override fun addAnnotation(annotation: Any) {
         annotations.add(annotation)
+    }
+
+    override fun addTransform(transform: NodeTransform<PF>) {
+        transforms.add(transform)
     }
 
     private fun <G> newContext(

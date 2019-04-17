@@ -22,7 +22,7 @@ internal data class MinutestRootContextBuilder<F>(
     override fun buildNode(): Node<Unit> {
         val rootContext = delegate.apply(builder).buildNode()
         val deduplicatedTransformsInTree = rootContext.findRootTransforms().toSet()
-        return rootContext.transformedBy(deduplicatedTransformsInTree)
+        return rootContext.transformedBy(deduplicatedTransformsInTree.reversed())
     }
 
     override fun withName(newName: String) = this.copy(delegate = delegate.copy(name = newName))

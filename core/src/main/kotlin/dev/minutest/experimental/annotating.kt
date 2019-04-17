@@ -42,5 +42,5 @@ fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation) {
  */
 fun <PF, F> TestContextBuilder<PF, F>.transformWith(transform: NodeTransform<PF>) {
     @Suppress("UNCHECKED_CAST") // information hiding downcast
-    (this as NodeBuilder<PF>).transforms.add(0, transform)
+    (this as NodeBuilder<PF>).addTransform(transform)
 }
