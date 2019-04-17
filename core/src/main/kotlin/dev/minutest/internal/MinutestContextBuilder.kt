@@ -15,7 +15,7 @@ internal data class MinutestContextBuilder<PF, F>(
     private val befores: MutableList<(F, TestDescriptor) -> F> = mutableListOf(),
     private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
     private val afterAlls: MutableList<() -> Unit> = mutableListOf(),
-    private val annotations: MutableList<Any> = mutableListOf(),
+    private val markers: MutableList<Any> = mutableListOf(),
     private val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
 
@@ -75,8 +75,8 @@ internal data class MinutestContextBuilder<PF, F>(
        a FixtureBuilder with the parent type so that checkedFixtureFactory() can reject it, and error if it doesn't.
      */
 
-    override fun addAnnotation(annotation: Any) {
-        annotations.add(annotation)
+    override fun addMarker(marker: Any) {
+        markers.add(marker)
     }
 
     override fun addTransform(transform: NodeTransform<PF>) {
@@ -108,7 +108,7 @@ internal data class MinutestContextBuilder<PF, F>(
     override fun buildNode(): Node<PF> = PreparedContext(
         name,
         children.map { it.buildNode() },
-        annotations,
+        markers,
         befores,
         afters,
         afterAlls,

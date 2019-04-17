@@ -5,7 +5,7 @@ import dev.minutest.*
 internal data class AmalgamatedRootContext(
     val packageName: String,
     private val contextBuilderBuilders: List<() -> RootContextBuilder>,
-    override val annotations: List<Any> = emptyList()
+    override val markers: List<Any> = emptyList()
 ) : Context<Unit, Unit>() {
 
     override val name: String get() = packageName

@@ -8,7 +8,7 @@ package dev.minutest
  */
 sealed class Node<F> {
     abstract val name: String
-    internal abstract val annotations: List<Any>
+    internal abstract val markers: List<Any>
 }
 
 /**
@@ -36,6 +36,6 @@ abstract class Context<PF, F> : Node<PF>(), AutoCloseable {
  */
 data class Test<F>(
     override val name: String,
-    override val annotations: List<Any>,
+    override val markers: List<Any>,
     private val f: Testlet<F>
 ) : Node<F>(), Testlet<F> by f
