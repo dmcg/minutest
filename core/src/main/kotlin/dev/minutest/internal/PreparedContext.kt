@@ -35,7 +35,9 @@ internal data class PreparedContext<PF, F> (
         }
     }
 
-    override fun withTransformedChildren(transform: NodeTransform<F>) = copy(children = transform.transformAll(children))
+    override fun withTransformedChildren(transform: NodeTransform<F>) = copy(
+        children = children.map { transform(it) }
+    )
 
     // apply befores in order - if anything is thrown return it and the last successful value
     private fun applyBeforesTo(fixture: F, testDescriptor: TestDescriptor): FixtureValue<F> =

@@ -1,12 +1,19 @@
 package dev.minutest.experimental
 
-import dev.minutest.*
+import dev.minutest.Context
+import dev.minutest.Node
+import dev.minutest.NodeTransform
+import dev.minutest.Test
 
-fun <F> Node<F>.transformedBy(transforms: Collection<NodeTransform<F>>): Node<F> =
+internal fun <F> Node<F>.transformedBy(transforms: Collection<NodeTransform<F>>): Node<F> =
     if (transforms.isEmpty())
         this
     else
         transforms.reduce(NodeTransform<F>::then)(this)
+
+internal fun <F> NodeTransform<F>.then(next: NodeTransform<F>): NodeTransform<F> = { node ->
+    next(this(node))
+}
 
 fun Node<*>.hasA(predicate: (Node<*>) -> Boolean): Boolean = when (this) {
     is Test<*> -> predicate(this)

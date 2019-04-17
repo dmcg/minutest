@@ -5,7 +5,7 @@ import dev.minutest.NodeBuilder
 import dev.minutest.NodeTransform
 
 /**
- * Convenience implementation of [TestAnnotation].
+ * A [TestAnnotation] that adds a transform to be applied to the [Node].
  */
 class TransformingAnnotation(
     private val transform: NodeTransform<*>

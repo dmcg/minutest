@@ -4,9 +4,9 @@ import dev.minutest.NodeBuilder
 import dev.minutest.RootTransform
 
 /**
- * Convenience implementation of [TestAnnotation].
+ * A [TestAnnotation] carrying a [RootTransform] that will be applied before tests are run.
  */
-open class RootAnnotation(
+class RootAnnotation(
     private val rootTransform: RootTransform
 ) : TestAnnotation, RootTransform by rootTransform {
 
