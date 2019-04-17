@@ -12,8 +12,11 @@ interface NodeBuilder<F> {
     /**
      * Experimental - see [TestAnnotation].
      */
-    fun addAnnotation(annotation: Any)
+    fun addMarker(marker: Any)
 
+    /**
+     * Experimental - see [TestAnnotation].
+     */
     fun addTransform(transform: NodeTransform<F>)
 }
 

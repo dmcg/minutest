@@ -11,6 +11,6 @@ open class RootAnnotation(
 ) : TestAnnotation, RootTransform by rootTransform {
 
     override fun applyTo(nodeBuilder: NodeBuilder<*>) {
-        nodeBuilder.addAnnotation(this)
+        nodeBuilder.addMarker(this)
     }
 }

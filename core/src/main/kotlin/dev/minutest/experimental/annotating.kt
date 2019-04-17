@@ -21,7 +21,11 @@ operator fun <A: TestAnnotation> A.plus(other: A): List<A> = listOf(this, other)
  * Add a list of annotations to a context or test block.
  */
 operator fun <F, NodeBuilderT: NodeBuilder<F>> Iterable<TestAnnotation>.minus(nodeBuilder: NodeBuilderT): NodeBuilderT =
-    nodeBuilder.also { it.prependAnnotations(this) }
+    nodeBuilder.also {
+        this.reversed().forEach { annotation ->
+            annotation.applyTo(it)
+        }
+    }
 
 /**
  * If you are looking at this you are probably trying to add a mismatched set of [TestAnnotation]s to a test or context

@@ -8,7 +8,7 @@ import dev.minutest.*
 internal data class PreparedContext<PF, F> (
     override val name: String,
     override val children: List<Node<F>>,
-    override val annotations: List<Any>,
+    override val markers: List<Any>,
     private val befores: List<(F, TestDescriptor) -> F>,
     private val afters: List<(FixtureValue<F>, TestDescriptor) -> Unit>,
     private var afterAlls: List<() -> Unit>,
