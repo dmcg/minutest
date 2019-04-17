@@ -17,12 +17,14 @@ internal data class ContextWrapper<PF, F>(
         children: List<Node<F>> = delegate.children,
         runner: (Testlet<F>, parentFixture: PF, TestDescriptor) -> F = delegate::runTest,
         onClose: () -> Unit = delegate::close
-        ) : this(name, markers, children, runner, onCloseFor(delegate, onClose))
+    ) : this(name, markers, children, runner, onCloseFor(delegate, onClose))
 
     override fun runTest(testlet: Testlet<F>, parentFixture: PF, testDescriptor: TestDescriptor): F =
         runner(testlet, parentFixture, testDescriptor)
 
-    override fun withTransformedChildren(transform: NodeTransform<F>) = copy(children = transform.transformAll(children))
+    override fun withTransformedChildren(transform: NodeTransform<F>) = copy(
+        children = children.map { transform(it) }
+    )
 
     override fun close() = onClose.invoke()
 }
