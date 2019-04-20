@@ -47,6 +47,16 @@ private object ShouldCompile {
 //
 //    // * should not be able to assert that the node requires a particular fixture type
 //    val `transforms expects a particular fixture type` = TransformingAnnotation { node: Node<Int> -> node }
+//
+//    // * should not be able to accidentally pass a typed transform to TransformingAnnotation
+//    val intTransform: NodeTransform<Int> = { node -> node }
+//    val `can't pass trandform with type to TransformingAnnotation` = TransformingAnnotation(intTransform)
+//
+//    @Suppress("UNCHECKED_CAST")
+//    val `could cast, but on your head be it`  = TransformingAnnotation(intTransform as NodeTransform<Any?>)
+//
+//    val `can't do an unsafe thing by assignment`: NodeTransform<Any?> = intTransform
+//    val `can cast, but but on your head be it`: NodeTransform<Any?> = intTransform as NodeTransform<Any?>
 //}
 
 
