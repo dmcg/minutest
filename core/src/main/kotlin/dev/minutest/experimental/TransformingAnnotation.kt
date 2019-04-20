@@ -35,27 +35,37 @@ private object ShouldCompile {
     }
 }
 
+//@Suppress("unused")
 //private object `Should not compile` {
 //    // A TransformingAnnotation
 //
 //    // * should not be able to return a node that expects a particular fixture type to be supplied
+//
 //    val `transforms to node that expects a particular fixture type` = TransformingAnnotation { node ->
-//        Test<Int>("name", emptyList()) { anInt, _ ->
+//        Test<Int>("name", emptyList()) { anInt, _ -> // compile failure - Required: Node<Any?>, Found: Test<Int>
 //            anInt + 2
 //        }
 //    }
 //
 //    // * should not be able to assert that the node requires a particular fixture type
-//    val `transforms expects a particular fixture type` = TransformingAnnotation { node: Node<Int> -> node }
+//
+//    val `transforms expects a particular fixture type` = TransformingAnnotation {
+//        node: Node<Int> -> node // compile failure - Expected parameter of type Node<Any?>
+//    }
 //
 //    // * should not be able to accidentally pass a typed transform to TransformingAnnotation
+//
 //    val intTransform: NodeTransform<Int> = { node -> node }
-//    val `can't pass trandform with type to TransformingAnnotation` = TransformingAnnotation(intTransform)
+//    val `can't pass transform with type to TransformingAnnotation` =
+//        TransformingAnnotation(intTransform) // compile failure - Required: NodeTransform<Any?>, Found: NodeTransform<Int>
 //
 //    @Suppress("UNCHECKED_CAST")
 //    val `could cast, but on your head be it`  = TransformingAnnotation(intTransform as NodeTransform<Any?>)
 //
-//    val `can't do an unsafe thing by assignment`: NodeTransform<Any?> = intTransform
+//    val `can't do an unsafe thing by assignment`: NodeTransform<Any?> =
+//        intTransform // compile failure - Required: NodeTransform<Any?>, Found: NodeTransform<Int>
+//
+//    @Suppress("UNCHECKED_CAST")
 //    val `can cast, but but on your head be it`: NodeTransform<Any?> = intTransform as NodeTransform<Any?>
 //}
 
