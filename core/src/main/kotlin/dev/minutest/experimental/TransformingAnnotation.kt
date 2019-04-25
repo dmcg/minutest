@@ -70,3 +70,11 @@ private object ShouldCompile {
 //}
 
 
+private object `Smoking Gun` {
+    val `can replace a node with one that returns a different fixture type` = TransformingAnnotation { node: Node<Any?> ->
+        Test("name", emptyList()) { _, _ ->
+            2
+        }
+    }
+
+}
