@@ -5,13 +5,17 @@ import dev.minutest.*
 /**
  * A [TestAnnotation] that adds a transform to be applied to the [Node].
  */
-class TransformingAnnotation(
-    private val transform: NodeTransform<Any?>
-) : TestAnnotation {
+abstract class TransformingAnnotation : TestAnnotation {
 
     override fun applyTo(nodeBuilder: NodeBuilder<*>) {
         @Suppress("UNCHECKED_CAST") // I haven't (yet) found a way that this isn't safe
-        nodeBuilder.addTransform(transform as (Node<out Any?>) -> Nothing)
+        nodeBuilder.addTransform(this.asNodeTransform<Any?>() as (Node<out Any?>) -> Nothing)
+    }
+
+    abstract fun <F> transform(node: Node<F>): Node<F>
+
+    private fun <F> asNodeTransform(): NodeTransform<F> = object : NodeTransform<F> {
+        override fun invoke(node: Node<F>): Node<F> = transform(node)
     }
 }
 
@@ -19,19 +23,22 @@ private object ShouldCompile {
     // A TransformingAnnotation
 
     // * should be fine returning the same node
-    val id: TransformingAnnotation = TransformingAnnotation { node -> node }
+    val id: TransformingAnnotation = object : TransformingAnnotation() {
+        override fun <F> transform(node: Node<F>): Node<F> = node
+    }
 
     // * should be able to access the fixture, provided it doesn't assume anything about its type
-    val testLogging: TransformingAnnotation = TransformingAnnotation { node ->
-        when (node) {
-            is Context<*, *> -> node
-            is Test<Any?> -> Test(node.name, node.markers) { fixture, testDescriptor ->
-                println("Before ${testDescriptor.name}: $fixture")
-                node.invoke(fixture, testDescriptor).also {
-                    println("After ${testDescriptor.name}: $it")
+    val testLogging: TransformingAnnotation = object : TransformingAnnotation() {
+        override fun <F> transform(node: Node<F>): Node<F> =
+            when (node) {
+                is Context<F, *> -> node
+                is Test<F> -> Test(node.name, node.markers) { fixture, testDescriptor ->
+                    println("Before ${testDescriptor.name}: $fixture")
+                    node.invoke(fixture, testDescriptor).also {
+                        println("After ${testDescriptor.name}: $it")
+                    }
                 }
             }
-        }
     }
 }
 
@@ -70,11 +77,17 @@ private object ShouldCompile {
 //}
 
 
-private object `Smoking Gun` {
-    val `can replace a node with one that returns a different fixture type` = TransformingAnnotation { node: Node<Any?> ->
-        Test("name", emptyList()) { _, _ ->
-            2
-        }
-    }
-
-}
+//private object `Smoking Gun` {
+//    val `can replace a node with one that returns a different fixture type` = object: TransformingAnnotation() {
+//        override fun <F> transform(node: Node<F>): Node<F> {
+//            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//        }
+//    }
+//
+//    { node: Node<Any?> ->
+//        Test("name", emptyList()) { _, _ ->
+//            2
+//        }
+//    }
+//
+//}
