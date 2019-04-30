@@ -43,7 +43,7 @@ class TestEventsTests {
     @Test fun firesEvents() {
 
         val tests = rootContext<Unit> {
-            transformWith { node ->
+            addTransform { node ->
                 node.telling(listener)
             }
             test("in root") {}

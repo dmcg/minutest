@@ -3,6 +3,7 @@ package dev.minutest.experimental
 import dev.minutest.NodeBuilder
 import dev.minutest.NodeTransform
 import dev.minutest.TestContextBuilder
+import dev.minutest.internal.MinutestContextBuilder
 
 /**
  * Used (ironically) to *add* an annotation to a context or test block.
@@ -37,7 +38,7 @@ fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation) {
 /**
  * Adds a transform to a context block from the inside.
  */
-fun <PF, F> TestContextBuilder<PF, F>.transformWith(transform: NodeTransform<PF>) {
+fun <PF, F> TestContextBuilder<PF, F>.addTransform(transform: NodeTransform<PF>) {
     @Suppress("UNCHECKED_CAST") // information hiding downcast
-    (this as NodeBuilder<PF>).addTransform(transform)
+    (this as MinutestContextBuilder<PF, *>).addTransform(transform)
 }

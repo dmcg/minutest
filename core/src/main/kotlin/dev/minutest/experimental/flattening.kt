@@ -13,7 +13,7 @@ fun <F> TestContextBuilder<Sequence<F>, F>.flatten() {
         parentFixture.first()
     }
 
-    transformWith { node: Node<Sequence<F>> ->
+    addTransform { node: Node<Sequence<F>> ->
         @Suppress("UNCHECKED_CAST") // safe in context
         val wrapped = (node as? Context<Sequence<F>, F>) ?: error("Not a context")
         ContextWrapper(wrapped, runner = flatteningRunnerFor(wrapped))
