@@ -7,7 +7,7 @@ fun <PF, F> TestContextBuilder<PF, F>.checkedAgainst(
     logger: TestLogger = defaultLogger(),
     check: (List<String>) -> Unit
 ) {
-    transformWith { node ->
+    addTransform { node ->
         when (node) {
             is Context<PF, *> -> {
                 ContextWrapper(node.telling(logger), onClose = { check(logger.log) })

@@ -2,7 +2,7 @@ package dev.minutest.junit.experimental
 
 import dev.minutest.*
 import dev.minutest.experimental.ContextWrapper
-import dev.minutest.experimental.transformWith
+import dev.minutest.experimental.addTransform
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runner.Description.createTestDescription
@@ -12,7 +12,7 @@ import org.junit.runners.model.Statement
  * Apply a JUnit test rule in a fixture
  */
 fun <PF, F, R: TestRule> TestContextBuilder<PF, F>.applyRule(ruleExtractor: F.() -> R) {
-    transformWith(
+    addTransform(
         TestRuleTransform(ruleExtractor)
     )
 }
