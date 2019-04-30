@@ -22,7 +22,7 @@ abstract class TransformingAnnotation : TestAnnotation {
 private object ShouldCompile {
     // A TransformingAnnotation
 
-    // * should be fine returning the same node
+    // * should be able to return the same node
     val id: TransformingAnnotation = object : TransformingAnnotation() {
         override fun <F> transform(node: Node<F>): Node<F> = node
     }
@@ -42,51 +42,23 @@ private object ShouldCompile {
     }
 }
 
-//@Suppress("unused")
 //private object `Should not compile` {
 //    // A TransformingAnnotation
 //
 //    // * should not be able to return a node that expects a particular fixture type to be supplied
 //
-//    val `transforms to node that expects a particular fixture type` = TransformingAnnotation { node ->
-//        Test<Int>("name", emptyList()) { anInt, _ -> // compile failure - Required: Node<Any?>, Found: Test<Int>
-//            anInt + 2
+//    val `transforms to a node that expects a particular fixture type` = object: TransformingAnnotation()
+//    {
+//        override fun <F> transform(node: Node<F>): Node<F> =
+//            Test<F>("name", emptyList()) { fixture: Int, _ -> // compile failure - Expected parameter of type F
+//                fixture // compile failure - Required: F, Found: Int
 //        }
 //    }
 //
-//    // * should not be able to assert that the node requires a particular fixture type
-//
-//    val `transforms expects a particular fixture type` = TransformingAnnotation {
-//        node: Node<Int> -> node // compile failure - Expected parameter of type Node<Any?>
-//    }
-//
-//    // * should not be able to accidentally pass a typed transform to TransformingAnnotation
-//
-//    val intTransform: NodeTransform<Int> = { node -> node }
-//    val `can't pass transform with type to TransformingAnnotation` =
-//        TransformingAnnotation(intTransform) // compile failure - Required: NodeTransform<Any?>, Found: NodeTransform<Int>
-//
-//    @Suppress("UNCHECKED_CAST")
-//    val `could cast, but on your head be it`  = TransformingAnnotation(intTransform as NodeTransform<Any?>)
-//
-//    val `can't do an unsafe thing by assignment`: NodeTransform<Any?> =
-//        intTransform // compile failure - Required: NodeTransform<Any?>, Found: NodeTransform<Int>
-//
-//    @Suppress("UNCHECKED_CAST")
-//    val `can cast, but but on your head be it`: NodeTransform<Any?> = intTransform as NodeTransform<Any?>
-//}
-
-
-//private object `Smoking Gun` {
-//    val `can replace a node with one that returns a different fixture type` = object: TransformingAnnotation() {
-//        override fun <F> transform(node: Node<F>): Node<F> {
-//            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//        }
-//    }
-//
-//    { node: Node<Any?> ->
-//        Test("name", emptyList()) { _, _ ->
-//            2
+//    val `transforms to a particular node type` = object: TransformingAnnotation()
+//    {
+//        override fun <F> transform(node: Node<F>): Node<F> =
+//            Test<Int>("name", emptyList()) { _ , _ -> // compile failure - Required: Node<F>, Found: Test<Int>
 //        }
 //    }
 //
