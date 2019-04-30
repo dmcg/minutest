@@ -9,7 +9,7 @@ internal fun <F> Node<F>.transformedBy(transforms: Collection<NodeTransform<F>>)
     if (transforms.isEmpty())
         this
     else
-        transforms.reduce(NodeTransform<F>::then)(this)
+        transforms.reversed().reduce(NodeTransform<F>::then)(this)
 
 internal fun <F> NodeTransform<F>.then(next: NodeTransform<F>): NodeTransform<F> = { node ->
     next(this(node))
