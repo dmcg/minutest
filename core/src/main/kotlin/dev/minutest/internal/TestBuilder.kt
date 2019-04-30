@@ -18,7 +18,7 @@ internal data class TestBuilder<F>(val name: String, val f: F.(TestDescriptor) -
     }
 
     override fun addTransform(transform: NodeTransform<F>) {
-        transforms.add(0, transform)
+        transforms.add(transform)
     }
 }
 
