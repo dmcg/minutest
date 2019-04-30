@@ -23,7 +23,7 @@ operator fun <A: TestAnnotation> A.plus(other: A): List<A> = listOf(this, other)
  */
 operator fun <T: NodeBuilder<*>> Iterable<TestAnnotation>.minus(nodeBuilder: T): T =
     nodeBuilder.also {
-        this.reversed().forEach { annotation ->
+        forEach { annotation ->
             annotation.applyTo(it)
         }
     }
