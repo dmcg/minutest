@@ -14,7 +14,7 @@ import org.opentest4j.TestAbortedException
 
 class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<Node<Unit>>(type) {
 
-    override fun getChildren(): List<Node<Unit>> = listOf(testClass.javaClass.newInstance().rootContextFromMethods())
+    override fun getChildren(): List<Node<Unit>> = listOf(testClass.onlyConstructor.newInstance().rootContextFromMethods())
 
     override fun runChild(child: Node<Unit>, notifier: RunNotifier) = child.run(RootExecutor, notifier)
 
