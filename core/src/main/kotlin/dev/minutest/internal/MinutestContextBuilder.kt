@@ -6,7 +6,7 @@ import dev.minutest.experimental.transformedBy
 /**
  * Internal implementation of [TestContextBuilder] which hides the details and the [NodeBuilder]ness.
  */
-internal data class MinutestContextBuilder<PF, F>(
+internal class MinutestContextBuilder<PF, F>(
     val name: String,
     private val type: FixtureType,
     private var fixtureFactory: FixtureFactory<PF, F>,
