@@ -2,6 +2,13 @@
 
 I still have to go through Slack posts to find older details, but in the meantime
 
+## 1.6.0
+
+Internal changes to support safe transforms.
+
+Running under Java 9, 10, 11, 12./
+
+
 ## 1.5.0
 
 Annotation processing changes. These are not backward-compatible, but apply only to experimental features that I suspect
