@@ -3,6 +3,33 @@ package dev.minutest.internal
 import dev.minutest.*
 import dev.minutest.experimental.transformedBy
 
+internal class LateContextBuilder<PF, F>(
+    val name: String,
+    private val type: FixtureType,
+    private var fixtureFactory: FixtureFactory<PF, F>,
+    private val builder: TestContextBuilder<PF, F>.() -> Unit
+) : NodeBuilder<PF> {
+    private val markers: MutableList<Any> = mutableListOf()
+    private val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
+
+    override fun addMarker(marker: Any) {
+        markers.add(marker)
+    }
+
+    override fun addTransform(transform: NodeTransform<PF>) {
+        transforms.add(transform)
+    }
+
+    override fun buildNode(): Node<PF> {
+        val delegate = MinutestContextBuilder(name, type, fixtureFactory,
+            markers = markers.toMutableList(), // [1]
+            transforms = transforms.toMutableList() // [1]
+        )
+        return delegate.apply(builder).buildNode()
+        // [1] - these copies not strictly necessary but they help debugging
+    }
+}
+
 /**
  * Internal implementation of [TestContextBuilder] which hides the details and the [NodeBuilder]ness.
  */
@@ -16,8 +43,7 @@ internal class MinutestContextBuilder<PF, F>(
     private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
     private val afterAlls: MutableList<() -> Unit> = mutableListOf(),
     private val markers: MutableList<Any> = mutableListOf(),
-    private val transforms: MutableList<NodeTransform<PF>> = mutableListOf(),
-    private val builder: TestContextBuilder<PF, F>.() -> Unit
+    private val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
 
     override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
@@ -90,11 +116,11 @@ internal class MinutestContextBuilder<PF, F>(
         fixtureFactory: FixtureFactory<F, G>,
         builder: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F> = addChild(
-        MinutestContextBuilder(
+        LateContextBuilder(
             name,
             type,
             fixtureFactory,
-            builder = builder
+            builder
         )
     )
 
@@ -108,7 +134,6 @@ internal class MinutestContextBuilder<PF, F>(
     }
 
     override fun buildNode(): Node<PF> {
-        this.apply(builder)
         return PreparedContext(
             name,
             children.map { it.buildNode() },
