@@ -1,54 +1,45 @@
 package dev.minutest.internal
 
 import dev.minutest.*
+import dev.minutest.experimental.TestAnnotation
 import dev.minutest.experimental.transformedBy
 
 /**
- * A [NodeBuilder] that captures markers and transforms applied by prefix [TestAnnotations].
+ * A [NodeBuilder] that captures markers and transforms applied by prefix [TestAnnotation]s.
  */
 internal data class LateContextBuilder<PF, F>(
-    private val name: String,
-    private val type: FixtureType,
-    private var fixtureFactory: FixtureFactory<PF, F>,
-    private val builder: TestContextBuilder<PF, F>.() -> Unit,
-    private val markers: MutableList<Any> = mutableListOf(),
-    private val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
-) : NodeBuilder<PF> {
+    private val delegate: MinutestContextBuilder<PF, F>,
+    private val builder: TestContextBuilder<PF, F>.() -> Unit
+) : NodeBuilder<PF> by delegate {
 
-    override fun addMarker(marker: Any) {
-        markers.add(marker)
-    }
+    constructor(
+        name: String,
+        type: FixtureType,
+        fixtureFactory: FixtureFactory<PF, F>,
+        builder: TestContextBuilder<PF, F>.() -> Unit
+    ) : this(MinutestContextBuilder(name, type, fixtureFactory), builder)
 
-    override fun addTransform(transform: NodeTransform<PF>) {
-        transforms.add(transform)
-    }
+    override fun buildNode(): Node<PF> = delegate.apply(builder).buildNode()
 
-    override fun buildNode(): Node<PF> {
-        val delegate = MinutestContextBuilder(name, type, fixtureFactory,
-            markers = markers.toMutableList(), // [1]
-            transforms = transforms.toMutableList() // [1]
-        )
-        return delegate.apply(builder).buildNode()
-        // [1] - these copies not strictly necessary but they help debugging
-    }
+    fun withName(newName: String) = copy(delegate = delegate.copy(name = newName))
 }
 
 /**
  * Internal implementation of [TestContextBuilder] which hides the details and the [NodeBuilder]ness.
  */
-internal class MinutestContextBuilder<PF, F>(
-    private val name: String,
+
+internal data class MinutestContextBuilder<PF, F>(
+    val name: String,
     private val type: FixtureType,
     private var fixtureFactory: FixtureFactory<PF, F>,
+    private var explicitFixtureFactory: Boolean = false,
+    private val children: MutableList<NodeBuilder<F>> = mutableListOf(),
+    private val befores: MutableList<(F, TestDescriptor) -> F> = mutableListOf(),
+    private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
+    private val afterAlls: MutableList<() -> Unit> = mutableListOf(),
     private val markers: MutableList<Any> = mutableListOf(),
     private val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
-
-    private var explicitFixtureFactory  = false
-    private val children = mutableListOf<NodeBuilder<F>>()
-    private val befores = mutableListOf<(F, TestDescriptor) -> F>()
-    private val afters = mutableListOf<(FixtureValue<F>, TestDescriptor) -> Unit>()
-    private val afterAlls = mutableListOf<() -> Unit>()
 
     override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
         if (explicitFixtureFactory)
