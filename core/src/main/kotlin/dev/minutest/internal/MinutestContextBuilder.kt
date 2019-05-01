@@ -3,6 +3,9 @@ package dev.minutest.internal
 import dev.minutest.*
 import dev.minutest.experimental.transformedBy
 
+/**
+ * A [NodeBuilder] that captures markers and transforms applied by prefix [TestAnnotations].
+ */
 internal data class LateContextBuilder<PF, F>(
     private val name: String,
     private val type: FixtureType,

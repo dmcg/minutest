@@ -4,8 +4,9 @@ import dev.minutest.*
 import dev.minutest.experimental.transformedBy
 
 /**
- * A [NodeBuilder] for root contexts that applies the builder only when [buildNode] is called, and also finds and
- * applies [RootTransform]s.
+ * A [NodeBuilder] for root contexts that finds and applies [RootTransform]s.
+ *
+ * This delegates to LateContextBuilder rather than inherits because it's the easiest way to cope with [withName].
  */
 internal data class MinutestRootContextBuilder<F>(
     private val delegate: LateContextBuilder<Unit, F>
