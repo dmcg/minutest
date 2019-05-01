@@ -3,14 +3,14 @@ package dev.minutest.internal
 import dev.minutest.*
 import dev.minutest.experimental.transformedBy
 
-internal class LateContextBuilder<PF, F>(
-    val name: String,
+internal data class LateContextBuilder<PF, F>(
+    private val name: String,
     private val type: FixtureType,
     private var fixtureFactory: FixtureFactory<PF, F>,
-    private val builder: TestContextBuilder<PF, F>.() -> Unit
-) : NodeBuilder<PF> {
-    private val markers: MutableList<Any> = mutableListOf()
+    private val builder: TestContextBuilder<PF, F>.() -> Unit,
+    private val markers: MutableList<Any> = mutableListOf(),
     private val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
+) : NodeBuilder<PF> {
 
     override fun addMarker(marker: Any) {
         markers.add(marker)
@@ -34,17 +34,18 @@ internal class LateContextBuilder<PF, F>(
  * Internal implementation of [TestContextBuilder] which hides the details and the [NodeBuilder]ness.
  */
 internal class MinutestContextBuilder<PF, F>(
-    val name: String,
+    private val name: String,
     private val type: FixtureType,
     private var fixtureFactory: FixtureFactory<PF, F>,
-    private var explicitFixtureFactory: Boolean = false,
-    private val children: MutableList<NodeBuilder<F>> = mutableListOf(),
-    private val befores: MutableList<(F, TestDescriptor) -> F> = mutableListOf(),
-    private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
-    private val afterAlls: MutableList<() -> Unit> = mutableListOf(),
     private val markers: MutableList<Any> = mutableListOf(),
     private val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
+
+    private var explicitFixtureFactory  = false
+    private val children = mutableListOf<NodeBuilder<F>>()
+    private val befores = mutableListOf<(F, TestDescriptor) -> F>()
+    private val afters = mutableListOf<(FixtureValue<F>, TestDescriptor) -> Unit>()
+    private val afterAlls = mutableListOf<() -> Unit>()
 
     override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
         if (explicitFixtureFactory)
