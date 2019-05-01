@@ -4,27 +4,29 @@ import dev.minutest.*
 import dev.minutest.experimental.transformedBy
 
 /**
- * A [NodeBuilder] for root contexts that finds and applies [RootTransform]s.
- *
- * This delegates to [LateContextBuilder] rather than inherits because it's the easiest way to cope with [withName].
+ * A [LateContextBuilder] for root contexts that finds and applies [RootTransform]s.
  */
-internal data class MinutestRootContextBuilder<F>(
-    private val delegate: LateContextBuilder<Unit, F>
-) : NodeBuilder<Unit> by delegate, RootContextBuilder {
+internal class MinutestRootContextBuilder<F>(
+    delegate: MinutestContextBuilder<Unit, F>,
+    builder: TestContextBuilder<Unit, F>.() -> Unit
+) : LateContextBuilder<Unit, F>(delegate, builder), RootContextBuilder {
 
     constructor(
         name: String,
         type: FixtureType,
         builder: TestContextBuilder<Unit, F>.() -> Unit
-    ) : this(LateContextBuilder<Unit, F>(name, type, rootFixtureFactoryHack(), builder))
+    ) : this(MinutestContextBuilder(name, type, rootFixtureFactoryHack()), builder)
 
     override fun buildNode(): Node<Unit> {
-        val rootContext = delegate.buildNode()
+        val rootContext = super.buildNode()
         val deduplicatedTransformsInTree = rootContext.findRootTransforms().toSet()
         return rootContext.transformedBy(deduplicatedTransformsInTree)
     }
 
-    override fun withName(newName: String) = copy(delegate = delegate.withName(newName))
+    override fun withName(newName: String) = MinutestRootContextBuilder(
+        delegate.copy(name = newName),
+        builder
+    )
 }
 
 // TODO - this should probably be breadth-first
