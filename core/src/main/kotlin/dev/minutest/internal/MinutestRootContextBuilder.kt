@@ -24,13 +24,15 @@ internal data class MinutestRootContextBuilder<F>(
     }
 
     override fun buildNode(): Node<Unit> {
-        val delegate = MinutestContextBuilder(name, type, rootFixtureFactoryHack(), builder = builder)
-        markers.forEach { delegate.addMarker(it) }
-        transforms.forEach { delegate.addTransform(it) }
+        val delegate = MinutestContextBuilder(name, type, rootFixtureFactoryHack(),
+            markers = markers.toMutableList(), // [1]
+            transforms = transforms.toMutableList(), // [1]
+            builder = builder)
 
         val rootContext = delegate.buildNode()
         val deduplicatedTransformsInTree = rootContext.findRootTransforms().toSet()
         return rootContext.transformedBy(deduplicatedTransformsInTree)
+        // [1] - these copies not strictly necessary but they help debugging
     }
 
     override fun withName(newName: String) = this.copy(name = newName)
