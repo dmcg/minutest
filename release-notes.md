@@ -6,7 +6,7 @@ I still have to go through Slack posts to find older details, but in the meantim
 
 Internal changes to support safe transforms.
 
-Running under Java 9, 10, 11, 12./
+Running under Java 9, 10, 11, 12.
 
 
 ## 1.5.0
