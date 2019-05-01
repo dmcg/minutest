@@ -7,14 +7,13 @@ script: ./gradlew build
 sudo: false
 
 jdk:
-  - oraclejdk8
-  - oraclejdk9
-#  - oraclejdk10 now deprecated
-  - oraclejdk11
   - openjdk8
+  - oraclejdk8
   - openjdk9
   - openjdk10
   - openjdk11
+  - openjdk12
+  - oraclejdk12
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
