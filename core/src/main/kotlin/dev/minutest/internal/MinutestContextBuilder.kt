@@ -7,9 +7,9 @@ import dev.minutest.experimental.transformedBy
 /**
  * A [NodeBuilder] that captures markers and transforms applied by prefix [TestAnnotation]s.
  */
-internal data class LateContextBuilder<PF, F>(
-    private val delegate: MinutestContextBuilder<PF, F>,
-    private val builder: TestContextBuilder<PF, F>.() -> Unit
+internal open class LateContextBuilder<PF, F>(
+    protected val delegate: MinutestContextBuilder<PF, F>,
+    protected val builder: TestContextBuilder<PF, F>.() -> Unit
 ) : NodeBuilder<PF> by delegate {
 
     constructor(
@@ -20,14 +20,10 @@ internal data class LateContextBuilder<PF, F>(
     ) : this(MinutestContextBuilder(name, type, fixtureFactory), builder)
 
     override fun buildNode(): Node<PF> = delegate.apply(builder).buildNode()
-
-    fun withName(newName: String) = copy(delegate = delegate.copy(name = newName))
 }
-
 /**
  * Internal implementation of [TestContextBuilder] which hides the details and the [NodeBuilder]ness.
  */
-
 internal data class MinutestContextBuilder<PF, F>(
     val name: String,
     private val type: FixtureType,
