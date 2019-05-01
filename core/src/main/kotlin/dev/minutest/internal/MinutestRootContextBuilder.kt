@@ -8,34 +8,22 @@ import dev.minutest.experimental.transformedBy
  * applies [RootTransform]s.
  */
 internal data class MinutestRootContextBuilder<F>(
-    private val name: String,
-    private val type: FixtureType,
-    private val builder: TestContextBuilder<Unit, F>.() -> Unit,
-    private val markers: MutableList<Any> = mutableListOf(),
-    private val transforms: MutableList<NodeTransform<Unit>> = mutableListOf()
-) : RootContextBuilder {
+    private val delegate: LateContextBuilder<Unit, F>
+) : NodeBuilder<Unit> by delegate, RootContextBuilder {
 
-    override fun addMarker(marker: Any) {
-        markers.add(marker)
-    }
-
-    override fun addTransform(transform: NodeTransform<Unit>) {
-        transforms.add(transform)
-    }
+    constructor(
+        name: String,
+        type: FixtureType,
+        builder: TestContextBuilder<Unit, F>.() -> Unit
+    ) : this(LateContextBuilder<Unit, F>(name, type, rootFixtureFactoryHack(), builder))
 
     override fun buildNode(): Node<Unit> {
-        val delegate = MinutestContextBuilder<Unit, F>(name, type, rootFixtureFactoryHack(),
-            markers = markers.toMutableList(), // [1]
-            transforms = transforms.toMutableList() // [1]
-            )
-
-        val rootContext = delegate.apply(builder).buildNode()
+        val rootContext = delegate.buildNode()
         val deduplicatedTransformsInTree = rootContext.findRootTransforms().toSet()
         return rootContext.transformedBy(deduplicatedTransformsInTree)
-        // [1] - these copies not strictly necessary but they help debugging
     }
 
-    override fun withName(newName: String) = this.copy(name = newName)
+    override fun withName(newName: String) = copy(delegate = delegate.copy(name = newName))
 }
 
 // TODO - this should probably be breadth-first

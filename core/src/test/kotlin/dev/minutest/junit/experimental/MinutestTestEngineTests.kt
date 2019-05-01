@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.platform.engine.TestExecutionResult
 import org.junit.platform.engine.discovery.ClassNameFilter.excludeClassNamePatterns
+import org.junit.platform.engine.discovery.ClassNameFilter.includeClassNamePatterns
 import org.junit.platform.engine.discovery.DiscoverySelectors.*
 import org.junit.platform.engine.discovery.PackageNameFilter.excludePackageNames
 import org.junit.platform.launcher.*
@@ -80,7 +81,10 @@ class MinutestTestEngineTests {
         assertTestRun(
             {
                 selectors(selectPackage("samples.minutestRunner.a"))
-                filters(excludeClassNamePatterns(".*Typed.*"))
+                filters(
+                    excludeClassNamePatterns(".*Typed.*"),
+                    excludeClassNamePatterns(".*Skipped.*")
+                    )
             },
             "plan started",
             "started: Minutest",
@@ -95,6 +99,22 @@ class MinutestTestEngineTests {
             "started: a passing test",
             "successful: a passing test",
             "successful: example context",
+            "successful: samples.minutestRunner.a",
+            "successful: Minutest",
+            "plan finished"
+        )
+    }
+
+    @Test
+    fun `skip on root`() {
+        assertTestRun(
+            {
+                selectors(selectPackage("samples.minutestRunner.a"))
+                filters(includeClassNamePatterns(".*ExampleSkippedMinutest.*"))
+            },
+            "plan started",
+            "started: Minutest",
+            "started: samples.minutestRunner.a",
             "registered: example skipped context",
             "started: example skipped context",
             "aborted: example skipped context",
