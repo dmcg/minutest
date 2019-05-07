@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Assertions.assertNotEquals
 class FirstMinutests : JUnit5Minutests {
 
     // tests are grouped in a context
-    fun tests() = rootContext<Unit> {
+    fun tests() = rootContext {
 
         // define a test by calling test
         test("my first test") {

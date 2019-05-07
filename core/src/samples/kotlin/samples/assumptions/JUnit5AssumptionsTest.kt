@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assumptions
 
 class JUnit5AssumptionsTest : JUnit5Minutests {
 
-    fun tests() = rootContext<Unit> {
+    fun tests() = rootContext {
         assumptionsContract(Assumptions::assumeTrue)
     }
 }

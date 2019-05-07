@@ -8,7 +8,7 @@ import dev.minutest.experimental.checkedAgainst as willRun
 
 class RepeatingExampleTests : JUnit5Minutests {
 
-    fun tests() = rootContext<Unit> {
+    fun tests() = rootContext {
 
         // Invoking the test block creates a test to be run later.
         // You can use plain old Kotlin to generate multiple otherwise identical tests.

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test as JUnitTest
 
 class AnnotationTests : JUnit5Minutests {
 
-    fun tests() = rootContext<Unit> {
+    fun tests() = rootContext {
 
         isNodeBuilder(test("no annotations") {})
         isNodeBuilder(unitAnnotation - test("single annotation") {})

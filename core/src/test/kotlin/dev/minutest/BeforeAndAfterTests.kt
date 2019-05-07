@@ -205,7 +205,7 @@ class BeforeAndAfterTests {
 
     @Test fun `afters abort if they throw`() {
 
-        val test = rootContext<Unit> {
+        val test = rootContext {
 
             test("test") {
                 log.add("test")
@@ -232,7 +232,7 @@ class BeforeAndAfterTests {
     @Test fun `fails with the last exception`() {
 
         // use an immutable fixture to prove the point
-        val test = rootContext<Unit> {
+        val test = rootContext {
 
             test_("test") {
                 log.add("test")

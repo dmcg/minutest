@@ -10,7 +10,7 @@ import samples.assumptions.JUnit5AssumptionsTest
 
 class AssumeTests : JUnit5Minutests {
 
-    fun tests() = rootContext<Unit> {
+    fun tests() = rootContext {
         context("JUnit 4") {
             test("with JUnit 4 assumptions") {
                 checkLog(runTestsInClass<JUnit4AssumptionsTest>(VintageTestDescriptor.ENGINE_ID))

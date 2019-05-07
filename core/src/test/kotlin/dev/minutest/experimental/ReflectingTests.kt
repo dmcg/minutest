@@ -9,7 +9,7 @@ import kotlin.test.assertNull
 
 class ReflectingTests : JUnit5Minutests {
 
-    fun tests() = rootContext<Unit> {
+    fun tests() = rootContext {
 
         context("KType.creator") {
             context("works for") {

@@ -37,13 +37,13 @@ class JUnit5ClassLifecycleTests : JUnit5Minutests {
         log.add("afterEach")
     }
 
-    fun tests1() = rootContext<Unit> {
+    fun tests1() = rootContext {
         test("1") {
             log.add("1")
         }
     }
 
-    fun tests2() = rootContext<Unit> {
+    fun tests2() = rootContext {
         test("2") {
             log.add("2")
         }

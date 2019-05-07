@@ -11,12 +11,6 @@ internal class MinutestRootContextBuilder<F>(
     builder: TestContextBuilder<Unit, F>.() -> Unit
 ) : LateContextBuilder<Unit, F>(delegate, builder), RootContextBuilder {
 
-    constructor(
-        name: String,
-        type: FixtureType,
-        builder: TestContextBuilder<Unit, F>.() -> Unit
-    ) : this(MinutestContextBuilder(name, type, rootFixtureFactoryHack()), builder)
-
     override fun buildNode(): Node<Unit> {
         val rootContext = super.buildNode()
         val deduplicatedTransformsInTree = rootContext.findRootTransforms().toSet()

@@ -42,14 +42,14 @@ object JUnit5ObjectLifecycleTests : JUnit5Minutests {
         log.add("afterEach")
     }
 
-    fun tests1() = rootContext<Unit> {
+    fun tests1() = rootContext {
         test("1") {
             println("${it.fullName()} $hashCode ${System.identityHashCode(this@JUnit5ObjectLifecycleTests)}")
             log.add("1")
         }
     }
 
-    fun tests2() = rootContext<Unit> {
+    fun tests2() = rootContext {
         test("2") {
             println("${it.fullName()} $hashCode ${System.identityHashCode(this@JUnit5ObjectLifecycleTests)}")
             log.add("2")
