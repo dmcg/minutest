@@ -11,7 +11,7 @@ class CheckingTests {
 
     @Test fun checking() {
 
-        val tests = rootContext<Unit> {
+        val tests = rootContext {
 
             checkedAgainst(
                 listOf(
@@ -34,7 +34,7 @@ class CheckingTests {
 
     @Test fun `checking fails`() {
 
-        val tests = rootContext<Unit> {
+        val tests = rootContext {
             checkedAgainst(emptyList(), checker = ::assertEquals)
             test("test") {}
         }

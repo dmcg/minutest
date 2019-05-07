@@ -80,7 +80,7 @@ class ClassWithTwoContextMethods {
         fixture { "banana" }
         test("test in tests") {}
     }
-    fun testsToo() = rootContext<Unit> {
+    fun testsToo() = rootContext {
         test("test in testsToo") {}
     }
 }
@@ -88,9 +88,9 @@ class ClassWithTwoContextMethods {
 class ClassWithNoContextMethods
 
 class ClassWithNoPublicContextMethods {
-    private fun tests() = rootContext<Unit> {}
+    private fun tests() = rootContext {}
 }
 
 class ClassWithNoZeroArgContextMethod {
-    fun tests(x: Int) = rootContext<Unit> {}
+    fun tests(x: Int) = rootContext {}
 }

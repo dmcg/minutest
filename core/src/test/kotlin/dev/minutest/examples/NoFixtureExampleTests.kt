@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 
 class NoFixtureExampleTests : JUnit5Minutests {
 
-    fun tests() = rootContext<Unit> {
+    fun tests() = rootContext {
 
         context("addition") {
             test("positive + positive") {

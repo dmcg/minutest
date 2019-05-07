@@ -12,7 +12,7 @@ class AnnotationPrecedenceTests {
     fun `first test transform is outer`() {
 
         executeTests(
-            rootContext<Unit> {
+            rootContext {
                 transform("1") + transform("2") - test("test") {}
             }
         )
@@ -28,7 +28,7 @@ class AnnotationPrecedenceTests {
     fun `first context transform is outer`() {
 
         executeTests(
-            rootContext<Unit> {
+            rootContext {
                 transform("1") + transform("2") - context("inner") {
                     test("test") {}
                 }
@@ -46,7 +46,7 @@ class AnnotationPrecedenceTests {
     fun `first root context transform is outer`() {
 
         executeTests(
-            transform("1") + transform("2") - rootContext<Unit> {
+            transform("1") + transform("2") - rootContext {
                 test("test") {}
             }
         )
@@ -62,7 +62,7 @@ class AnnotationPrecedenceTests {
     fun `first internal transform is outer`() {
 
         executeTests(
-            rootContext<Unit> {
+            rootContext {
                 annotateWith(transform("1"))
                 annotateWith(transform("2"))
                 test("test") {}
@@ -80,7 +80,7 @@ class AnnotationPrecedenceTests {
     fun `external annotations are outside internal`() {
 
         executeTests(
-            rootContext<Unit> {
+            rootContext {
                 transform("1") - context("inner") {
                     annotateWith(transform("2"))
                     test("test") {}
@@ -99,7 +99,7 @@ class AnnotationPrecedenceTests {
     fun `external annotations are outside internal for rootContext`() {
 
         executeTests(
-            transform("1") - rootContext<Unit> {
+            transform("1") - rootContext {
                 annotateWith(transform("2"))
                 test("test") {}
             }

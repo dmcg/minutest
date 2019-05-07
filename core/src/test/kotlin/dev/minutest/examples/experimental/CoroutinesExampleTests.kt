@@ -28,4 +28,4 @@ class CoroutinesExampleTests : JUnit5Minutests {
 suspend fun String.slowPlus(other: String) = this + other
 
 fun <F> ContextBuilder<F>.coTest(name: String, f: suspend F.(testDescriptor: TestDescriptor) -> Unit) =
-    test(name, { testDescriptor -> runBlocking { f.invoke(this@test, testDescriptor) } })
+    test(name) { testDescriptor -> runBlocking { f.invoke(this@test, testDescriptor) } }

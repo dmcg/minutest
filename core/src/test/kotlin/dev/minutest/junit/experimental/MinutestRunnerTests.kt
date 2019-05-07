@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 class MinutestRunnerTests {
 
-    @Test fun test() = rootContext<Unit> {
+    @Test fun test() = rootContext {
         checkRunnersExampleLog(
             runTestsInClass("samples.runners.MinutestSample", MinutestTestEngine.engineId),
             "Minutest",

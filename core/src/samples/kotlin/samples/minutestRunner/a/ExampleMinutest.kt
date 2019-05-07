@@ -7,7 +7,7 @@ import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
 
-fun `example context`() = rootContext<Unit> {
+fun `example context`() = rootContext {
     test("a failing test") {
         fail("example failure")
     }

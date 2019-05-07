@@ -6,7 +6,7 @@ import org.junit.Assume
 
 class JUnit4AssumptionsTest : JUnit4Minutests() {
 
-    fun tests() = rootContext<Unit> {
+    fun tests() = rootContext {
         assumptionsContract(Assume::assumeTrue)
     }
 }

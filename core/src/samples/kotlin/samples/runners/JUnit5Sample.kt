@@ -5,7 +5,7 @@ import dev.minutest.rootContext
 
 class JUnit5Sample : JUnit5Minutests {
 
-    fun tests() = rootContext<Unit> {
+    fun tests() = rootContext {
         runnersExample()
     }
 }

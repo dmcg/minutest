@@ -8,7 +8,7 @@ import dev.minutest.experimental.checkedAgainst as willRun
 
 class ParameterisedExampleTests : JUnit5Minutests {
 
-    fun tests() = rootContext<Unit> {
+    fun tests() = rootContext {
 
         context("palindromes") {
 

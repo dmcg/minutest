@@ -11,7 +11,7 @@ class AutoCloseTests {
     val log = mutableListOf<String>()
 
     @JUnitTest fun test() {
-        val tests = rootContext<Unit> {
+        val tests = rootContext {
 
             val resource by autoClose {
                 log.add("resource created")
@@ -43,7 +43,7 @@ class AutoCloseTests {
     }
 
     @JUnitTest fun `doesnt close if resource not accessed`() {
-        val tests = rootContext<Unit> {
+        val tests = rootContext {
 
             @Suppress("UNUSED_VARIABLE")
             val resource by autoClose {

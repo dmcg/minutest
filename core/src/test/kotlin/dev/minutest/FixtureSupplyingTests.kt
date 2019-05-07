@@ -25,7 +25,7 @@ class FixtureSupplyingTests : JUnit5Minutests {
         }
     }
 
-    fun `supply fixture in derivedContext`() = rootContext<Unit> {
+    fun `supply fixture in derivedContext`() = rootContext {
         derivedContext<String>("parent had no fixture") {
             fixture { "banana" }
             test("test") {
@@ -34,7 +34,7 @@ class FixtureSupplyingTests : JUnit5Minutests {
         }
     }
 
-    fun `need not specify Unit fixture`() = rootContext<Unit> {
+    fun `need not specify Unit fixture`() = rootContext {
         test("test") {
             assertSame(Unit, fixture)
         }
