@@ -14,9 +14,7 @@ abstract class TransformingAnnotation : TestAnnotation {
 
     abstract fun <F> transform(node: Node<F>): Node<F>
 
-    private fun <F> asNodeTransform(): NodeTransform<F> = object : NodeTransform<F> {
-        override fun invoke(node: Node<F>): Node<F> = transform(node)
-    }
+    private fun <F> asNodeTransform(): NodeTransform<F> = this::transform
 }
 
 private object ShouldCompile {

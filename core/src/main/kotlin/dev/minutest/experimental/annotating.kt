@@ -38,6 +38,6 @@ fun <PF, F> TestContextBuilder<PF, F>.annotateWith(annotation: TestAnnotation) {
  * Adds a transform to a context block from the inside.
  */
 fun <PF, F> TestContextBuilder<PF, F>.addTransform(transform: NodeTransform<PF>) {
-    @Suppress("UNCHECKED_CAST") // information   hiding downcast
+    @Suppress("UNCHECKED_CAST") // information hiding downcast
     (this as NodeBuilder<PF>).addTransform(transform)
 }
