@@ -6,12 +6,12 @@ import org.junit.jupiter.api.assertThrows
 import java.io.FileNotFoundException
 
 
-class FixtureNotSpecifiedTests {
+class FixtureNotSuppliedTests {
 
     @Test fun `throws IllegalStateException if no fixture specified when one is needed by a test`() {
         assertThrows<IllegalStateException> {
             rootContext<String> {
-                test("there needs to be a test to build") {}
+                test("there needs to be a test") {}
             }.toTestFactory()
         }
     }
@@ -22,7 +22,7 @@ class FixtureNotSpecifiedTests {
                 modifyFixture {
                     fixture
                 }
-                test("there needs to be a test to build") {}
+                test("there needs to be a test") {}
             }.toTestFactory()
         }
     }
@@ -36,12 +36,11 @@ class FixtureNotSpecifiedTests {
         }
     }
 
-    @Test fun `fails at execute-time if a sub-context does not provide a fixture`() {
+    @Test fun `throws IllegalStateException if a sub-context does not provide a fixture`() {
         assertThrows<IllegalStateException> {
             rootContext<String> {
-                context("dd") {
-                    test("dd") {
-                    }
+                context("subcontext") {
+                    test("there needs to be a test") {}
                 }
             }.toTestFactory()
         }
