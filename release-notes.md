@@ -2,6 +2,13 @@
 
 I still have to go through Slack posts to find older details, but in the meantime
 
+
+## 1.7.0
+
+A `rootContext {` function to avoid `rootContex<Unit> {`, thanks to Robert Stoll
+
+Internal changes to reduce casting and increase type safety, thanks to Robert Stoll.
+
 ## 1.6.0
 
 Internal changes to support safe transforms.
