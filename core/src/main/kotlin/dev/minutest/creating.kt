@@ -3,7 +3,7 @@ package dev.minutest
 import dev.minutest.internal.*
 
 /**
- * The entry point to Minutest without no fixture type - defines a context that is not nested within a parent context.
+ * The entry point to Minutest with no fixture type - defines a context that is not nested within a parent context.
  */
 @JvmName("rootContextUnit")
 fun rootContext(

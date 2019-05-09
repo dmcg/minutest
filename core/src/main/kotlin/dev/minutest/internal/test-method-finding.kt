@@ -4,6 +4,7 @@ import dev.minutest.Node
 import dev.minutest.RootContextBuilder
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction1
+import kotlin.reflect.KParameter
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberFunctions
 
@@ -23,12 +24,17 @@ internal fun Any.rootContextFromMethods(): Node<Unit> {
     }
 }
 
-@Suppress("UNCHECKED_CAST") // reflection
-private fun <T : Any> KClass<out T>.testMethods(): List<KFunction1<T, RootContextBuilder>> =
+private fun KClass<*>.testMethods(): List<KFunction1<Any, RootContextBuilder>> =
     memberFunctions
+        .asSequence()
         .filter { method ->
             method.returnType.classifier == RootContextBuilder::class &&
-                method.parameters.size == 1 &&
+                // only `this` receiver as parameters
+                method.parameters.size == 1 && method.parameters[0].kind == KParameter.Kind.INSTANCE &&
                 method.visibility == KVisibility.PUBLIC
         }
-        .map { method -> method as KFunction1<T, RootContextBuilder> }
+        .map { method ->
+            @Suppress("UNCHECKED_CAST" /* safe, checked has only `this` receiver as argument and correct return type */)
+            method as KFunction1<Any, RootContextBuilder>
+        }
+        .toList()

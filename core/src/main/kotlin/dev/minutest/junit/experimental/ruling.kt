@@ -7,24 +7,25 @@ import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runner.Description.createTestDescription
 import org.junit.runners.model.Statement
+import java.lang.IllegalStateException
 
 /**
  * Apply a JUnit test rule in a fixture
  */
-fun <PF, F, R: TestRule> TestContextBuilder<PF, F>.applyRule(ruleExtractor: F.() -> R) {
+fun <PF, F, R : TestRule> TestContextBuilder<PF, F>.applyRule(ruleExtractor: F.() -> R) {
     addTransform(
         TestRuleTransform(ruleExtractor)
     )
 }
 
-private class TestRuleTransform<PF, F, R: TestRule>(
+private class TestRuleTransform<PF, F, R : TestRule>(
     private val ruleExtractor: F.() -> R
 ) : NodeTransform<PF> {
 
     override fun invoke(node: Node<PF>): Node<PF> =
         when (node) {
             is Context<PF, *> -> {
-                @Suppress("UNCHECKED_CAST") // might do better?
+                @Suppress("UNCHECKED_CAST") // safe as long as F is not exposed in TestContextBuilder directly, might do better?
                 ContextWrapper(node as Context<PF, F>, runner = magicRunnerFor(node))
             }
             else -> error("TestRuleAnnotation can only be applied to a context")
@@ -42,19 +43,24 @@ private class TestRuleTransform<PF, F, R: TestRule>(
      */
     private fun magicTestlet(wrapped: Testlet<F>) = fun(fixture: F, testDescriptor: TestDescriptor): F {
 
-        var fixureValue: F? = null // 1 - will be supplied at [2]
+        var fixtureValue: List<F>? = null
 
-        val wrappedTestAsStatement = object: Statement() {
+        val wrappedTestAsStatement = object : Statement() {
             override fun evaluate() {
-                fixureValue = wrapped(fixture, testDescriptor) // 2 - see [1]
+                fixtureValue = listOf(wrapped(fixture, testDescriptor))
             }
         }
 
-        // this is Statement.apply
-        ruleExtractor(fixture).apply(wrappedTestAsStatement, testDescriptor.toTestDescription()).evaluate()
+        ruleExtractor(fixture)
+            .apply(wrappedTestAsStatement, testDescriptor.toTestDescription()) // this is TestRule.apply
+            .evaluate()
 
-        @Suppress("UNCHECKED_CAST") // probably least worst solution
-        return fixureValue as F // F may be nullable, so this can be initialised and still null, so cast not !!
+        val result = fixtureValue
+        return if (result != null) {
+            result.first()
+        } else {
+            throw IllegalStateException("fixture not initialised after TestRule evaluation")
+        }
     }
 
     private fun TestDescriptor.toTestDescription(): Description = fullName().let {
