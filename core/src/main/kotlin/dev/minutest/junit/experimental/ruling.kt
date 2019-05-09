@@ -27,7 +27,7 @@ private class TestRuleTransform<PF, F, R : TestRule>(
                 @Suppress("UNCHECKED_CAST") // safe as long as F is not exposed in TestContextBuilder directly, might do better?
                 ContextWrapper(node as Context<PF, F>, runner = magicRunnerFor(node))
             }
-            else -> error("TestRuleAnnotation can only be applied to a context")
+            else -> error("TestRuleTransform should only be applicable to a context - please report")
         }
 
     private fun magicRunnerFor(context: Context<PF, F>) =
@@ -42,11 +42,11 @@ private class TestRuleTransform<PF, F, R : TestRule>(
      */
     private fun magicTestlet(wrapped: Testlet<F>) = fun(fixture: F, testDescriptor: TestDescriptor): F {
 
-        var fixtureValue: List<F>? = null
+        var fixtureHolder: List<F>? = null
 
         val wrappedTestAsStatement = object : Statement() {
             override fun evaluate() {
-                fixtureValue = listOf(wrapped(fixture, testDescriptor))
+                fixtureHolder = listOf(wrapped(fixture, testDescriptor))
             }
         }
 
@@ -54,12 +54,9 @@ private class TestRuleTransform<PF, F, R : TestRule>(
             .apply(wrappedTestAsStatement, testDescriptor.toTestDescription()) // this is TestRule.apply
             .evaluate()
 
-        val result = fixtureValue
-        return if (result != null) {
-            result.first()
-        } else {
-            throw IllegalStateException("fixture not initialised after TestRule evaluation")
-        }
+        fixtureHolder?.let {
+            return it.first() // you can't lift the return out
+        } ?: throw IllegalStateException("fixture not initialised after TestRule evaluation")
     }
 
     private fun TestDescriptor.toTestDescription(): Description = fullName().let {

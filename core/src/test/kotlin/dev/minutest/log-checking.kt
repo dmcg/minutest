@@ -1,19 +1,19 @@
 package dev.minutest
 
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 
 
 fun assertLogged(log: List<String>, vararg expected: String) {
-    assertEquals(expected.toList(), log) { log.joinToString("\n") }
+    assertEquals(expected.toList().joinToString("\n"), log.joinToString("\n"))
 }
 
 fun assertNothingLogged(log: List<String>) {
-    Assertions.assertEquals(emptyList<String>(), log)
+    assertEquals(emptyList<String>(), log)
 }
 
 fun assertThereIsALogItem(log: List<String>, predicate: (String) -> Boolean) {
-    Assertions.assertTrue(log.any(predicate)) { log.joinToString("\n") }
+    assertTrue(log.any(predicate)) { log.joinToString("\n") }
 }
 
 
