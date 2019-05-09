@@ -9,7 +9,7 @@ Enter Focus and Skip.
 ```kotlin
 class SkipAndFocusExampleTests : JUnit5Minutests {
 
-    fun tests() = rootContext {
+    fun tests() = rootContext<Unit> {
 
         // Apply the FOCUS annotation to a test
         FOCUS - test("this test is focused, only other focused things will be run") {}

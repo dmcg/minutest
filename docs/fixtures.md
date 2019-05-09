@@ -25,7 +25,7 @@ You don't have to have a fixture. The simplest tests can just have assertions.
 ```kotlin
 class NoFixtureExampleTests : JUnit5Minutests {
 
-    fun tests() = rootContext {
+    fun tests() = rootContext<Unit> {
 
         context("addition") {
             test("positive + positive") {
@@ -145,7 +145,6 @@ class ControlPanel(
         else
             beep()
     }
-
     val warningLight get() = keySwitch()
 }
 

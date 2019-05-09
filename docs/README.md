@@ -25,7 +25,7 @@ To just test simple functions, define your tests in a class which mixes-in JUnit
 class FirstMinutests : JUnit5Minutests {
 
     // tests are grouped in a context
-    fun tests() = rootContext {
+    fun tests() = rootContext<Unit> {
 
         // define a test by calling test
         test("my first test") {
@@ -148,7 +148,6 @@ class ControlPanel(
         else
             beep()
     }
-
     val warningLight get() = keySwitch()
 }
 
@@ -211,7 +210,7 @@ For example, parameterised tests require [special handling](https://junit.org/ju
 ```kotlin
 class ParameterisedExampleTests : JUnit5Minutests {
 
-    fun tests() = rootContext {
+    fun tests() = rootContext<Unit> {
 
         context("palindromes") {
 
