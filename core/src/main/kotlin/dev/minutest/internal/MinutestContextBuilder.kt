@@ -147,7 +147,7 @@ internal data class MinutestContextBuilder<PF, F>(
     }
 
     private fun thisContextDoesntNeedAFixture() =
-        befores.isEmpty() && afters.isEmpty() && children.filterIsInstance<TestBuilder<F>>().isEmpty()
+        befores.isEmpty() && afters.isEmpty() && ! children.any { it is TestBuilder<F> }
 }
 
 
