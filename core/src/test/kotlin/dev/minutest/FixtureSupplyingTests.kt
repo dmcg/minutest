@@ -69,4 +69,24 @@ class FixtureSupplyingTests : JUnit5Minutests {
             assertNotNull(this)
         }
     }
+
+    fun `derivedContext doesn't have to specify one if parent fixture will do`() = rootContext<String> {
+        fixture { "banana" }
+        derivedContext<String>("Hasn't actually changed type") {
+            test("test") {
+                assertEquals("banana", this)
+            }
+        }
+        derivedContext<CharSequence>("Has changed to a compatible type") {
+            test("test") {
+                assertEquals("banana", this)
+            }
+        }
+        derivedContext<String?>("Has changed to the nullable type") {
+            test("test") {
+                assertEquals("banana", this)
+            }
+        }
+    }
+
 }

@@ -68,11 +68,14 @@ internal data class MinutestContextBuilder<PF, F>(
     ): NodeBuilder<F> = newContext(
         name,
         type,
-        FixtureFactory(this.type) { _, _ -> error("Please report sighting of wrong fixture factory") }, // [2]
+        FixtureFactory(fixtureFactory.type) { f, _ -> // [2]
+            @Suppress("UNCHECKED_CAST")
+            f as? G ?: error("Please report sighting of wrong fixture factory")
+        },
         block
     )
-    /* 2 - If you're deriving a context we know that we don't know how to build a fixture any more. So we pass on
-       a FixtureBuilder with the parent type so that checkedFixtureFactory() can reject it, and error if it doesn't.
+    /* 2 - If you're deriving a context we know might still be able to build a context, because the type may not have
+       changed, or may be compatible. So we punt a bit here and let checkedFixtureFactory() do its job.
      */
 
     override fun addMarker(marker: Any) {
@@ -122,7 +125,7 @@ internal data class MinutestContextBuilder<PF, F>(
         // broken out for debugging
         thisContextDoesntNeedAFixture() ->
             fixtureFactory
-        fixtureFactory.type == this.type ->
+        fixtureFactory.type.isSubtypeOf(this.type) ->
             fixtureFactory
         else ->
             error("Fixture has not been set in context \"$name\"")
