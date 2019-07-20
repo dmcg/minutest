@@ -8,8 +8,8 @@ import dev.minutest.experimental.transformedBy
  */
 internal class MinutestRootContextBuilder<F>(
     delegate: MinutestContextBuilder<Unit, F>,
-    builder: TestContextBuilder<Unit, F>.() -> Unit
-) : LateContextBuilder<Unit, F>(delegate, builder), RootContextBuilder {
+    block: TestContextBuilder<Unit, F>.() -> Unit
+) : LateContextBuilder<Unit, F>(delegate, block), RootContextBuilder {
 
     override fun buildNode(): Node<Unit> {
         val rootContext = super.buildNode()
@@ -19,7 +19,7 @@ internal class MinutestRootContextBuilder<F>(
 
     override fun withName(newName: String) = MinutestRootContextBuilder(
         delegate.copy(name = newName),
-        builder
+        block
     )
 }
 

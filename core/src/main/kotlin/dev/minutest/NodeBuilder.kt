@@ -21,7 +21,7 @@ interface NodeBuilder<F> {
 }
 
 /**
- * Marker interface for the root [Context] builder.
+ * Marker interface for the root [Context] block.
  */
 interface RootContextBuilder : NodeBuilder<Unit> {
     fun withName(newName: String): RootContextBuilder

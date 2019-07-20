@@ -48,12 +48,12 @@ internal data class MinutestContextBuilder<PF, F>(
     override fun test_(name: String, f: F.(TestDescriptor) -> F): NodeBuilder<F> =
         addChild(TestBuilder(name, f))
 
-    override fun context(name: String, builder: TestContextBuilder<F, F>.() -> Unit) =
+    override fun context(name: String, block: TestContextBuilder<F, F>.() -> Unit) =
         newContext(
             name,
             type,
             FixtureFactory(fixtureFactory.type) { f, _ -> f }, // [1]
-            builder)
+            block)
     /* 1 - We don't know for sure that the type of our fixtureFactory is the same as our type, so we pass it on
        so that checkedFixtureFactory() can do the right thing.
 
@@ -64,12 +64,12 @@ internal data class MinutestContextBuilder<PF, F>(
     override fun <G> internalDerivedContext(
         name: String,
         type: FixtureType,
-        builder: TestContextBuilder<F, G>.() -> Unit
+        block: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F> = newContext(
         name,
         type,
         FixtureFactory(this.type) { _, _ -> error("Please report sighting of wrong fixture factory") }, // [2]
-        builder
+        block
     )
     /* 2 - If you're deriving a context we know that we don't know how to build a fixture any more. So we pass on
        a FixtureBuilder with the parent type so that checkedFixtureFactory() can reject it, and error if it doesn't.
@@ -87,13 +87,13 @@ internal data class MinutestContextBuilder<PF, F>(
         name: String,
         type: FixtureType,
         fixtureFactory: FixtureFactory<F, G>,
-        builder: TestContextBuilder<F, G>.() -> Unit
+        block: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F> = addChild(
         LateContextBuilder(
             name,
             type,
             fixtureFactory,
-            builder
+            block
         )
     )
 

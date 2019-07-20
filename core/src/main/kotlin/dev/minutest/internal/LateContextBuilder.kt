@@ -9,7 +9,7 @@ import dev.minutest.TestContextBuilder
  */
 internal open class LateContextBuilder<PF, F>(
     protected val delegate: MinutestContextBuilder<PF, F>,
-    protected val builder: TestContextBuilder<PF, F>.() -> Unit
+    protected val block: TestContextBuilder<PF, F>.() -> Unit
 ) : NodeBuilder<PF> by delegate {
 
     constructor(
@@ -19,5 +19,5 @@ internal open class LateContextBuilder<PF, F>(
         builder: TestContextBuilder<PF, F>.() -> Unit
     ) : this(MinutestContextBuilder(name, type, fixtureFactory), builder)
 
-    override fun buildNode(): Node<PF> = delegate.apply(builder).buildNode()
+    override fun buildNode(): Node<PF> = delegate.apply(block).buildNode()
 }
