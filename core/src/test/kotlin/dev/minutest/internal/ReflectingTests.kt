@@ -15,8 +15,8 @@ class ReflectingTests : JUnit5Minutests {
                 assertEquals(String::class, askType<String>().classifier)
             }
             test("captures nullability") {
-                assertFalse(askType<String>().isMarkedNullable)
-                assertTrue(askType<String?>().isMarkedNullable)
+                assertFalse(askType<String>().isNullable)
+                assertTrue(askType<String?>().isNullable)
             }
             test("knows about subtypes") {
                 assertTrue(askType<String>().isSubtypeOf(askType<Any>()))
