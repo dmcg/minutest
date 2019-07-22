@@ -126,6 +126,8 @@ internal data class MinutestContextBuilder<PF, F>(
             name,
             children.map { it.buildNode() },
             markers,
+            parentFixtureType,
+            fixtureType,
             befores,
             afters,
             afterAlls,
