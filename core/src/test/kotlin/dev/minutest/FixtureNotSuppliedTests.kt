@@ -9,7 +9,8 @@ import java.io.FileNotFoundException
 
 class FixtureNotSuppliedTests {
 
-    @Test fun `throws IllegalStateException if no fixture specified when one is needed by a test`() {
+    @Test
+    fun `throws IllegalStateException if no fixture specified when one is needed by a test`() {
         assertThrows<IllegalStateException> {
             rootContext<String> {
                 test("there needs to be a test") {}
@@ -17,7 +18,8 @@ class FixtureNotSuppliedTests {
         }
     }
 
-    @Test fun `throws IllegalStateException if no fixture specified when one is needed by a fixture`() {
+    @Test
+    fun `throws IllegalStateException if no fixture specified when one is needed by a fixture`() {
         assertThrows<IllegalStateException> {
             rootContext<String> {
                 modifyFixture {
@@ -28,7 +30,8 @@ class FixtureNotSuppliedTests {
         }
     }
 
-    @Test fun `throws IllegalStateException if fixture is specified twice in a context`() {
+    @Test
+    fun `throws IllegalStateException if fixture is specified twice in a context`() {
         assertThrows<IllegalStateException> {
             rootContext<String> {
                 fixture { "banana" }
@@ -37,7 +40,8 @@ class FixtureNotSuppliedTests {
         }
     }
 
-    @Test fun `throws IllegalStateException if a sub-context does not provide a fixture`() {
+    @Test
+    fun `throws IllegalStateException if a sub-context does not provide a fixture`() {
         assertThrows<IllegalStateException> {
             rootContext<String> {
                 context("subcontext") {
@@ -47,7 +51,8 @@ class FixtureNotSuppliedTests {
         }
     }
 
-    @Test fun `throws IllegalStateException if parent fixture is not compatible and no deriveFixture specified`() {
+    @Test
+    fun `throws IllegalStateException if parent fixture is not compatible and no deriveFixture specified`() {
         assertThrows<IllegalStateException> {
             rootContext<CharSequence> {
                 fixture { "banana" }
@@ -58,7 +63,8 @@ class FixtureNotSuppliedTests {
         }
     }
 
-    @Test fun `throws IllegalStateException if parent fixture is not nullably compatible and no deriveFixture specified`() {
+    @Test
+    fun `throws IllegalStateException if parent fixture is not nullably compatible and no deriveFixture specified`() {
         assertThrows<IllegalStateException> {
             rootContext<String?> {
                 fixture { null }
@@ -72,7 +78,8 @@ class FixtureNotSuppliedTests {
         }
     }
 
-    @Test fun `throws exception thrown from fixture during execution`() {
+    @Test
+    fun `throws exception thrown from fixture during execution`() {
         val tests = rootContext<String> {
             fixture {
                 throw FileNotFoundException()
@@ -83,5 +90,16 @@ class FixtureNotSuppliedTests {
         checkItems(executeTests(tests), { it is FileNotFoundException })
     }
 
-
+    // TODO - a bug
+    @Test
+    fun `throws ClassCastException if you deriveFixture in a child when parent had punted`() {
+        val tests = rootContext<String> {
+            context("parent had no fixture") {
+                deriveFixture { this } // this tries to cast Unit to String
+                test("test") {
+                }
+            }
+        }
+        checkItems(executeTests(tests), { it is ClassCastException })
+    }
 }
