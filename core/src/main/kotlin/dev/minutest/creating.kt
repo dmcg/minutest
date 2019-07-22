@@ -26,4 +26,12 @@ internal fun <F> rootWithoutFixture(
     name: String,
     type: FixtureType,
     builder: TestContextBuilder<Unit, F>.() -> Unit
-) = MinutestRootContextBuilder(MinutestContextBuilder(name, type, rootFixtureFactoryHack()), builder)
+) = MinutestRootContextBuilder(
+    MinutestContextBuilder(name, unitFixtureType, type, rootFixtureFactoryHack()),
+    builder
+)
+
+@Suppress("UNCHECKED_CAST") // safe as long as we make sure that we fail if the fixture is accessed before it is redefined
+internal fun <PF, F> rootFixtureFactoryHack() = rootFixtureFactory as FixtureFactory<PF, F>
+
+private val rootFixtureFactory = FixtureFactory<Unit, Unit>(unitFixtureType, unitFixtureType) { _, _ -> Unit }

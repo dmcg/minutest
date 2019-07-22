@@ -8,7 +8,8 @@ import dev.minutest.experimental.transformedBy
  */
 internal data class MinutestContextBuilder<PF, F>(
     val name: String,
-    private val type: FixtureType,
+    private val parentFixtureType: FixtureType,
+    private val fixtureType: FixtureType,
     private var fixtureFactory: FixtureFactory<PF, F>,
     private var explicitFixtureFactory: Boolean = false,
     private val children: MutableList<NodeBuilder<F>> = mutableListOf(),
@@ -22,7 +23,7 @@ internal data class MinutestContextBuilder<PF, F>(
     override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
         if (explicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
-        fixtureFactory = FixtureFactory(type, f)
+        fixtureFactory = FixtureFactory(parentFixtureType, fixtureType, f)
         explicitFixtureFactory = true
     }
 
@@ -51,10 +52,10 @@ internal data class MinutestContextBuilder<PF, F>(
     override fun context(name: String, block: TestContextBuilder<F, F>.() -> Unit) =
         newContext(
             name,
-            type,
-            FixtureFactory(fixtureFactory.type) { f, _ -> f }, // [1]
+            fixtureType,
+            FixtureFactory(fixtureType, fixtureFactory.outputType) { f, _ -> f }, // [1]
             block)
-    /* 1 - We don't know for sure that the type of our fixtureFactory is the same as our type, so we pass it on
+    /* 1 - We don't know for sure that the fixtureType of our fixtureFactory is the same as our fixtureType, so we pass it on
        so that checkedFixtureFactory() can do the right thing.
 
        The value returned by the factory in our child should be the value that this context has computed -
@@ -68,13 +69,13 @@ internal data class MinutestContextBuilder<PF, F>(
     ): NodeBuilder<F> = newContext(
         name,
         type,
-        FixtureFactory(fixtureFactory.type) { f, _ -> // [2]
+        FixtureFactory(fixtureType, fixtureFactory.outputType) { f, _ -> // [2]
             @Suppress("UNCHECKED_CAST")
             f as? G ?: error("Please report sighting of wrong fixture factory")
         },
         block
     )
-    /* 2 - If you're deriving a context we know might still be able to build a context, because the type may not have
+    /* 2 - If you're deriving a context we know might still be able to build a context, because the fixtureType may not have
        changed, or may be compatible. So we punt a bit here and let checkedFixtureFactory() do its job.
      */
 
@@ -88,13 +89,14 @@ internal data class MinutestContextBuilder<PF, F>(
 
     private fun <G> newContext(
         name: String,
-        type: FixtureType,
+        newFixtureType: FixtureType,
         fixtureFactory: FixtureFactory<F, G>,
         block: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F> = addChild(
         LateContextBuilder(
             name,
-            type,
+            this.fixtureType,
+            newFixtureType,
             fixtureFactory,
             block
         )
@@ -123,10 +125,9 @@ internal data class MinutestContextBuilder<PF, F>(
 
     private fun checkedFixtureFactory(): (PF, TestDescriptor) -> F = when {
         // broken out for debugging
-        thisContextDoesntNeedAFixture() ->
-            fixtureFactory
-        fixtureFactory.type.isSubtypeOf(this.type) ->
-            fixtureFactory
+        explicitFixtureFactory -> fixtureFactory
+        fixtureFactory.isCompatibleWith(parentFixtureType, fixtureType) -> fixtureFactory
+        thisContextDoesntNeedAFixture() -> fixtureFactory
         else ->
             error("Fixture has not been set in context \"$name\"")
     }
@@ -134,5 +135,9 @@ internal data class MinutestContextBuilder<PF, F>(
     private fun thisContextDoesntNeedAFixture() =
         befores.isEmpty() && afters.isEmpty() && ! children.any { it is TestBuilder<F> }
 }
+
+private fun <PF, F> FixtureFactory<PF, F>.isCompatibleWith(inputType: FixtureType, outputType: FixtureType) = inputType.isSubtypeOf(this.inputType) &&
+    this.outputType.isSubtypeOf(outputType)
+
 
 

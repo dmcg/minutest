@@ -2,13 +2,11 @@ package dev.minutest.internal
 
 import dev.minutest.TestDescriptor
 
-
+/**
+ * Converts a parent fixture to a child fixture.
+ */
 internal class FixtureFactory<PF, F>(
-    val type: FixtureType,
+    val inputType: FixtureType,
+    val outputType: FixtureType,
     val f: (PF, TestDescriptor) -> F
 ) : (PF, TestDescriptor) -> F by f
-
-@Suppress("UNCHECKED_CAST") // safe as long as we make sure that we fail if the fixture is accessed before it is redefined
-internal fun <PF, F> rootFixtureFactoryHack() = rootFixtureFactory as FixtureFactory<PF, F>
-
-private val rootFixtureFactory = FixtureFactory<Unit, Unit>(FixtureType(Unit::class, false)) { _, _ -> Unit }

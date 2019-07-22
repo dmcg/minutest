@@ -10,3 +10,5 @@ import kotlin.reflect.full.isSubclassOf
         (if (this.isMarkedNullable) other.isMarkedNullable else true) &&
             this.classifier.isSubclassOf(other.classifier)
 }
+
+internal val unitFixtureType = askType<Unit>()
