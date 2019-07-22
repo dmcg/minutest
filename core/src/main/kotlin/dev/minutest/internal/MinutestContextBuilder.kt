@@ -20,6 +20,15 @@ internal data class MinutestContextBuilder<PF, F>(
     private val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
 
+    override fun fixture(factory: Unit.(testDescriptor: TestDescriptor) -> F) {
+        if (explicitFixtureFactory)
+            throw IllegalStateException("Fixture already set in context \"$name\"")
+        fixtureFactory = FixtureFactory(parentFixtureType, fixtureType) { _, testDescriptor ->
+            Unit.factory(testDescriptor)
+        }
+        explicitFixtureFactory = true
+    }
+
     override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
         if (explicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
@@ -69,7 +78,8 @@ internal data class MinutestContextBuilder<PF, F>(
     ): NodeBuilder<F> = newContext(
         name,
         type,
-        FixtureFactory(fixtureType, fixtureFactory.outputType) { f, _ -> // [2]
+        FixtureFactory(fixtureType, fixtureFactory.outputType) { f, _ ->
+            // [2]
             @Suppress("UNCHECKED_CAST")
             f as? G ?: error("Please report sighting of wrong fixture factory")
         },
@@ -133,7 +143,7 @@ internal data class MinutestContextBuilder<PF, F>(
     }
 
     private fun thisContextDoesntNeedAFixture() =
-        befores.isEmpty() && afters.isEmpty() && ! children.any { it is TestBuilder<F> }
+        befores.isEmpty() && afters.isEmpty() && !children.any { it is TestBuilder<F> }
 }
 
 private fun <PF, F> FixtureFactory<PF, F>.isCompatibleWith(inputType: FixtureType, outputType: FixtureType) = inputType.isSubtypeOf(this.inputType) &&

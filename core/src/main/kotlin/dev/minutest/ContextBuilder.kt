@@ -34,9 +34,7 @@ abstract class TestContextBuilder<PF, F> {
      * The strange parameter type keeps compatibility with the other fixture methods, that have
      * the parent fixture as the receiver.
      */
-    fun fixture(factory: (Unit).(testDescriptor: TestDescriptor) -> F): Unit = deriveFixture { testDescriptor ->
-        Unit.factory(testDescriptor)
-    }
+    abstract fun fixture(factory: (Unit).(testDescriptor: TestDescriptor) -> F)
 
     /**
      * Apply an operation to the current fixture (accessible as the receiver 'this')
