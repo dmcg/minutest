@@ -139,12 +139,12 @@ internal data class MinutestContextBuilder<PF, F>(
         // broken out for debugging
         explicitFixtureFactory -> fixtureFactory
         fixtureFactory.isCompatibleWith(parentFixtureType, fixtureType) -> fixtureFactory
-        thisContextDoesntNeedAFixture() -> fixtureFactory
+        thisContextDoesntReferenceTheFixture() -> fixtureFactory
         else ->
             error("Fixture has not been set in context \"$name\"")
     }
 
-    private fun thisContextDoesntNeedAFixture() =
+    private fun thisContextDoesntReferenceTheFixture() =
         befores.isEmpty() && afters.isEmpty() && !children.any { it is TestBuilder<F> }
 }
 
