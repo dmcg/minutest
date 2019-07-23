@@ -127,9 +127,12 @@ internal data class MinutestContextBuilder<PF, F>(
 
     private fun checkedFixtureFactory(): (PF, TestDescriptor) -> F = when {
         // broken out for debugging
-        fixtureFactory is ExplicitFixtureFactory -> fixtureFactory
-        fixtureFactory.isCompatibleWith(parentFixtureType, fixtureType) -> fixtureFactory
-        thisContextDoesntReferenceTheFixture() -> fixtureFactory
+        fixtureFactory is ExplicitFixtureFactory ->
+            fixtureFactory
+        fixtureFactory.isCompatibleWith(parentFixtureType, fixtureType) ->
+            fixtureFactory
+        thisContextDoesntReferenceTheFixture() ->
+            fixtureFactory
         else ->
             error("Fixture has not been set in context \"$name\"")
     }
@@ -137,9 +140,3 @@ internal data class MinutestContextBuilder<PF, F>(
     private fun thisContextDoesntReferenceTheFixture() =
         befores.isEmpty() && afters.isEmpty() && !children.any { it is TestBuilder<F> }
 }
-
-private fun <PF, F> FixtureFactory<PF, F>.isCompatibleWith(inputType: FixtureType, outputType: FixtureType) = inputType.isSubtypeOf(this.inputType) &&
-    this.outputType.isSubtypeOf(outputType)
-
-
-
