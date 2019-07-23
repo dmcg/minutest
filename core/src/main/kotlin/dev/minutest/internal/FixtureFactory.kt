@@ -21,3 +21,12 @@ internal class UnsafeFixtureFactory<PF, F>(
     override fun toString() = "UnsafeFixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
 
 }
+
+internal class ExplicitFixtureFactory<PF, F>(
+    inputType: FixtureType,
+    outputType: FixtureType,
+    f: (PF, TestDescriptor) -> F
+) : FixtureFactory<PF, F>(inputType, outputType, f) {
+    override fun toString() = "ExplicitFixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
+
+}

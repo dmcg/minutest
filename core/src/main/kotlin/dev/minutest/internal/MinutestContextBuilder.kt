@@ -11,7 +11,6 @@ internal data class MinutestContextBuilder<PF, F>(
     private val parentFixtureType: FixtureType,
     private val fixtureType: FixtureType,
     private var fixtureFactory: FixtureFactory<PF, F>,
-    private var explicitFixtureFactory: Boolean = false,
     private val children: MutableList<NodeBuilder<F>> = mutableListOf(),
     private val befores: MutableList<(F, TestDescriptor) -> F> = mutableListOf(),
     private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
@@ -21,19 +20,17 @@ internal data class MinutestContextBuilder<PF, F>(
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
 
     override fun fixture(factory: Unit.(testDescriptor: TestDescriptor) -> F) {
-        if (explicitFixtureFactory)
+        if (fixtureFactory is ExplicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
-        fixtureFactory = FixtureFactory(parentFixtureType, fixtureType) { _, testDescriptor ->
+        fixtureFactory = ExplicitFixtureFactory(parentFixtureType, fixtureType) { _, testDescriptor ->
             Unit.factory(testDescriptor)
         }
-        explicitFixtureFactory = true
     }
 
     override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
-        if (explicitFixtureFactory)
+        if (fixtureFactory is ExplicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
-        fixtureFactory = FixtureFactory(parentFixtureType, fixtureType, f)
-        explicitFixtureFactory = true
+        fixtureFactory = ExplicitFixtureFactory(parentFixtureType, fixtureType, f)
     }
 
     override fun before(operation: F.(TestDescriptor) -> Unit) {
@@ -133,7 +130,7 @@ internal data class MinutestContextBuilder<PF, F>(
 
     private fun checkedFixtureFactory(): (PF, TestDescriptor) -> F = when {
         // broken out for debugging
-        explicitFixtureFactory -> fixtureFactory
+        fixtureFactory is ExplicitFixtureFactory -> fixtureFactory
         fixtureFactory.isCompatibleWith(parentFixtureType, fixtureType) -> fixtureFactory
         thisContextDoesntReferenceTheFixture() -> fixtureFactory
         else ->
