@@ -11,6 +11,6 @@ internal class FixtureFactory<PF, F>(
     val f: (PF, TestDescriptor) -> F
 ) : (PF, TestDescriptor) -> F by f {
 
-    override fun toString() = "FixtureFactory ($inputType) -> $outputType"
+    override fun toString() = "FixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
 
 }

@@ -9,6 +9,10 @@ import kotlin.reflect.full.isSubclassOf
     fun isSubtypeOf(other: FixtureType) =
         (if (this.isNullable) other.isNullable else true) &&
             this.classifier.isSubclassOf(other.classifier)
+
+    override fun toString() = "FixtureType(${qualifiedName})"
+
+    val qualifiedName get() = "${classifier.qualifiedName}${if (isNullable) "?" else ""}"
 }
 
 internal val unitFixtureType = askType<Unit>()
