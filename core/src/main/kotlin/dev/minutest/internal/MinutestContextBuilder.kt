@@ -59,22 +59,19 @@ internal data class MinutestContextBuilder<PF, F>(
         newContext(
             name,
             fixtureType,
-            FixtureFactory(fixtureType, fixtureFactory.outputType) { f, _ -> f }, // [1]
+            if (fixtureFactory.isCompatibleWith(fixtureType, fixtureType))
+                IdFixtureFactory(fixtureType)
+            else
+                UnsafeFixtureFactory(fixtureFactory.outputType),
             block)
-    /* 1 - We don't know for sure that the fixtureType of our fixtureFactory is the same as our fixtureType, so we pass it on
-       so that checkedFixtureFactory() can do the right thing.
-
-       The value returned by the factory in our child should be the value that this context has computed -
-       that's the f in the block
-     */
 
     override fun <G> internalDerivedContext(
         name: String,
-        type: FixtureType,
+        newFixtureType: FixtureType,
         block: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F> = newContext(
         name,
-        type,
+        newFixtureType,
         UnsafeFixtureFactory(fixtureType),
         block
     )

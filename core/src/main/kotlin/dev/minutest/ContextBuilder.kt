@@ -26,7 +26,7 @@ abstract class TestContextBuilder<PF, F> {
      * to the child fixture type.
      */
     inline fun <reified G> derivedContext(name: String, noinline block: TestContextBuilder<F, G>.() -> Unit)
-        : NodeBuilder<F> = internalDerivedContext(name = name, type = askType<G>(), block = block)
+        : NodeBuilder<F> = internalDerivedContext(name = name, newFixtureType = askType<G>(), block = block)
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
@@ -108,7 +108,7 @@ abstract class TestContextBuilder<PF, F> {
      */
     @PublishedApi internal abstract fun <G> internalDerivedContext(
         name: String,
-        type: FixtureType,
+        newFixtureType: FixtureType,
         block: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F>
 
