@@ -5,12 +5,19 @@ import dev.minutest.TestDescriptor
 /**
  * Converts a parent fixture to a child fixture.
  */
-internal class FixtureFactory<PF, F>(
+internal open class FixtureFactory<PF, F>(
     val inputType: FixtureType,
     val outputType: FixtureType,
     val f: (PF, TestDescriptor) -> F
 ) : (PF, TestDescriptor) -> F by f {
 
     override fun toString() = "FixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
+
+}
+
+internal class UnsafeFixtureFactory<PF, F>(
+    inputType: FixtureType
+) : FixtureFactory<PF, F>(inputType, inputType, { pf, _ -> pf as F}) {
+    override fun toString() = "UnsafeFixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
 
 }

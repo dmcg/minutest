@@ -78,11 +78,7 @@ internal data class MinutestContextBuilder<PF, F>(
     ): NodeBuilder<F> = newContext(
         name,
         type,
-        FixtureFactory(fixtureType, fixtureFactory.outputType) { f, _ ->
-            // [2]
-            @Suppress("UNCHECKED_CAST")
-            f as? G ?: error("Please report sighting of wrong fixture factory")
-        },
+        UnsafeFixtureFactory(fixtureType),
         block
     )
     /* 2 - If you're deriving a context we know might still be able to build a context, because the fixtureType may not have
