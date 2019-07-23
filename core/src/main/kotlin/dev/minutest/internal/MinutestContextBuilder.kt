@@ -30,7 +30,10 @@ internal data class MinutestContextBuilder<PF, F>(
     override fun deriveFixture(f: (PF).(TestDescriptor) -> F) {
         if (fixtureFactory is ExplicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
-        fixtureFactory = ExplicitFixtureFactory(parentFixtureType, fixtureType, f)
+        if (fixtureFactory.outputType.isSubtypeOf(parentFixtureType))
+            fixtureFactory = ExplicitFixtureFactory(parentFixtureType, fixtureType, f)
+        else
+            error("You can't deriveFixture in context \"$name\" because the parent context has no fixture")
     }
 
     override fun before(operation: F.(TestDescriptor) -> Unit) {
@@ -75,9 +78,6 @@ internal data class MinutestContextBuilder<PF, F>(
         UnsafeFixtureFactory(fixtureType),
         block
     )
-    /* 2 - If you're deriving a context we know might still be able to build a context, because the fixtureType may not have
-       changed, or may be compatible. So we punt a bit here and let checkedFixtureFactory() do its job.
-     */
 
     override fun addMarker(marker: Any) {
         markers.add(marker)

@@ -92,14 +92,24 @@ class FixtureNotSuppliedTests {
 
     // TODO - a bug
     @Test
-    fun `throws ClassCastException if you deriveFixture in a child when parent had punted`() {
-        val tests = rootContext<String> {
+    fun `throws IllegalStateException if you deriveFixture in a child when parent had punted`() {
+        assertThrows<IllegalStateException> {
+            rootContext<String> {
+                context("parent had no fixture") {
+                    deriveFixture { this + "banana" } // this won't have been supplied, so we should forbid
+                    test("test") {
+                    }
+                }
+            }.toTestFactory()
+        }
+
+        // It should be OK for Unit though
+        rootContext<Unit> {
             context("parent had no fixture") {
-                deriveFixture { this } // this tries to cast Unit to String
+                deriveFixture { this }
                 test("test") {
                 }
             }
         }
-        checkItems(executeTests(tests), { it is ClassCastException })
     }
 }
