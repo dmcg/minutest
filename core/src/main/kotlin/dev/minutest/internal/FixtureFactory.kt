@@ -17,14 +17,19 @@ internal sealed class FixtureFactory<PF, F>(
         inputType.isSubtypeOf(this.inputType) && this.outputType.isSubtypeOf(outputType)
 }
 
-@Suppress("UNCHECKED_CAST")
-internal class UnsafeFixtureFactory<PF, F>(
+/**
+ * Passes parent fixture on unchanged where this is known safe.
+ */
+internal class IdFixtureFactory<F>(
     inputType: FixtureType
-) : FixtureFactory<PF, F>(inputType, inputType, { pf, _ -> pf as F}) {
+) : FixtureFactory<F, F>(inputType, inputType, { pf, _ -> pf }) {
 
-    override fun toString() = "UnsafeFixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
+    override fun toString() = "IdFixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
 }
 
+/**
+ * Explicitly set by a 'fixture' or 'deriveFixture' block.
+ */
 internal class ExplicitFixtureFactory<PF, F>(
     inputType: FixtureType,
     outputType: FixtureType,
@@ -34,9 +39,16 @@ internal class ExplicitFixtureFactory<PF, F>(
     override fun toString() = "ExplicitFixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
 }
 
-internal class IdFixtureFactory<F>(
+/**
+ * Used where we are passing the parent fixture on unchanged but this may not be safe.
+ *
+ * In this case the context must provide a fixture block.
+ */
+@Suppress("UNCHECKED_CAST")
+internal class UnsafeFixtureFactory<PF, F>(
     inputType: FixtureType
-) : FixtureFactory<F, F>(inputType, inputType, { pf, _ -> pf }) {
+) : FixtureFactory<PF, F>(inputType, inputType, { pf, _ -> pf as F}) {
 
-    override fun toString() = "IdFixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
+    override fun toString() = "UnsafeFixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
 }
+
