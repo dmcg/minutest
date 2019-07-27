@@ -4,9 +4,10 @@ import dev.minutest.junit.toTestFactory
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.fail
-import java.io.FileNotFoundException
 
-
+/**
+ * Tests that we detect issues with fixture presence and type while building the context tree.
+ */
 class FixtureNotSuppliedTests {
 
     @Test
@@ -78,19 +79,6 @@ class FixtureNotSuppliedTests {
         }
     }
 
-    @Test
-    fun `throws exception thrown from fixture during execution`() {
-        val tests = rootContext<String> {
-            fixture {
-                throw FileNotFoundException()
-            }
-            test("there needs to be a test to run anything") {}
-
-        }
-        checkItems(executeTests(tests), { it is FileNotFoundException })
-    }
-
-    // TODO - a bug
     @Test
     fun `throws IllegalStateException if you deriveFixture in a child when parent had punted`() {
         assertThrows<IllegalStateException> {
