@@ -42,6 +42,14 @@ class ReflectingTests : JUnit5Minutests {
                 test("private object") {
                     assertNull(askType<PrivateObject>().creator())
                 }
+                test("collection interfaces") {
+                    assertNull(askType<List<*>>().creator())
+                    assertNull(askType<Set<*>>().creator())
+                }
+                test("primitives") {
+                    assertNull(askType<Int>().creator())
+                    assertNull(askType<Double>().creator())
+                }
             }
         }
     }
