@@ -1,12 +1,15 @@
 package dev.minutest
 
 import dev.minutest.junit.JUnit5Minutests
-import org.junit.jupiter.api.Assertions.*
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertSame
 
 
 class FixtureSupplyingTests : JUnit5Minutests {
 
-    fun `supply fixture at top`() = rootContext<String> {
+    fun `supply fixture at root`() = rootContext<String> {
         fixture { "banana" }
         context("parent had fixture") {
             test("test") {
