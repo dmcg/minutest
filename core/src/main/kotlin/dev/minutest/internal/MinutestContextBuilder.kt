@@ -1,6 +1,7 @@
 package dev.minutest.internal
 
 import dev.minutest.*
+import dev.minutest.experimental.creator
 import dev.minutest.experimental.transformedBy
 
 /**
@@ -11,6 +12,7 @@ internal data class MinutestContextBuilder<PF, F>(
     private val parentFixtureType: FixtureType,
     private val fixtureType: FixtureType,
     private var fixtureFactory: FixtureFactory<PF, F>,
+    private val autoFixture: Boolean,
     private val children: MutableList<NodeBuilder<F>> = mutableListOf(),
     private val befores: MutableList<(F, TestDescriptor) -> F> = mutableListOf(),
     private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
@@ -98,6 +100,7 @@ internal data class MinutestContextBuilder<PF, F>(
             this.fixtureType,
             newFixtureType,
             fixtureFactory,
+            autoFixture,
             block
         )
     )
@@ -133,10 +136,26 @@ internal data class MinutestContextBuilder<PF, F>(
             fixtureFactory
         thisContextDoesntReferenceTheFixture() ->
             fixtureFactory
+        autoFixture ->
+            automaticFixtureFactory() ?: error("Cannot automatically create fixture in context \"$name\"")
         else ->
             error("Fixture has not been set in context \"$name\"")
     }
 
     private fun thisContextDoesntReferenceTheFixture() =
-        befores.isEmpty() && afters.isEmpty() && !children.any { it is TestBuilder<F> }
+        befores.isEmpty() && afters.isEmpty() && !children.any { it is TestBuilder<F> || it.isDerivedContext()}
+
+    @Suppress("UNCHECKED_CAST")
+    private fun automaticFixtureFactory() =
+        this.fixtureType.creator()?.let { creator ->
+            { _: Unit, _: TestDescriptor ->
+                creator() as F
+            }
+        } as ((PF, TestDescriptor) -> F)?
+
+    private fun <F> NodeBuilder<F>.isDerivedContext() =
+        this is MinutestContextBuilder<F, *> && this.fixtureType != this.parentFixtureType ||
+            this is LateContextBuilder<F, *> && this.delegate.fixtureType != this.delegate.parentFixtureType
 }
+
+

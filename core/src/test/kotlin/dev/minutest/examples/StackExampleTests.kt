@@ -8,7 +8,7 @@ import java.util.*
 
 class StackExampleTests : JUnit5Minutests {
 
-    fun tests() = rootContext<Stack<String>>("when new") {
+    fun tests() = rootContext<Stack<String>>("when new", false) {
 
         // The tests in the root context run with this empty stack
         fixture {
