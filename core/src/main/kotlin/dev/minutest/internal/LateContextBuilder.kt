@@ -15,8 +15,8 @@ internal open class LateContextBuilder<PF, F>(
 
     constructor(
         name: String,
-        parentFixtureType: FixtureType,
-        fixtureType: FixtureType,
+        parentFixtureType: FixtureType<PF>,
+        fixtureType: FixtureType<F>,
         fixtureFactory: FixtureFactory<PF, F>,
         autoFixture: Boolean,
         builder: TestContextBuilder<PF, F>.() -> Unit

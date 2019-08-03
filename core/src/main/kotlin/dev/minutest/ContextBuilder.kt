@@ -108,7 +108,7 @@ abstract class TestContextBuilder<PF, F> {
      */
     @PublishedApi internal abstract fun <G> internalDerivedContext(
         name: String,
-        newFixtureType: FixtureType,
+        newFixtureType: FixtureType<G>,
         block: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F>
 
