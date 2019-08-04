@@ -64,6 +64,13 @@ class AutofixtureTests : JUnit5Minutests {
         }
     }
 
+    fun `tests in root and sub-context`() = rootContext<Fixture> {
+        test("test in root") {}
+        context("context") {
+            test("test in context") {}
+        }
+    }
+
     open class Fixture() {
         var value: String = "default"
     }

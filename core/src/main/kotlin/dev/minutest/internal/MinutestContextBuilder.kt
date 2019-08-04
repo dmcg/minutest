@@ -11,7 +11,7 @@ internal data class MinutestContextBuilder<PF, F>(
     private val parentFixtureType: FixtureType<PF>,
     private val fixtureType: FixtureType<F>,
     private var fixtureFactory: FixtureFactory<PF, F>,
-    private val autoFixture: Boolean,
+    override var autoFixture: Boolean = true,
     private val children: MutableList<NodeBuilder<F>> = mutableListOf(),
     private val befores: MutableList<(F, TestDescriptor) -> F> = mutableListOf(),
     private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
@@ -147,19 +147,12 @@ internal data class MinutestContextBuilder<PF, F>(
     @Suppress("UNCHECKED_CAST")
     private fun automaticFixtureFactory() =
         this.fixtureType.creator()?.let { creator ->
-            { _: Unit, _: TestDescriptor ->
+            { _: PF, _: TestDescriptor ->
                 creator()
             }
-        } as ((PF, TestDescriptor) -> F)?
+        }
 
     private fun <F> NodeBuilder<F>.isDerivedContext() =
         this is MinutestContextBuilder<F, *> && this.fixtureType != this.parentFixtureType ||
             this is LateContextBuilder<F, *> && this.delegate.fixtureType != this.delegate.parentFixtureType
 }
-
-//internal typealias FixtureFactoryFactory<PF, F> =
-//    (parentFixtureType: FixtureType, fixtureType: FixtureType) -> ((PF, TestDescriptor) -> F)?
-//
-//internal val noAutoFixture: FixtureFactoryFactory<*, *> = { _, _ -> null }
-
-//internal val defaultAutoFixture: FixtureFactoryFactory<*, *>
