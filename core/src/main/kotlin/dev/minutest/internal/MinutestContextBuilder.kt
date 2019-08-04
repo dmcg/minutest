@@ -113,19 +113,17 @@ internal data class MinutestContextBuilder<PF, F>(
         afterAlls.add(f)
     }
 
-    override fun buildNode(): Node<PF> {
-        return PreparedContext(
-            name,
-            children.map { it.buildNode() },
-            markers,
-            parentFixtureType,
-            fixtureType,
-            befores,
-            afters,
-            afterAlls,
-            checkedFixtureFactory()
-        ).transformedBy(transforms)
-    }
+    override fun buildNode(): Node<PF> = PreparedContext(
+        name,
+        children.map { it.buildNode() },
+        markers,
+        parentFixtureType,
+        fixtureType,
+        befores,
+        afters,
+        afterAlls,
+        checkedFixtureFactory()
+    ).transformedBy(transforms)
 
     private fun checkedFixtureFactory(): (PF, TestDescriptor) -> F = when {
         // broken out for debugging
@@ -142,9 +140,8 @@ internal data class MinutestContextBuilder<PF, F>(
     }
 
     private fun thisContextDoesntReferenceTheFixture() =
-        befores.isEmpty() && afters.isEmpty() && !children.any { it is TestBuilder<F> || it.isDerivedContext()}
+        befores.isEmpty() && afters.isEmpty() && !children.any { it is TestBuilder<F> || it.isDerivedContext() }
 
-    @Suppress("UNCHECKED_CAST")
     private fun automaticFixtureFactory() =
         this.fixtureType.creator()?.let { creator ->
             { _: PF, _: TestDescriptor ->
