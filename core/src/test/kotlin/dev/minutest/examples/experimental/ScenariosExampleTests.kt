@@ -6,6 +6,8 @@ import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.assertTrue
+import dev.minutest.experimental.checkedAgainst as willRun
+
 
 class ScenariosExampleTests : JUnit5Minutests {
 
@@ -44,6 +46,15 @@ class ScenariosExampleTests : JUnit5Minutests {
                 assertTrue(fixture.isEmpty())
             }
         }
+
+        // Minutest will check that the following tests are run
+        willRun(
+            "root",
+            "  adding things to a list",
+            "    Given an empty list, Then it is empty, When you add a thing, Then then it is in the list",
+            "  removing things from a list",
+            "    Given a list with one thing, Then it has the thing, When you remove the thing, Then it is empty"
+        )
     }
 }
 
