@@ -4,7 +4,7 @@ import dev.minutest.internal.FixtureType
 import dev.minutest.internal.askType
 
 /**
- * [ContextBuilder]s allow definition of tests and sub-contexts, all of which have the fixture type F.
+ * [ContextBuilder]s allow definition of tests and sub-contexts, all of which have the fixture type [F].
  */
 typealias ContextBuilder<F> = TestContextBuilder<*, F>
 
@@ -47,11 +47,6 @@ abstract class TestContextBuilder<PF, F> {
      * transforming the parent fixture, accessible as the receiver 'this'.
      */
     abstract fun deriveFixture(f: (PF).(testDescriptor: TestDescriptor) -> F)
-
-    /**
-     * If true, Minutest will try to create fixtures automatically.
-     */
-    abstract var autoFixture: Boolean
 
     /**
      * Define a test on the current fixture (accessible as 'this').

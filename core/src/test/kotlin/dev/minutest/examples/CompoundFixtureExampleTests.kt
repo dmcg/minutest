@@ -36,6 +36,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 
     fun tests() = rootContext<Fixture> {
+        fixture { Fixture() }
 
         context("key not turned") {
             test("light off") {

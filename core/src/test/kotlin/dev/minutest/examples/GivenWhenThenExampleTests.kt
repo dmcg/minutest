@@ -41,6 +41,7 @@ class GivenWhenThenExampleTests : JUnit5Minutests {
     }
 
     fun tests() = rootContext<Fixture> {
+        fixture { Fixture() }
 
         GIVEN("key not turned") {
             // this is a precondition
