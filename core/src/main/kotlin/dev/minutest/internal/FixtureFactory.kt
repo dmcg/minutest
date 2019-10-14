@@ -6,14 +6,14 @@ import dev.minutest.TestDescriptor
  * Converts a parent fixture to a child fixture.
  */
 internal sealed class FixtureFactory<PF, F>(
-    val inputType: FixtureType<PF>,
-    val outputType: FixtureType<F>,
+    val inputType: FixtureType,
+    val outputType: FixtureType,
     val f: (PF, TestDescriptor) -> F
 ) : (PF, TestDescriptor) -> F by f {
 
     override fun toString() = "FixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
 
-    fun isCompatibleWith(inputType: FixtureType<*>, outputType: FixtureType<*>) =
+    fun isCompatibleWith(inputType: FixtureType, outputType: FixtureType) =
         inputType.isSubtypeOf(this.inputType) && this.outputType.isSubtypeOf(outputType)
 }
 
@@ -21,7 +21,7 @@ internal sealed class FixtureFactory<PF, F>(
  * Passes parent fixture on unchanged where this is known safe.
  */
 internal class IdFixtureFactory<F>(
-    inputType: FixtureType<F>
+    inputType: FixtureType
 ) : FixtureFactory<F, F>(inputType, inputType, { pf, _ -> pf }) {
 
     override fun toString() = "IdFixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
@@ -31,8 +31,8 @@ internal class IdFixtureFactory<F>(
  * Explicitly set by a 'fixture' or 'deriveFixture' block.
  */
 internal class ExplicitFixtureFactory<PF, F>(
-    inputType: FixtureType<PF>,
-    outputType: FixtureType<F>,
+    inputType: FixtureType,
+    outputType: FixtureType,
     f: (PF, TestDescriptor) -> F
 ) : FixtureFactory<PF, F>(inputType, outputType, f) {
 
@@ -46,8 +46,8 @@ internal class ExplicitFixtureFactory<PF, F>(
  */
 @Suppress("UNCHECKED_CAST")
 internal class UnsafeFixtureFactory<PF, F>(
-    inputType: FixtureType<PF>
-) : FixtureFactory<PF, F>(inputType, inputType as FixtureType<F>, { pf, _ -> pf as F}) {
+    inputType: FixtureType
+) : FixtureFactory<PF, F>(inputType, inputType, { pf, _ -> pf as F}) {
 
     override fun toString() = "UnsafeFixtureFactory((${inputType.qualifiedName}) -> ${outputType.qualifiedName})"
 }

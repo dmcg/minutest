@@ -26,7 +26,7 @@ inline fun <reified F> rootContext(
 @PublishedApi
 internal fun <F> rootWithoutFixture(
     name: String,
-    type: FixtureType<F>,
+    type: FixtureType,
     autoFixture: Boolean,
     builder: TestContextBuilder<Unit, F>.() -> Unit
 ) = MinutestRootContextBuilder(

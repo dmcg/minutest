@@ -1,6 +1,7 @@
 package dev.minutest.internal
 
 import dev.minutest.*
+import dev.minutest.experimental.creator
 import dev.minutest.experimental.transformedBy
 
 /**
@@ -8,8 +9,8 @@ import dev.minutest.experimental.transformedBy
  */
 internal data class MinutestContextBuilder<PF, F>(
     val name: String,
-    private val parentFixtureType: FixtureType<PF>,
-    private val fixtureType: FixtureType<F>,
+    private val parentFixtureType: FixtureType,
+    private val fixtureType: FixtureType,
     private var fixtureFactory: FixtureFactory<PF, F>,
     private val autoFixture: Boolean,
     private val children: MutableList<NodeBuilder<F>> = mutableListOf(),
@@ -71,7 +72,7 @@ internal data class MinutestContextBuilder<PF, F>(
 
     override fun <G> internalDerivedContext(
         name: String,
-        newFixtureType: FixtureType<G>,
+        newFixtureType: FixtureType,
         block: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F> = newContext(
         name,
@@ -90,7 +91,7 @@ internal data class MinutestContextBuilder<PF, F>(
 
     private fun <G> newContext(
         name: String,
-        newFixtureType: FixtureType<G>,
+        newFixtureType: FixtureType,
         fixtureFactory: FixtureFactory<F, G>,
         block: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F> = addChild(
@@ -148,7 +149,7 @@ internal data class MinutestContextBuilder<PF, F>(
     private fun automaticFixtureFactory() =
         this.fixtureType.creator()?.let { creator ->
             { _: Unit, _: TestDescriptor ->
-                creator()
+                creator() as F
             }
         } as ((PF, TestDescriptor) -> F)?
 
@@ -157,9 +158,4 @@ internal data class MinutestContextBuilder<PF, F>(
             this is LateContextBuilder<F, *> && this.delegate.fixtureType != this.delegate.parentFixtureType
 }
 
-//internal typealias FixtureFactoryFactory<PF, F> =
-//    (parentFixtureType: FixtureType, fixtureType: FixtureType) -> ((PF, TestDescriptor) -> F)?
-//
-//internal val noAutoFixture: FixtureFactoryFactory<*, *> = { _, _ -> null }
 
-//internal val defaultAutoFixture: FixtureFactoryFactory<*, *>
