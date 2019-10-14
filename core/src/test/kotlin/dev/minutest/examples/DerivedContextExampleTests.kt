@@ -18,7 +18,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
     }
 
     // Our root fixture type is Fruit
-    fun tests() = rootContext<Fruit>("Fruit Context", false) {
+    fun tests() = rootContext<Fruit>("Fruit Context") {
 
         fixture {
             Fruit("banana")

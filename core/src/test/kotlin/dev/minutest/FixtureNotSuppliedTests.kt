@@ -13,7 +13,7 @@ class FixtureNotSuppliedTests {
     @Test
     fun `throws IllegalStateException if no fixture specified when one is needed by a test`() {
         assertThrows<IllegalStateException> {
-            rootContext<String>(autoFixture = false) {
+            rootContext<String> {
                 test("there needs to be a test") {}
             }.toTestFactory()
         }
@@ -22,7 +22,7 @@ class FixtureNotSuppliedTests {
     @Test
     fun `throws IllegalStateException if no fixture specified when one is needed by a fixture`() {
         assertThrows<IllegalStateException> {
-            rootContext<String>(autoFixture = false) {
+            rootContext<String> {
                 modifyFixture {
                     fixture
                 }
@@ -34,7 +34,7 @@ class FixtureNotSuppliedTests {
     @Test
     fun `throws IllegalStateException if fixture is specified twice in a context`() {
         assertThrows<IllegalStateException> {
-            rootContext<String>(autoFixture = false) {
+            rootContext<String> {
                 fixture { "banana" }
                 fixture { "banana" }
             }.toTestFactory()
@@ -44,7 +44,7 @@ class FixtureNotSuppliedTests {
     @Test
     fun `throws IllegalStateException if a sub-context does not provide a fixture`() {
         assertThrows<IllegalStateException> {
-            rootContext<String>(autoFixture = false) {
+            rootContext<String> {
                 context("subcontext") {
                     test("there needs to be a test") {}
                 }
@@ -55,7 +55,7 @@ class FixtureNotSuppliedTests {
     @Test
     fun `throws IllegalStateException if parent fixture is not compatible and no deriveFixture specified`() {
         assertThrows<IllegalStateException> {
-            rootContext<CharSequence>(autoFixture = false) {
+            rootContext<CharSequence> {
                 fixture { "banana" }
                 derivedContext<String>("subcontext") {
                     test("there needs to be a test") {}
@@ -67,7 +67,7 @@ class FixtureNotSuppliedTests {
     @Test
     fun `throws IllegalStateException if parent fixture is not nullably compatible and no deriveFixture specified`() {
         assertThrows<IllegalStateException> {
-            rootContext<String?>(autoFixture = false) {
+            rootContext<String?> {
                 fixture { null }
                 derivedContext<String>("subcontext") {
                     test("there needs to be a test") {
@@ -82,7 +82,7 @@ class FixtureNotSuppliedTests {
     @Test
     fun `throws IllegalStateException if you deriveFixture in a child when parent had punted`() {
         assertThrows<IllegalStateException> {
-            rootContext<String>(autoFixture = false) {
+            rootContext<String> {
                 context("parent had no fixture") {
                     deriveFixture { this + "banana" } // this won't have been supplied, so we should forbid
                     test("test") {
@@ -92,12 +92,9 @@ class FixtureNotSuppliedTests {
         }
 
         // It should be OK for Unit though
-        rootContext<Unit>(autoFixture = false) {
+        rootContext<Unit> {
             context("parent had no fixture") {
-                deriveFixture {
-                    @Suppress("UNUSED_EXPRESSION")
-                    this
-                }
+                deriveFixture { this }
                 test("test") {
                 }
             }

@@ -21,7 +21,7 @@ class JUnitRulesTests : JUnit5Minutests {
         val rule = TestRule()
     }
 
-    fun `non-null fixture`() = rootContext<Fixture>(name = "non-null fixture", autoFixture = false) {
+    fun `non-null fixture`() = rootContext<Fixture>(name = "non-null fixture") {
         fixture {
             Fixture()
         }
@@ -39,7 +39,7 @@ class JUnitRulesTests : JUnit5Minutests {
     }
 
     // Show that we differentiate between a null fixture and a fixture that hasn't been set
-    fun `null fixture`() = rootContext<Fixture?>(name = "null fixture", autoFixture = false) {
+    fun `null fixture`() = rootContext<Fixture?>(name = "null fixture") {
         fixture {
             null
         }
