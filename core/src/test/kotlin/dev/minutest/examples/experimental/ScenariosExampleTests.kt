@@ -11,7 +11,7 @@ import dev.minutest.experimental.checkedAgainst as willRun
 
 class ScenariosExampleTests : JUnit5Minutests {
 
-    fun tests() = rootContext<MutableList<String>> {
+    fun tests() = rootContext<MutableList<String>>("Mutable Lists") {
 
         Scenario("adding things to a list") {
 
@@ -49,7 +49,7 @@ class ScenariosExampleTests : JUnit5Minutests {
 
         // Minutest will check that the following tests are run
         willRun(
-            "root",
+            "Mutable Lists",
             "  adding things to a list",
             "    Given an empty list, Then it is empty, When you add a thing, Then then it is in the list",
             "  removing things from a list",
