@@ -1,5 +1,6 @@
 package dev.minutest.experimental
 
+import dev.minutest.TestDescriptor
 import dev.minutest.internal.FixtureType
 import kotlin.reflect.KFunction
 import kotlin.reflect.KVisibility
@@ -24,4 +25,10 @@ internal fun FixtureType.creator(): (() -> Any)? {
 private fun Collection<KFunction<Any>>.noArgCtor() =
     find {
         it.visibility == KVisibility.PUBLIC && it.parameters.isEmpty()
+    }
+
+@Suppress("UNCHECKED_CAST", "UNUSED")
+internal fun <F> experimentalFixtureFactoryFor(type: FixtureType): ((Unit, TestDescriptor) -> F)? =
+    type.creator()?.let { creator ->
+        { _: Unit, _: TestDescriptor -> creator() as F }
     }
