@@ -22,6 +22,10 @@ class JUnitRulesTests : JUnit5Minutests {
     }
 
     fun `non-null fixture`() = rootContext<Fixture>(name = "non-null fixture") {
+        fixture {
+            Fixture()
+        }
+
         applyRule { fixture.rule }
 
         test("test in root") {}

@@ -8,10 +8,9 @@ import dev.minutest.experimental.transformedBy
  */
 internal data class MinutestContextBuilder<PF, F>(
     val name: String,
-    private val parentFixtureType: FixtureType<PF>,
-    private val fixtureType: FixtureType<F>,
+    private val parentFixtureType: FixtureType,
+    private val fixtureType: FixtureType,
     private var fixtureFactory: FixtureFactory<PF, F>,
-    override var autoFixture: Boolean = true,
     private val children: MutableList<NodeBuilder<F>> = mutableListOf(),
     private val befores: MutableList<(F, TestDescriptor) -> F> = mutableListOf(),
     private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
@@ -71,7 +70,7 @@ internal data class MinutestContextBuilder<PF, F>(
 
     override fun <G> internalDerivedContext(
         name: String,
-        newFixtureType: FixtureType<G>,
+        newFixtureType: FixtureType,
         block: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F> = newContext(
         name,
@@ -90,7 +89,7 @@ internal data class MinutestContextBuilder<PF, F>(
 
     private fun <G> newContext(
         name: String,
-        newFixtureType: FixtureType<G>,
+        newFixtureType: FixtureType,
         fixtureFactory: FixtureFactory<F, G>,
         block: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F> = addChild(
@@ -99,7 +98,6 @@ internal data class MinutestContextBuilder<PF, F>(
             this.fixtureType,
             newFixtureType,
             fixtureFactory,
-            autoFixture,
             block
         )
     )
@@ -133,23 +131,10 @@ internal data class MinutestContextBuilder<PF, F>(
             fixtureFactory
         thisContextDoesntReferenceTheFixture() ->
             fixtureFactory
-        autoFixture ->
-            automaticFixtureFactory() ?: error("Cannot automatically create fixture in context \"$name\"")
         else ->
             error("Fixture has not been set in context \"$name\"")
     }
 
     private fun thisContextDoesntReferenceTheFixture() =
-        befores.isEmpty() && afters.isEmpty() && !children.any { it is TestBuilder<F> || it.isDerivedContext() }
-
-    private fun automaticFixtureFactory() =
-        this.fixtureType.creator()?.let { creator ->
-            { _: PF, _: TestDescriptor ->
-                creator()
-            }
-        }
-
-    private fun <F> NodeBuilder<F>.isDerivedContext() =
-        this is MinutestContextBuilder<F, *> && this.fixtureType != this.parentFixtureType ||
-            this is LateContextBuilder<F, *> && this.delegate.fixtureType != this.delegate.parentFixtureType
+        befores.isEmpty() && afters.isEmpty() && !children.any { it is TestBuilder<F> }
 }

@@ -24,14 +24,9 @@ inline fun <reified F> rootContext(
 @PublishedApi
 internal fun <F> rootWithoutFixture(
     name: String,
-    type: FixtureType<F>,
+    type: FixtureType,
     builder: TestContextBuilder<Unit, F>.() -> Unit
 ) = MinutestRootContextBuilder(
-    MinutestContextBuilder(
-        name = name,
-        parentFixtureType = unitFixtureType,
-        fixtureType = type,
-        fixtureFactory = UnsafeFixtureFactory(unitFixtureType)
-    ),
+    MinutestContextBuilder(name, unitFixtureType, type, UnsafeFixtureFactory(unitFixtureType)),
     builder
 )
