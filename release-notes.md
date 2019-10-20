@@ -3,6 +3,10 @@
 I still have to go through Slack posts to find older details, but in the meantime
 
 
+## 1.8.0
+
+Internal changes to increase type safety, reduce object allocation and simplify.
+
 ## 1.7.0
 
 A `rootContext {` function to avoid `rootContex<Unit> {`, thanks to Robert Stoll

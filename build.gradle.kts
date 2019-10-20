@@ -4,8 +4,8 @@ plugins {
 }
 
 allprojects {
-    group = "dev.minutest"
-    version = "1.8.0-RC1"
+    group = "devutest"
+    version = "1.8.0"
 
     repositories {
         mavenCentral()
