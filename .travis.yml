@@ -1,5 +1,7 @@
 language: java
 
+dist: trusty
+
 before_install:
 
 script: ./gradlew build
