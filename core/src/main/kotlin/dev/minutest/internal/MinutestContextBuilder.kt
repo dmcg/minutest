@@ -16,7 +16,8 @@ internal data class MinutestContextBuilder<PF, F>(
     private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
     private val afterAlls: MutableList<() -> Unit> = mutableListOf(),
     private val markers: MutableList<Any> = mutableListOf(),
-    private val transforms: MutableList<NodeTransform<PF>> = mutableListOf()
+    private val transforms: MutableList<NodeTransform<PF>> = mutableListOf(),
+    private val block: TestContextBuilder<PF, F>.() -> Unit
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
 
     override fun fixture(factory: Unit.(testDescriptor: TestDescriptor) -> F) {
@@ -93,12 +94,12 @@ internal data class MinutestContextBuilder<PF, F>(
         fixtureFactory: FixtureFactory<F, G>,
         block: TestContextBuilder<F, G>.() -> Unit
     ): NodeBuilder<F> = addChild(
-        LateContextBuilder(
+        MinutestContextBuilder(
             name,
             this.fixtureType,
             newFixtureType,
             fixtureFactory,
-            block
+            block = block
         )
     )
 
@@ -111,17 +112,19 @@ internal data class MinutestContextBuilder<PF, F>(
         afterAlls.add(f)
     }
 
-    override fun buildNode(): Node<PF> = PreparedContext(
-        name,
-        children.map { it.buildNode() },
-        markers,
-        parentFixtureType,
-        fixtureType,
-        befores,
-        afters,
-        afterAlls,
-        checkedFixtureFactory()
-    ).transformedBy(transforms)
+    override fun buildNode(): Node<PF> = this.apply(block).run {
+        PreparedContext(
+            name,
+            children.map { it.buildNode() },
+            markers,
+            parentFixtureType,
+            fixtureType,
+            befores,
+            afters,
+            afterAlls,
+            checkedFixtureFactory()
+        ).transformedBy(transforms)
+    }
 
     private fun checkedFixtureFactory(): (PF, TestDescriptor) -> F = when {
         // broken out for debugging

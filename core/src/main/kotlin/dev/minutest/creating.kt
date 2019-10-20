@@ -1,6 +1,8 @@
 package dev.minutest
 
-import dev.minutest.internal.*
+import dev.minutest.internal.FixtureType
+import dev.minutest.internal.MinutestRootContextBuilder
+import dev.minutest.internal.askType
 
 /**
  * The entry point to Minutest with no fixture type - defines a context that is not nested within a parent context.
@@ -25,8 +27,6 @@ inline fun <reified F> rootContext(
 internal fun <F> rootWithoutFixture(
     name: String,
     type: FixtureType,
-    builder: TestContextBuilder<Unit, F>.() -> Unit
-) = MinutestRootContextBuilder(
-    MinutestContextBuilder(name, unitFixtureType, type, UnsafeFixtureFactory(unitFixtureType)),
-    builder
-)
+    block: TestContextBuilder<Unit, F>.() -> Unit
+) = MinutestRootContextBuilder(name, type, block = block)
+
