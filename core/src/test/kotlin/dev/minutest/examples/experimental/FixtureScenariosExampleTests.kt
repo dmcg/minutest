@@ -1,6 +1,6 @@
 package dev.minutest.examples.experimental
 
-import dev.minutest.experimental.Given_
+import dev.minutest.experimental.GivenFixture
 import dev.minutest.experimental.Scenario
 import dev.minutest.experimental.Then
 import dev.minutest.experimental.When
@@ -11,30 +11,32 @@ import kotlin.test.assertTrue
 import dev.minutest.experimental.checkedAgainst as willRun
 
 
-class ScenariosExampleTests : JUnit5Minutests {
+class FixtureScenariosExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<MutableList<String>>("Mutable Lists") {
 
         Scenario("adding things to a list") {
 
-            Given_("an empty list") { mutableListOf() }
-
-            Then("it is empty") {
-                assertTrue(fixture.isEmpty())
+            GivenFixture("an empty list") {
+                mutableListOf()
+            }.Then("it is empty") {
+                assertTrue(it.isEmpty())
             }
 
             When("you add a thing") {
                 add("one")
+            }.Then("it returns true") { result ->
+                assertTrue(result)
             }
 
-            Then("then it is in the list") {
+            Then("it is in the list") {
                 assertEquals(listOf("one"), fixture)
             }
         }
 
         Scenario("removing things from a list") {
 
-            Given_("a list with one thing") { mutableListOf("one") }
+            GivenFixture("a list with one thing") { mutableListOf("one") }
 
             Then("it has the thing") {
                 assertEquals(listOf("one"), fixture)
