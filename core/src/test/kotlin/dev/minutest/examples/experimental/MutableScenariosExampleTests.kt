@@ -47,6 +47,7 @@ class MutableScenariosExampleTests : JUnit5Minutests {
         fixture { Fixture() }
 
         Scenario("Cannot launch without key switch") {
+
             Given("key not turned") {
                 assertFalse(keySwitchOn)
             }
@@ -55,9 +56,9 @@ class MutableScenariosExampleTests : JUnit5Minutests {
             }
             When("pressing the button") {
                 controlPanel.pressButton()
-            }
-            Then("missile was not launched") {
-                // TODO - how do we check the result of the pressButton?
+            }.
+            Then("missile was not launched") { result ->
+                assertFalse(result)
                 assertTrue(beeped)
                 assertFalse(missileLaunched)
             }
@@ -72,9 +73,9 @@ class MutableScenariosExampleTests : JUnit5Minutests {
             }
             When("pressing the button") {
                 controlPanel.pressButton()
-            }
-            Then("missile was launched") {
-                // TODO - how do we check the result of the pressButton?
+            }.
+            Then("missile was launched") { result ->
+                assertTrue(result)
                 assertFalse(beeped)
                 assertTrue(missileLaunched)
             }

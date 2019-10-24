@@ -20,7 +20,7 @@ class FixtureScenariosExampleTests : JUnit5Minutests {
             GivenFixture("an empty list") {
                 mutableListOf()
             }.Then("it is empty") {
-                assertTrue(it.isEmpty())
+                assert(it.isEmpty())
             }
 
             When("you add a thing") {
@@ -28,7 +28,6 @@ class FixtureScenariosExampleTests : JUnit5Minutests {
             }.Then("it returns true") { result ->
                 assertTrue(result)
             }
-
             Then("it is in the list") {
                 assertEquals(listOf("one"), fixture)
             }
@@ -36,16 +35,17 @@ class FixtureScenariosExampleTests : JUnit5Minutests {
 
         Scenario("removing things from a list") {
 
-            GivenFixture("a list with one thing") { mutableListOf("one") }
-
-            Then("it has the thing") {
-                assertEquals(listOf("one"), fixture)
+            GivenFixture("a list with one thing") {
+                mutableListOf("one")
+            }.Then("it has the thing") {
+                assertEquals(listOf("one"), it)
             }
 
             When("you remove the thing") {
                 remove("one")
+            }.Then("it returns true") { result ->
+                assertTrue(result)
             }
-
             Then("it is empty") {
                 assertTrue(fixture.isEmpty())
             }
@@ -55,9 +55,9 @@ class FixtureScenariosExampleTests : JUnit5Minutests {
         willRun(
             "Mutable Lists",
             "  adding things to a list",
-            "    Given an empty list, Then it is empty, When you add a thing, Then then it is in the list",
+            "    Given an empty list, Then it is empty, When you add a thing, Then it returns true, Then it is in the list",
             "  removing things from a list",
-            "    Given a list with one thing, Then it has the thing, When you remove the thing, Then it is empty"
+            "    Given a list with one thing, Then it has the thing, When you remove the thing, Then it returns true, Then it is empty"
         )
     }
 }
