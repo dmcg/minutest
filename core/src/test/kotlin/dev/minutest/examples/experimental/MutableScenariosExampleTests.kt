@@ -54,12 +54,15 @@ class MutableScenariosExampleTests : JUnit5Minutests {
             Then("warning light is off") {
                 assertFalse(controlPanel.warningLight)
             }
-            When("pressing the button") {
+            When("taking a moment") {
+                println("Oh no")
+            }.And("pressing the button") {
                 controlPanel.pressButton()
             }.
-            Then("missile was not launched") { result ->
+            Then("result was false") { result ->
                 assertFalse(result)
                 assertTrue(beeped)
+            }.And("missile was not launched") {
                 assertFalse(missileLaunched)
             }
         }
@@ -74,9 +77,10 @@ class MutableScenariosExampleTests : JUnit5Minutests {
             When("pressing the button") {
                 controlPanel.pressButton()
             }.
-            Then("missile was launched") { result ->
+            Then("result was true") { result ->
                 assertTrue(result)
                 assertFalse(beeped)
+            }.And("missile was launched") {
                 assertTrue(missileLaunched)
             }
         }

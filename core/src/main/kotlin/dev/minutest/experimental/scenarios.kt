@@ -35,10 +35,11 @@ fun <PF, F, R> ScenarioBuilder<PF, F>.When(name: String, f: F.() -> R): Thenable
     return next
 }
 
-fun <PF, F> ScenarioBuilder<PF, F>.Then(name: String, f: F.() -> Unit) {
+fun <PF, F> ScenarioBuilder<PF, F>.Then(name: String, f: F.() -> Unit): Andable<F> {
     steps.add(
         TestStep("Then $name", f)
     )
+    return Andable(this)
 }
 
 internal class Preamble<PF, F>(
@@ -51,18 +52,41 @@ internal class TestStep<F, R>(
     val f: (F).() -> R
 )
 
-class Thenable<F, R>(val scenarioBuilder: ScenarioBuilder<*, F>) {
+class Thenable<F, R>(private val scenarioBuilder: ScenarioBuilder<*, F>) {
     private val previousResultHolder = mutableListOf<R>()
 
     internal var previousResult  get() = previousResultHolder.first()
         set(value) { previousResultHolder.add(value) }
 
-    fun Then(name: String, f: F.(previousResult: R) -> Unit) {
+    fun Then(name: String, f: F.(previousResult: R) -> Unit): Andable<F> {
         scenarioBuilder.steps.add(
             TestStep<F, Unit>("Then $name") {
                 this.f(previousResult)
             }
         )
+        return Andable(scenarioBuilder)
+    }
+    fun <R2> And(name: String, f: F.() -> R2): Thenable<F, R2> {
+        val next = Thenable<F, R2>(scenarioBuilder)
+        scenarioBuilder.steps.add(
+            TestStep<F, R2>("And $name") {
+                f().also {
+                    next.previousResult = it
+                }
+            }
+        )
+        return next
+    }
+}
+
+class Andable<F>(val scenarioBuilder: ScenarioBuilder<*, F>) {
+    fun And(name: String, f: F.() -> Unit): Andable<F> {
+        scenarioBuilder.steps.add(
+            TestStep<F, Unit>("And $name") {
+                this.f()
+            }
+        )
+        return Andable(scenarioBuilder)
     }
 }
 
