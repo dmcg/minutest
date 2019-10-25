@@ -9,7 +9,7 @@ import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
-class ControlPanel2(
+internal class ControlPanel(
     val keySwitch: () -> Boolean,
     val beep: () -> Unit,
     val launchMissile: () -> Unit
@@ -28,14 +28,14 @@ class ControlPanel2(
 
 class MutableScenariosExampleTests : JUnit5Minutests {
 
-    class Fixture() {
+    internal class Fixture() {
         // Rather than introduce a mocking framework, we can work with
         // functions and mutable state.
         var keySwitchOn = false
         var beeped = false
         var missileLaunched = false
 
-        val controlPanel = ControlPanel2(
+        val controlPanel = ControlPanel(
             keySwitch = { keySwitchOn },
             beep = { beeped = true },
             launchMissile = { missileLaunched = true }

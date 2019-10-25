@@ -13,7 +13,6 @@ fun <PF, F> ScenarioBuilder<PF, F>.GivenFixture(name: String, factory: (Unit).()
         }
     )
     return next
-
 }
 
 fun <PF, F> ScenarioBuilder<PF, F>.Given(name: String, operation: F.() -> Unit) {
@@ -58,7 +57,7 @@ class Thenable<F, R>(val scenarioBuilder: ScenarioBuilder<*, F>) {
     internal var previousResult  get() = previousResultHolder.first()
         set(value) { previousResultHolder.add(value) }
 
-    fun Then(name: String, f: F.(R) -> Unit) {
+    fun Then(name: String, f: F.(previousResult: R) -> Unit) {
         scenarioBuilder.steps.add(
             TestStep<F, Unit>("Then $name") {
                 this.f(previousResult)
