@@ -1,9 +1,6 @@
 package dev.minutest.examples.experimental
 
-import dev.minutest.experimental.Given
 import dev.minutest.experimental.Scenario
-import dev.minutest.experimental.Then
-import dev.minutest.experimental.When
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -23,6 +20,7 @@ internal class ControlPanel(
             false
         }
     }
+
     val warningLight get() = keySwitch()
 }
 
@@ -54,12 +52,9 @@ class MutableScenariosExampleTests : JUnit5Minutests {
             Then("warning light is off") {
                 assertFalse(controlPanel.warningLight)
             }
-            When("taking a moment") {
-                println("Oh no")
-            }.And("pressing the button") {
+            When("pressing the button") {
                 controlPanel.pressButton()
-            }.
-            Then("result was false") { result ->
+            }.Then("result was false") { result ->
                 assertFalse(result)
                 assertTrue(beeped)
             }.And("missile was not launched") {
@@ -76,8 +71,7 @@ class MutableScenariosExampleTests : JUnit5Minutests {
             }
             When("pressing the button") {
                 controlPanel.pressButton()
-            }.
-            Then("result was true") { result ->
+            }.Then("result was true") { result ->
                 assertTrue(result)
                 assertFalse(beeped)
             }.And("missile was launched") {

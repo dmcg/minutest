@@ -1,8 +1,6 @@
 package dev.minutest.examples.experimental
 
-import dev.minutest.experimental.GivenFixture
 import dev.minutest.experimental.Scenario
-import dev.minutest.experimental.When
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals

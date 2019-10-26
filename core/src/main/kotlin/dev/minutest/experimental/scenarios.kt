@@ -1,113 +1,172 @@
+@file:Suppress("FunctionName")
+
 package dev.minutest.experimental
 
+import dev.minutest.MinutestFixture
 import dev.minutest.TestContextBuilder
 
-fun <PF, F> TestContextBuilder<PF, F>.Scenario(name: String, block: ScenarioBuilder<PF, F>.() -> Unit) =
-    ScenarioBuilder<PF, F>(name).apply(block).applyToContext(this)
+fun <PF, F> TestContextBuilder<PF, F>.Scenario(description: String, block: ScenarioBuilder<PF, F>.() -> Unit) =
+    ScenarioBuilder<PF, F>(description).apply(block).applyToContext(this)
 
-fun <PF, F> ScenarioBuilder<PF, F>.GivenFixture(name: String, factory: (Unit).() -> F): Thenable<F, F> {
-    val next = Thenable<F, F>(this)
-    preambles.add(
-        Preamble("Given $name") {
-            fixture { factory().also { next.previousResult = it } }
-        }
-    )
-    return next
-}
+@MinutestFixture
+class ScenarioBuilder<PF, F>(
+    private val description: String
+) {
+    private val preambles: MutableList<Preamble<F, F>> = mutableListOf()
+    private val steps: MutableList<TestStep<F, *>> = mutableListOf()
 
-fun <PF, F> ScenarioBuilder<PF, F>.Given(name: String, operation: F.() -> Unit) {
-    preambles.add(
-        Preamble("Given $name") {
-            modifyFixture { operation() }
-        }
-    )
-}
-
-fun <PF, F, R> ScenarioBuilder<PF, F>.When(name: String, f: F.() -> R): Thenable<F, R> {
-    val next = Thenable<F, R>(this)
-    steps.add(
-        TestStep<F, R>("When $name") {
-            f().also {
-                next.previousResult = it
-            }
-        }
-    )
-    return next
-}
-
-fun <PF, F> ScenarioBuilder<PF, F>.Then(name: String, f: F.() -> Unit): Andable<F> {
-    steps.add(
-        TestStep("Then $name", f)
-    )
-    return Andable(this)
-}
-
-internal class Preamble<PF, F>(
-    val name: String,
-    val f: (TestContextBuilder<PF, F>).() -> Unit
-)
-
-internal class TestStep<F, R>(
-    val name: String,
-    val f: (F).() -> R
-)
-
-class Thenable<F, R>(private val scenarioBuilder: ScenarioBuilder<*, F>) {
-    private val previousResultHolder = mutableListOf<R>()
-
-    internal var previousResult  get() = previousResultHolder.first()
-        set(value) { previousResultHolder.add(value) }
-
-    fun Then(name: String, f: F.(previousResult: R) -> Unit): Andable<F> {
-        scenarioBuilder.steps.add(
-            TestStep<F, Unit>("Then $name") {
-                this.f(previousResult)
+    fun GivenFixture(description: String, factory: (Unit).() -> F): Givens<F, F> {
+        val next = Givens<F, F>(this)
+        addPreamble(
+            Preamble("Given $description") {
+                fixture { factory().also { next.result = it } }
             }
         )
-        return Andable(scenarioBuilder)
+        return next
     }
-    fun <R2> And(name: String, f: F.() -> R2): Thenable<F, R2> {
-        val next = Thenable<F, R2>(scenarioBuilder)
-        scenarioBuilder.steps.add(
-            TestStep<F, R2>("And $name") {
+
+    fun <R> Given(description: String, operation: F.() -> R): Thens<F, R> {
+        val next = Thens<F, R>(this)
+        addPreamble(
+            Preamble("Given $description") {
+                modifyFixture { operation().also { next.result = it } }
+            }
+        )
+        return next
+    }
+
+    fun <R> When(description: String, f: F.() -> R): Whens<F, R> {
+        val next = Whens<F, R>(this)
+        addStep(
+            TestStep<F, R>("When $description") {
                 f().also {
-                    next.previousResult = it
+                    next.result = it
                 }
             }
         )
         return next
     }
-}
 
-class Andable<F>(val scenarioBuilder: ScenarioBuilder<*, F>) {
-    fun And(name: String, f: F.() -> Unit): Andable<F> {
-        scenarioBuilder.steps.add(
-            TestStep<F, Unit>("And $name") {
-                this.f()
-            }
+    fun Then(description: String, f: F.() -> Unit): Thens<F, Unit> {
+        addStep(
+            TestStep("Then $description", f)
         )
-        return Andable(scenarioBuilder)
+        return Thens(this)
     }
-}
 
-class ScenarioBuilder<PF, F>(
-    val name: String
-) {
-    internal val preambles: MutableList<Preamble<F, F>> = mutableListOf()
-    internal val steps: MutableList<TestStep<F, *>> = mutableListOf()
+    fun And(description: String, f: F.() -> Unit) {
+        addStep(
+            TestStep("And $description", f)
+        )
+    }
+
+    /**
+     * Name the fixture to improve communication.
+     */
+    val F.fixture: F get() = this
+
+    internal fun addPreamble(preamble: Preamble<F, F>) {
+        preambles.add(preamble)
+    }
+
+    internal fun addStep(step: TestStep<F, *>) {
+        steps.add(step)
+    }
 
     internal fun applyToContext(contextBuilder: TestContextBuilder<PF, F>) {
-        contextBuilder.context(name) {
+        contextBuilder.context(description) {
             val newContext = this
-            preambles.forEach { preamble ->
+            this@ScenarioBuilder.preambles.forEach { preamble ->
                 preamble.f(newContext)
             }
-            val testName = (preambles.map { it.name } + steps.map { it.name }).joinToString()
+            val testName = (this@ScenarioBuilder.preambles.map { it.description } + this@ScenarioBuilder.steps.map { it.description }).joinToString()
             test(testName) {
-                steps.forEach { step ->
+                this@ScenarioBuilder.steps.forEach { step ->
                     step.f(this)
                 }
             }
         }
     }
 }
+
+class Givens<F, R>(private val scenarioBuilder: ScenarioBuilder<*, F>) {
+    private val resultHolder = mutableListOf<R>()
+
+    internal  var result  get() = resultHolder.first()
+        set(value) { resultHolder.add(value) }
+
+    fun <R2> And(description: String, operation: F.() -> R2): Givens<F, R2> {
+        val next = Givens<F, R2>(scenarioBuilder)
+        scenarioBuilder.addPreamble(
+            Preamble("And $description") {
+                modifyFixture { operation().also { next.result = it } }
+            }
+        )
+        return next
+    }
+
+    fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): Thens<F, R> {
+        scenarioBuilder.addStep(
+            TestStep<F, Unit>("$prefix $description") {
+                this.f(result)
+            }
+        )
+        return Thens(scenarioBuilder, resultHolder)
+    }
+}
+
+class Whens<F, R>(private val scenarioBuilder: ScenarioBuilder<*, F>) {
+    private val resultHolder = mutableListOf<R>()
+
+    internal  var result  get() = resultHolder.first()
+        set(value) { resultHolder.add(value) }
+
+    fun <R2> And(description: String, f: F.() -> R2): Whens<F, R2> {
+        val next = Whens<F, R2>(scenarioBuilder)
+        scenarioBuilder.addStep(
+            TestStep<F, R2>("When $description") {
+                f().also {
+                    next.result = it
+                }
+            }
+        )
+        return next
+    }
+
+    fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): Thens<F, R> {
+        scenarioBuilder.addStep(
+            TestStep<F, Unit>("$prefix $description") {
+                this.f(result)
+            }
+        )
+        return Thens(scenarioBuilder, resultHolder)
+    }
+}
+
+class Thens<F, R>(
+    private val scenarioBuilder: ScenarioBuilder<*, F>,
+    private val resultHolder: MutableList<R> = mutableListOf()
+) {
+    internal var result  get() = resultHolder.first()
+        set(value) { resultHolder.add(value) }
+
+    fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): Thens<F, R> {
+        scenarioBuilder.addStep(
+            TestStep<F, Unit>("$prefix $description") {
+                this.f(result)
+            }
+        )
+        return this
+    }
+    fun And(description: String, f: F.(previousResult: R) -> Unit): Thens<F, R> = Then(description, "And", f)
+}
+
+internal data class Preamble<PF, F>(
+    val description: String,
+    val f: (TestContextBuilder<PF, F>).() -> Unit
+)
+
+internal data class TestStep<F, R>(
+    val description: String,
+    val f: (F).() -> R
+)

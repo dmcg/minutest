@@ -30,7 +30,7 @@ fun executeTests(tests: Stream<out DynamicNode>,
     return exceptions
 }
 
-fun executeTests(root: RootContextBuilder) = executeTests(root.toTestFactory())
+fun executeTests(root: RootContextBuilder): List<Throwable> = executeTests(root.toTestFactory())
 
 inline fun <reified T : Any> runTestsInClass(engineID: String): List<String> = runTestsInClass(
     discoveryRequest(engineID, DiscoverySelectors.selectClass(T::class.java)))
