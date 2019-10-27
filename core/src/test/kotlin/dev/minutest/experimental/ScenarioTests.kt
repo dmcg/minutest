@@ -191,6 +191,27 @@ class ScenarioTests {
             "in and"
         )
     }
+
+    @Test
+    fun `Standalone Then-And`() {
+        val tests = rootContext<MutableList<String>> {
+            fixture { mutableListOf() }
+            Scenario("Scenario") {
+                Then("it is empty") {
+                    log += "in then"
+                    assertTrue(fixture.isEmpty())
+                }.And("its size is 0") {
+                    log += "in and"
+                    assertEquals(0, fixture.size)
+                }
+            }
+        }
+        executeTests(tests).orFail()
+        assertLogged(log,
+            "in then",
+            "in and"
+        )
+    }
 }
 
 private fun List<Throwable>.orFail() = firstOrNull()?.let { throw it }

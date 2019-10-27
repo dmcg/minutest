@@ -25,8 +25,8 @@ class ScenarioBuilder<PF, F>(
         return next
     }
 
-    fun <R> Given(description: String, operation: F.() -> R): Thens<F, R> {
-        val next = Thens<F, R>(this)
+    fun <R> Given(description: String, operation: F.() -> R): ResultingThens<F, R> {
+        val next = ResultingThens<F, R>(this)
         addPreamble(
             Preamble("Given $description") {
                 modifyFixture { operation().also { next.result = it } }
@@ -47,7 +47,7 @@ class ScenarioBuilder<PF, F>(
         return next
     }
 
-    fun Then(description: String, f: F.() -> Unit): Thens<F, Unit> {
+    fun Then(description: String, f: F.() -> Unit): Thens<F> {
         addStep(
             TestStep("Then $description", f)
         )
@@ -105,13 +105,13 @@ class Givens<F, R>(private val scenarioBuilder: ScenarioBuilder<*, F>) {
         return next
     }
 
-    fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): Thens<F, R> {
+    fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): ResultingThens<F, R> {
         scenarioBuilder.addStep(
             TestStep<F, Unit>("$prefix $description") {
                 this.f(result)
             }
         )
-        return Thens(scenarioBuilder, resultHolder)
+        return ResultingThens(scenarioBuilder, resultHolder)
     }
 }
 
@@ -133,24 +133,24 @@ class Whens<F, R>(private val scenarioBuilder: ScenarioBuilder<*, F>) {
         return next
     }
 
-    fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): Thens<F, R> {
+    fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): ResultingThens<F, R> {
         scenarioBuilder.addStep(
             TestStep<F, Unit>("$prefix $description") {
                 this.f(result)
             }
         )
-        return Thens(scenarioBuilder, resultHolder)
+        return ResultingThens(scenarioBuilder, resultHolder)
     }
 }
 
-class Thens<F, R>(
+class ResultingThens<F, R>(
     private val scenarioBuilder: ScenarioBuilder<*, F>,
     private val resultHolder: MutableList<R> = mutableListOf()
 ) {
     internal var result  get() = resultHolder.first()
         set(value) { resultHolder.add(value) }
 
-    fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): Thens<F, R> {
+    fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): ResultingThens<F, R> {
         scenarioBuilder.addStep(
             TestStep<F, Unit>("$prefix $description") {
                 this.f(result)
@@ -158,7 +158,21 @@ class Thens<F, R>(
         )
         return this
     }
-    fun And(description: String, f: F.(previousResult: R) -> Unit): Thens<F, R> = Then(description, "And", f)
+    fun And(description: String, f: F.(previousResult: R) -> Unit): ResultingThens<F, R> = Then(description, "And", f)
+}
+
+class Thens<F>(
+    private val scenarioBuilder: ScenarioBuilder<*, F>
+) {
+    fun Then(description: String, prefix: String = "Then", f: F.() -> Unit): Thens<F> {
+        scenarioBuilder.addStep(
+            TestStep<F, Unit>("$prefix $description") {
+                this.f()
+            }
+        )
+        return this
+    }
+    fun And(description: String, f: F.() -> Unit): Thens<F> = Then(description, "And", f)
 }
 
 internal data class Preamble<PF, F>(
