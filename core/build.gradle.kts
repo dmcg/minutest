@@ -24,14 +24,15 @@ dependencies {
     compileOnly("org.junit.vintage:junit-vintage-engine:5.4.0")
     compileOnly("junit:junit:4.12")
 
-    testCompile(kotlin("test"))
-    testCompile("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1")
-    testCompile("org.junit.vintage:junit-vintage-engine:5.4.0")
-    testCompile("junit:junit:4.12")
-    testCompile("org.junit.jupiter:junit-jupiter-engine:5.4.0")
-    testCompile("org.junit.platform:junit-platform-launcher:1.4.0") {
+    testImplementation(kotlin("test"))
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.4.0")
+    testImplementation("junit:junit:4.12")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.4.0")
+    testImplementation("org.junit.platform:junit-platform-launcher:1.4.0") {
         because("enables running in IntelliJ using JUnit runner")
     }
+    testImplementation("com.natpryce:hamkrest:1.7.0.0")
 }
 
 tasks {
