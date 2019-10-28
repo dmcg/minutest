@@ -48,8 +48,10 @@ class ScenariosHamkrestExampleTests : JUnit5Minutests {
                 destination.moveInto(source)
             }.ThenResult(equalTo(true))
 
-            Then("destination", Fixture::destination, isEmpty)
-                .And("source", Fixture::source, containsAll(listOf("apple", "banana")) and hasSize(equalTo(2)))
+            Then("fixture", { this },
+                has(Fixture::source, containsAll(listOf("apple", "banana")) and hasSize(equalTo(2))) and
+                has(Fixture::destination, isEmpty))
+
         }
 
 
@@ -63,8 +65,8 @@ class ScenariosHamkrestExampleTests : JUnit5Minutests {
                 " And source is empty," +
                 " When moving back," +
                 " Then result is equal to true," +
-                " Then destination is empty," +
-                " And source contains all [\"apple\", \"banana\"] and has size that is equal to 2"
+                " Then fixture has source that contains all [\"apple\", \"banana\"] and has size that is equal to 2" +
+                " and has destination that is empty"
         )
     }
 
