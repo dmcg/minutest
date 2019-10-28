@@ -2,14 +2,14 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core.iml" group="minutest/core" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_main.iml" group="minutest/core" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_samples.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_samples.iml" group="minutest/core" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_test.iml" group="minutest/core" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/docs/docs.iml" filepath="$PROJECT_DIR$/.idea/modules/docs/docs.iml" group="minutest/docs" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/minutest.iml" filepath="$PROJECT_DIR$/.idea/minutest.iml" group="minutest" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/minutest_main.iml" filepath="$PROJECT_DIR$/.idea/modules/minutest_main.iml" group="minutest" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/minutest_test.iml" filepath="$PROJECT_DIR$/.idea/modules/minutest_test.iml" group="minutest" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/minutest.iml" filepath="$PROJECT_DIR$/.idea/minutest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/minutest.core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/minutest.core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/minutest.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/minutest.core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/minutest.core.samples.iml" filepath="$PROJECT_DIR$/.idea/modules/core/minutest.core.samples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/minutest.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/minutest.core.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/docs/minutest.docs.iml" filepath="$PROJECT_DIR$/.idea/modules/docs/minutest.docs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/minutest.main.iml" filepath="$PROJECT_DIR$/.idea/modules/minutest.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/minutest.test.iml" filepath="$PROJECT_DIR$/.idea/modules/minutest.test.iml" />
     </modules>
   </component>
 </project>

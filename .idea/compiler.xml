@@ -8,6 +8,11 @@
       <module name="core_samples" target="1.8" />
       <module name="core_test" target="1.8" />
       <module name="core_testExamples" target="1.8" />
+      <module name="minutest.core.main" target="1.8" />
+      <module name="minutest.core.samples" target="1.8" />
+      <module name="minutest.core.test" target="1.8" />
+      <module name="minutest.main" target="1.8" />
+      <module name="minutest.test" target="1.8" />
       <module name="minutest_main" target="1.8" />
       <module name="minutest_test" target="1.8" />
     </bytecodeTargetLevel>
