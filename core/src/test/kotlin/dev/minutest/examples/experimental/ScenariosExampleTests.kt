@@ -68,7 +68,6 @@ class ScenariosExampleTests : JUnit5Minutests {
             }
         }
 
-
         // Minutest will check that the following tests are run - note that it is one long test name
         willRun(
             "Moving Between Lists",
@@ -79,4 +78,44 @@ class ScenariosExampleTests : JUnit5Minutests {
                 " When moving back, Then result is true, And they have swapped again"
         )
     }
+
+}
+
+class ScenarioTableTests : JUnit5Minutests {
+
+    fun tests() = rootContext<ScenariosExampleTests.Fixture>("Moving Between Lists") {
+        val lists: List<MutableList<String>> = listOf(
+            mutableListOf(),
+            mutableListOf("apple"),
+            mutableListOf("banana", "cumcumber")
+        )
+        val things: List<Pair<MutableList<String>, MutableList<String>>> = combinationsOf(lists, lists)
+
+        // Scenario defines a nested context
+        things.forEach { (originalSource, originalDestination) ->
+            val fixture = ScenariosExampleTests.Fixture(originalSource.toMutableList(), originalDestination.toMutableList())
+            Scenario("Moving ${originalSource} to ${originalDestination}") {
+                GivenFixture("$originalSource to $originalDestination") {
+                    fixture
+                }
+
+                // When is for operations
+                When("$originalSource moveInto $originalDestination") {
+                    source.moveInto(destination)
+                }.Then("result is ${originalSource.isNotEmpty()}") { result ->
+                    assertEquals(result, originalSource.isNotEmpty())
+                }.And("destination contains $originalSource") {
+                    assertTrue(destination.containsAll(originalSource))
+                }.And("destination contains $originalDestination") {
+                    assertTrue(destination.containsAll(originalDestination))
+                }.And("source is empty") {
+                    assertTrue(source.isEmpty())
+                }
+            }
+        }
+    }
+}
+
+fun <T, U> combinationsOf(ts: Iterable<T>, us: Iterable<U>): List<Pair<T, U>> = ts.flatMap { t ->
+    us.map { u -> t to u }
 }
