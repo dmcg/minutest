@@ -212,6 +212,34 @@ class ScenarioTests {
             "in and"
         )
     }
+
+    @Test
+    fun `Accessing local variables`() {
+        val tests = rootContext<MutableList<String>> {
+            fixture { mutableListOf() }
+            Scenario("Scenario") {
+                Given("there is an item") {
+                    fixture += "banana"
+                }
+
+                // Not ideal, but might simplify some code
+                lateinit var item: String
+
+                When("item is removed") {
+                    log += "in when"
+                    item = fixture.removeAt(0)
+                }.Then("the item is returned") {
+                    log += "in then"
+                    assertEquals(item, "banana")
+                }
+            }
+        }
+        executeTests(tests).orFail()
+        assertLogged(log,
+            "in when",
+            "in then"
+        )
+    }
 }
 
 private fun List<Throwable>.orFail() = firstOrNull()?.let { throw it }
