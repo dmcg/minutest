@@ -74,12 +74,12 @@ class ScenariosHamkrestExampleTests : JUnit5Minutests {
 
 private fun <T> containsAll(cmp: List<T>) = Matcher(Collection<T>::containsAll, cmp)
 
-fun <PF, F, R> ScenarioBuilder<PF, F>.Then(thing: String, f: F.() -> R, matcher: Matcher<R>): Thens<F> =
+fun <F, R> ScenarioBuilder<F>.Then(thing: String, f: F.() -> R, matcher: Matcher<R>): Thens<F> =
     Then("$thing ${matcher.description}") {
         assertThat(f(this), matcher)
     }
 
-fun <PF, F, R> ScenarioBuilder<PF, F>.And(thing: String, f: F.() -> R, matcher: Matcher<R>): Unit =
+fun <F, R> ScenarioBuilder<F>.And(thing: String, f: F.() -> R, matcher: Matcher<R>): Unit =
     And("$thing ${matcher.description}") {
         assertThat(f(this), matcher)
     }
