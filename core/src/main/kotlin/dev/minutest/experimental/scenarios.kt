@@ -23,16 +23,8 @@ class ScenarioBuilder<F>(
         preambles.add(
             Preamble("Given $description") {
                 fixture {
-                    try {
+                    this@ScenarioBuilder.tryThrowingScenarioFailedException(gah) {
                         factory().also { next.result = it }
-                    } catch (t: Throwable) {
-                        throw scenarioFailedExceptionFor(
-                            this@ScenarioBuilder.description,
-                            this@ScenarioBuilder.preambles,
-                            this@ScenarioBuilder.steps,
-                            gah,
-                            t
-                        )
                     }
                 }
             }.also { gah = it }
@@ -40,52 +32,20 @@ class ScenarioBuilder<F>(
         return next
     }
 
-    fun <R> Given(description: String, operation: F.() -> R): Givens<F, R> {
+    fun <R> Given(description: String, prefix: String = "Given", operation: F.() -> R): Givens<F, R> {
         val next = Givens<F, R>(this)
         lateinit var gah: Preamble
         preambles.add(
-            Preamble("Given $description") {
+            Preamble("$prefix $description") {
                 modifyFixture {
-                    try {
+                    this@ScenarioBuilder.tryThrowingScenarioFailedException(gah) {
                         operation().also { next.result = it }
-                    } catch (t: Throwable) {
-                        throw scenarioFailedExceptionFor(
-                            this@ScenarioBuilder.description,
-                            this@ScenarioBuilder.preambles,
-                            this@ScenarioBuilder.steps,
-                            gah,
-                            t
-                        )
                     }
                 }
             }.also { gah = it }
         )
         return next
     }
-
-    internal fun <R2> givensAnd(description: String, operation: F.() -> R2): Givens<F, R2> {
-        val next = Givens<F, R2>(this)
-        lateinit var gah: Preamble
-        preambles.add(
-            Preamble("And $description") {
-                modifyFixture {
-                    try {
-                        operation().also { next.result = it }
-                    } catch (t: Throwable) {
-                        throw scenarioFailedExceptionFor(
-                            this@ScenarioBuilder.description,
-                            this@ScenarioBuilder.preambles,
-                            this@ScenarioBuilder.steps,
-                            gah,
-                            t
-                        )
-                    }
-                }
-            }.also { gah = it }
-        )
-        return next
-    }
-
 
     fun <R> When(description: String, f: F.() -> R): Whens<F, R> {
         val next = Whens<F, R>(this)
@@ -128,18 +88,10 @@ class ScenarioBuilder<F>(
             scenarioBuilder.preambles.forEach { preamble ->
                 preamble.f(newContext)
             }
-            val testName = scenarioBuilder.testName
-            test(testName) {
+            test(scenarioBuilder.testName) {
                 scenarioBuilder.steps.forEach { step ->
-                    try {
+                    scenarioBuilder.tryThrowingScenarioFailedException(step) {
                         step.f(this)
-                    } catch (t: Throwable) {
-                        throw scenarioFailedExceptionFor(
-                            scenarioBuilder.description,
-                            scenarioBuilder.preambles,
-                            scenarioBuilder.steps,
-                            step,
-                            t)
                     }
                 }
             }
@@ -147,18 +99,10 @@ class ScenarioBuilder<F>(
     }
 
     private val testName: String
-        get() {
-            return (
-                preambles.map { it.description } +
-                    steps.map {
-                        when {
-                            it.type == THEN && it.description.startsWith("And")-> "And…"
-                            it.type == THEN -> "Then…"
-                            else -> it.description
-                        }
-                    }
-                ).joinToString()
-        }
+        get() = (
+            preambles.map { it.description } +
+                steps.map { it.toTestNameComponent() }
+            ).joinToString()
 
     inner class Preamble(
         val description: String,
@@ -166,6 +110,13 @@ class ScenarioBuilder<F>(
     ) {
         override fun toString() = description
     }
+
+    private fun <R> tryThrowingScenarioFailedException(step: Any, t2: () -> R): R =
+        try {
+            t2()
+        } catch (t: Throwable) {
+            throw scenarioFailedExceptionFor(description, preambles, steps, step, t)
+        }
 }
 
 class Givens<F, R>(private val scenarioBuilder: ScenarioBuilder<F>) {
@@ -178,7 +129,7 @@ class Givens<F, R>(private val scenarioBuilder: ScenarioBuilder<F>) {
         }
 
     fun <R2> And(description: String, operation: F.() -> R2): Givens<F, R2> {
-        return scenarioBuilder.givensAnd(description, operation)
+        return scenarioBuilder.Given(description, "And", operation)
     }
 
     fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): ResultingThens<F, R> {
@@ -291,5 +242,11 @@ private fun stepLinesFor(preambles: List<ScenarioBuilder<*>.Preamble>, steps: Li
         currentLine +
         errorMessage +
         after).filterNotNull()
+}
+
+private fun TestStep<*, *>.toTestNameComponent() = when {
+    type == THEN && description.startsWith("And") -> "And…"
+    type == THEN -> "Then…"
+    else -> description
 }
 
