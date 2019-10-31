@@ -128,7 +128,7 @@ class ScenarioBuilder<F>(
             scenarioBuilder.preambles.forEach { preamble ->
                 preamble.f(newContext)
             }
-            val testName = scenarioBuilder.testNameFor()
+            val testName = scenarioBuilder.testName
             test(testName) {
                 scenarioBuilder.steps.forEach { step ->
                     try {
@@ -146,15 +146,19 @@ class ScenarioBuilder<F>(
         }
     }
 
-    private fun testNameFor(): String {
-        val applicableSteps = steps.filter { it.type == WHEN }.let {
-            if (it.isEmpty()) steps else it
+    private val testName: String
+        get() {
+            return (
+                preambles.map { it.description } +
+                    steps.map {
+                        when {
+                            it.type == THEN && it.description.startsWith("And")-> "And…"
+                            it.type == THEN -> "Then…"
+                            else -> it.description
+                        }
+                    }
+                ).joinToString()
         }
-        return (
-            preambles.map { it.description } +
-                applicableSteps.map { it.description }
-            ).joinToString()
-    }
 
     inner class Preamble(
         val description: String,
@@ -199,7 +203,7 @@ class Whens<F, R>(private val scenarioBuilder: ScenarioBuilder<F>) {
     fun <R2> And(description: String, f: F.() -> R2): Whens<F, R2> {
         val next = Whens<F, R2>(scenarioBuilder)
         scenarioBuilder.addStep(
-            TestStep<F, R2>("When $description", WHEN) {
+            TestStep<F, R2>("And $description", WHEN) {
                 f().also {
                     next.result = it
                 }

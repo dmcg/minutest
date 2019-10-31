@@ -48,7 +48,7 @@ class ScenariosHamkrestExampleTests : JUnit5Minutests {
                 destination.moveInto(source)
             }.ThenResult(equalTo(true))
 
-            Then("fixture", { this },
+            And("fixture", { this },
                 has(Fixture::source, containsAll(listOf("apple", "banana")) and hasSize(equalTo(2))) and
                 has(Fixture::destination, isEmpty))
 
@@ -61,7 +61,11 @@ class ScenariosHamkrestExampleTests : JUnit5Minutests {
             "  Moving around items",
             "    Given an empty destination, And a populated source," +
                 " When source moveInto destination," +
-                " When moving back"
+                " Then…," +
+                " And…," +
+                " When moving back," +
+                " Then…," +
+                " And…"
         )
     }
 
