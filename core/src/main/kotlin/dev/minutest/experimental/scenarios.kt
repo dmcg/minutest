@@ -5,6 +5,7 @@ package dev.minutest.experimental
 import dev.minutest.ContextBuilder
 import dev.minutest.MinutestFixture
 import dev.minutest.TestContextBuilder
+import dev.minutest.experimental.StepType.*
 
 fun <F> ContextBuilder<F>.Scenario(description: String, block: ScenarioBuilder<F>.() -> Unit) =
     ScenarioBuilder<F>(description).apply(block).applyToContext(this)
@@ -39,8 +40,8 @@ class ScenarioBuilder<F>(
         return next
     }
 
-    fun <R> Given(description: String, operation: F.() -> R): ResultingThens<F, R> {
-        val next = ResultingThens<F, R>(this)
+    fun <R> Given(description: String, operation: F.() -> R): Givens<F, R> {
+        val next = Givens<F, R>(this)
         lateinit var gah: Preamble
         preambles.add(
             Preamble("Given $description") {
@@ -89,7 +90,7 @@ class ScenarioBuilder<F>(
     fun <R> When(description: String, f: F.() -> R): Whens<F, R> {
         val next = Whens<F, R>(this)
         addStep(
-            TestStep<F, R>("When $description") {
+            TestStep<F, R>("When $description", WHEN) {
                 f().also {
                     next.result = it
                 }
@@ -100,14 +101,14 @@ class ScenarioBuilder<F>(
 
     fun Then(description: String, f: F.() -> Unit): Thens<F> {
         addStep(
-            TestStep("Then $description", f)
+            TestStep("Then $description", THEN, f)
         )
         return Thens(this)
     }
 
     fun And(description: String, f: F.() -> Unit) {
         addStep(
-            TestStep("And $description", f)
+            TestStep("And $description", INFER, f)
         )
     }
 
@@ -117,7 +118,7 @@ class ScenarioBuilder<F>(
     val F.fixture: F get() = this
 
     internal fun addStep(step: TestStep<F, *>) {
-        steps.add(step)
+        steps.add(if (step.type == INFER) step.copy(type = steps.lastOrNull()?.type ?: WHEN) else step)
     }
 
     internal fun applyToContext(contextBuilder: ContextBuilder<F>) {
@@ -127,7 +128,7 @@ class ScenarioBuilder<F>(
             scenarioBuilder.preambles.forEach { preamble ->
                 preamble.f(newContext)
             }
-            val testName = (scenarioBuilder.preambles.map { it.description } + scenarioBuilder.steps.map { it.description }).joinToString()
+            val testName = scenarioBuilder.testNameFor()
             test(testName) {
                 scenarioBuilder.steps.forEach { step ->
                     try {
@@ -143,6 +144,16 @@ class ScenarioBuilder<F>(
                 }
             }
         }
+    }
+
+    private fun testNameFor(): String {
+        val applicableSteps = steps.filter { it.type == WHEN }.let {
+            if (it.isEmpty()) steps else it
+        }
+        return (
+            preambles.map { it.description } +
+                applicableSteps.map { it.description }
+            ).joinToString()
     }
 
     inner class Preamble(
@@ -168,7 +179,7 @@ class Givens<F, R>(private val scenarioBuilder: ScenarioBuilder<F>) {
 
     fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): ResultingThens<F, R> {
         scenarioBuilder.addStep(
-            TestStep<F, Unit>("$prefix $description") {
+            TestStep<F, Unit>("$prefix $description", THEN) {
                 this.f(result)
             }
         )
@@ -188,7 +199,7 @@ class Whens<F, R>(private val scenarioBuilder: ScenarioBuilder<F>) {
     fun <R2> And(description: String, f: F.() -> R2): Whens<F, R2> {
         val next = Whens<F, R2>(scenarioBuilder)
         scenarioBuilder.addStep(
-            TestStep<F, R2>("When $description") {
+            TestStep<F, R2>("When $description", WHEN) {
                 f().also {
                     next.result = it
                 }
@@ -199,7 +210,7 @@ class Whens<F, R>(private val scenarioBuilder: ScenarioBuilder<F>) {
 
     fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): ResultingThens<F, R> {
         scenarioBuilder.addStep(
-            TestStep<F, Unit>("$prefix $description") {
+            TestStep<F, Unit>("$prefix $description", THEN) {
                 this.f(result)
             }
         )
@@ -219,7 +230,7 @@ class ResultingThens<F, R>(
 
     fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): ResultingThens<F, R> {
         scenarioBuilder.addStep(
-            TestStep<F, Unit>("$prefix $description") {
+            TestStep<F, Unit>("$prefix $description", THEN) {
                 this.f(result)
             }
         )
@@ -234,7 +245,7 @@ class Thens<F>(
 ) {
     fun Then(description: String, prefix: String = "Then", f: F.() -> Unit): Thens<F> {
         scenarioBuilder.addStep(
-            TestStep<F, Unit>("$prefix $description") {
+            TestStep<F, Unit>("$prefix $description", THEN) {
                 this.f()
             }
         )
@@ -246,12 +257,15 @@ class Thens<F>(
 
 internal data class TestStep<F, R>(
     val description: String,
+    val type: StepType,
     val f: (F).() -> R
 ) {
     override fun toString() = description
 }
 
 class ScenarioStepFailedException(message: String, cause: Throwable) : Error(message, cause)
+
+internal enum class StepType { WHEN, THEN, INFER }
 
 private fun scenarioFailedExceptionFor(
     scenarioDescription: String,
@@ -267,10 +281,10 @@ private fun stepLinesFor(preambles: List<ScenarioBuilder<*>.Preamble>, steps: Li
     val all = preambles + steps
     val currentIndex = all.indexOf(current)
     val before = all.subList(0, currentIndex).map { "✓ $it" }
-    val current = "X " + all[currentIndex].toString()
+    val currentLine = "X " + all[currentIndex].toString()
     val after = all.subList(currentIndex + 1, all.size).map { "- $it" }
     return (before +
-        current +
+        currentLine +
         errorMessage +
         after).filterNotNull()
 }

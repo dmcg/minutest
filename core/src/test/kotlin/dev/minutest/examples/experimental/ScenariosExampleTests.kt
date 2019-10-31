@@ -74,8 +74,7 @@ class ScenariosExampleTests : JUnit5Minutests {
             "  Moving around items",
             "    Given an empty destination, And a populated source," +
                 " When source moveInto destination," +
-                " Then destination contains source items, And source is empty," +
-                " When moving back, Then result is true, And they have swapped again"
+                " When moving back"
         )
     }
 

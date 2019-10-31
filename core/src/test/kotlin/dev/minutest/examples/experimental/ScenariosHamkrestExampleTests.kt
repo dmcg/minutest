@@ -61,12 +61,7 @@ class ScenariosHamkrestExampleTests : JUnit5Minutests {
             "  Moving around items",
             "    Given an empty destination, And a populated source," +
                 " When source moveInto destination," +
-                " Then destination contains all [\"apple\", \"banana\"] and has size that is equal to 2," +
-                " And source is empty," +
-                " When moving back," +
-                " Then result is equal to true," +
-                " Then fixture has source that contains all [\"apple\", \"banana\"] and has size that is equal to 2" +
-                " and has destination that is empty"
+                " When moving back"
         )
     }
 
