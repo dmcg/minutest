@@ -12,19 +12,16 @@ class ScenarioTableTests : JUnit5Minutests {
         val lists: List<MutableList<String>> = listOf(
             mutableListOf(),
             mutableListOf("apple"),
-            mutableListOf("banana", "cumcumber")
+            mutableListOf("banana", "cucumber")
         )
         val things: List<Pair<MutableList<String>, MutableList<String>>> = combinationsOf(lists, lists)
 
-        // Scenario defines a nested context
         things.forEach { (originalSource, originalDestination) ->
             val fixture = ScenariosExampleTests.Fixture(originalSource.toMutableList(), originalDestination.toMutableList())
             Scenario("Moving ${originalSource} to ${originalDestination}") {
                 GivenFixture("$originalSource to $originalDestination") {
                     fixture
                 }
-
-                // When is for operations
                 When("$originalSource moveInto $originalDestination") {
                     source.moveInto(destination)
                 }.Then("result is ${originalSource.isNotEmpty()}") { result ->
