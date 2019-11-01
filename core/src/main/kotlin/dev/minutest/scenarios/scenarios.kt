@@ -13,14 +13,14 @@ fun <F> ContextBuilder<F>.Scenario(description: String? = null, block: ScenarioB
 class ScenarioBuilder<F>(
     private val description: String?
 ) {
-    private val preambles: MutableList<Preamble<F>> = mutableListOf()
-    private val steps: MutableList<TestStep<F, *>> = mutableListOf()
+    private val givenSteps: MutableList<GivenStep<F>> = mutableListOf()
+    private val testSteps: MutableList<TestStep<F, *>> = mutableListOf()
 
     fun GivenFixture(description: String, factory: (Unit).() -> F): Givens<F, F> {
         val next = Givens<F, F>(this)
-        lateinit var gah: Preamble<F>
-        preambles.add(
-            Preamble<F>("Given $description") {
+        lateinit var gah: GivenStep<F>
+        givenSteps.add(
+            GivenStep<F>("Given $description") {
                 fixture {
                     this@ScenarioBuilder.tryThrowingScenarioFailedException(gah) {
                         factory().also { next.result = it }
@@ -33,9 +33,9 @@ class ScenarioBuilder<F>(
 
     fun <R> Given(description: String, prefix: String = "Given", operation: F.() -> R): Givens<F, R> {
         val next = Givens<F, R>(this)
-        lateinit var gah: Preamble<F>
-        preambles.add(
-            Preamble<F>("$prefix $description") {
+        lateinit var gah: GivenStep<F>
+        givenSteps.add(
+            GivenStep<F>("$prefix $description") {
                 modifyFixture {
                     this@ScenarioBuilder.tryThrowingScenarioFailedException(gah) {
                         operation().also { next.result = it }
@@ -77,9 +77,9 @@ class ScenarioBuilder<F>(
     val F.fixture: F get() = this
 
     internal fun addStep(step: TestStep<F, *>) {
-        steps.add(
+        testSteps.add(
             if (step.type == INFER)
-                step.copy(type = steps.lastOrNull()?.type ?: WHEN)
+                step.copy(type = testSteps.lastOrNull()?.type ?: WHEN)
             else
                 step
         )
@@ -88,10 +88,10 @@ class ScenarioBuilder<F>(
     internal fun applyToContext(contextBuilder: ContextBuilder<F>) {
         val scenarioBuilder = this@ScenarioBuilder
         val topLevelName = description ?: generateName()
-        if (preambles.isNotEmpty()) {
+        if (givenSteps.isNotEmpty()) {
             contextBuilder.context(topLevelName) {
                 val newContext = this
-                scenarioBuilder.preambles.forEach { preamble ->
+                scenarioBuilder.givenSteps.forEach { preamble ->
                     preamble.f(newContext)
                 }
                 scenarioBuilder.addTestForStepsTo(this,
@@ -105,7 +105,7 @@ class ScenarioBuilder<F>(
 
     private fun addTestForStepsTo(contextBuilder: ContextBuilder<F>, testName: String) {
         contextBuilder.test(testName) {
-            steps.forEach { step ->
+            testSteps.forEach { step ->
                 tryThrowingScenarioFailedException(step) {
                     step.f(this)
                 }
@@ -113,38 +113,36 @@ class ScenarioBuilder<F>(
         }
     }
 
-    private fun <R> tryThrowingScenarioFailedException(step: Any, f: () -> R): R =
+    private fun <R> tryThrowingScenarioFailedException(step: ScenarioStep, f: () -> R): R =
         try {
             f()
         } catch (t: Throwable) {
-            throw scenarioFailedExceptionFor(description ?: generateName(), preambles, steps, step, t)
+            throw scenarioFailedExceptionFor(description ?: generateName(), givenSteps + testSteps, step, t)
         }
 
     private fun generateName(): String {
-        val candidate = (preambles.map { it.description } + steps.map { it.description }).joinToString()
+        val candidate = (givenSteps.map { it.description } + testSteps.map { it.description }).joinToString()
         return when {
             candidate.length <= 128 -> candidate
-            else -> (preambles.map { it.description } + steps.map { it.toElidedTestNameComponent() }).joinToString()
+            else -> (givenSteps.map { it.description } + testSteps.map { it.toElidedTestNameComponent() }).joinToString()
         }
     }
 }
 
 private fun scenarioFailedExceptionFor(
     scenarioDescription: String,
-    preambles: List<Preamble<*>>,
-    steps: List<TestStep<*, *>>,
-    current: Any,
+    steps: List<ScenarioStep>,
+    current: ScenarioStep,
     t: Throwable
 ) = ScenarioStepFailedException(
-    (listOf("", "Error in $scenarioDescription") + stepLinesFor(preambles, steps, current, t.message)).joinToString("\n")
+    (listOf("", "Error in $scenarioDescription") + stepLinesFor(steps, current, t.message)).joinToString("\n")
     , t)
 
-private fun stepLinesFor(preambles: List<Preamble<*>>, steps: List<TestStep<*, *>>, current: Any, errorMessage: String?): List<String> {
-    val all = preambles + steps
-    val currentIndex = all.indexOf(current)
-    val before = all.subList(0, currentIndex).map { "✓ $it" }
-    val currentLine = "X " + all[currentIndex].toString()
-    val after = all.subList(currentIndex + 1, all.size).map { "- $it" }
+private fun stepLinesFor(steps: List<ScenarioStep>, current: ScenarioStep, errorMessage: String?): List<String> {
+    val currentIndex = steps.indexOf(current)
+    val before = steps.subList(0, currentIndex).map { "✓ ${it.description}" }
+    val currentLine = "X " + steps[currentIndex].description
+    val after = steps.subList(currentIndex + 1, steps.size).map { "- ${it.description}" }
     return (before +
         currentLine +
         errorMessage +
