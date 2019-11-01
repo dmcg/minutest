@@ -18,7 +18,7 @@ class ScenarioTests {
             checkedAgainst(
                 "root",
                 "  Scenario",
-                "    Given the string banana, When nothing happens, Then…, And…"
+                "    Given the string banana, When nothing happens, Then the fixture is banana, And it has 6 chars"
             )
             Scenario("Scenario") {
                 GivenFixture("the string banana") {

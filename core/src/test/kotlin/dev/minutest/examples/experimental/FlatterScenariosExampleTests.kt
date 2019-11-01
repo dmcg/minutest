@@ -16,34 +16,35 @@ class FlatterScenariosExampleTests : JUnit5Minutests {
         val destination: MutableList<String> = emptyMutableList()
     )
 
-    // A feature is a context
     fun tests() = rootContext<Fixture>("Moving Between Lists") {
 
         fixture {
             Fixture()
         }
 
-        Scenario("Moving around items") {
+        // Where the fixture is set up in the parent context you can just use When and Then to create a self-describing
+        // test
+        Scenario {
 
             When("source is populated") {
                 source.addAll(listOf("apple", "banana"))
             }
 
-            When("source moveInto destination") {
+            And("source moveInto destination") {
                 source.moveInto(destination)
             }
 
             Then("destination contains source items") {
                 assertEquals(listOf("apple", "banana"), destination)
             }.And("source is empty") {
-                // Chained Ands continue the statement
                 assertTrue(source.isEmpty())
             }
         }
 
         willRun(
             "Moving Between Lists",
-            "  Moving around items"
+            "  When source is populated, And source moveInto destination," +
+                " Then destination contains source items, And source is empty"
         )
     }
 

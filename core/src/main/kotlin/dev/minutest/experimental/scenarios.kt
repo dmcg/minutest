@@ -87,22 +87,28 @@ class ScenarioBuilder<F>(
         if (preambles.isNotEmpty()) {
             contextBuilder.context(topLevelName) {
                 val newContext = this
-                val testName = if (scenarioBuilder.description == null) "test" else scenarioBuilder.generatedName
                 scenarioBuilder.preambles.forEach { preamble ->
                     preamble.f(newContext)
                 }
-                scenarioBuilder.addTestForStepsTo(this, testName)
+                scenarioBuilder.addTestForStepsTo(this,
+                    testName = if (scenarioBuilder.description == null) "test" else scenarioBuilder.generatedName
+                )
             }
         } else {
-            scenarioBuilder.addTestForStepsTo(contextBuilder, topLevelName)
+            scenarioBuilder.addTestForStepsTo(contextBuilder, testName = topLevelName)
         }
     }
 
-    private val generatedName: String get() = (preambles.map { it.description } + steps.map { it.toTestNameComponent() })
-        .joinToString()
+    private val generatedName: String
+        get() {
+            val candidate = (preambles.map { it.description } + steps.map { it.description }).joinToString()
+            return if (candidate.length <= 128) candidate
+            else (preambles.map { it.description } + steps.map { it.toElidedTestNameComponent() }).joinToString()
 
-    private fun addTestForStepsTo(contextBuilder: ContextBuilder<F>, name: String) {
-        contextBuilder.test(name) {
+        }
+
+    private fun addTestForStepsTo(contextBuilder: ContextBuilder<F>, testName: String) {
+        contextBuilder.test(testName) {
             steps.forEach { step ->
                 tryThrowingScenarioFailedException(step) {
                     step.f(this)
@@ -251,7 +257,7 @@ private fun stepLinesFor(preambles: List<ScenarioBuilder<*>.Preamble>, steps: Li
         after).filterNotNull()
 }
 
-private fun TestStep<*, *>.toTestNameComponent() = when {
+private fun TestStep<*, *>.toElidedTestNameComponent() = when {
     type == THEN && description.startsWith("And") -> "And…"
     type == THEN -> "Then…"
     else -> description

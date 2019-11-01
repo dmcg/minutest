@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test
 class ScenarioNamingTests {
 
     @Test
-    fun `Name is Givens and Whens with elided Thens`() {
+    fun `test name is generated from stages`() {
         val tests = rootContext<Unit> {
             checkedAgainst(
                 "root",
                 "  Scenario",
-                "    Given given1, And given2, Then…, When when1, And when2, Then…, And…, When when3, And when4, Then…"
+                "    Given given1, And given2, Then then1, When when1, And when2, Then then2, And then3, When when3, And when4, Then then4"
             )
             Scenario("Scenario") {
                 GivenFixture("given1") {
@@ -33,8 +33,32 @@ class ScenarioNamingTests {
     }
 
     @Test
-    fun `has scenario name if no givens`() {
-        // in this case no context is generated
+    fun `Thens are elided if test name gets too long`() {
+        val tests = rootContext<Unit> {
+            checkedAgainst(
+                "root",
+                "  Scenario",
+                "    Given given1, And given2, Then…, When when1, And when2, Then…, And…, When when3, And when4, Then…"
+            )
+            Scenario("Scenario") {
+                GivenFixture("given1") {
+                }.And("given2") {
+                }.Then("then1") {}
+                When("when1") {}
+                And("when2") {}
+                Then("then2") {}
+                And("then3") {}
+                When("when3") {
+                }.And("when4") {
+                }.Then("then4 and some more characters") {
+                }
+            }
+        }
+        executeTests(tests).orFail()
+    }
+
+    @Test
+    fun `test has scenario name if no givens (and hence no context)`() {
         val tests = rootContext<Unit> {
             checkedAgainst(
                 "root",
@@ -48,12 +72,12 @@ class ScenarioNamingTests {
     }
 
     @Test
-    fun `will generate name if none provided`() {
+    fun `will generate scenario name if none provided`() {
         // in this case no context is generated
         val tests = rootContext<Unit> {
             checkedAgainst(
                 "root",
-                "  When when, Then…"
+                "  When when, Then then"
             )
             Scenario {
                 When("when") {}.Then("then") {}
@@ -68,7 +92,7 @@ class ScenarioNamingTests {
         val tests = rootContext<Unit> {
             checkedAgainst(
                 "root",
-                "  Given given, When when, Then…",
+                "  Given given, When when, Then then",
                 "    test"
             )
             Scenario {
