@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="All tests in Minutest" type="JUnit" factoryName="JUnit" singleton="false">
-    <module name="core_test" />
+    <module name="minutest.core.test" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="com.oneeyedmen.minutest.*" />
