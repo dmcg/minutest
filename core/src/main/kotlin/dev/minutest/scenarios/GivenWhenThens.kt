@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package dev.minutest.scenarios
 
 class Givens<F, R>(private val scenarioBuilder: ScenarioBuilder<F>) {

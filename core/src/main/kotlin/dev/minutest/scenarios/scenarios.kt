@@ -77,12 +77,17 @@ class ScenarioBuilder<F>(
     val F.fixture: F get() = this
 
     internal fun addStep(step: TestStep<F, *>) {
-        steps.add(if (step.type == INFER) step.copy(type = steps.lastOrNull()?.type ?: WHEN) else step)
+        steps.add(
+            if (step.type == INFER)
+                step.copy(type = steps.lastOrNull()?.type ?: WHEN)
+            else
+                step
+        )
     }
 
     internal fun applyToContext(contextBuilder: ContextBuilder<F>) {
         val scenarioBuilder = this@ScenarioBuilder
-        val topLevelName = description ?: generatedName
+        val topLevelName = description ?: generateName()
         if (preambles.isNotEmpty()) {
             contextBuilder.context(topLevelName) {
                 val newContext = this
@@ -90,21 +95,13 @@ class ScenarioBuilder<F>(
                     preamble.f(newContext)
                 }
                 scenarioBuilder.addTestForStepsTo(this,
-                    testName = if (scenarioBuilder.description == null) "test" else scenarioBuilder.generatedName
+                    testName = if (scenarioBuilder.description == null) "test" else scenarioBuilder.generateName()
                 )
             }
         } else {
             scenarioBuilder.addTestForStepsTo(contextBuilder, testName = topLevelName)
         }
     }
-
-    private val generatedName: String
-        get() {
-            val candidate = (preambles.map { it.description } + steps.map { it.description }).joinToString()
-            return if (candidate.length <= 128) candidate
-            else (preambles.map { it.description } + steps.map { it.toElidedTestNameComponent() }).joinToString()
-
-        }
 
     private fun addTestForStepsTo(contextBuilder: ContextBuilder<F>, testName: String) {
         contextBuilder.test(testName) {
@@ -120,8 +117,16 @@ class ScenarioBuilder<F>(
         try {
             f()
         } catch (t: Throwable) {
-            throw scenarioFailedExceptionFor(description ?: generatedName, preambles, steps, step, t)
+            throw scenarioFailedExceptionFor(description ?: generateName(), preambles, steps, step, t)
         }
+
+    private fun generateName(): String {
+        val candidate = (preambles.map { it.description } + steps.map { it.description }).joinToString()
+        return when {
+            candidate.length <= 128 -> candidate
+            else -> (preambles.map { it.description } + steps.map { it.toElidedTestNameComponent() }).joinToString()
+        }
+    }
 }
 
 private fun scenarioFailedExceptionFor(
