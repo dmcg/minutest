@@ -130,23 +130,19 @@ class ScenarioBuilder<F>(
 }
 
 private fun scenarioFailedExceptionFor(
-    scenarioDescription: String,
-    steps: List<ScenarioStep>,
-    current: ScenarioStep,
-    t: Throwable
-) = ScenarioStepFailedException(
-    (listOf("", "Error in $scenarioDescription") + stepLinesFor(steps, current, t.message)).joinToString("\n")
-    , t)
+    scenarioDescription: String, steps: List<ScenarioStep>, failingStep: ScenarioStep, t: Throwable
+) =
+    ScenarioStepFailedException(
+        (listOf("", "Error in $scenarioDescription") + stepLinesFor(steps, failingStep, t.message)).joinToString("\n"),
+        t
+    )
 
-private fun stepLinesFor(steps: List<ScenarioStep>, current: ScenarioStep, errorMessage: String?): List<String> {
-    val currentIndex = steps.indexOf(current)
-    val before = steps.subList(0, currentIndex).map { "✓ ${it.description}" }
-    val currentLine = "X " + steps[currentIndex].description
-    val after = steps.subList(currentIndex + 1, steps.size).map { "- ${it.description}" }
-    return (before +
-        currentLine +
-        errorMessage +
-        after).filterNotNull()
+private fun stepLinesFor(steps: List<ScenarioStep>, failingStep: ScenarioStep, errorMessage: String?): List<String> {
+    val failingIndex = steps.indexOf(failingStep)
+    val beforeLines = steps.subList(0, failingIndex).map { "✓ ${it.description}" }
+    val failingLine = "X " + steps[failingIndex].description
+    val afterLines = steps.subList(failingIndex + 1, steps.size).map { "- ${it.description}" }
+    return (beforeLines + failingLine + errorMessage + afterLines).filterNotNull()
 }
 
 private fun TestStep<*, *>.toElidedTestNameComponent() = when {
