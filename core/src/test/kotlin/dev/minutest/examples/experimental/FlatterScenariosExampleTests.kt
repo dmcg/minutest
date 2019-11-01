@@ -1,8 +1,8 @@
 package dev.minutest.examples.experimental
 
-import dev.minutest.experimental.Scenario
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
+import dev.minutest.scenarios.Scenario
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.assertTrue
 import dev.minutest.experimental.checkedAgainst as willRun

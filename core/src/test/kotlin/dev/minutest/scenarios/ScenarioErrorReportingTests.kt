@@ -1,4 +1,4 @@
-package dev.minutest.experimental
+package dev.minutest.scenarios
 
 import dev.minutest.executeTests
 import dev.minutest.rootContext

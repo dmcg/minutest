@@ -1,7 +1,8 @@
-package dev.minutest.experimental
+package dev.minutest.scenarios
 
 import dev.minutest.assertLogged
 import dev.minutest.executeTests
+import dev.minutest.experimental.checkedAgainst
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

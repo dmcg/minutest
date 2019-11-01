@@ -2,9 +2,9 @@ package dev.minutest.examples.experimental
 
 import com.natpryce.hamkrest.*
 import com.natpryce.hamkrest.assertion.assertThat
-import dev.minutest.experimental.*
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
+import dev.minutest.scenarios.*
 import dev.minutest.experimental.checkedAgainst as willRun
 
 private fun emptyMutableList() = mutableListOf<String>()
@@ -87,6 +87,6 @@ fun <F, R> Thens<F>.And(thing: String, f: F.() -> R, matcher: Matcher<R>) = And(
     assertThat(f(this), matcher)
 }
 
-fun <F, R> Whens<F, R>.ThenResult( matcher: Matcher<R>): ResultingThens<F, R> = Then("result ${matcher.description}") {
+fun <F, R> Whens<F, R>.ThenResult(matcher: Matcher<R>): ResultingThens<F, R> = Then("result ${matcher.description}") {
     assertThat(it, matcher)
 }
