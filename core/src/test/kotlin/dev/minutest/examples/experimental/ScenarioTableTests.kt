@@ -6,9 +6,19 @@ import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions
 import kotlin.test.assertTrue
 
+
+private fun emptyMutableList() = mutableListOf<String>()
+
 class ScenarioTableTests : JUnit5Minutests {
 
-    fun tests() = rootContext<ScenariosExampleTests.Fixture>("Moving Between Lists") {
+
+    data class Fixture(
+        val source: MutableList<String> = emptyMutableList(),
+        val destination: MutableList<String> = emptyMutableList()
+    )
+
+    fun tests() = rootContext<Fixture>("Moving Between Lists") {
+
         val lists: List<MutableList<String>> = listOf(
             mutableListOf(),
             mutableListOf("apple"),
@@ -17,7 +27,7 @@ class ScenarioTableTests : JUnit5Minutests {
         val things: List<Pair<MutableList<String>, MutableList<String>>> = combinationsOf(lists, lists)
 
         things.forEach { (originalSource, originalDestination) ->
-            val fixture = ScenariosExampleTests.Fixture(originalSource.toMutableList(), originalDestination.toMutableList())
+            val fixture = Fixture(originalSource.toMutableList(), originalDestination.toMutableList())
             Scenario("Moving ${originalSource} to ${originalDestination}") {
                 GivenFixture("$originalSource to $originalDestination") {
                     fixture

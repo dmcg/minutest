@@ -7,12 +7,12 @@ import dev.minutest.MinutestFixture
 import dev.minutest.TestContextBuilder
 import dev.minutest.experimental.StepType.*
 
-fun <F> ContextBuilder<F>.Scenario(description: String, block: ScenarioBuilder<F>.() -> Unit) =
+fun <F> ContextBuilder<F>.Scenario(description: String? = null, block: ScenarioBuilder<F>.() -> Unit) =
     ScenarioBuilder<F>(description).apply(block).applyToContext(this)
 
 @MinutestFixture
 class ScenarioBuilder<F>(
-    private val description: String
+    private val description: String?
 ) {
     private val preambles: MutableList<Preamble> = mutableListOf()
     private val steps: MutableList<TestStep<F, *>> = mutableListOf()
@@ -82,27 +82,34 @@ class ScenarioBuilder<F>(
     }
 
     internal fun applyToContext(contextBuilder: ContextBuilder<F>) {
-        contextBuilder.context(description) {
-            val newContext = this
-            val scenarioBuilder = this@ScenarioBuilder
-            scenarioBuilder.preambles.forEach { preamble ->
-                preamble.f(newContext)
+        val scenarioBuilder = this@ScenarioBuilder
+        val topLevelName = description ?: generatedName
+        if (preambles.isNotEmpty()) {
+            contextBuilder.context(topLevelName) {
+                val newContext = this
+                val testName = if (scenarioBuilder.description == null) "test" else scenarioBuilder.generatedName
+                scenarioBuilder.preambles.forEach { preamble ->
+                    preamble.f(newContext)
+                }
+                scenarioBuilder.addTestForStepsTo(this, testName)
             }
-            test(scenarioBuilder.testName) {
-                scenarioBuilder.steps.forEach { step ->
-                    scenarioBuilder.tryThrowingScenarioFailedException(step) {
-                        step.f(this)
-                    }
+        } else {
+            scenarioBuilder.addTestForStepsTo(contextBuilder, topLevelName)
+        }
+    }
+
+    private val generatedName: String get() = (preambles.map { it.description } + steps.map { it.toTestNameComponent() })
+        .joinToString()
+
+    private fun addTestForStepsTo(contextBuilder: ContextBuilder<F>, name: String) {
+        contextBuilder.test(name) {
+            steps.forEach { step ->
+                tryThrowingScenarioFailedException(step) {
+                    step.f(this)
                 }
             }
         }
     }
-
-    private val testName: String
-        get() = (
-            preambles.map { it.description } +
-                steps.map { it.toTestNameComponent() }
-            ).joinToString()
 
     inner class Preamble(
         val description: String,
@@ -115,7 +122,7 @@ class ScenarioBuilder<F>(
         try {
             t2()
         } catch (t: Throwable) {
-            throw scenarioFailedExceptionFor(description, preambles, steps, step, t)
+            throw scenarioFailedExceptionFor(description ?: generatedName, preambles, steps, step, t)
         }
 }
 

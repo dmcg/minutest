@@ -33,16 +33,47 @@ class ScenarioNamingTests {
     }
 
     @Test
-    fun `Survives no Givens or Whens`() {
+    fun `has scenario name if no givens`() {
+        // in this case no context is generated
         val tests = rootContext<Unit> {
             checkedAgainst(
                 "root",
-                "  Scenario",
-                "    Then…, And…"
+                "  Scenario"
             )
             Scenario("Scenario") {
-                Then("then1") {}
-                And("then2") {}
+                When("when") {}.Then("then") {}
+            }
+        }
+        executeTests(tests).orFail()
+    }
+
+    @Test
+    fun `will generate name if none provided`() {
+        // in this case no context is generated
+        val tests = rootContext<Unit> {
+            checkedAgainst(
+                "root",
+                "  When when, Then…"
+            )
+            Scenario {
+                When("when") {}.Then("then") {}
+            }
+        }
+        executeTests(tests).orFail()
+    }
+
+    @Test
+    fun `will use test for test description if none provided and has context and test`() {
+        // in this case no context is generated
+        val tests = rootContext<Unit> {
+            checkedAgainst(
+                "root",
+                "  Given given, When when, Then…",
+                "    test"
+            )
+            Scenario {
+                GivenFixture("given") {}
+                When("when") {}.Then("then") {}
             }
         }
         executeTests(tests).orFail()
