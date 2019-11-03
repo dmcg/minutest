@@ -45,7 +45,6 @@ class MutableScenariosExampleTests : JUnit5Minutests {
         fixture { Fixture() }
 
         Scenario("Cannot launch without key switch") {
-
             Given("key not turned") {
                 assertFalse(keySwitchOn)
             }

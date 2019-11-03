@@ -11,7 +11,6 @@ private fun emptyMutableList() = mutableListOf<String>()
 
 class ScenarioTableTests : JUnit5Minutests {
 
-
     data class Fixture(
         val source: MutableList<String> = emptyMutableList(),
         val destination: MutableList<String> = emptyMutableList()
