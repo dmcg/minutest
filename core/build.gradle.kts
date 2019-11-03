@@ -17,19 +17,19 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
-    implementation("org.junit.jupiter:junit-jupiter-api:5.4.0")
+    implementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
     implementation("io.github.classgraph:classgraph:4.8.28")
 
     // alternative runners - provide your own dependencies
-    compileOnly("org.junit.vintage:junit-vintage-engine:5.4.0")
+    compileOnly("org.junit.vintage:junit-vintage-engine:5.5.2")
     compileOnly("junit:junit:4.12")
 
     testImplementation(kotlin("test"))
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1")
-    testImplementation("org.junit.vintage:junit-vintage-engine:5.4.0")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.5.2")
     testImplementation("junit:junit:4.12")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.4.0")
-    testImplementation("org.junit.platform:junit-platform-launcher:1.4.0") {
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+    testImplementation("org.junit.platform:junit-platform-launcher:1.5.2") {
         because("enables running in IntelliJ using JUnit runner")
     }
     testImplementation("com.natpryce:hamkrest:1.7.0.0")
