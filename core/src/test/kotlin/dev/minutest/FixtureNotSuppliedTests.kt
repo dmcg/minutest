@@ -94,10 +94,11 @@ class FixtureNotSuppliedTests {
         // It should be OK for Unit though
         rootContext<Unit> {
             context("parent had no fixture") {
-                deriveFixture { this }
+                deriveFixture {
+                }
                 test("test") {
                 }
             }
-        }
+        }.toTestFactory()
     }
 }
