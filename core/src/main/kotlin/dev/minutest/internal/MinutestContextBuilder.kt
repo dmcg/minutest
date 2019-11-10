@@ -2,6 +2,7 @@ package dev.minutest.internal
 
 import dev.minutest.*
 import dev.minutest.experimental.transformedBy
+import java.io.File
 
 /**
  * Internal implementation of [TestContextBuilder] which hides the details and the [NodeBuilder]ness.
@@ -59,7 +60,7 @@ internal data class MinutestContextBuilder<PF, F>(
     override fun test_(name: String, f: F.(TestDescriptor) -> F): NodeBuilder<F> = addChild(TestBuilder(name, f))
 
     private fun NodeBuilder<F>.withMarkerForBlockInvocation(): NodeBuilder<F> {
-        return apply { findStackTraceElementForBlockInvocation()?.let { addMarker(it) } }
+        return apply { sourceReferenceForBlockInvocation()?.let { addMarker(it) } }
     }
 
     override fun context(name: String, block: TestContextBuilder<F, F>.() -> Unit) =
@@ -145,11 +146,24 @@ internal data class MinutestContextBuilder<PF, F>(
         befores.isEmpty() && afters.isEmpty() && !children.any { it is TestBuilder<F> }
 }
 
-private fun findStackTraceElementForBlockInvocation(): StackTraceElement? {
+private val sourceRoot = listOf(
+    File("src/test/kotlin"),
+    File("src/test/java")
+).find { it.isDirectory } ?: File(".")
+
+private fun sourceReferenceForBlockInvocation(): SourceReference? {
     val elements = Thread.currentThread().stackTrace
     return elements.drop(2).find {
         val string = it.toString()
         !string.startsWith("dev.minutest.internal") && !string.startsWith("dev.minutest.TestContextBuilder")
-    }
+    }?.toSourceReference(sourceRoot)
+}
+
+private fun StackTraceElement.toSourceReference(sourceRoot: File): SourceReference? {
+    val fileName = fileName ?: return null
+    val type = Class.forName(className)
+    return SourceReference(
+        sourceRoot.toPath().resolve(type.`package`.name.replace(".", "/")).resolve(fileName).toFile().absolutePath,
+        lineNumber)
 }
 

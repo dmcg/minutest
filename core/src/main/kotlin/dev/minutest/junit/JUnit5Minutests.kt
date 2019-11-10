@@ -6,6 +6,7 @@ import dev.minutest.Node
 import dev.minutest.RootContextBuilder
 import dev.minutest.Test
 import dev.minutest.internal.RootExecutor
+import dev.minutest.internal.SourceReference
 import dev.minutest.internal.TestExecutor
 import dev.minutest.internal.rootContextFromMethods
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
@@ -64,16 +65,10 @@ private fun <F> Node<F>.toDynamicNode(executor: TestExecutor<F>): DynamicNode = 
 }
 
 private fun <F> Node<F>.testUri(): URI? =
-    (this.markers.find { it is StackTraceElement } as? StackTraceElement)?.toSourceFileURI(File("src/test/kotlin/"))
+    (this.markers.find { it is SourceReference } as? SourceReference)?.toURI()
 
-// WIP
-// If we store the stack trace element of the invocation of ContextBuilder.test in the TestBuilder and then the Test, we can
-// populate the DynamicTest testSourceURI and allow navigation on double-click
-private fun StackTraceElement.toSourceFileURI(sourceRoot: File): URI? {
-    val fileName = fileName ?: return null
-    val type = Class.forName(className)
-    val fileUri = sourceRoot.toPath().resolve(type.`package`.name.replace(".", "/")).resolve(fileName).toUri()
-    return URI(fileUri.scheme, fileUri.userInfo, fileUri.host, fileUri.port, "//" + fileUri.path, "line=$lineNumber", fileUri.fragment)
+private fun SourceReference.toURI(): URI = File(path).toURI().let { fileUri ->
+    URI(fileUri.scheme, fileUri.userInfo, fileUri.host, fileUri.port, "//" + fileUri.path, "line=$lineNumber", fileUri.fragment)
 }
 
 
