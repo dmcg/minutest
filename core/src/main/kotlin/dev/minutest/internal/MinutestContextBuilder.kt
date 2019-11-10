@@ -56,8 +56,11 @@ internal data class MinutestContextBuilder<PF, F>(
         afters.add(operation)
     }
 
-    override fun test_(name: String, f: F.(TestDescriptor) -> F): NodeBuilder<F> =
-        addChild(TestBuilder(name, f))
+    override fun test_(name: String, f: F.(TestDescriptor) -> F): NodeBuilder<F> = addChild(TestBuilder(name, f))
+
+    private fun NodeBuilder<F>.withMarkerForBlockInvocation(): NodeBuilder<F> {
+        return apply { findStackTraceElementForBlockInvocation()?.let { addMarker(it) } }
+    }
 
     override fun context(name: String, block: TestContextBuilder<F, F>.() -> Unit) =
         newContext(
@@ -104,7 +107,7 @@ internal data class MinutestContextBuilder<PF, F>(
     )
 
     private fun <T : NodeBuilder<F>> addChild(child: T): T {
-        children.add(child)
+        children.add(child.withMarkerForBlockInvocation())
         return child
     }
 
@@ -141,3 +144,12 @@ internal data class MinutestContextBuilder<PF, F>(
     private fun thisContextDoesntReferenceTheFixture() =
         befores.isEmpty() && afters.isEmpty() && !children.any { it is TestBuilder<F> }
 }
+
+private fun findStackTraceElementForBlockInvocation(): StackTraceElement? {
+    val elements = Thread.currentThread().stackTrace
+    return elements.drop(2).find {
+        val string = it.toString()
+        !string.startsWith("dev.minutest.internal") && !string.startsWith("dev.minutest.TestContextBuilder")
+    }
+}
+
