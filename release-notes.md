@@ -3,6 +3,16 @@
 I still have to go through Slack posts to find older details, but in the meantime
 
 
+## 1.10.0
+
+Jump to source in IntelliJ now works - double-click on a test to go to its definition. This works for contexts too, but
+from the right-click menu.
+
+## 1.9.0
+
+Experimental support for Given When Then scenarios.
+
+
 ## 1.8.0
 
 Internal changes to increase type safety, reduce object allocation and simplify.
