@@ -19,10 +19,10 @@ You will need to include Minutest and JUnit 5 on your test compilation classpath
 ```groovy
 dependencies {
     ...
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.5.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.3.2"
     testImplementation "dev.minutest:minutest:+"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.5.2"
-    testRuntime "org.junit.platform:junit-platform-launcher:1.4.2"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.3.2"
+    testRuntime "org.junit.platform:junit-platform-launcher:1.3.2"
 }
 ```
 
@@ -34,9 +34,10 @@ You now you need to let test tasks know to use JUnit 5
 tasks {
     test {
         useJUnitPlatform()
-        testLogging {
-            events "skipped", "failed"
-        }
+    	afterTest { descriptor, result ->
+            // work around a bug in Gradle versions before 6.1, see https://github.com/junit-team/junit5/issues/2041
+	    	println "\n$descriptor.className [$descriptor.classDisplayName] > $descriptor.name [$descriptor.displayName]: $result.resultType"
+	    }
     }
 }
 ```

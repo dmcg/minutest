@@ -32,9 +32,10 @@ You now you need to let test tasks know to use JUnit 5
 tasks {
     test {
         useJUnitPlatform()
-        testLogging {
-            events "skipped", "failed"
-        }
+    	afterTest { descriptor, result ->
+            // work around a bug in Gradle versions before 6.1, see https://github.com/junit-team/junit5/issues/2041
+	    	println "\n$descriptor.className [$descriptor.classDisplayName] > $descriptor.name [$descriptor.displayName]: $result.resultType"
+	    }
     }
 }
 ```
