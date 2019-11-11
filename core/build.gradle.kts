@@ -1,5 +1,6 @@
 
 import com.jfrog.bintray.gradle.BintrayExtension
+import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 
@@ -45,6 +46,11 @@ tasks {
     withType<Test> {
         useJUnitPlatform {
             includeEngines("junit-jupiter", "junit-vintage")
+            afterTest(KotlinClosure2<TestDescriptor, TestResult, Any>({ descriptor, result ->
+                // work around a bug in Gradle versions before 6.1, see https://github.com/junit-team/junit5/issues/2041
+                val test = descriptor as TestDescriptorInternal
+                println("${test.className} [${test.classDisplayName}] > ${test.name} [${test.displayName}]: ${result.resultType}")
+            }))
         }
     }
 
