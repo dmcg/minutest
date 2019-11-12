@@ -1,7 +1,140 @@
 # Minutest
 
-[ ![Download](https://api.bintray.com/packages/dmcg/oneeyedmen-mvn/minutest.dev/images/download.svg) ](https://bintray.com/dmcg/oneeyedmen-mvn/minutest.dev/_latestVersion)
+[![Download](https://api.bintray.com/packages/dmcg/oneeyedmen-mvn/minutest.dev/images/download.svg)](https://bintray.com/dmcg/oneeyedmen-mvn/minutest/_latestVersion)
 [![Build Status](https://travis-ci.org/dmcg/minutest.svg?branch=master)](https://travis-ci.org/dmcg/minutest)
+
+Minutest embiggens JUnit with Kotlin
+
+## Why Another Test Framework?
+
+JUnit is great for quickly writing and running tests as part of a TDD workflow, but try to do some reasonable things and you will quickly have to reach for the documentation and specially written annotations. 
+
+In contrast, Minutest runs on JUnit and exposes a simple model that allows you to solve your own problems - it's just Kotlin.
+
+For example
+
+### Conditionally running a test
+
+JUnit has a special annotation
+
+```kotlin
+@Test
+@EnabledIfEnvironmentVariable(named = "ENV", matches = "staging-server")
+fun onlyOnStagingServer() {
+    // ...
+}
+```
+
+Minutest is just Kotlin
+
+```kotlin
+if (getenv("ENV") == "staging-server" ) test("only on staging server") {
+    // ...
+}
+```
+
+### Parameterised tests
+
+JUnit has three annotations
+
+```kotlin
+@DisplayName("Fruit tests")
+@ParameterizedTest(name = "{index} ==> fruit=''{0}'', rank={1}")
+@CsvSource("apple, 1", "banana, 2", "'lemon, lime', 3")
+fun testWithCustomDisplayNames(fruit: String, rank, String) {
+    // ...
+}
+```
+
+Minutest is just Kotlin
+
+```kotlin
+context("Fruit tests") {
+    listOf("apple" to 1, "banana" to 2, "lemon, lime" to 3).forEachIndexed { index, (fruit, rank) ->
+        test("$index ==> fruit='$fruit', rank=$rank") {
+            // ...
+        }
+    }
+}
+```
+
+### Nested Tests
+
+JUnit needs more annotations
+
+```kotlin
+@DisplayName("A stack")
+class TestingAStackDemo {
+
+    var stack: Stack<Any> = Stack()
+
+    @Nested
+    @DisplayName("when new")
+    inner class WhenNew {
+
+        @Test
+        fun `is empty`() {
+            assertTrue(stack.isEmpty())
+        }
+    }
+
+    @Nested
+    @DisplayName("after pushing an element")
+    inner class AfterPushing {
+
+        var anElement = "an element"
+
+        @BeforeEach
+        fun pushAnElement() {
+            stack.push(anElement)
+        }
+
+        @Test
+        fun `it is no longer empty`() {
+            assertFalse(stack.isEmpty())
+        }
+    }
+}
+```
+<small>\[[core/src/test/kotlin/dev/minutest/examples/StackExampleTestsJUnit.kt](../core/src/test/kotlin/dev/minutest/examples/StackExampleTestsJUnit.kt)\]</small>
+
+Minutest is just Kotlin
+
+```kotlin
+class StackExampleTests : JUnit5Minutests {
+
+    fun tests() = rootContext<Stack<Any>> {
+
+        fixture { Stack() }
+
+        context("when new") {
+
+            test("is empty") {
+                assertTrue(fixture.isEmpty())
+            }
+        }
+
+        context("after pushing an element") {
+
+            modifyFixture {
+                parentFixture.push("an element")
+            }
+
+            test("it is no longer empty") {
+                assertFalse(fixture.isEmpty())
+            }
+        }
+    }
+}
+```
+<small>\[[core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt)\]</small>
+
+
+
+
+
+
+
 
 Minutest brings the power of Kotlin to JUnit, giving
 
@@ -16,112 +149,131 @@ Minutest brings the power of Kotlin to JUnit, giving
 
 [Instructions](installation.md)
 
-## Usage
+## Converting JUnit Tests to Minutest
 
-To just test simple functions, define your tests in a class which mixes-in JUnit5Minutests. The JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests) looks like this.
+Here is a version of the JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests), converted to Kotlin.
+
+```kotlin
+class MyFirstJUnitJupiterTests {
+
+    private val calculator = Calculator()
+
+    @Test
+    fun addition() {
+        assertEquals(0, calculator.currentValue)
+
+        calculator.add(2)
+        assertEquals(2, calculator.currentValue)
+    }
+}
+```
+<small>\[[core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests.kt](../core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests.kt)\]</small>
+
+In Minutest it looks like this
 
 ```kotlin
 // Mix-in JUnit5Minutests to run Minutests with JUnit 5
-class FirstMinutests : JUnit5Minutests {
+class MyFirstMinutests : JUnit5Minutests {
+
+    private val calculator = Calculator()
 
     // tests are grouped in a context
     fun tests() = rootContext {
 
-        // define a test by calling test
-        test("my first test") {
-            // Minutest doesn't have any built-in assertions.
-            // Here I'm using JUnit assertEquals
-            assertEquals(2, 1 + 1)
-        }
+        // define a test with a test block
+        test("addition") {
+            assertEquals(0, calculator.currentValue)
 
-        // here is another one
-        test("my second test") {
-            assertNotEquals(42, 6 * 9)
+            calculator.add(2)
+            assertEquals(2, calculator.currentValue)
         }
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/FirstMinutests.kt](../core/src/test/kotlin/dev/minutest/examples/FirstMinutests.kt)\]</small>
+<small>\[[core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt](../core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt)\]</small>
 
-Most tests require access to some state. The collection of state required by the tests is called the test fixture. If you are testing a class, at simplest the fixture might be an instance of the class.
+Most tests require access to some state. The collection of state required by the tests is called the test fixture. In JUnit we use the fields of the test class as the fixture - in this case just the calculator. Calculator has some state - its currentValue. Let's see what happens when we add another test, first to JUnit
 
 ```kotlin
-class SimpleStackExampleTests : JUnit5Minutests {
+class MyFirstJUnitJupiterTests2 {
 
-    // The fixture type is the generic type of the test, here Stack<String>
-    fun tests() = rootContext<Stack<String>> {
+    // calculator is recreated for each test.
+    private val calculator = Calculator()
 
-        // The fixture block tells Minutest how to create an instance of the fixture.
-        // Minutest will call it once for every test.
-        fixture {
-            Stack()
+    @Test
+    fun addition() {
+        assertEquals(0, calculator.currentValue)
+
+        calculator.add(2)
+        assertEquals(2, calculator.currentValue)
+    }
+
+    @Test
+    fun subtraction() {
+        assertEquals(0, calculator.currentValue)
+
+        calculator.subtract(2)
+        assertEquals(-2, calculator.currentValue)
+    }
+}
+```
+<small>\[[core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests2.kt](../core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests2.kt)\]</small>
+
+Here, despite the fact that the `addition` test left the currentValue as 2, it is 0 again when `subtraction` is run. That's because JUnit creates a new instance of the test class for each test method that is run - the fixture is recreated each time.
+
+If we try to do that in Minutest
+
+```kotlin
+class MyFirstMinutests2 : JUnit5Minutests {
+
+    private val calculator = Calculator()
+
+    fun tests() = rootContext {
+
+        test("addition") {
+            assertEquals(0, calculator.currentValue)
+
+            calculator.add(2)
+            assertEquals(2, calculator.currentValue)
         }
 
-        test("add an item") {
-            // In a test, 'this' is the fixture created above
-            assertTrue(this.isEmpty())
+        test("subtraction") {
+            assertEquals(0, calculator.currentValue)
 
-            this.add("item")
-            assertFalse(this.isEmpty())
-        }
-
-        // another test will use a new fixture instance
-        test("fixture is fresh") {
-            // you can also access the fixture as 'fixture' if it reads nicer
-            assertTrue(fixture.isEmpty())
-
-            // or use the implicit 'this'
-            assertFalse(isNotEmpty())
+            calculator.add(2)
+            assertEquals(2, calculator.currentValue)
         }
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/SimpleStackExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/SimpleStackExampleTests.kt)\]</small>
+<small>\[[core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests2.kt](../core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests2.kt)\]</small>
+
+then `subtraction` will fail, `Expected :0 Actual :2`. When running Minutests, JUnit only creates a single instance of the test class for all tests within it.
+
 
 Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
 
 ```kotlin
 class StackExampleTests : JUnit5Minutests {
 
-    fun tests() = rootContext<Stack<String>>("when new") {
+    fun tests() = rootContext<Stack<Any>> {
 
-        // The tests in the root context run with this empty stack
-        fixture {
-            Stack()
-        }
+        fixture { Stack() }
 
-        test("is empty") {
-            assertTrue(fixture.isEmpty())
-        }
+        context("when new") {
 
-        test("throws EmptyStackException when popped") {
-            assertThrows<EmptyStackException> { pop() }
-        }
-
-        test("throws EmptyStackException when peeked") {
-            assertThrows<EmptyStackException> { peek() }
-        }
-
-        // nested a context
-        context("after pushing an element") {
-
-            // This context modifies the fixture from its parent -
-            // the tests run with the single item stack.
-            modifyFixture {
-                parentFixture.push("one")
-            }
-
-            test("is not empty") {
-                assertFalse(fixture.isEmpty())
-            }
-
-            test("returns the element when popped and is empty") {
-                assertEquals("one", pop())
+            test("is empty") {
                 assertTrue(fixture.isEmpty())
             }
+        }
 
-            test("returns the element when peeked but remains not empty") {
-                assertEquals("one", peek())
+        context("after pushing an element") {
+
+            modifyFixture {
+                parentFixture.push("an element")
+            }
+
+            test("it is no longer empty") {
                 assertFalse(fixture.isEmpty())
             }
         }

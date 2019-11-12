@@ -11,3 +11,4 @@ class Calculator {
         currentValue -= a
     }
 }
+

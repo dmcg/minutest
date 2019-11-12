@@ -46,7 +46,7 @@ class ScenariosHamkrestExampleTests : JUnit5Minutests {
             // You can have more Whens
             When("moving back") {
                 destination.moveInto(source)
-            }.ThenResult(equalTo(true))
+            }.ThenResult(equalTo(false))
 
             And("fixture", { this },
                 has(Fixture::source, containsAll(listOf("apple", "banana")) and hasSize(equalTo(2))) and

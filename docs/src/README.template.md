@@ -3,19 +3,72 @@
 [![Download](https://api.bintray.com/packages/dmcg/oneeyedmen-mvn/minutest.dev/images/download.svg)](https://bintray.com/dmcg/oneeyedmen-mvn/minutest/_latestVersion)
 [![Build Status](https://travis-ci.org/dmcg/minutest.svg?branch=master)](https://travis-ci.org/dmcg/minutest)
 
-Minutest embiggens JUnit with Kotlin
+Minutest embiggens JUnit
 
 ## Why Another Test Framework?
 
-I have been using JUnit to practice Test Driven Development since 1999. It's great for quickly writing and running tests as part of a TDD workflow, and its tool support is second to none. It really has changed the way that we write software. 
+JUnit is great for quickly writing and running tests as part of a TDD workflow, but try to do some reasonable things and you will quickly have to reach for the documentation and specially written annotations. 
 
-But we ask more from our tests than we did 20 years ago. It used to be enough to provide examples to drive new functionality and prevent us from breaking old features. Now we ask our tests to be readable by our product owners, and serve as documentation for our APIs, and to be reusable across different implementations, and to help us find errors with fuzz and property-based techniques. 
+In contrast, Minutest runs on JUnit and exposes a simple model that allows you to solve your own problems - it's just Kotlin.
 
-When stretched in these different directions JUnit's model is lacking. Many extensions require special test runners, and many features are only implementable in the JUnit source itself. For example if you want to write nested tests, or repeated tests, or parameterised tests - all these feel like you should be able to work out how to use JUnit to implement them yourself, but all require special support with annotations. 
+For example
 
-In the end I grew tired of having to continually look up how to do simple things with JUnit, and looked for a better model.
+### Conditionally running a test
 
-Minutest is a rethinking of test primitives hosted on JUnit 5 (and with some caveats JUnit 4). It allows the runtime definition of tests and collections of tests (contexts). By allowing tests that are not methods, and contexts that are not classes, they can be generated from data and manipulated by the test developer without relying on magic.
+JUnit has a special annotation
+
+```kotlin
+@Test
+@EnabledIfEnvironmentVariable(named = "ENV", matches = "staging-server")
+fun onlyOnStagingServer() {
+    // ...
+}
+```
+
+Minutest is just Kotlin
+
+```kotlin
+if (getenv("ENV") == "staging-server" ) test("only on staging server") {
+    // ...
+}
+```
+
+### Parameterised tests
+
+JUnit has three annotations
+
+```kotlin
+@DisplayName("Fruit tests")
+@ParameterizedTest(name = "{index} ==> fruit=''{0}'', rank={1}")
+@CsvSource("apple, 1", "banana, 2", "'lemon, lime', 3")
+fun testWithCustomDisplayNames(fruit: String, rank, String) {
+    // ...
+}
+```
+
+Minutest is just Kotlin
+
+```kotlin
+context("Fruit tests") {
+    listOf("apple" to 1, "banana" to 2, "lemon, lime" to 3).forEachIndexed { index, (fruit, rank) ->
+        test("$index ==> fruit='$fruit', rank=$rank") {
+            // ...
+        }
+    }
+}
+```
+
+### Nested Tests
+
+JUnit needs more annotations
+
+```insert-kotlin core/src/test/kotlin/dev/minutest/examples/StackExampleTestsJUnit.kt
+```
+
+Minutest is just Kotlin
+
+```insert-kotlin core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt
+```
 
 
 
