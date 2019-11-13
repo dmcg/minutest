@@ -6,30 +6,32 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
 class ControlPanel(
-    val keySwitch: () -> Boolean,
-    val beep: () -> Unit,
-    val launchMissile: () -> Unit
+    private val beep: () -> Unit,
+    private val launchMissile: () -> Unit
 ) {
+    private var keyTurned: Boolean = false
+
+    fun turnKey() {
+        keyTurned = true
+    }
+
     fun pressButton() {
-        if (keySwitch())
+        if (keyTurned)
             launchMissile()
         else
             beep()
     }
-    val warningLight get() = keySwitch()
+    val warningLight get() = keyTurned
 }
 
 class CompoundFixtureExampleTests : JUnit5Minutests {
 
+    // The fixture consists of all the state affected by tests
     class Fixture() {
-        // Rather than introduce a mocking framework, we can work with
-        // functions and mutable state.
-        var keySwitchOn = false
         var beeped = false
         var missileLaunched = false
 
         val controlPanel = ControlPanel(
-            keySwitch = { keySwitchOn },
             beep = { beeped = true },
             launchMissile = { missileLaunched = true }
         )
@@ -51,7 +53,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
 
         context("key turned") {
             modifyFixture {
-                keySwitchOn = true
+                controlPanel.turnKey()
             }
             test("light on") {
                 assertTrue(controlPanel.warningLight)

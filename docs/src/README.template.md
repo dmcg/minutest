@@ -1,15 +1,15 @@
-# Minutest
-
 [![Download](https://api.bintray.com/packages/dmcg/oneeyedmen-mvn/minutest.dev/images/download.svg)](https://bintray.com/dmcg/oneeyedmen-mvn/minutest/_latestVersion)
 [![Build Status](https://travis-ci.org/dmcg/minutest.svg?branch=master)](https://travis-ci.org/dmcg/minutest)
 
-Minutest embiggens JUnit
+# Minutest
+
+JUnit multiplied by Kotlin
 
 ## Why Another Test Framework?
 
-JUnit is great for quickly writing and running tests as part of a TDD workflow, but try to do some reasonable things and you will quickly have to reach for the documentation and specially written annotations. 
+JUnit is great for quickly writing and running tests as part of a TDD workflow, but try to do anything unusual and you have to reach for the documentation and specially written annotations. 
 
-In contrast, Minutest runs on JUnit and exposes a simple model that allows you to solve your own problems - it's just Kotlin.
+Minutest extends JUnit with a simple model that allows you to solve your own problems - it's just Kotlin.
 
 For example
 
@@ -71,26 +71,19 @@ Minutest is just Kotlin
 ```
 
 
+Minutest brings the power of Kotlin to JUnit, providing
 
+* A clean DSL to define nested contexts and tests
+* Generation and manipulation of tests at runtime 
+* Much easier reuse of test code
 
-
-
-
-
-Minutest brings the power of Kotlin to JUnit, giving
-
-* Spec-style nested contexts and tests
-* Easy reuse of test code
-* On-the fly generation of tests
-* A level of expressiveness that should change the way you write tests.
-
-[Why do we think a new test library is needed?](http://oneeyedmen.com/my-new-test-model.html) 
+For more information on how why Minutest is like it is, see [My New Test Model](http://oneeyedmen.com/my-new-test-model.html) .
 
 ## Installation
 
 [Instructions](installation.md)
 
-## Converting JUnit Tests to Minutest
+## Moving from JUnit to Minutest
 
 Here is a version of the JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests), converted to Kotlin.
 
@@ -102,31 +95,11 @@ In Minutest it looks like this
 ```insert-kotlin core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt
 ```
 
-Most tests require access to some state. The collection of state required by the tests is called the test fixture. In JUnit we use the fields of the test class as the fixture - in this case just the calculator. Calculator has some state - its currentValue. Let's see what happens when we add another test, first to JUnit
+Most tests require access to some state. The collection of state required by the tests is called the test fixture. In JUnit we use the fields of the test class as the fixture - in this case just the calculator. JUnit uses a fresh instance of the test class for each test method run, which is why the state of calculator after `addition` does not affect the result of `subtraction`.
 
-```insert-kotlin core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests2.kt
-```
+Minutest does not create a fresh test class for each test, instead it invokes a `fixture` block in a context and passes the result into tests as `this`.
 
-Here, despite the fact that the `addition` test left the currentValue as 2, it is 0 again when `subtraction` is run. That's because JUnit creates a new instance of the test class for each test method that is run - the fixture is recreated each time.
-
-If we try to do that in Minutest
-
-```insert-kotlin core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests2.kt
-```
-
-then `subtraction` will fail, `Expected :0 Actual :2`. When running Minutests, JUnit only creates a single instance of the test class for all tests within it.
-
-
-Minutests can be defined in a Spec style, with nested contexts and tests. The JUnit 5 [Nested Tests example](https://junit.org/junit5/docs/current/user-guide/#writing-tests-nested) translates like this 
-
-```insert-kotlin core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt
-```
-
-This runs the following tests
-
-![StackExampleTests](images/StackExampleTests.png)
-
-Tests for cooperating components will typically have one piece of state. In this case make the fixture hold all the state. 
+Tests for cooperating components will typically have more state than just the thing we are testing. In this case make the fixture hold all the state. 
 
 ```insert-kotlin core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt
 ```

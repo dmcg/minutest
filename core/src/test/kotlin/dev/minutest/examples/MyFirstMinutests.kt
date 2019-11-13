@@ -4,20 +4,26 @@ import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 
-// Mix-in JUnit5Minutests to run Minutests with JUnit 5
+// Mix-in JUnit5Minutests to run Minutests with JUnit 5 (JUnit 4 support is also available)
 class MyFirstMinutests : JUnit5Minutests {
 
-    private val calculator = Calculator()
-
     // tests are grouped in a context
-    fun tests() = rootContext {
+    fun tests() = rootContext<Calculator> {
+
+        // We need to tell Minutest how to build the fixture
+        fixture { Calculator() }
 
         // define a test with a test block
         test("addition") {
-            assertEquals(0, calculator.currentValue)
+            // inside tests, the fixture is `this`
+            this.add(2)
+            assertEquals(2, currentValue) // you can leave off the `this`
+        }
 
-            calculator.add(2)
-            assertEquals(2, calculator.currentValue)
+        // each new test gets its own new fixture
+        test("subtraction") {
+            subtract(2)
+            assertEquals(-2, currentValue)
         }
     }
 }

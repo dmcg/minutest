@@ -10,9 +10,13 @@ class MyFirstJUnitJupiterTests {
 
     @Test
     fun addition() {
-        assertEquals(0, calculator.currentValue)
-
         calculator.add(2)
         assertEquals(2, calculator.currentValue)
+    }
+
+    @Test
+    fun subtraction() {
+        calculator.subtract(2)
+        assertEquals(-2, calculator.currentValue)
     }
 }
