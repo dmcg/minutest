@@ -1,41 +1,5 @@
 [Minutest](README.md)
 
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
 # Fixtures
 
 ## What is a test fixture?

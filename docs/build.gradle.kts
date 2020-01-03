@@ -17,17 +17,13 @@ fun processMarkDown(dir: File) {
 
 fun processMarkDown(src: File, dest: File) {
     val text = src.readText()
-    val expandedText = expandCodeBlocks(text)
-    dest.writeText(headerFor(src) + expandedText)
+    dest.writeText(expandCodeBlocks(text))
 }
 
 fun Iterable<String>.withoutPreamble(): List<String> = this
     .filter { !it.startsWith("import") && !it.startsWith("package") }
     .dropWhile { it.isEmpty() }
 
-fun headerFor(file: File) = if (file.name.startsWith("README.")) "" else header
-
-val header = "[Minutest](README.md)\n\n"
 val root = project.projectDir
 
 fun expandCodeBlocks(text: String): String =

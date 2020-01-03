@@ -1,40 +1,5 @@
 [Minutest](README.md)
 
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
-
-[Minutest](README.md)
 
 # Installation
 
