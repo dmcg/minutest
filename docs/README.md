@@ -9,7 +9,7 @@ JUnit multiplied by Kotlin
 
 JUnit is great for quickly writing and running tests as part of a TDD workflow, but try to do anything unusual and you have to reach for the documentation and specially written annotations. 
 
-Minutest extends JUnit with a simple model that allows you to solve your own problems - it's just Kotlin.
+Minutest extends JUnit with a simple model that allows you to solve your own problems with plain Kotlin.
 
 For example
 
@@ -62,6 +62,7 @@ context("Fruit tests") {
 
 JUnit needs more annotations
 
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/StackExampleTestsJUnit.kt>
 ```kotlin
 @DisplayName("A stack")
 class TestingAStackDemo {
@@ -96,10 +97,13 @@ class TestingAStackDemo {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/StackExampleTestsJUnit.kt](../core/src/test/kotlin/dev/minutest/examples/StackExampleTestsJUnit.kt)\]</small>
+<small>\[[../core/src/test/kotlin/dev/minutest/examples/StackExampleTestsJUnit.kt](../core/src/test/kotlin/dev/minutest/examples/StackExampleTestsJUnit.kt)\]</small>
+
+[end-insert]: <>
 
 Minutest is just Kotlin
 
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt>
 ```kotlin
 class StackExampleTests : JUnit5Minutests {
 
@@ -127,7 +131,9 @@ class StackExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt)\]</small>
+<small>\[[../core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt)\]</small>
+
+[end-insert]: <>
 
 
 Minutest brings the power of Kotlin to JUnit, providing
@@ -146,6 +152,7 @@ For more information on how why Minutest is like it is, see [My New Test Model](
 
 Here is a version of the JUnit 5 [first test case](https://junit.org/junit5/docs/current/user-guide/#writing-tests), converted to Kotlin.
 
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests.kt>
 ```kotlin
 class MyFirstJUnitJupiterTests {
 
@@ -164,10 +171,13 @@ class MyFirstJUnitJupiterTests {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests.kt](../core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests.kt)\]</small>
+<small>\[[../core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests.kt](../core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests.kt)\]</small>
+
+[end-insert]: <>
 
 In Minutest it looks like this
 
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt>
 ```kotlin
 // Mix-in JUnit5Minutests to run Minutests with JUnit 5 (JUnit 4 support is also available)
 class MyFirstMinutests : JUnit5Minutests {
@@ -193,14 +203,17 @@ class MyFirstMinutests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt](../core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt)\]</small>
+<small>\[[../core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt](../core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt)\]</small>
+
+[end-insert]: <>
 
 Most tests require access to some state. The collection of state required by the tests is called the test fixture. In JUnit we use the fields of the test class as the fixture - in this case just the calculator. JUnit uses a fresh instance of the test class for each test method run, which is why the state of calculator after `addition` does not affect the result of `subtraction`.
 
-Minutest does not create a fresh test class for each test, instead it invokes a `fixture` block in a context and passes the result into tests as `this`.
+Minutest does not create a fresh instance of the test class for each test, instead it invokes a `fixture` block in a context and passes the result into tests as `this`.
 
 Tests for cooperating components will typically have more state than just the thing we are testing. In this case make the fixture hold all the state. 
 
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt>
 ```kotlin
 class ControlPanel(
     private val beep: () -> Unit,
@@ -264,7 +277,9 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt)\]</small>
+<small>\[[../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt)\]</small>
+
+[end-insert]: <>
 
 Understanding fixtures is key to Minutest - [read more](fixtures.md)
 
@@ -274,6 +289,7 @@ The key to Minutest is that by separating the fixture from the test code, both a
 
 For example, parameterised tests require [special handling](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests) in JUnit, but not in Minutest.
 
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt>
 ```kotlin
 class ParameterisedExampleTests : JUnit5Minutests {
 
@@ -317,7 +333,9 @@ fun String.isPalindrome(): Boolean =
     if (length == 0) false
     else (0 until length / 2).find { index -> this[index] != this[length - index - 1] } == null
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt)\]</small>
+<small>\[[../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt)\]</small>
+
+[end-insert]: <>
 
 ## Reusing Tests
 
@@ -325,6 +343,7 @@ More complicated scenarios can be approached by writing your own function that r
  
 If you want to reuse the same tests for different concrete implementations, define a context with a function and call it for subclasses. Some people call this a contract.
 
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt>
 ```kotlin
 // To run the same tests against different implementations, first define a ContextBuilder extension function
 // that defines the tests you want run.
@@ -367,7 +386,9 @@ class LinkedListTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt)\]</small>
+<small>\[[../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt)\]</small>
+
+[end-insert]: <>
 
 ## Other Features
 

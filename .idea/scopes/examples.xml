@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="examples" pattern="test[minutest.core.test]:dev.minutest.examples..*" />
+</component>

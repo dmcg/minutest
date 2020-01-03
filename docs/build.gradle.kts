@@ -4,14 +4,14 @@ import kotlin.text.RegexOption.MULTILINE
 tasks {
     create("build") {
         doFirst {
-            processMarkDown(project.projectDir.resolve("src"))
+            processMarkDown(project.projectDir)
         }
     }
 }
 
 fun processMarkDown(dir: File) {
-    dir.listFiles().filter { it.name.endsWith("template.md") }.forEach { file ->
-        processMarkDown(file, file.parentFile.resolve("../" + file.name.replace(".template", "")))
+    dir.listFiles().filter { it.name.endsWith(".md") }.forEach { file ->
+        processMarkDown(file, file)
     }
 }
 
@@ -27,20 +27,28 @@ fun Iterable<String>.withoutPreamble(): List<String> = this
 
 fun headerFor(file: File) = if (file.name.startsWith("README.")) "" else header
 
-val codeBlockFinder = "^```insert-kotlin (.*?)^```".toRegex(setOf(DOT_MATCHES_ALL, MULTILINE))
 val header = "[Minutest](README.md)\n\n"
-val root = project.rootProject.projectDir
+val root = project.projectDir
 
 fun expandCodeBlocks(text: String): String =
-    codeBlockFinder.replace(text) { matchResult ->
+    expandedCodeBlockFinder.replace(text) { matchResult ->
         matchResult.groups[1]?.value?.let { filename ->
-            expandCodeBlock(filename.trim())
+            expandCodeBlock(filename.trim(), root.resolve(filename.trim()).readLines().withoutPreamble())
         } ?: error("No filename found for kotlin block")
     }
 
-fun expandCodeBlock(filename: String): String = (
-    listOf("```kotlin") +
-        root.resolve(filename).readLines().withoutPreamble() +
+fun expandCodeBlock(filename: String, content: List<String>): String = (
+    listOf(
+        "[start-insert]: <$filename>",
+        "```kotlin"
+    ) +
+        content +
         "```" +
-        """<small>\[[$filename](../$filename)\]</small>"""
+        """<small>\[[$filename]($filename)\]</small>""" +
+        "" +
+        "[end-insert]: <>"
+
     ).joinToString("\n")
+
+//language=RegExp
+val expandedCodeBlockFinder = """^\[start-insert\]: <(.*?)>(.*?)^\[end-insert]:.*?$""".toRegex(setOf(DOT_MATCHES_ALL, MULTILINE))

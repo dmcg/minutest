@@ -1,9 +1,46 @@
 [Minutest](README.md)
 
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
 # Generating Tests
 
 Go crazy and unleash the `Power of Kotlin` to generate your tests on the fly.
 
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt>
 ```kotlin
 // We can define extension functions that return tests for later injection
 
@@ -81,4 +118,6 @@ class GeneratingExampleTests : JUnit5Minutests {
 }
 
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt)\]</small>
+<small>\[[../core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/GeneratingExampleTests.kt)\]</small>
+
+[end-insert]: <>

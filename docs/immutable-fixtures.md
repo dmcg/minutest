@@ -1,9 +1,46 @@
 [Minutest](README.md)
 
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
+[Minutest](README.md)
+
 # Immutable Fixtures
 
 Are you a functional programmer slumming it with Kotlin? Minutest allows immutable fixtures.
 
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/ImmutableExampleTests.kt>
 ```kotlin
 class ImmutableExampleTests : JUnit5Minutests {
 
@@ -27,5 +64,7 @@ class ImmutableExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[core/src/test/kotlin/dev/minutest/examples/ImmutableExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ImmutableExampleTests.kt)\]</small>
+<small>\[[../core/src/test/kotlin/dev/minutest/examples/ImmutableExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ImmutableExampleTests.kt)\]</small>
+
+[end-insert]: <>
 
