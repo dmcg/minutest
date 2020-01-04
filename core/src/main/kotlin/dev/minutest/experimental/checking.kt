@@ -30,8 +30,16 @@ fun <PF, F> TestContextBuilder<PF, F>.checkedAgainst(
     vararg expected: String,
     logger: TestLogger = defaultLogger(),
     checker: (List<String>, List<String>) -> Unit = ::defaultChecker
-) = this.checkedAgainst(logger = logger, expected = expected.toList(), checker = checker)
+) = this.checkedAgainst(expected.toList(), logger, checker)
 
+/**
+ * Convenience alias for checkedAgainst.
+ */
+fun <PF, F> TestContextBuilder<PF, F>.willRun(
+    vararg expected: String,
+    logger: TestLogger = defaultLogger(),
+    checker: (List<String>, List<String>) -> Unit = ::defaultChecker
+) = this.checkedAgainst(expected.toList(), logger, checker)
 
 private fun defaultLogger() = TestLogger(mutableListOf(), prefixer = TestLogger.noSymbols)
 

@@ -1,12 +1,12 @@
 package dev.minutest.examples
 
 import dev.minutest.ContextBuilder
+import dev.minutest.experimental.willRun
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertThrows
 import java.util.*
-import dev.minutest.experimental.checkedAgainst as willRun
 
 // We can define extension functions that return tests for later injection
 

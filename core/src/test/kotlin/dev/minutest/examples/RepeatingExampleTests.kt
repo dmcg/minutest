@@ -1,10 +1,9 @@
 package dev.minutest.examples
 
+import dev.minutest.experimental.willRun
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
-import dev.minutest.experimental.checkedAgainst as willRun
-
 
 class RepeatingExampleTests : JUnit5Minutests {
 

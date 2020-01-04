@@ -1,10 +1,10 @@
 package dev.minutest.examples
 
+import dev.minutest.experimental.willRun
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import dev.minutest.experimental.checkedAgainst as willRun
 
 class ParameterisedExampleTests : JUnit5Minutests {
 

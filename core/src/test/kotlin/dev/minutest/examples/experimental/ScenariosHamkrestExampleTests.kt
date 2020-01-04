@@ -2,10 +2,10 @@ package dev.minutest.examples.experimental
 
 import com.natpryce.hamkrest.*
 import com.natpryce.hamkrest.assertion.assertThat
+import dev.minutest.experimental.willRun
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.scenarios.*
-import dev.minutest.experimental.checkedAgainst as willRun
 
 private fun emptyMutableList() = mutableListOf<String>()
 
