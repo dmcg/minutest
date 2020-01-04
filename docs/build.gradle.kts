@@ -40,7 +40,7 @@ fun expandCodeBlock(filename: String, content: List<String>): String = (
     ) +
         content +
         "```" +
-        """<small>\[[$filename]($filename)\]</small>""" +
+        """<small>[$filename]($filename)</small>""" +
         "" +
         "[end-insert]: <>"
 

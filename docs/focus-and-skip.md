@@ -46,7 +46,7 @@ class SkipAndFocusExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/experimental/SkipAndFocusExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/experimental/SkipAndFocusExampleTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/experimental/SkipAndFocusExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/experimental/SkipAndFocusExampleTests.kt)</small>
 
 [end-insert]: <>
 

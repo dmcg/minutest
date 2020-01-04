@@ -27,6 +27,6 @@ class JUnitRulesExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/experimental/JUnitRulesExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/experimental/JUnitRulesExampleTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/experimental/JUnitRulesExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/experimental/JUnitRulesExampleTests.kt)</small>
 
 [end-insert]: <>

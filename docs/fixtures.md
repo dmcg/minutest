@@ -47,7 +47,7 @@ class NoFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/NoFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/NoFixtureExampleTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/NoFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/NoFixtureExampleTests.kt)</small>
 
 [end-insert]: <>
 
@@ -88,7 +88,7 @@ class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/SubjectUnderTestFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/SubjectUnderTestFixtureExampleTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/SubjectUnderTestFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/SubjectUnderTestFixtureExampleTests.kt)</small>
 
 [end-insert]: <>
 
@@ -132,7 +132,7 @@ class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/ArgumentsAsFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ArgumentsAsFixtureExampleTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/ArgumentsAsFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ArgumentsAsFixtureExampleTests.kt)</small>
 
 [end-insert]: <>
 
@@ -206,7 +206,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt)</small>
 
 [end-insert]: <>
 
@@ -255,7 +255,7 @@ class ParentFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/ParentFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ParentFixtureExampleTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/ParentFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ParentFixtureExampleTests.kt)</small>
 
 [end-insert]: <>
 
@@ -308,7 +308,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/DerivedContextExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/DerivedContextExampleTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/DerivedContextExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/DerivedContextExampleTests.kt)</small>
 
 [end-insert]: <>
 

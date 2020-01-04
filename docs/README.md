@@ -97,7 +97,7 @@ class TestingAStackDemo {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/StackExampleTestsJUnit.kt](../core/src/test/kotlin/dev/minutest/examples/StackExampleTestsJUnit.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/StackExampleTestsJUnit.kt](../core/src/test/kotlin/dev/minutest/examples/StackExampleTestsJUnit.kt)</small>
 
 [end-insert]: <>
 
@@ -131,7 +131,7 @@ class StackExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/StackExampleTests.kt)</small>
 
 [end-insert]: <>
 
@@ -171,7 +171,7 @@ class MyFirstJUnitJupiterTests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests.kt](../core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests.kt](../core/src/test/kotlin/dev/minutest/examples/MyFirstJUnitJupiterTests.kt)</small>
 
 [end-insert]: <>
 
@@ -203,7 +203,7 @@ class MyFirstMinutests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt](../core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt](../core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt)</small>
 
 [end-insert]: <>
 
@@ -277,13 +277,13 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt)</small>
 
 [end-insert]: <>
 
 Understanding fixtures is key to Minutest - [read more](fixtures.md)
 
-## Parameterised Tests
+## Run Code to Make Tests
 
 The key to Minutest is that by separating the fixture from the test code, both are made available to manipulate as data. 
 
@@ -333,11 +333,11 @@ fun String.isPalindrome(): Boolean =
     if (length == 0) false
     else (0 until length / 2).find { index -> this[index] != this[length - index - 1] } == null
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ParameterisedExampleTests.kt)</small>
 
 [end-insert]: <>
 
-## Reusing Tests
+## Reuse Tests
 
 More complicated scenarios can be approached by writing your own function that returns a test or a context.
  
@@ -386,7 +386,7 @@ class LinkedListTests : JUnit5Minutests {
     }
 }
 ```
-<small>\[[../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt)\]</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt)</small>
 
 [end-insert]: <>
 
