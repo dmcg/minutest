@@ -58,7 +58,7 @@ class ScenariosExampleTests : JUnit5Minutests {
                 destination.moveInto(source)
             }.Then("result is true") { result ->
                 // Chained Then's have the result of the previous block
-                assertTrue(false)
+                assertTrue(result)
             }
 
             // You can have standalone Ands
