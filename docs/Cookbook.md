@@ -61,6 +61,11 @@ It's easy to integrate [Okeydoke](https://github.com/dmcg/okey-doke/) - see [Min
 
 Annotate the method with `dev.minutest.Tests`, Alt-Enter on the greyed-out method and select `Suppress unused warning if annotated by 'dev.minutest.Tests'`. Now all `@Tests` methods should not be greyed out. 
 
+## Testing with Coroutines
+
+[Coroutines](../core/src/test/kotlin/dev/minutest/examples/experimental/CoroutinesExampleTests.kt)
+
+
 ## Getting Help
 
 The best bet for feedback and help is the [#minutest channel on the Kotlin Slack](https://kotlinlang.slack.com/messages/CCYE00YM6). See you there.
