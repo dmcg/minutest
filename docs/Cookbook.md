@@ -63,7 +63,9 @@ Annotate the method with `dev.minutest.Tests`, Alt-Enter on the greyed-out metho
 
 ## Testing with Coroutines
 
-[Coroutines](../core/src/test/kotlin/dev/minutest/examples/experimental/CoroutinesExampleTests.kt)
+[Simple tests with coroutines](../core/src/test/kotlin/dev/minutest/examples/experimental/CoroutinesExampleTests.kt)
+
+[More elaborate tests with coroutines](../core/src/test/kotlin/dev/minutest/examples/experimental/CoroutinesExampleTests2.kt)
 
 
 ## Getting Help
