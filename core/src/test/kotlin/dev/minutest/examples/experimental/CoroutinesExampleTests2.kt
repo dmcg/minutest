@@ -37,7 +37,7 @@ class CoroutinesExampleTests2 : JUnit5Minutests {
         fixture { Fixture() }
 
         // Now you can define coTest to use the Fixture
-        coTest("use runBlocking") {
+        coTest("fixture is now a TestCoroutineScope") {
             assertEquals("bananarama", subject.add("banana", "rama"))
             advanceUntilIdle()
             assertEquals(10_000, currentTime)
