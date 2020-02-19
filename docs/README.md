@@ -390,6 +390,101 @@ class LinkedListTests : JUnit5Minutests {
 
 [end-insert]: <>
 
+
+## Structure Tests
+
+When your tests grow so that they need more structure, Minutest has extensions to support Given When Then blocks
+ 
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/experimental/ScenariosExampleTests.kt>
+```kotlin
+class ControlPanel(
+    private val beep: () -> Unit,
+    private val launchRocket: () -> Unit
+) {
+    private var keyTurned: Boolean = false
+
+    fun turnKey() {
+        keyTurned = true
+    }
+
+    fun pressButton(): Boolean {
+        return if (keyTurned) {
+            launchRocket()
+            true
+        } else {
+            beep()
+            false
+        }
+    }
+
+    val warningLightOn get() = keyTurned
+}
+
+class ScenariosExampleTests : JUnit5Minutests {
+
+    class Fixture() {
+        var beeped = false
+        var launched = false
+
+        val controlPanel = ControlPanel(
+            beep = { beeped = true },
+            launchRocket = { launched = true }
+        )
+    }
+
+    fun tests() = rootContext<Fixture> {
+
+        // Scenario defines a nested context
+        Scenario("Cannot launch without key switch") {
+
+            // GivenFixture sets up the fixture for the scenario
+            GivenFixture("key not turned") {
+                Fixture()
+            }.Then("warning light is off") {
+                // Then can check the setup
+                assertFalse(controlPanel.warningLightOn)
+            }
+
+            // When performs the operation
+            When("pressing the button") {
+                controlPanel.pressButton()
+            }.Then("result was false") { result ->
+                // Then has access to the result
+                assertFalse(result)
+            }.And("it beeped") {
+                // And makes another Thens with checks
+                assertTrue(beeped)
+            }.And("rocket was not launched") {
+                assertFalse(launched)
+            }
+        }
+
+        Scenario("Will launch with key switch") {
+            GivenFixture("key turned") {
+                Fixture().apply {
+                    controlPanel.turnKey()
+                }
+            }
+            Then("warning light is on") {
+                assertTrue(controlPanel.warningLightOn)
+            }
+            When("pressing the button") {
+                controlPanel.pressButton()
+            }.Then("result was true") { result ->
+                assertTrue(result)
+            }.And("it didn't beep") {
+                assertFalse(beeped)
+            }.And("missile was launched") {
+                assertTrue(launched)
+            }
+        }
+    }
+}
+```
+<small>[../core/src/test/kotlin/dev/minutest/examples/experimental/ScenariosExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/experimental/ScenariosExampleTests.kt)</small>
+
+[end-insert]: <>
+
 ## Other Features
 
 The [Cookbook](Cookbook.md) shows other ways to use Minutest. 

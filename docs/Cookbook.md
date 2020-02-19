@@ -67,6 +67,9 @@ Annotate the method with `dev.minutest.Tests`, Alt-Enter on the greyed-out metho
 
 [More elaborate tests with coroutines](../core/src/test/kotlin/dev/minutest/examples/experimental/CoroutinesExampleTests2.kt)
 
+## Structuring Tests
+
+[Given When Then](../core/src/test/kotlin/dev/minutest/examples/experimental/ScenariosExampleTests.kt)
 
 ## Getting Help
 
@@ -93,10 +96,6 @@ TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM
 TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
 ## Checking a Value
-
-TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
-
-## Structuring Tests
 
 TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
