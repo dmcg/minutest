@@ -1,90 +1,91 @@
 package dev.minutest.examples.experimental
 
-import dev.minutest.experimental.willRun
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.scenarios.Scenario
-import org.junit.jupiter.api.Assertions.assertEquals
-import kotlin.test.assertTrue
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 
-private fun emptyMutableList() = mutableListOf<String>()
+class ControlPanel(
+    private val beep: () -> Unit,
+    private val launchRocket: () -> Unit
+) {
+    private var keyTurned: Boolean = false
 
-fun <T> MutableCollection<T>.moveInto(destination: MutableCollection<T>): Boolean =
-    destination.addAll(this).also {
-        clear()
+    fun turnKey() {
+        keyTurned = true
     }
 
+    fun pressButton(): Boolean {
+        return if (keyTurned) {
+            launchRocket()
+            true
+        } else {
+            beep()
+            false
+        }
+    }
+
+    val warningLightOn get() = keyTurned
+}
 
 class ScenariosExampleTests : JUnit5Minutests {
 
-    data class Fixture(
-        val source: MutableList<String> = emptyMutableList(),
-        val destination: MutableList<String> = emptyMutableList()
-    )
+    class Fixture() {
+        var beeped = false
+        var launched = false
 
-    // A feature is a context
-    fun tests() = rootContext<Fixture>("Moving Between Lists") {
-
-        // we can populate the fixture as usual
-        fixture {
-            Fixture()
-        }
-
-        // Scenario defines a nested context
-        Scenario("Moving around items") {
-
-            // Given sets up the fixture for the scenario
-            Given("an empty destination") {
-                destination.clear()
-            }.And("a populated source") {
-                source.addAll(listOf("apple", "banana"))
-            }
-
-            // When is for operations
-            When("source moveInto destination") {
-                source.moveInto(destination)
-            }
-
-            // Then is for checks
-            Then("destination contains source items") {
-                assertEquals(listOf("apple", "banana"), destination)
-            }.And("source is empty") {
-                // Chained Ands continue the statement
-                assertTrue(source.isEmpty())
-            }
-
-            // You can have more Whens
-            When("moving back") {
-                destination.moveInto(source)
-            }.Then("result is true") { result ->
-                // Chained Then's have the result of the previous block
-                assertTrue(result)
-            }
-
-            // You can have standalone Ands
-            And("they have swapped again") {
-                assertTrue(destination.isEmpty())
-                assertEquals(listOf("apple", "banana"), source)
-            }
-        }
-
-        // Minutest will check that the following tests are run - note that it is one long test name
-        willRun(
-            "Moving Between Lists",
-            "  Moving around items",
-            "    Given an empty destination," +
-                " And a populated source," +
-                " When source moveInto destination," +
-                " Then…," +
-                " And…," +
-                " When moving back," +
-                " Then…," +
-                " And…"
+        val controlPanel = ControlPanel(
+            beep = { beeped = true },
+            launchRocket = { launched = true }
         )
     }
 
-}
+    fun tests() = rootContext<Fixture> {
 
-fun <T, U> combinationsOf(ts: Iterable<T>, us: Iterable<U>): List<Pair<T, U>> = ts.flatMap { t ->
-    us.map { u -> t to u }
+        // Scenario defines a nested context
+        Scenario("Cannot launch without key switch") {
+
+            // GivenFixture sets up the fixture for the scenario
+            GivenFixture("key not turned") {
+                Fixture()
+            }.Then("warning light is off") {
+                // Then can check the setup
+                assertFalse(controlPanel.warningLightOn)
+            }
+
+            // When performs the operation
+            When("pressing the button") {
+                controlPanel.pressButton()
+            }.Then("result was false") { result ->
+                // Then has access to the result
+                assertFalse(result)
+            }.And("it beeped") {
+                // And makes another Thens with checks
+                assertTrue(beeped)
+            }.And("rocket was not launched") {
+                assertFalse(launched)
+            }
+        }
+
+        Scenario("Will launch with key switch") {
+            GivenFixture("key turned") {
+                Fixture().apply {
+                    controlPanel.turnKey()
+                }
+            }
+            Then("warning light is on") {
+                assertTrue(controlPanel.warningLightOn)
+            }
+            When("pressing the button") {
+                controlPanel.pressButton()
+            }.Then("result was true") { result ->
+                assertTrue(result)
+            }.And("it didn't beep") {
+                assertFalse(beeped)
+            }.And("missile was launched") {
+                assertTrue(launched)
+            }
+        }
+    }
 }

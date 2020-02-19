@@ -85,3 +85,8 @@ fun <F, R> Thens<F>.And(thing: String, f: F.() -> R, matcher: Matcher<R>) = And(
 fun <F, R> Whens<F, R>.ThenResult(matcher: Matcher<R>): ResultingThens<F, R> = Then("result ${matcher.description}") {
     assertThat(it, matcher)
 }
+
+fun <T> MutableCollection<T>.moveInto(destination: MutableCollection<T>): Boolean =
+    destination.addAll(this).also {
+        clear()
+    }
