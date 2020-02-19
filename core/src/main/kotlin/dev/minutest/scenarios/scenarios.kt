@@ -6,12 +6,17 @@ import dev.minutest.ContextBuilder
 import dev.minutest.MinutestFixture
 import dev.minutest.scenarios.StepType.*
 
-fun <F> ContextBuilder<F>.Scenario(description: String? = null, block: ScenarioBuilder<F>.() -> Unit) =
-    ScenarioBuilder<F>(description).apply(block).applyToContext(this)
+fun <F> ContextBuilder<F>.Scenario(
+    description: String? = null,
+    elideTestNameAfterLength: Int = 128,
+    block: ScenarioBuilder<F>.() -> Unit
+) =
+    ScenarioBuilder<F>(description, elideTestNameAfterLength).apply(block).applyToContext(this)
 
 @MinutestFixture
 class ScenarioBuilder<F>(
-    private val description: String?
+    private val description: String?,
+    private var elideTestNameAfterLength: Int
 ) {
     private val givenSteps: MutableList<GivenStep<F>> = mutableListOf()
     private val testSteps: MutableList<TestStep<F, *>> = mutableListOf()
@@ -123,7 +128,7 @@ class ScenarioBuilder<F>(
     private fun generateName(): String {
         val candidate = (givenSteps.map { it.description } + testSteps.map { it.description }).joinToString()
         return when {
-            candidate.length <= 128 -> candidate
+            candidate.length <= elideTestNameAfterLength -> candidate
             else -> (givenSteps.map { it.description } + testSteps.map { it.toElidedTestNameComponent() }).joinToString()
         }
     }

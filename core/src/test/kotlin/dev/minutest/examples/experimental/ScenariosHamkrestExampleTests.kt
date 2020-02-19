@@ -9,6 +9,9 @@ import dev.minutest.scenarios.*
 
 private fun emptyMutableList() = mutableListOf<String>()
 
+/**
+ * Proof of concept for naming Then steps using Hamkrest descriptions
+ */
 class ScenariosHamkrestExampleTests : JUnit5Minutests {
 
     data class Fixture(
@@ -16,59 +19,51 @@ class ScenariosHamkrestExampleTests : JUnit5Minutests {
         val destination: MutableList<String> = emptyMutableList()
     )
 
-    // A feature is a context
+    private val appleAndBanana = listOf("apple", "banana")
+
     fun tests() = rootContext<Fixture>("Moving Between Lists") {
 
-        // we can populate the fixture as usual
         fixture {
             Fixture()
         }
 
-        // Scenario defines a nested context
-        Scenario("Moving around items") {
+        Scenario("Moving around items", elideTestNameAfterLength = 1000) {
 
-            // Given sets up the fixture for the scenario
             Given("an empty destination") {
                 destination.clear()
-            }.And("a populated source") {
-                source.addAll(listOf("apple", "banana"))
+            }.And("a source populated with $appleAndBanana") {
+                source.addAll(appleAndBanana)
             }
 
-            // When is for operations
             When("source moveInto destination") {
                 source.moveInto(destination)
-            }
+            }.ThenResult(equalTo(true))
 
-            // Then is for checks
             Then("destination", Fixture::destination, containsAll(listOf("apple", "banana")) and hasSize(equalTo(2)))
                 .And("source", Fixture::source, isEmpty)
 
-            // You can have more Whens
             When("moving back") {
                 destination.moveInto(source)
             }.ThenResult(equalTo(true))
 
             And("fixture", { this },
-                has(Fixture::source, containsAll(listOf("apple", "banana")) and hasSize(equalTo(2))) and
-                has(Fixture::destination, isEmpty))
-
+                has(Fixture::source, containsAll(appleAndBanana) and hasSize(equalTo(2))) and
+                    has(Fixture::destination, isEmpty))
         }
 
-
-        // Minutest will check that the following tests are run - note that it is one long test name
         willRun(
             "Moving Between Lists",
             "  Moving around items",
-            "    Given an empty destination, And a populated source," +
+            "    Given an empty destination, And a source populated with [apple, banana]," +
                 " When source moveInto destination," +
-                " Then…," +
-                " And…," +
+                " Then result is equal to true," +
+                " Then destination contains all [\"apple\", \"banana\"] and has size that is equal to 2," +
+                " And source is empty," +
                 " When moving back," +
-                " Then…," +
-                " And…"
+                " Then result is equal to true," +
+                " And fixture has source that contains all [\"apple\", \"banana\"] and has size that is equal to 2 and has destination that is empty"
         )
     }
-
 }
 
 private fun <T> containsAll(cmp: List<T>) = Matcher(Collection<T>::containsAll, cmp)
