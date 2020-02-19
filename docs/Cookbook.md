@@ -93,6 +93,8 @@ TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM
 
 ## Mocking Collaborators
 
+Even in Kotlin I'm a fan of [JMock](http://jmock.org/), especially when sweeted with [k-sera](https://github.com/dmcg/k-sera).
+
 TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
 ## Thinking about Fixtures and Contexts
