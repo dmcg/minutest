@@ -22,7 +22,7 @@ Here are some ways of using fixtures in Minutest.
 
 You don't have to have a fixture. The simplest tests can just have assertions.
 
-[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/NoFixtureExampleTests.kt>
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/fixtures/NoFixtureExampleTests.kt>
 ```kotlin
 class NoFixtureExampleTests : JUnit5Minutests {
 
@@ -47,7 +47,7 @@ class NoFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>[../core/src/test/kotlin/dev/minutest/examples/NoFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/NoFixtureExampleTests.kt)</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/fixtures/NoFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/fixtures/NoFixtureExampleTests.kt)</small>
 
 [end-insert]: <>
 
@@ -55,7 +55,7 @@ class NoFixtureExampleTests : JUnit5Minutests {
 
 It makes sense to have the subject under test as the fixture if it has the only state in the test.
 
-[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/SubjectUnderTestFixtureExampleTests.kt>
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/fixtures/SubjectUnderTestFixtureExampleTests.kt>
 ```kotlin
 class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
 
@@ -88,7 +88,7 @@ class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>[../core/src/test/kotlin/dev/minutest/examples/SubjectUnderTestFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/SubjectUnderTestFixtureExampleTests.kt)</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/fixtures/SubjectUnderTestFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/fixtures/SubjectUnderTestFixtureExampleTests.kt)</small>
 
 [end-insert]: <>
 
@@ -98,7 +98,7 @@ Even if the subject is immutable then you can [inspect it in after blocks](immut
 
 If you are testing static functions, making the arguments the fixture can be expressive. 
 
-[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/ArgumentsAsFixtureExampleTests.kt>
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/fixtures/ArgumentsAsFixtureExampleTests.kt>
 ```kotlin
 class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
 
@@ -132,7 +132,7 @@ class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>[../core/src/test/kotlin/dev/minutest/examples/ArgumentsAsFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ArgumentsAsFixtureExampleTests.kt)</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/fixtures/ArgumentsAsFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/fixtures/ArgumentsAsFixtureExampleTests.kt)</small>
 
 [end-insert]: <>
 
@@ -142,7 +142,7 @@ Again, where possible having the context name expressed in the fixture state, an
 
 When testing a system that mediates between other components, it makes sense to bring them all into the fixture - this gives the test isolation and repeatability that is the point of the fixture.
 
-[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt>
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/fixtures/CompoundFixtureExampleTests.kt>
 ```kotlin
 class ControlPanel(
     private val beep: () -> Unit,
@@ -206,7 +206,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>[../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt)</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/fixtures/CompoundFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/fixtures/CompoundFixtureExampleTests.kt)</small>
 
 [end-insert]: <>
 
@@ -214,7 +214,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
 
 Fixtures are inherited from the parent context, and may be replaced or modified by children.
 
-[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/ParentFixtureExampleTests.kt>
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/fixtures/ParentFixtureExampleTests.kt>
 ```kotlin
 class ParentFixtureExampleTests : JUnit5Minutests {
 
@@ -255,7 +255,7 @@ class ParentFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>[../core/src/test/kotlin/dev/minutest/examples/ParentFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/ParentFixtureExampleTests.kt)</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/fixtures/ParentFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/fixtures/ParentFixtureExampleTests.kt)</small>
 
 [end-insert]: <>
 

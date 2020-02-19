@@ -213,7 +213,7 @@ Minutest does not create a fresh instance of the test class for each test, inste
 
 Tests for cooperating components will typically have more state than just the thing we are testing. In this case make the fixture hold all the state. 
 
-[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt>
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/fixtures/CompoundFixtureExampleTests.kt>
 ```kotlin
 class ControlPanel(
     private val beep: () -> Unit,
@@ -277,7 +277,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>[../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/CompoundFixtureExampleTests.kt)</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/fixtures/CompoundFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/fixtures/CompoundFixtureExampleTests.kt)</small>
 
 [end-insert]: <>
 

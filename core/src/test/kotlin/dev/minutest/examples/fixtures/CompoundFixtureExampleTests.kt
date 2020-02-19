@@ -1,4 +1,4 @@
-package dev.minutest.examples
+package dev.minutest.examples.fixtures
 
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext

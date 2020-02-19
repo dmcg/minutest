@@ -1,4 +1,4 @@
-package dev.minutest.examples
+package dev.minutest.examples.fixtures
 
 import dev.minutest.ContextBuilder
 import dev.minutest.junit.JUnit5Minutests
@@ -33,7 +33,7 @@ class SelfDescribingFixtureExampleTests : JUnit5Minutests {
     }
 }
 
-fun <F> ContextBuilder<F>.context(f: F, builder: ContextBuilder<F>.() -> Unit) = context(f.toString()) {
+private fun <F> ContextBuilder<F>.context(f: F, builder: ContextBuilder<F>.() -> Unit) = context(f.toString()) {
     fixture { f }
     builder()
 }
