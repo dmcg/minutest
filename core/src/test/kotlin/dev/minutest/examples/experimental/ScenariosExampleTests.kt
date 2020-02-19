@@ -83,7 +83,7 @@ class ScenariosExampleTests : JUnit5Minutests {
                 assertTrue(result)
             }.And("it didn't beep") {
                 assertFalse(beeped)
-            }.And("missile was launched") {
+            }.And("rocket was launched") {
                 assertTrue(launched)
             }
         }
