@@ -464,10 +464,10 @@ class ScenariosExampleTests : JUnit5Minutests {
                 Fixture().apply {
                     controlPanel.turnKey()
                 }
-            }
-            Then("warning light is on") {
+            }.Then("warning light is on") {
                 assertTrue(controlPanel.warningLightOn)
             }
+
             When("pressing the button") {
                 controlPanel.pressButton()
             }.Then("result was true") { result ->
