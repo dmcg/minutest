@@ -395,7 +395,7 @@ class LinkedListTests : JUnit5Minutests {
 
 When your tests grow so that they need more structure, Minutest has extensions to support Given When Then blocks
  
-[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/experimental/ScenariosExampleTests.kt>
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/scenarios/ScenariosExampleTests.kt>
 ```kotlin
 class ControlPanel(
     private val beep: () -> Unit,
@@ -483,7 +483,7 @@ class ScenariosExampleTests : JUnit5Minutests {
     }
 }
 ```
-<small>[../core/src/test/kotlin/dev/minutest/examples/experimental/ScenariosExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/experimental/ScenariosExampleTests.kt)</small>
+<small>[../core/src/test/kotlin/dev/minutest/examples/scenarios/ScenariosExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/scenarios/ScenariosExampleTests.kt)</small>
 
 [end-insert]: <>
 

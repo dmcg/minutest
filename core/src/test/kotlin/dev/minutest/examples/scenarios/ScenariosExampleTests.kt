@@ -1,4 +1,4 @@
-package dev.minutest.examples.experimental
+package dev.minutest.examples.scenarios
 
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
