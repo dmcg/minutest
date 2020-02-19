@@ -8,7 +8,7 @@ The name originally came from a trawl of [words containing test](https://www.the
 
 However, when @duncanmcg read back his first message on the subject `I'd like to run my new test framework past you`, he realised that there was another pronunciation - 'My New Test', and that is the emphasis that seems to have stuck.
  
-## Writing tests
+## Writing Tests
 
 See the [readme](README.md)
 
@@ -20,6 +20,10 @@ See the [readme](README.md)
 
 There is experimental support for running tests with JUnit 4 - see 
 [JUnit4MinutestsTests](../core/src/test/kotlin/dev/minutest/junit/experimental/JUnit4MinutestsTests.kt)
+
+## Understanding Fixtures
+
+Understanding fixtures is key to Minutest - [read more](fixtures.md)
 
 ## Running Only Some Tests
 
