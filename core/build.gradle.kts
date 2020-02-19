@@ -35,6 +35,7 @@ dependencies {
     // for examples
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.3")
     testImplementation("com.natpryce:hamkrest:1.7.0.0")
+    testImplementation("com.oneeyedmen:k-sera:1.0.0")
 }
 
 tasks {

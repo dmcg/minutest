@@ -21,7 +21,7 @@ See the [readme](README.md)
 There is experimental support for running tests with JUnit 4 - see 
 [JUnit4MinutestsTests](../core/src/test/kotlin/dev/minutest/junit/experimental/JUnit4MinutestsTests.kt)
 
-## Understanding Fixtures
+## Understanding Fixtures and Contexts
 
 Understanding fixtures is key to Minutest - [read more](fixtures.md)
 
@@ -57,6 +57,10 @@ There is experimental support for [skipping some tests and only running others](
 
 JUnit Rules [mostly work](junit-rules.md).
 
+## Mocking Collaborators
+
+[JMock](../core/src/test/kotlin/dev/minutest/examples/experimental/JMockExampleTests.kt)
+
 ## Approval Tests with Minutest
 
 It's easy to integrate [Okeydoke](https://github.com/dmcg/okey-doke/) - see [Minutest Examples](https://github.com/dmcg/minutest-examples/blob/master/src/test/kotlin/approvals/ApprovalsTest2.kt)
@@ -73,31 +77,23 @@ Annotate the method with `dev.minutest.Tests`, Alt-Enter on the greyed-out metho
 
 ## Structuring Tests
 
-[Given When Then](../core/src/test/kotlin/dev/minutest/examples/experimental/ScenariosExampleTests.kt)
+[Given When Then](../core/src/test/kotlin/dev/minutest/examples/scenarios/ScenariosExampleTests.kt)
+
+## Reusing Test Code
+
+[Contracts](../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt)
 
 ## Getting Help
 
 The best bet for feedback and help is the [#minutest channel on the Kotlin Slack](https://kotlinlang.slack.com/messages/CCYE00YM6). See you there.
 
-## Reusing Test Code
 
-TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
 ## Managing Test Resources
 
 TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
 ## Tracing Test Execution
-
-TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
-
-## Mocking Collaborators
-
-Even in Kotlin I'm a fan of [JMock](http://jmock.org/), especially when sweeted with [k-sera](https://github.com/dmcg/k-sera).
-
-TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
-
-## Thinking about Fixtures and Contexts
 
 TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
