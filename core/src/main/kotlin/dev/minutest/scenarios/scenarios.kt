@@ -18,30 +18,30 @@ class ScenarioBuilder<F>(
 
     fun GivenFixture(description: String, factory: (Unit).() -> F): Givens<F, F> {
         val next = Givens<F, F>(this)
-        lateinit var gah: GivenStep<F>
+        lateinit var cantAccessThisInCtor: GivenStep<F>
         givenSteps.add(
             GivenStep<F>("Given $description") {
                 fixture {
-                    this@ScenarioBuilder.tryThrowingScenarioFailedException(gah) {
+                    this@ScenarioBuilder.tryThrowingScenarioFailedException(cantAccessThisInCtor) {
                         factory().also { next.result = it }
                     }
                 }
-            }.also { gah = it }
+            }.also { cantAccessThisInCtor = it }
         )
         return next
     }
 
     fun <R> Given(description: String, prefix: String = "Given", operation: F.() -> R): Givens<F, R> {
         val next = Givens<F, R>(this)
-        lateinit var gah: GivenStep<F>
+        lateinit var cantAccessThisInCtor: GivenStep<F>
         givenSteps.add(
             GivenStep<F>("$prefix $description") {
                 modifyFixture {
-                    this@ScenarioBuilder.tryThrowingScenarioFailedException(gah) {
+                    this@ScenarioBuilder.tryThrowingScenarioFailedException(cantAccessThisInCtor) {
                         operation().also { next.result = it }
                     }
                 }
-            }.also { gah = it }
+            }.also { cantAccessThisInCtor = it }
         )
         return next
     }
