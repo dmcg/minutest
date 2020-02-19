@@ -16,15 +16,17 @@ class ControlPanel(
         keyTurned = true
     }
 
-    fun pressButton(): Boolean {
-        return if (keyTurned) {
-            launchRocket()
-            true
-        } else {
-            beep()
-            false
+    fun pressButton(): Boolean =
+        when {
+            keyTurned -> {
+                launchRocket()
+                true
+            }
+            else -> {
+                beep()
+                false
+            }
         }
-    }
 
     val warningLightOn get() = keyTurned
 }
