@@ -2,54 +2,44 @@
 
 package dev.minutest.scenarios
 
-class Givens<F, R>(private val scenarioBuilder: ScenarioBuilder<F>) {
-    private val resultHolder = mutableListOf<R>()
+class Givens<F, R>(
+    private val scenarioBuilder: ScenarioBuilder<F>,
+    private val resultHolder: ResultHolder<R>
+) {
 
-    internal var result
-        get() = resultHolder.first()
-        set(value) {
-            resultHolder.add(value)
-        }
-
-    fun <R2> And(description: String, operation: F.() -> R2): Givens<F, R2> {
-        return scenarioBuilder.Given(description, "And", operation)
-    }
+    fun <R2> And(description: String, operation: F.() -> R2): Givens<F, R2> =
+        scenarioBuilder.Given(description, "And", operation)
 
     fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): ResultingThens<F, R> {
         scenarioBuilder.addStep(
             TestStep<F, Unit>("$prefix $description", StepType.THEN) {
-                this.f(result)
+                this.f(resultHolder.value)
             }
         )
         return ResultingThens(scenarioBuilder, resultHolder)
     }
 }
 
-class Whens<F, R>(private val scenarioBuilder: ScenarioBuilder<F>) {
-    private val resultHolder = mutableListOf<R>()
-
-    internal var result
-        get() = resultHolder.first()
-        set(value) {
-            resultHolder.add(value)
-        }
-
+class Whens<F, R>(
+    private val scenarioBuilder: ScenarioBuilder<F>,
+    private val resultHolder: ResultHolder<R>
+) {
     fun <R2> And(description: String, f: F.() -> R2): Whens<F, R2> {
-        val next = Whens<F, R2>(scenarioBuilder)
+        val resultHolder = ResultHolder<R2>()
         scenarioBuilder.addStep(
             TestStep<F, R2>("And $description", StepType.WHEN) {
                 f().also {
-                    next.result = it
+                    resultHolder.value = it
                 }
             }
         )
-        return next
+        return Whens(scenarioBuilder, resultHolder)
     }
 
     fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): ResultingThens<F, R> {
         scenarioBuilder.addStep(
             TestStep<F, Unit>("$prefix $description", StepType.THEN) {
-                this.f(result)
+                this.f(resultHolder.value)
             }
         )
         return ResultingThens(scenarioBuilder, resultHolder)
@@ -58,18 +48,12 @@ class Whens<F, R>(private val scenarioBuilder: ScenarioBuilder<F>) {
 
 class ResultingThens<F, R>(
     private val scenarioBuilder: ScenarioBuilder<F>,
-    private val resultHolder: MutableList<R> = mutableListOf()
+    private val resultHolder: ResultHolder<R>
 ) {
-    internal var result
-        get() = resultHolder.first()
-        set(value) {
-            resultHolder.add(value)
-        }
-
     fun Then(description: String, prefix: String = "Then", f: F.(previousResult: R) -> Unit): ResultingThens<F, R> {
         scenarioBuilder.addStep(
             TestStep<F, Unit>("$prefix $description", StepType.THEN) {
-                this.f(result)
+                this.f(resultHolder.value)
             }
         )
         return this

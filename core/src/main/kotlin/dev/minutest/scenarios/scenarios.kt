@@ -17,45 +17,45 @@ class ScenarioBuilder<F>(
     private val testSteps: MutableList<TestStep<F, *>> = mutableListOf()
 
     fun GivenFixture(description: String, factory: (Unit).() -> F): Givens<F, F> {
-        val next = Givens<F, F>(this)
+        val nextResult = ResultHolder<F>()
         lateinit var cantAccessThisInCtor: GivenStep<F>
         givenSteps.add(
             GivenStep<F>("Given $description") {
                 fixture {
                     this@ScenarioBuilder.tryThrowingScenarioFailedException(cantAccessThisInCtor) {
-                        factory().also { next.result = it }
+                        factory().also { nextResult.value = it }
                     }
                 }
             }.also { cantAccessThisInCtor = it }
         )
-        return next
+        return Givens(this, nextResult)
     }
 
     fun <R> Given(description: String, prefix: String = "Given", operation: F.() -> R): Givens<F, R> {
-        val next = Givens<F, R>(this)
+        val nextResult = ResultHolder<R>()
         lateinit var cantAccessThisInCtor: GivenStep<F>
         givenSteps.add(
             GivenStep<F>("$prefix $description") {
                 modifyFixture {
                     this@ScenarioBuilder.tryThrowingScenarioFailedException(cantAccessThisInCtor) {
-                        operation().also { next.result = it }
+                        operation().also { nextResult.value = it }
                     }
                 }
             }.also { cantAccessThisInCtor = it }
         )
-        return next
+        return Givens(this, nextResult)
     }
 
     fun <R> When(description: String, f: F.() -> R): Whens<F, R> {
-        val next = Whens<F, R>(this)
+        val nextResult = ResultHolder<R>()
         addStep(
             TestStep<F, R>("When $description", WHEN) {
                 f().also {
-                    next.result = it
+                    nextResult.value = it
                 }
             }
         )
-        return next
+        return Whens(this, nextResult)
     }
 
     fun Then(description: String, f: F.() -> Unit): Thens<F> {
