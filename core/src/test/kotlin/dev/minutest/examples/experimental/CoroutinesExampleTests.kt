@@ -40,6 +40,7 @@ suspend fun String.slowPlus(other: String): String = (this + other).also {
     delay(10_000)
 }
 
+@ExperimentalCoroutinesApi
 private fun <F> ContextBuilder<F>.coTest(
     name: String,
     f: suspend F.(testDescriptor: TestDescriptor, testCoroutineScope: TestCoroutineScope) -> Unit
