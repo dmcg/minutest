@@ -146,7 +146,7 @@ When testing a system that mediates between other components, it makes sense to 
 ```kotlin
 class ControlPanel(
     private val beep: () -> Unit,
-    private val launchMissile: () -> Unit
+    private val launchRocket: () -> Unit
 ) {
     private var keyTurned: Boolean = false
 
@@ -156,11 +156,11 @@ class ControlPanel(
 
     fun pressButton() {
         if (keyTurned)
-            launchMissile()
+            launchRocket()
         else
             beep()
     }
-    val warningLight get() = keyTurned
+    val warningLightOn get() = keyTurned
 }
 
 class CompoundFixtureExampleTests : JUnit5Minutests {
@@ -168,11 +168,11 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     // The fixture consists of all the state affected by tests
     class Fixture() {
         var beeped = false
-        var missileLaunched = false
+        var launched = false
 
         val controlPanel = ControlPanel(
             beep = { beeped = true },
-            launchMissile = { missileLaunched = true }
+            launchRocket = { launched = true }
         )
     }
 
@@ -180,13 +180,13 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
         fixture { Fixture() }
 
         context("key not turned") {
-            test("light off") {
-                assertFalse(controlPanel.warningLight)
+            test("light is off") {
+                assertFalse(controlPanel.warningLightOn)
             }
-            test("cannot launch") {
+            test("cannot launch when pressing button") {
                 controlPanel.pressButton()
                 assertTrue(beeped)
-                assertFalse(missileLaunched)
+                assertFalse(launched)
             }
         }
 
@@ -194,13 +194,13 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
             modifyFixture {
                 controlPanel.turnKey()
             }
-            test("light on") {
-                assertTrue(controlPanel.warningLight)
+            test("light is on") {
+                assertTrue(controlPanel.warningLightOn)
             }
-            test("will launch") {
+            test("launches when pressing button") {
                 controlPanel.pressButton()
                 assertFalse(beeped)
-                assertTrue(missileLaunched)
+                assertTrue(launched)
             }
         }
     }

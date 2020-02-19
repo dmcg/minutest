@@ -6,14 +6,19 @@ import dev.minutest.scenarios.Scenario
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
-internal class ControlPanel(
-    val keySwitch: () -> Boolean,
-    val beep: () -> Unit,
-    val launchMissile: () -> Unit
+class ControlPanel(
+    private val beep: () -> Unit,
+    private val launchRocket: () -> Unit
 ) {
+    private var keyTurned: Boolean = false
+
+    fun turnKey() {
+        keyTurned = true
+    }
+
     fun pressButton(): Boolean {
-        return if (keySwitch()) {
-            launchMissile()
+        return if (keyTurned) {
+            launchRocket()
             true
         } else {
             beep()
@@ -21,60 +26,58 @@ internal class ControlPanel(
         }
     }
 
-    val warningLight get() = keySwitch()
+    val warningLightOn get() = keyTurned
 }
 
 class MutableScenariosExampleTests : JUnit5Minutests {
 
-    internal class Fixture() {
-        // Rather than introduce a mocking framework, we can work with
-        // functions and mutable state.
-        var keySwitchOn = false
+    // The fixture consists of all the state affected by tests
+    class Fixture() {
         var beeped = false
-        var missileLaunched = false
+        var launched = false
 
         val controlPanel = ControlPanel(
-            keySwitch = { keySwitchOn },
             beep = { beeped = true },
-            launchMissile = { missileLaunched = true }
+            launchRocket = { launched = true }
         )
     }
 
     fun tests() = rootContext<Fixture> {
 
-        fixture { Fixture() }
-
         Scenario("Cannot launch without key switch") {
-            Given("key not turned") {
-                assertFalse(keySwitchOn)
-            }
-            Then("warning light is off") {
-                assertFalse(controlPanel.warningLight)
+            GivenFixture("key not turned") {
+                Fixture()
+            }.Then("warning light is off") {
+                assertFalse(controlPanel.warningLightOn)
             }
             When("pressing the button") {
                 controlPanel.pressButton()
             }.Then("result was false") { result ->
                 assertFalse(result)
+            }.And("it beeped") {
                 assertTrue(beeped)
-            }.And("missile was not launched") {
-                assertFalse(missileLaunched)
+            }.And("rocket was not launched") {
+                assertFalse(launched)
             }
         }
 
         Scenario("Will launch with key switch") {
-            Given("key turned") {
-                keySwitchOn = true
+            GivenFixture("key turned") {
+                Fixture().apply {
+                    controlPanel.turnKey()
+                }
             }
             Then("warning light is on") {
-                assertTrue(controlPanel.warningLight)
+                assertTrue(controlPanel.warningLightOn)
             }
             When("pressing the button") {
                 controlPanel.pressButton()
             }.Then("result was true") { result ->
                 assertTrue(result)
+            }.And("it didn't beep") {
                 assertFalse(beeped)
             }.And("missile was launched") {
-                assertTrue(missileLaunched)
+                assertTrue(launched)
             }
         }
     }
