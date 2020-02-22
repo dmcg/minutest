@@ -16,11 +16,11 @@ fun <F: AutoCloseable> ContextBuilder<F>.closeableFixture(
 /**
  * Define a fixture that needs a disposable dependency.
  */
-fun <F, D : Any> ContextBuilder<F>.lifecycleFixture(
+fun <F, D : Any> ContextBuilder<F>.dependentFixture(
     dependencyBuilder: () -> D,
     dependencyDisposer: (D) -> Unit,
     factory: (Unit).(D) -> F
-) = lifecycleFixture(
+) = dependentFixture(
     dependencyBuilder = { dependencyBuilder() },
     dependencyDisposer = { dependency, _ -> dependencyDisposer(dependency) },
     factory = { dependency, _ -> factory(dependency) }
@@ -29,7 +29,7 @@ fun <F, D : Any> ContextBuilder<F>.lifecycleFixture(
 /**
  * Define a fixture that needs a disposable dependency (pedantic version).
  */
-fun <F, D : Any> ContextBuilder<F>.lifecycleFixture(
+fun <F, D : Any> ContextBuilder<F>.dependentFixture(
     dependencyBuilder: (TestDescriptor) -> D,
     dependencyDisposer: (D, TestDescriptor) -> Unit,
     factory: (Unit).(D, TestDescriptor) -> F

@@ -5,8 +5,8 @@ import com.oneeyedmen.kSera.invoke
 import com.oneeyedmen.kSera.mock
 import com.oneeyedmen.kSera.returnValue
 import dev.minutest.ContextBuilder
+import dev.minutest.dependentFixture
 import dev.minutest.junit.JUnit5Minutests
-import dev.minutest.lifecycleFixture
 import dev.minutest.rootContext
 import org.jmock.Mockery
 
@@ -93,7 +93,7 @@ class JMockExampleTests : JUnit5Minutests {
 
 private fun <F> ContextBuilder<F>.jmockFixture(
     factory: (Unit).(mockery: Mockery) -> F
-) = lifecycleFixture(
+) = dependentFixture(
     dependencyBuilder = ::Mockery,
     dependencyDisposer = Mockery::assertIsSatisfied,
     factory = factory

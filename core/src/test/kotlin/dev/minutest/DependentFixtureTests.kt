@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 
-class LifecycleFixtureTests : JUnit5Minutests {
+class DependentFixtureTests : JUnit5Minutests {
 
     val log = mutableListOf<String>()
 
@@ -25,7 +25,7 @@ class LifecycleFixtureTests : JUnit5Minutests {
 
     fun tests() = rootContext<Fixture> {
 
-        lifecycleFixture(
+        dependentFixture(
             dependencyBuilder = {
                 log += "in dependency builder"
                 ByteArrayOutputStream()
@@ -44,7 +44,6 @@ class LifecycleFixtureTests : JUnit5Minutests {
             log += "in test"
             dependency.write(42)
         }
-
 
         log += "in builder"
     }
