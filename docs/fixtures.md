@@ -312,6 +312,43 @@ class DerivedContextExampleTests : JUnit5Minutests {
 
 [end-insert]: <>
 
+## Fixture Lifecyle
+
+If a fixture has resources that should be disposed of, you can make it `AutoCloseable` and use `closeableFixture`.
+
+[start-insert]: <../core/src/test/kotlin/dev/minutest/examples/CloseableFixtureExampleTests.kt>
+```kotlin
+class CloseableFixtureExampleTests : JUnit5Minutests {
+
+    class Fixture(file: File): Closeable {
+
+        val writer = FileWriter(file)
+
+        override fun close() = writer.close()
+    }
+
+    fun tests() = rootContext<Fixture> {
+
+        closeableFixture { testDescriptor ->
+            Fixture(File.createTempFile(testDescriptor.name, ".tmp"))
+        }
+
+        test("can write") {
+            writer.write("banana")
+        }
+
+        after {
+            assertThrows(IOException::class.java) {
+                writer.write("should be closed")
+            }
+        }
+    }
+}
+```
+<small>[../core/src/test/kotlin/dev/minutest/examples/CloseableFixtureExampleTests.kt](../core/src/test/kotlin/dev/minutest/examples/CloseableFixtureExampleTests.kt)</small>
+
+[end-insert]: <>
+
 ## More Reading
 
 [My New Test Model](http://oneeyedmen.com/my-new-test-model.html) discusses fixtures and contexts in more detail.

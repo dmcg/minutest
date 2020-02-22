@@ -83,15 +83,15 @@ Annotate the method with `dev.minutest.Tests`, Alt-Enter on the greyed-out metho
 
 [Contracts](../core/src/test/kotlin/dev/minutest/examples/ContractsExampleTests.kt)
 
+## Managing Test Resources
+
+You can use `before`, `after` and `afterAll` blocks in a context to manage resources.
+
+For simple cases there is a [`closeableFixture` block](../core/src/test/kotlin/dev/minutest/examples/CloseableFixtureExampleTests.kt) 
+
 ## Getting Help
 
 The best bet for feedback and help is the [#minutest channel on the Kotlin Slack](https://kotlinlang.slack.com/messages/CCYE00YM6). See you there.
-
-
-
-## Managing Test Resources
-
-TODO - in the meantime [just ask](https://kotlinlang.slack.com/messages/CCYE00YM6).
 
 ## Tracing Test Execution
 

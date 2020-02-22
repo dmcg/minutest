@@ -30,7 +30,7 @@ class LifecycleFixtureTests : JUnit5Minutests {
                 log += "in dependency builder"
                 ByteArrayOutputStream()
             },
-            dependencyCloser = { os, _ ->
+            dependencyDisposer = { os, _ ->
                 log += "in dependency closer"
                 os.close()
             },

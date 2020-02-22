@@ -1,24 +1,37 @@
 package dev.minutest
 
 /**
- * Inject a dependency into a fixture and close it later.
+ * Define a fixture that will automatically be closed when the context is done with.
  */
-fun <PF, F, D : Any> TestContextBuilder<PF, F>.lifecycleFixture(
+fun <F: AutoCloseable> ContextBuilder<F>.closeableFixture(
+    factory: (Unit).(testDescriptor: TestDescriptor) -> F
+) = fixture { testDescriptor ->
+    factory(testDescriptor)
+}.also {
+    after {
+        fixture.close()
+    }
+}
+
+/**
+ * Define a fixture that needs a disposable dependency.
+ */
+fun <F, D : Any> ContextBuilder<F>.lifecycleFixture(
     dependencyBuilder: () -> D,
-    dependencyCloser: (D) -> Unit,
+    dependencyDisposer: (D) -> Unit,
     factory: (Unit).(D) -> F
 ) = lifecycleFixture(
     dependencyBuilder = { dependencyBuilder() },
-    dependencyCloser = { dependency, _ -> dependencyCloser(dependency) },
+    dependencyDisposer = { dependency, _ -> dependencyDisposer(dependency) },
     factory = { dependency, _ -> factory(dependency) }
 )
 
 /**
- * Inject a dependency into a fixture and close it later (pedantic version).
+ * Define a fixture that needs a disposable dependency (pedantic version).
  */
-fun <PF, F, D : Any> TestContextBuilder<PF, F>.lifecycleFixture(
+fun <F, D : Any> ContextBuilder<F>.lifecycleFixture(
     dependencyBuilder: (TestDescriptor) -> D,
-    dependencyCloser: (D, TestDescriptor) -> Unit,
+    dependencyDisposer: (D, TestDescriptor) -> Unit,
     factory: (Unit).(D, TestDescriptor) -> F
 ) {
     lateinit var dependency: D // lateinit as we want to build dependency as late as possible but still see it in the after
@@ -27,6 +40,6 @@ fun <PF, F, D : Any> TestContextBuilder<PF, F>.lifecycleFixture(
         factory(dependency, testDescriptor)
     }
     after { testDescriptor ->
-        dependencyCloser(dependency, testDescriptor)
+        dependencyDisposer(dependency, testDescriptor)
     }
 }
