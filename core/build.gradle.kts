@@ -49,6 +49,9 @@ tasks {
         useJUnitPlatform {
             includeEngines("junit-jupiter", "junit-vintage")
         }
+        testLogging {
+            events("skipped", "failed", "passed")
+        }
     }
 
     create<Jar>("sourceJar") {
