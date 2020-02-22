@@ -6,6 +6,7 @@ import com.oneeyedmen.kSera.mock
 import com.oneeyedmen.kSera.returnValue
 import dev.minutest.TestContextBuilder
 import dev.minutest.junit.JUnit5Minutests
+import dev.minutest.lifecycleFixture
 import dev.minutest.rootContext
 import org.jmock.Mockery
 
@@ -92,14 +93,8 @@ class JMockExampleTests : JUnit5Minutests {
 
 private fun <PF, F> TestContextBuilder<PF, F>.jmockFixture(
     factory: (Unit).(mockery: Mockery) -> F
-) {
-    // This messing around prevents accidentally sharing the mockery between contexts
-    lateinit var mockery: Mockery
-    fixture {
-        mockery = Mockery()
-        factory(mockery)
-    }
-    after {
-        mockery.assertIsSatisfied()
-    }
-}
+) = lifecycleFixture(
+    dependencyBuilder = ::Mockery,
+    dependencyCloser = Mockery::assertIsSatisfied,
+    factory = factory
+)
