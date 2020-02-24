@@ -48,3 +48,20 @@ fun expandCodeBlock(filename: String, content: List<String>): String = (
 
 //language=RegExp
 val expandedCodeBlockFinder = """^\[start-insert\]: <(.*?)>(.*?)^\[end-insert]:.*?$""".toRegex(setOf(DOT_MATCHES_ALL, MULTILINE))
+
+
+/*
+This might be better - https://stackoverflow.com/questions/4823468/comments-in-markdown
+
+val expandedCodeBlockFinder = """^(\[start-insert]: <> \((.*?)\)).*?^(\[end-insert]:.*?$)""".toRegex(setOf(DOT_MATCHES_ALL, MULTILINE))
+
+fun expandCodeBlocks(text: String, lookup: (String) -> Any): String =
+expandedCodeBlockFinder.replace(text) { matchResult ->
+val startLine = matchResult.groups[1]!!.value
+val name = matchResult.groups[2]!!.value.trim()
+val endLine = matchResult.groups[3]!!.value
+(startLine + "\n" +
+lookup(name).asCodeBlock() + "\n" +
+endLine
+}
+ /*
