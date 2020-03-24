@@ -63,7 +63,11 @@ JUnit Rules [mostly work](junit-rules.md).
 
 ## Approval Tests with Minutest
 
-It's easy to integrate [Okeydoke](https://github.com/dmcg/okey-doke/) - see [Minutest Examples](https://github.com/dmcg/minutest-examples/blob/master/src/test/kotlin/approvals/ApprovalsTest2.kt)
+It's easy to integrate [Okeydoke](https://github.com/dmcg/okey-doke/) - see [Minutest Examples](https://github.com/dmcg/minutest-examples/blob/master/src/test/kotlin/spring/SpringTests.kt)
+
+## Spring Integration 
+
+You can easily populate a fixture with the same annotations you would use in JUnit - see [Minutest Examples](https://github.com/dmcg/minutest-examples/blob/master/src/spring/SpringTests.kt)
 
 ## Stopping IntelliJ Showing Test Methods As Unused
 
