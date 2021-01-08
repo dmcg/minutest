@@ -16,12 +16,18 @@ fun ContextBuilder<Unit>.runnersExample() {
             throw RuntimeException("fail in inner")
         }
     }
-
 }
 
-fun expectedRunnersLog(engineName: String, testName: String, rootName: String): List<String> = expected
-    .map {
-        it.replace("ENGINE_NAME", engineName).replace("TEST_NAME", testName).replace("ROOT_NAME", rootName)
+fun expectedRunnersLog(
+    engineName: String,
+    testName: String,
+    rootName: String
+): List<String> =
+    expected.map {
+        it
+            .replace("ENGINE_NAME", engineName)
+            .replace("TEST_NAME", testName)
+            .replace("ROOT_NAME", rootName)
     }
 
 private val expected = listOf(
