@@ -57,24 +57,23 @@ tasks {
     }
 
     create<Jar>("sourceJar") {
-        classifier = "sources"
+        archiveClassifier.set("sources")
         from(sourceSets["main"].allSource)
     }
 
     withType<Jar> {
-        baseName = "minutest"
+        archiveBaseName.set("minutest")
     }
 }
 
 project.sourceSets {
-    create("samples") {
+    val samples = create("samples") {
         java.srcDir(file("src/samples/kotlin"))
         compileClasspath += get("main").output + configurations.testRuntimeClasspath
-        runtimeClasspath += output + compileClasspath
     }
     get("test").apply {
-        compileClasspath += get("samples").output
-        runtimeClasspath += get("samples").output
+        compileClasspath += samples.output
+        runtimeClasspath += samples.output
     }
 }
 
