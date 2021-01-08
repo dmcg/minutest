@@ -14,21 +14,23 @@ plugins {
     id("com.jfrog.bintray") version "1.8.4"
 }
 
+val junitVersion = "5.7.0"
+
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
-    implementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
+    implementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     implementation("io.github.classgraph:classgraph:4.8.28")
 
     // alternative runners - provide your own dependencies
-    compileOnly("org.junit.vintage:junit-vintage-engine:5.6.0")
+    compileOnly("org.junit.vintage:junit-vintage-engine:$junitVersion")
     compileOnly("junit:junit:4.12")
 
     testImplementation(kotlin("test"))
-    testImplementation("org.junit.vintage:junit-vintage-engine:5.6.0")
+    testImplementation("org.junit.vintage:junit-vintage-engine:$junitVersion")
     testImplementation("junit:junit:4.12")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.6.0")
-    testImplementation("org.junit.platform:junit-platform-launcher:1.6.0") {
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    testImplementation("org.junit.platform:junit-platform-launcher:1.7.0") {
         because("enables running in IntelliJ using JUnit runner")
     }
 
