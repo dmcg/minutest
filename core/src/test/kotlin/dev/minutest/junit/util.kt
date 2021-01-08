@@ -7,9 +7,10 @@ fun checkRunnersExampleLog(
     log: List<String>,
     engineName: String,
     testName: String,
-    rootName: String
+    rootName: String,
+    abortRatherThanSkip: Boolean = false
 ) =
     assertLogged(
         log,
-        *expectedRunnersLog(engineName, testName, rootName).toTypedArray()
+        *expectedRunnersLog(engineName, testName, rootName, abortRatherThanSkip).toTypedArray()
     )

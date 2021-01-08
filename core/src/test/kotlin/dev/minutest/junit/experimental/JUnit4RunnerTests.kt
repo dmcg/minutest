@@ -14,6 +14,8 @@ class JUnit4RunnerTests {
             runTestsInClass<JUnit4Sample>(VintageTestDescriptor.ENGINE_ID),
             "JUnit Vintage",
             "JUnit4Sample",
-            "root")
+            "root",
+            abortRatherThanSkip = false
+        )
     }
 }

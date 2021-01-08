@@ -12,7 +12,9 @@ class JUnit5RunnerTests {
             runTestsInClass<JUnit5Sample>("junit-jupiter"),
             "JUnit Jupiter",
             "JUnit5Sample",
-            "minutests()")
+            "minutests()",
+            abortRatherThanSkip = true
+        )
     }
 }
 
