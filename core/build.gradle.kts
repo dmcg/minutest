@@ -48,7 +48,7 @@ tasks {
 
     withType<Test> {
         useJUnitPlatform {
-            includeEngines("junit-jupiter", "junit-vintage")
+            includeEngines("junit-jupiter", "junit-vintage", "minutest")
         }
         testLogging {
             events("skipped", "failed", "passed")
