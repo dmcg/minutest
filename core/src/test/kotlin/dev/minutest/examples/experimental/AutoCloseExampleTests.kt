@@ -20,12 +20,12 @@ class AutoCloseExampleTests : JUnit5Minutests {
 
         test("test 1") {
             // sharedResource is not created until here
-            sharedResource.appendln("in test 1")
+            sharedResource.appendLine("in test 1")
         }
 
         test("test 2") {
             // this is the same instance
-            sharedResource.appendln("in test 2")
+            sharedResource.appendLine("in test 2")
         }
 
         afterAll {

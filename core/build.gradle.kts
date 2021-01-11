@@ -2,13 +2,12 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
-
 repositories {
     mavenCentral()
 }
 
 plugins {
-    kotlin("jvm")
+    kotlin("jvm") // NB version is in parent build
     maven
     `maven-publish`
     id("com.jfrog.bintray") version "1.8.4"

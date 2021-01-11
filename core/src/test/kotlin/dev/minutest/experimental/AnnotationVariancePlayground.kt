@@ -79,7 +79,10 @@ private fun scope() {
     val list4: List<NewAnnotation<Int>> = PlainAnnotation<Int>() + PlainAnnotation<Any?>()
     val list5: List<NewAnnotation<Int>> = PlainAnnotation<Any?>() + PlainAnnotation<Any?>()
     val list6: List<NewAnnotation<Int>> = PlainAnnotation<Any?>() + PlainAnnotation<Int>()
-    val list7: List<NewAnnotation<*>> = PlainAnnotation<String>() + PlainAnnotation<Int>()
+
+// list7 used to compile under 1.3.7, but doesn't under 1.4.21
+//    val list7: List<NewAnnotation<*>> = PlainAnnotation<String>() + PlainAnnotation<Int>()
+
 //    val list8: List<NewAnnotation<Any?>> = PlainAnnotation<String>() + PlainAnnotation<Int>()
 
     val list9: List<NewAnnotation<String>> = PlainAnnotation<String>() + PlainAnnotation<String>() + PlainAnnotation<String>()
