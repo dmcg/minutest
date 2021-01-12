@@ -18,7 +18,11 @@ internal data class PreparedContext<PF, F> (
     private val fixtureFactory: (PF, TestDescriptor) -> F
 ) : Context<PF, F>() {
 
-    override fun runTest(testlet: Testlet<F>, parentFixture: PF, testDescriptor: TestDescriptor): F {
+    override fun runTest(
+        testlet: Testlet<F>,
+        parentFixture: PF,
+        testDescriptor: TestDescriptor
+    ): F {
         val fixture = fixtureFactory(parentFixture, testDescriptor)
         return applyBeforesTo(fixture, testDescriptor)
             .tryMap { f -> testlet(f, testDescriptor) }
