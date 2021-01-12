@@ -18,7 +18,7 @@ internal fun Any.rootContextFromMethods(): Node<Unit> {
             "root",
             contextBuilderMethods.map { method ->
                 {
-                    method(this).withName(method.name)
+                    method.invoke(this).withName(method.name)
                 }
             })
     }
