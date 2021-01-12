@@ -50,6 +50,10 @@ internal data class PreparedContext<PF, F> (
         }
 }
 
+
+private  inline fun <F> FixtureValue<F>.flatMap(f: (F) -> FixtureValue<F>): FixtureValue<F> =
+    if (error != null) this else f(this.value)
+
 private fun <F> FixtureValue<F>.orThrow(): F {
     if (error != null) {
         throw error
