@@ -17,7 +17,7 @@ sealed class Node<F> {
  * [PF] is the parent fixture type, which will be supplied to the context.
  * [F] is the fixture type of the children - the context will supply this to them.
  */
-abstract class Context<PF, F> : Node<PF>(), AutoCloseable {
+abstract class Context<PF, F> : Node<PF>() {
     abstract val children: List<Node<F>>
 
     /**
@@ -29,6 +29,8 @@ abstract class Context<PF, F> : Node<PF>(), AutoCloseable {
      * Return a copy of this node with children transformed.
      */
     internal abstract fun withTransformedChildren(transform: NodeTransform<F>): Context<PF, F>
+
+    abstract fun close()
 }
 
 /**
