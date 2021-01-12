@@ -3,7 +3,8 @@ package dev.minutest.internal
 import dev.minutest.*
 
 /**
- * The runtime representation of a context.
+ * Once the DSL has been evaluated, its contexts are converted to a [PreparedContext]
+ * ready to be run.
  */
 internal data class PreparedContext<PF, F> (
     override val name: String,
