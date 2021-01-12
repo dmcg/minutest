@@ -78,7 +78,8 @@ abstract class TestContextBuilder<PF, F> {
     abstract fun before_(transform: F.(TestDescriptor) -> F)
 
     /**
-     * Apply an operation to the current fixture (accessible as 'this') after running tests.
+     * Apply an operation to the last known value of the current fixture
+     * (accessible as 'this') after running tests.
      *
      * Will be invoked even if tests or 'befores' throw exceptions.
      *
@@ -86,6 +87,10 @@ abstract class TestContextBuilder<PF, F> {
      */
     abstract fun after(operation: F.(TestDescriptor) -> Unit)
 
+    /**
+     * Version of [after] that gives access to the last known value of the fixture and
+     * any exception thrown by previous operations as a [FixtureValue].
+     */
     abstract fun after2(operation: FixtureValue<F>.(TestDescriptor) -> Unit)
 
     /**
