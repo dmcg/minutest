@@ -43,7 +43,8 @@ fun testFactoryFor(root: RootContextBuilder): Stream<out DynamicNode> =
  *
  * @see [testFactoryFor(RootContextBuilder)]
  */
-fun RootContextBuilder.toTestFactory() = testFactoryFor(this)
+fun RootContextBuilder.toTestFactory(): Stream<out DynamicNode> =
+    testFactoryFor(this)
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
