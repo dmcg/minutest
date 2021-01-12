@@ -17,7 +17,7 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Define a child-context, inheriting the fixture from the parent.
      */
-    abstract fun context(name: String, block: TestContextBuilder<F, F>.() -> Unit): NodeBuilder<F>
+    abstract fun context(name: String, block: TestContextBuilder<F, F>.() -> Unit): Annotatable<F>
 
     /**
      * Define a child-context with a different fixture type.
@@ -26,7 +26,7 @@ abstract class TestContextBuilder<PF, F> {
      * to the child fixture type.
      */
     inline fun <reified G> derivedContext(name: String, noinline block: TestContextBuilder<F, G>.() -> Unit)
-        : NodeBuilder<F> = internalDerivedContext(name = name, newFixtureType = askType<G>(), block = block)
+        : Annotatable<F> = internalDerivedContext(name = name, newFixtureType = askType<G>(), block = block)
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
@@ -51,7 +51,7 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Define a test on the current fixture (accessible as 'this').
      */
-    fun test(name: String, f: F.(testDescriptor: TestDescriptor) -> Unit): NodeBuilder<F> =
+    fun test(name: String, f: F.(testDescriptor: TestDescriptor) -> Unit): Annotatable<F> =
         test_(name) { testDescriptor ->
             this.apply {
                 f(testDescriptor)
@@ -63,7 +63,7 @@ abstract class TestContextBuilder<PF, F> {
      * a new fixture to be processed by 'afters'.
      */
     @Suppress("FunctionName")
-    abstract fun test_(name: String, f: F.(testDescriptor: TestDescriptor) -> F): NodeBuilder<F>
+    abstract fun test_(name: String, f: F.(testDescriptor: TestDescriptor) -> F): Annotatable<F>
 
     /**
      * Apply an operation to the current fixture (accessible as the receiver 'this') before
@@ -115,6 +115,6 @@ abstract class TestContextBuilder<PF, F> {
         name: String,
         newFixtureType: FixtureType,
         block: TestContextBuilder<F, G>.() -> Unit
-    ): NodeBuilder<F>
+    ): Annotatable<F>
 
 }

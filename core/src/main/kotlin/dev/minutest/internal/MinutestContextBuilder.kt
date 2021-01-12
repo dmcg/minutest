@@ -57,7 +57,10 @@ internal data class MinutestContextBuilder<PF, F>(
         afters.add(operation)
     }
 
-    override fun test_(name: String, f: F.(TestDescriptor) -> F): NodeBuilder<F> = addChild(TestBuilder(name, f))
+    override fun test_(
+        name: String,
+        f: F.(TestDescriptor) -> F
+    ): Annotatable<F> = addChild(TestBuilder(name, f))
 
     private fun NodeBuilder<F>.withMarkerForBlockInvocation(): NodeBuilder<F> {
         return apply { sourceReferenceForBlockInvocation()?.let { addMarker(it) } }
@@ -77,7 +80,7 @@ internal data class MinutestContextBuilder<PF, F>(
         name: String,
         newFixtureType: FixtureType,
         block: TestContextBuilder<F, G>.() -> Unit
-    ): NodeBuilder<F> = newContext(
+    ): Annotatable<F> = newContext(
         name,
         newFixtureType,
         UnsafeFixtureFactory(fixtureType),
@@ -97,7 +100,7 @@ internal data class MinutestContextBuilder<PF, F>(
         newFixtureType: FixtureType,
         fixtureFactory: FixtureFactory<F, G>,
         block: TestContextBuilder<F, G>.() -> Unit
-    ): NodeBuilder<F> = addChild(
+    ): Annotatable<F> = addChild(
         MinutestContextBuilder(
             name,
             this.fixtureType,

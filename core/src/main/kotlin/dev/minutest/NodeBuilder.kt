@@ -5,9 +5,12 @@ import dev.minutest.experimental.TestAnnotation
 /**
  * Common interface for the DSL components that build [Node]s.
  */
-interface NodeBuilder<F> {
+interface NodeBuilder<F> : Annotatable<F>{
 
     fun buildNode(): Node<F>
+}
+
+interface Annotatable<F> {
 
     /**
      * Experimental - see [TestAnnotation].

@@ -1,6 +1,6 @@
 package dev.minutest.experimental
 
-import dev.minutest.NodeBuilder
+import dev.minutest.Annotatable
 import dev.minutest.RootTransform
 
 /**
@@ -10,7 +10,7 @@ class RootAnnotation(
     private val rootTransform: RootTransform
 ) : TestAnnotation, RootTransform by rootTransform {
 
-    override fun applyTo(nodeBuilder: NodeBuilder<*>) {
-        nodeBuilder.addMarker(this)
+    override fun applyTo(annotatable: Annotatable<*>) {
+        annotatable.addMarker(this)
     }
 }

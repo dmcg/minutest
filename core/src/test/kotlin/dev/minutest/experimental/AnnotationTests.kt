@@ -1,25 +1,24 @@
 package dev.minutest.experimental
 
-import dev.minutest.NodeBuilder
+import dev.minutest.Annotatable
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import org.junit.jupiter.api.Test as JUnitTest
 
 class AnnotationTests : JUnit5Minutests {
 
     fun tests() = rootContext {
 
-        isNodeBuilder(test("no annotations") {})
-        isNodeBuilder(unitAnnotation - test("single annotation") {})
-        isNodeBuilder(unitAnnotation - context("single annotation") {
+        isAnnotatable(test("no annotations") {})
+        isAnnotatable(unitAnnotation - test("single annotation") {})
+        isAnnotatable(unitAnnotation - context("single annotation") {
             test("in single annotation") {}
         })
 
-        isNodeBuilder(unitAnnotation + anyAnnotation - test("2 annotations") {})
-        isNodeBuilder(anyAnnotation + unitAnnotation - test("2 annotations again") {})
+        isAnnotatable(unitAnnotation + anyAnnotation - test("2 annotations") {})
+        isAnnotatable(anyAnnotation + unitAnnotation - test("2 annotations again") {})
 
-        isNodeBuilder(unitAnnotation + anyAnnotation + yetAnotherAnnotation - test("3 annotations") {})
-        isNodeBuilder(listOf(unitAnnotation, anyAnnotation, yetAnotherAnnotation) - test("3 annotations again") {})
+        isAnnotatable(unitAnnotation + anyAnnotation + yetAnotherAnnotation - test("3 annotations") {})
+        isAnnotatable(listOf(unitAnnotation, anyAnnotation, yetAnotherAnnotation) - test("3 annotations again") {})
 
         context("annotate with") {
             annotateWith(unitAnnotation)
@@ -45,5 +44,5 @@ class AnnotationTests : JUnit5Minutests {
     private val yetAnotherAnnotation = MarkerAnnotation()
 }
 
-// check that expression is a nodebuilder at compile time
-fun <F> isNodeBuilder(nodeBuilder: NodeBuilder<F>) = nodeBuilder
+// check that expression is a Annotatable at compile time
+private fun <F> isAnnotatable(nodeBuilder: Annotatable<F>) = nodeBuilder

@@ -7,9 +7,9 @@ import dev.minutest.*
  */
 abstract class TransformingAnnotation : TestAnnotation {
 
-    override fun applyTo(nodeBuilder: NodeBuilder<*>) {
+    override fun applyTo(annotatable: Annotatable<*>) {
         @Suppress("UNCHECKED_CAST") // I haven't (yet) found a way that this isn't safe
-        nodeBuilder.addTransform(this.asNodeTransform<Any?>() as (Node<out Any?>) -> Nothing)
+        annotatable.addTransform(this.asNodeTransform<Any?>() as (Node<out Any?>) -> Nothing)
     }
 
     abstract fun <F> transform(node: Node<F>): Node<F>

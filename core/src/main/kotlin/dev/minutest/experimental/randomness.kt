@@ -1,7 +1,7 @@
 package dev.minutest.experimental
 
+import dev.minutest.Annotatable
 import dev.minutest.ContextBuilder
-import dev.minutest.NodeBuilder
 import dev.minutest.TestDescriptor
 import java.io.File
 import java.io.IOException
@@ -13,7 +13,7 @@ import kotlin.random.Random
 fun <F> ContextBuilder<F>.randomTest(
     name: String,
     block: F.(rng: Random, testDescriptor: TestDescriptor) -> F
-): NodeBuilder<F> =
+): Annotatable<F> =
     test(name) { testDescriptor ->
         val seedFile = testDescriptor.testStateFile("random-seed")
         
