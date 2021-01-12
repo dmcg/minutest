@@ -6,10 +6,10 @@ import dev.minutest.*
  * The TestExecutor is built by running down the context tree. It can then run a test by asking the contexts up the
  * tree to supply their fixture.
  */
-interface TestExecutor<F> : TestDescriptor {
+internal interface TestExecutor<F> : TestDescriptor {
 
     fun runTest(test: Test<F>) {
-        runTest(test, this.then(test.name))
+        runTest(test, this.andThen(test.name))
     }
 
     fun runTest(testlet: Testlet<F>, testDescriptor: TestDescriptor)
@@ -34,6 +34,11 @@ internal object RootExecutor : TestExecutor<Unit>, RootDescriptor {
     override val name = ""
     override val parent: Nothing? = null
     override fun runTest(testlet: Testlet<Unit>, testDescriptor: TestDescriptor): Unit = testlet(Unit, testDescriptor)
+}
+
+internal fun TestDescriptor.andThen(name: String): TestDescriptor = object : TestDescriptor {
+    override val name = name
+    override val parent: TestDescriptor = this@andThen
 }
 
 

@@ -2,6 +2,7 @@ package dev.minutest.experimental
 
 import dev.minutest.assertLogged
 import dev.minutest.internal.RootExecutor
+import dev.minutest.internal.andThen
 import org.junit.jupiter.api.Test
 import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
@@ -46,13 +47,13 @@ class TestLoggerTests {
     }
 
     private fun doStuff(logger: TestLogger) {
-        logger.testComplete(Unit, RootExecutor.then("root").then("test in root"))
-        logger.testComplete(Unit, RootExecutor.then("root").then("test 2 in root"))
-        logger.testComplete(Unit, RootExecutor.then("root").then("outer").then("test in outer"))
-        logger.testComplete(Unit, RootExecutor.then("root").then("outer").then("inner").then("test in inner"))
-        logger.testComplete(Unit, RootExecutor.then("root").then("test 3 in root"))
-        logger.testSkipped(Unit, RootExecutor.then("root").then("skipped test in root"), IncompleteExecutionException())
-        logger.testAborted(Unit, RootExecutor.then("root").then("aborted test in root"), TestAbortedException())
-        logger.testFailed(Unit, RootExecutor.then("root").then("failed test in root"), RuntimeException())
+        logger.testComplete(Unit, RootExecutor.andThen("root").andThen("test in root"))
+        logger.testComplete(Unit, RootExecutor.andThen("root").andThen("test 2 in root"))
+        logger.testComplete(Unit, RootExecutor.andThen("root").andThen("outer").andThen("test in outer"))
+        logger.testComplete(Unit, RootExecutor.andThen("root").andThen("outer").andThen("inner").andThen("test in inner"))
+        logger.testComplete(Unit, RootExecutor.andThen("root").andThen("test 3 in root"))
+        logger.testSkipped(Unit, RootExecutor.andThen("root").andThen("skipped test in root"), IncompleteExecutionException())
+        logger.testAborted(Unit, RootExecutor.andThen("root").andThen("aborted test in root"), TestAbortedException())
+        logger.testFailed(Unit, RootExecutor.andThen("root").andThen("failed test in root"), RuntimeException())
     }
 }

@@ -14,8 +14,4 @@ interface TestDescriptor {
 
     fun fullName(): List<String> = path().map(TestDescriptor::name)
 
-    fun then(name: String): TestDescriptor = object : TestDescriptor {
-        override val name = name
-        override val parent: TestDescriptor = this@TestDescriptor
-    }
 }
