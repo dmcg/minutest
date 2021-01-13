@@ -27,19 +27,23 @@ internal fun findRootContextPerPackage(scannerConfig: ClassGraph.() -> Unit, cla
         // Check Kotlin visibility because a public static Java method might have internal visibility in Kotlin
         .filter { it.visibility == PUBLIC }
         .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
-        .map { (packageName, functions) -> AmalgamatedRootContext(packageName, functions.renamed()) }
+        .map { (packageName, functions: List<RootContextFun>) ->
+            AmalgamatedRootContext(packageName, functions.renamed())
+        }
 
-private fun MethodInfo.toKotlinFunction(): KFunction0<RootContextBuilder>? {
-    @Suppress("UNCHECKED_CAST") // reflection
-    return loadClassAndGetMethod().kotlinFunction as? KFunction0<RootContextBuilder>
-}
+@Suppress("UNCHECKED_CAST") // reflection
+private fun MethodInfo.toKotlinFunction(): RootContextFun? =
+    loadClassAndGetMethod().kotlinFunction as? RootContextFun
 
 private fun MethodInfo.definesTopLevelContext() =
-    isStatic && isPublic && parameterInfo.isEmpty() && !isBridge
-        && typeSignatureOrTypeDescriptor.resultType.name() == RootContextBuilder::class.java.name
+    isStatic && isPublic && parameterInfo.isEmpty() && !isBridge &&
+        typeSignatureOrTypeDescriptor.resultType.name() == RootContextBuilder::class.java.name
 
-private fun TypeSignature.name() =
-    (this as? ClassRefTypeSignature)?.baseClassName
+private fun TypeSignature.name() = (this as? ClassRefTypeSignature)?.baseClassName
 
-private fun Iterable<KFunction0<RootContextBuilder>>.renamed(): List<() -> RootContextBuilder> =
-    this.map { f -> { f().withName(f.name) } }
+private fun Iterable<RootContextFun>.renamed(): List<() -> RootContextBuilder> =
+    this.map { f: RootContextFun ->
+        { f().withName(f.name) }
+    }
+
+private typealias RootContextFun = KFunction0<RootContextBuilder>
