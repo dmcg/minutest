@@ -23,22 +23,21 @@ private fun RunnableNode.toDynamicNode() =
     }
 
 private fun RunnableTest.toDynamicTest() =
-    DynamicTest.dynamicTest(name, test.testUri()) {
+    DynamicTest.dynamicTest(name, testUri) {
         this.invoke()
     }
 
 private fun RunnableContext.toDynamicContainer() =
     DynamicContainer.dynamicContainer(
         name,
-        context.testUri(),
+        testUri,
         toListOfDynamicNodes().stream()
     )
 
 private fun RunnableContext.toListOfDynamicNodes(): List<DynamicNode> =
     children.map { it.toDynamicNode() }
 
-private fun <F> Node<F>.testUri(): URI? =
-    (this.markers.find { it is SourceReference } as? SourceReference)?.toURI()
+private val RunnableNode.testUri: URI? get() = sourceReference?.toURI()
 
 private fun SourceReference.toURI(): URI = File(path).toURI().let { fileUri ->
     URI(

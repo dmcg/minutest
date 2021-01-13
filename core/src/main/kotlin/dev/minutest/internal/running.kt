@@ -18,14 +18,19 @@ sealed class RunnableNode(
     val testDescriptor: TestDescriptor
 ) {
     abstract val name: String
+    abstract val sourceReference: SourceReference?
 }
 
 internal class RunnableTest internal constructor(
-    internal val test: Test<*>,
+    private val test: Test<*>,
     testDescriptor: TestDescriptor,
     private val f: () -> Unit
 ) : RunnableNode(testDescriptor) {
+
     override val name get() = test.name
+
+    override val sourceReference get() =
+        test.markers.filterIsInstance<SourceReference>().firstOrNull()
 
     fun invoke() {
         f()
@@ -33,11 +38,15 @@ internal class RunnableTest internal constructor(
 }
 
 internal class RunnableContext(
-    internal val context: Context<*, *>,
+    private val context: Context<*, *>,
     val children: List<RunnableNode>,
     testDescriptor: TestDescriptor
 ) : RunnableNode(testDescriptor) {
+
     override val name get() = context.name
+
+    override val sourceReference get() =
+        context.markers.filterIsInstance<SourceReference>().firstOrNull()
 }
 
 private fun <F> Node<F>.toRunnableNode(executor: TestExecutor<F>): RunnableNode =
