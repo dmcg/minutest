@@ -8,10 +8,10 @@ import dev.minutest.TestDescriptor
 /**
  * Create the root [RunnableNode] for a tree of tests.
  */
-internal fun Node<Unit>.toRootRunnableNode(): RunnableNode<Unit> = toRunnableNode(RootExecutor)
+internal fun Node<Unit>.toRootRunnableNode(): RunnableNode = toRunnableNode(RootExecutor)
 
 
-sealed class RunnableNode<F>(
+sealed class RunnableNode(
     val testDescriptor: TestDescriptor
 ) {
     abstract val name: String
@@ -20,7 +20,7 @@ sealed class RunnableNode<F>(
 internal class RunnableTest<F>(
     internal val test: Test<F>,
     private val testExecutor: TestExecutor<F>
-) : RunnableNode<F>(testExecutor) {
+) : RunnableNode(testExecutor) {
     override val name get() = test.name
 
     fun invoke() {
@@ -30,13 +30,13 @@ internal class RunnableTest<F>(
 
 internal class RunnableContext<PF, F>(
     internal val context: Context<PF, F>,
-    val children: List<RunnableNode<F>>,
+    val children: List<RunnableNode>,
     testDescriptor: TestDescriptor
-) : RunnableNode<PF>(testDescriptor) {
+) : RunnableNode(testDescriptor) {
     override val name get() = context.name
 }
 
-private fun <F> Node<F>.toRunnableNode(executor: TestExecutor<F>): RunnableNode<F> =
+private fun <F> Node<F>.toRunnableNode(executor: TestExecutor<F>): RunnableNode =
     when (this) {
         is Test<F> -> this.toRunnableTest(executor)
         is Context<F, *> -> this.toRunnableContext(executor)

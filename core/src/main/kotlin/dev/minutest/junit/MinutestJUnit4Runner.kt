@@ -7,9 +7,9 @@ import org.junit.runners.ParentRunner
 import org.junit.runners.model.Statement
 import org.opentest4j.TestAbortedException
 
-class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode<Unit>>(type) {
+class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode>(type) {
 
-    override fun getChildren(): List<RunnableNode<Unit>> = listOf(
+    override fun getChildren(): List<RunnableNode> = listOf(
         testClass
             .onlyConstructor
             .newInstance()
@@ -17,15 +17,15 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode<Unit>>(ty
             .toRootRunnableNode()
     )
 
-    override fun runChild(child: RunnableNode<Unit>, notifier: RunNotifier) =
+    override fun runChild(child: RunnableNode, notifier: RunNotifier) =
         child.run(notifier)
 
-    override fun describeChild(child: RunnableNode<Unit>) = child.toDescription()
+    override fun describeChild(child: RunnableNode) = child.toDescription()
 
-    private fun <F> RunnableNode<F>.run(notifier: RunNotifier): Unit =
+    private fun RunnableNode.run(notifier: RunNotifier): Unit =
         when (this) {
-            is RunnableTest<F> -> this.run(notifier)
-            is RunnableContext<F, *> -> this.run(notifier)
+            is RunnableTest<*> -> this.run(notifier)
+            is RunnableContext<*, *> -> this.run(notifier)
         }
 
     private fun <F> RunnableTest<F>.run(notifier: RunNotifier) {
@@ -49,9 +49,9 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode<Unit>>(ty
     }
 }
 
-private fun <F> RunnableNode<F>.toDescription(): Description = when (this) {
-    is RunnableTest<F> -> toDescription()
-    is RunnableContext<F, *> -> this.toDescription()
+private fun RunnableNode.toDescription(): Description = when (this) {
+    is RunnableTest<*> -> toDescription()
+    is RunnableContext<*, *> -> this.toDescription()
 }
 
 private fun <F> RunnableTest<F>.toDescription() =

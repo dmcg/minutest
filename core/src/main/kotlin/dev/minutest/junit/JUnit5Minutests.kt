@@ -42,10 +42,10 @@ fun RootContextBuilder.toTestFactory(): Iterable<DynamicNode> =
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-private fun <F> RunnableNode<F>.toDynamicNode() =
+private fun RunnableNode.toDynamicNode() =
     when (this) {
-        is RunnableTest<F> -> this.toDynamicTest()
-        is RunnableContext<F, *> -> this.toDynamicContainer()
+        is RunnableTest<*> -> this.toDynamicTest()
+        is RunnableContext<*, *> -> this.toDynamicContainer()
     }
 
 private fun <F> RunnableTest<F>.toDynamicTest() =
@@ -62,9 +62,9 @@ private fun <PF, F> RunnableContext<PF, F>.toDynamicContainer() =
 
 private fun Node<Unit>.toRootListOfDynamicNodes(): List<DynamicNode> =
     when (val runnableNode = this.toRootRunnableNode()) {
-        is RunnableTest<Unit> ->
+        is RunnableTest<*> ->
             listOf(runnableNode.toDynamicTest())
-        is RunnableContext<Unit, *> ->
+        is RunnableContext<*, *> ->
             runnableNode.toListOfDynamicNodes()
     }
 
