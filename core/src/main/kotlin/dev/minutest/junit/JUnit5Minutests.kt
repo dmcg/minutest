@@ -54,17 +54,15 @@ private fun <F> Node<F>.toStreamOfDynamicNodes(executor: TestExecutor<F>) =
         is Test<F> -> Stream.of(this.toDynamicNode(executor))
     }
 
-private fun <PF, F> Context<PF, F>.toStreamOfDynamicNodes(executor: TestExecutor<PF>) =
-    children.toStreamOfDynamicNodes(this, executor.andThen(this))
+private fun <PF, F> Context<PF, F>.toStreamOfDynamicNodes(parentContextExecutor: TestExecutor<PF>) =
+    children.toStreamOfDynamicNodes(parentContextExecutor.andThen(this))
 
 private fun <F> Iterable<Node<F>>.toStreamOfDynamicNodes(
-    parent: Context<*, F>,
     executor: TestExecutor<F>
 ) =
     asSequence()
         .map { it.toDynamicNode(executor) }
         .asStream()
-        .onClose { parent.close() }
 
 private fun <F> Node<F>.toDynamicNode(executor: TestExecutor<F>): DynamicNode =
     when (this) {

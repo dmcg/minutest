@@ -42,7 +42,6 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<Node<Unit>>(type) {
         children.forEach { child ->
             child.run(executor.andThen(this), notifier)
         }
-        close()
 // TODO - If we don't fire this event, IntelliJ gets confused and shows contexts still in progress.
 // If we do fire it, then RunListenerAdapter fires it again, confusing other things.
 //        notifier.fireTestFinished(toDescription(executor))

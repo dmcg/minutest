@@ -17,7 +17,7 @@ internal data class AmalgamatedRootContext(
     }
 
     override fun runTest(testlet: Testlet<Unit>, parentFixture: Unit, testDescriptor: TestDescriptor) =
-        RootExecutor.runTest(testlet, testDescriptor)
+        RootExecutor.runTest(testDescriptor, testlet)
 
     override fun withTransformedChildren(transform: NodeTransform<Unit>): Context<Unit, Unit> {
         TODO("not implemented")

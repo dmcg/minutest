@@ -22,6 +22,7 @@ abstract class Context<PF, F> : Node<PF>() {
 
     /**
      * Invoke a [Testlet], converting a parent fixture [PF] to the type required by the test.
+     * Note that the [Testlet] may represent a [Test], or code that a sub-context wants run.
      */
     abstract fun runTest(testlet: Testlet<F>, parentFixture: PF, testDescriptor: TestDescriptor): F
 

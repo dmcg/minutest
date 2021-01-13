@@ -3,8 +3,9 @@ package dev.minutest.experimental
 import dev.minutest.executeTests
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import org.opentest4j.AssertionFailedError
 
 
 class CheckingTests {
@@ -29,18 +30,22 @@ class CheckingTests {
             }
         }
 
-        executeTests(tests)
+        assertTrue(executeTests(tests).isEmpty())
     }
 
-    @Test fun `checking fails`() {
+    @Test fun `when checking fails`() {
 
         val tests = rootContext {
-            checkedAgainst(emptyList(), checker = ::assertEquals)
+            checkedAgainst(
+                emptyList(),
+                checker = ::assertEquals
+            )
             test("test") {}
         }
 
-        assertThrows<AssertionError> {
-            executeTests(tests)
-        }
+        assertEquals(
+            AssertionFailedError::class.java,
+            executeTests(tests).single()::class.java
+        )
     }
 }
