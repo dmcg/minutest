@@ -14,7 +14,7 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode<Unit>>(ty
             .onlyConstructor
             .newInstance()
             .rootContextFromMethods()
-            .toRunnableNode(RootExecutor)
+            .toRootRunnableNode()
     )
 
     override fun runChild(child: RunnableNode<Unit>, notifier: RunNotifier) =

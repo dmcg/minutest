@@ -21,7 +21,7 @@ interface JUnit5Minutests {
     @TestFactory
     fun minutests(): Iterable<DynamicNode> =
         rootContextFromMethods()
-            .toListOfDynamicNodes(RootExecutor)
+            .toRootListOfDynamicNodes()
 }
 
 /**
@@ -30,7 +30,7 @@ interface JUnit5Minutests {
  * @see [RootContextBuilder#testFactory()]
  */
 fun testFactoryFor(root: RootContextBuilder): Iterable<DynamicNode> =
-    root.buildNode().toListOfDynamicNodes(RootExecutor)
+    root.buildNode().toRootListOfDynamicNodes()
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]
@@ -60,13 +60,11 @@ private fun <PF, F> RunnableContext<PF, F>.toDynamicContainer() =
         toListOfDynamicNodes().stream()
     )
 
-private fun <F> Node<F>.toListOfDynamicNodes(
-    executor: TestExecutor<F>
-): List<DynamicNode> =
-    when (val runnableNode = this.toRunnableNode(executor)) {
-        is RunnableTest<F> ->
+private fun Node<Unit>.toRootListOfDynamicNodes(): List<DynamicNode> =
+    when (val runnableNode = this.toRootRunnableNode()) {
+        is RunnableTest<Unit> ->
             listOf(runnableNode.toDynamicTest())
-        is RunnableContext<F, *> ->
+        is RunnableContext<Unit, *> ->
             runnableNode.toListOfDynamicNodes()
     }
 

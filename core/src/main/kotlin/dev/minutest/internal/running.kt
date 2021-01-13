@@ -5,6 +5,12 @@ import dev.minutest.Node
 import dev.minutest.Test
 import dev.minutest.TestDescriptor
 
+/**
+ * Create the root [RunnableNode] for a tree of tests.
+ */
+internal fun Node<Unit>.toRootRunnableNode(): RunnableNode<Unit> = toRunnableNode(RootExecutor)
+
+
 sealed class RunnableNode<F>(
     val testDescriptor: TestDescriptor
 ) {
@@ -30,7 +36,7 @@ internal class RunnableContext<PF, F>(
     override val name get() = context.name
 }
 
-internal fun <F> Node<F>.toRunnableNode(executor: TestExecutor<F>): RunnableNode<F> =
+private fun <F> Node<F>.toRunnableNode(executor: TestExecutor<F>): RunnableNode<F> =
     when (this) {
         is Test<F> -> this.toRunnableTest(executor)
         is Context<F, *> -> this.toRunnableContext(executor)
