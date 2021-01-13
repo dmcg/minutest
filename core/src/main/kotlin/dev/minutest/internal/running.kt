@@ -3,16 +3,18 @@ package dev.minutest.internal
 import dev.minutest.Context
 import dev.minutest.Node
 import dev.minutest.Test
+import dev.minutest.TestDescriptor
 
-
-internal sealed class RunnableNode<F> {
+sealed class RunnableNode<F>(
+    val testDescriptor: TestDescriptor
+) {
     abstract val name: String
 }
 
 internal class RunnableTest<F>(
     internal val test: Test<F>,
     private val testExecutor: TestExecutor<F>
-) : RunnableNode<F>() {
+) : RunnableNode<F>(testExecutor) {
     override val name get() = test.name
 
     fun invoke() {
@@ -22,8 +24,9 @@ internal class RunnableTest<F>(
 
 internal class RunnableContext<PF, F>(
     internal val context: Context<PF, F>,
-    val children: List<RunnableNode<F>>
-) : RunnableNode<PF>() {
+    val children: List<RunnableNode<F>>,
+    testDescriptor: TestDescriptor
+) : RunnableNode<PF>(testDescriptor) {
     override val name get() = context.name
 }
 
@@ -44,6 +47,7 @@ internal fun <PF, F> Context<PF, F>.toRunnableContext(
 
     return RunnableContext(
         this,
-        children.map { it.toRunnableNode(childExecutor) }
+        children.map { it.toRunnableNode(childExecutor) },
+        executor
     )
 }
