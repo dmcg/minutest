@@ -14,8 +14,6 @@ import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
 import java.io.File
 import java.net.URI
-import java.util.stream.Stream
-import kotlin.streams.asStream
 
 /**
  * Mix-in this interface to run your tests with JUnit 5
@@ -26,8 +24,8 @@ interface JUnit5Minutests {
      * Provided so that JUnit will run the tests
      */
     @TestFactory
-    fun minutests(): Stream<out DynamicNode> =
-        this.rootContextFromMethods().toStreamOfDynamicNodes(RootExecutor)
+    fun minutests(): Iterable<DynamicNode> =
+        this.rootContextFromMethods().toListOfDynamicNodes(RootExecutor)
 }
 
 /**
@@ -35,34 +33,31 @@ interface JUnit5Minutests {
  *
  * @see [RootContextBuilder#testFactory()]
  */
-fun testFactoryFor(root: RootContextBuilder): Stream<out DynamicNode> =
-    root.buildNode().toStreamOfDynamicNodes(RootExecutor)
+fun testFactoryFor(root: RootContextBuilder): Iterable<DynamicNode> =
+    root.buildNode().toListOfDynamicNodes(RootExecutor)
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]
  *
  * @see [testFactoryFor(RootContextBuilder)]
  */
-fun RootContextBuilder.toTestFactory(): Stream<out DynamicNode> =
+fun RootContextBuilder.toTestFactory(): Iterable<DynamicNode> =
     testFactoryFor(this)
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-private fun <F> Node<F>.toStreamOfDynamicNodes(executor: TestExecutor<F>) =
+private fun <F> Node<F>.toListOfDynamicNodes(executor: TestExecutor<F>) =
     when (this) {
-        is Context<F, *> -> this.toStreamOfDynamicNodes(executor)
-        is Test<F> -> Stream.of(this.toDynamicNode(executor))
+        is Context<F, *> -> this.toListOfDynamicNodes(executor)
+        is Test<F> -> listOf(this.toDynamicNode(executor))
     }
 
-private fun <PF, F> Context<PF, F>.toStreamOfDynamicNodes(parentContextExecutor: TestExecutor<PF>) =
-    children.toStreamOfDynamicNodes(parentContextExecutor.andThen(this))
+private fun <PF, F> Context<PF, F>.toListOfDynamicNodes(parentContextExecutor: TestExecutor<PF>) =
+    children.toListOfDynamicNodes(parentContextExecutor.andThen(this))
 
-private fun <F> Iterable<Node<F>>.toStreamOfDynamicNodes(
+private fun <F> Iterable<Node<F>>.toListOfDynamicNodes(
     executor: TestExecutor<F>
-) =
-    asSequence()
-        .map { it.toDynamicNode(executor) }
-        .asStream()
+) = map { it.toDynamicNode(executor) }
 
 private fun <F> Node<F>.toDynamicNode(executor: TestExecutor<F>): DynamicNode =
     when (this) {
@@ -72,7 +67,7 @@ private fun <F> Node<F>.toDynamicNode(executor: TestExecutor<F>): DynamicNode =
         is Context<F, *> -> dynamicContainer(
             name,
             this.testUri(),
-            this.toStreamOfDynamicNodes(executor)
+            this.toListOfDynamicNodes(executor).stream()
         )
     }
 

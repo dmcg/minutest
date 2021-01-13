@@ -10,21 +10,20 @@ import org.junit.platform.launcher.EngineFilter
 import org.junit.platform.launcher.LauncherDiscoveryRequest
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 import org.junit.platform.launcher.core.LauncherFactory
-import java.util.stream.Stream
+import kotlin.streams.toList
 
-fun executeTests(tests: Stream<out DynamicNode>,
+fun executeTests(
+    tests: Iterable<DynamicNode>,
     exceptions: MutableList<Throwable> = mutableListOf()
 ): List<Throwable> {
-    tests.use {
-        it.forEachOrdered { dynamicNode ->
-            when (dynamicNode) {
-                is DynamicTest -> try {
-                    dynamicNode.executable.execute()
-                } catch (x: Throwable) {
-                    exceptions.add(x)
-                }
-                is DynamicContainer -> executeTests(dynamicNode.children, exceptions)
+    tests.forEach { dynamicNode ->
+        when (dynamicNode) {
+            is DynamicTest -> try {
+                dynamicNode.executable.execute()
+            } catch (x: Throwable) {
+                exceptions.add(x)
             }
+            is DynamicContainer -> executeTests(dynamicNode.children.toList(), exceptions)
         }
     }
     return exceptions
