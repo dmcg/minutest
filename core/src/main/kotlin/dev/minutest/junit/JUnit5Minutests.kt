@@ -1,13 +1,8 @@
 package dev.minutest.junit
 
-import dev.minutest.Context
 import dev.minutest.Node
 import dev.minutest.RootContextBuilder
-import dev.minutest.Test
-import dev.minutest.internal.RootExecutor
-import dev.minutest.internal.SourceReference
-import dev.minutest.internal.TestExecutor
-import dev.minutest.internal.rootContextFromMethods
+import dev.minutest.internal.*
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
@@ -25,7 +20,8 @@ interface JUnit5Minutests {
      */
     @TestFactory
     fun minutests(): Iterable<DynamicNode> =
-        this.rootContextFromMethods().toListOfDynamicNodes(RootExecutor)
+        rootContextFromMethods()
+            .toListOfDynamicNodes(RootExecutor)
 }
 
 /**
@@ -46,30 +42,36 @@ fun RootContextBuilder.toTestFactory(): Iterable<DynamicNode> =
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-private fun <F> Node<F>.toListOfDynamicNodes(executor: TestExecutor<F>) =
+private fun <F> RunnableNode<F>.toDynamicNode() =
     when (this) {
-        is Context<F, *> -> this.toListOfDynamicNodes(executor)
-        is Test<F> -> listOf(this.toDynamicNode(executor))
+        is RunnableTest<F> -> this.toDynamicTest()
+        is RunnableContext<F, *> -> this.toDynamicContainer()
     }
 
-private fun <PF, F> Context<PF, F>.toListOfDynamicNodes(parentContextExecutor: TestExecutor<PF>) =
-    children.toListOfDynamicNodes(parentContextExecutor.andThen(this))
+private fun <F> RunnableTest<F>.toDynamicTest() =
+    dynamicTest(name, test.testUri()) {
+        this.invoke()
+    }
 
-private fun <F> Iterable<Node<F>>.toListOfDynamicNodes(
+private fun <PF, F> RunnableContext<PF, F>.toDynamicContainer() =
+    dynamicContainer(
+        name,
+        context.testUri(),
+        toListOfDynamicNodes().stream()
+    )
+
+private fun <F> Node<F>.toListOfDynamicNodes(
     executor: TestExecutor<F>
-) = map { it.toDynamicNode(executor) }
-
-private fun <F> Node<F>.toDynamicNode(executor: TestExecutor<F>): DynamicNode =
-    when (this) {
-        is Test<F> -> dynamicTest(name, this.testUri()) {
-            executor.runTest(this)
-        }
-        is Context<F, *> -> dynamicContainer(
-            name,
-            this.testUri(),
-            this.toListOfDynamicNodes(executor).stream()
-        )
+): List<DynamicNode> =
+    when (val runnableNode = this.toRunnableNode(executor)) {
+        is RunnableTest<F> ->
+            listOf(runnableNode.toDynamicTest())
+        is RunnableContext<F, *> ->
+            runnableNode.toListOfDynamicNodes()
     }
+
+private fun <F, PF> RunnableContext<PF, F>.toListOfDynamicNodes(): List<DynamicNode> =
+    children.map { it.toDynamicNode() }
 
 private fun <F> Node<F>.testUri(): URI? =
     (this.markers.find { it is SourceReference } as? SourceReference)?.toURI()
