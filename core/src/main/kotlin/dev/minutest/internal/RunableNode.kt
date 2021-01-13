@@ -15,17 +15,17 @@ internal fun Node<Unit>.toRootRunnableNode(): RunnableNode = toRunnableNode(Root
  * of fixture types and [TestExecutor]s from test runners.
  */
 sealed class RunnableNode(
-    val testDescriptor: TestDescriptor
 ) {
+    abstract val testDescriptor: TestDescriptor
     abstract val name: String
     abstract val sourceReference: SourceReference?
 }
 
 internal class RunnableTest internal constructor(
     private val test: Test<*>,
-    testDescriptor: TestDescriptor,
+    override val testDescriptor: TestDescriptor,
     private val f: () -> Unit
-) : RunnableNode(testDescriptor) {
+) : RunnableNode() {
 
     override val name get() = test.name
 
@@ -40,8 +40,8 @@ internal class RunnableTest internal constructor(
 internal class RunnableContext(
     private val context: Context<*, *>,
     val children: List<RunnableNode>,
-    testDescriptor: TestDescriptor
-) : RunnableNode(testDescriptor) {
+    override val testDescriptor: TestDescriptor
+) : RunnableNode() {
 
     override val name get() = context.name
 

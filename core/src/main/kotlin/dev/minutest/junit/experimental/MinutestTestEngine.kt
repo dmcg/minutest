@@ -1,11 +1,6 @@
 package dev.minutest.junit.experimental
 
-import dev.minutest.Context
-import dev.minutest.Node
-import dev.minutest.Test
-import dev.minutest.internal.RootExecutor
-import dev.minutest.internal.TestExecutor
-import dev.minutest.internal.findRootContextPerPackage
+import dev.minutest.internal.*
 import org.junit.platform.engine.*
 import org.junit.platform.engine.TestDescriptor.Type.CONTAINER
 import org.junit.platform.engine.TestDescriptor.Type.TEST
@@ -17,7 +12,9 @@ import kotlin.collections.LinkedHashSet
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
-
+/**
+ * A JUnit 5 platform test engine that runs Minutests separately from JUnit Jupiter.
+ */
 class MinutestTestEngine : TestEngine {
 
     override fun getId() = engineId
@@ -30,8 +27,6 @@ class MinutestTestEngine : TestEngine {
             scan(this, discoveryRequest).forEach {
                 addChild(it)
             }
-            // I think that at this point we have a MinutestEngineDescriptor with an
-            // AmalgamatedRootContext for each package.
         }
 
     override fun execute(request: ExecutionRequest) {
@@ -39,49 +34,49 @@ class MinutestTestEngine : TestEngine {
         require(root is MinutestEngineDescriptor) {
             "root descriptor is not a ${MinutestEngineDescriptor::class.jvmName}"
         }
-        execute(root, RootExecutor, root.discoveryRequest, request.engineExecutionListener)
+        execute(root, root.discoveryRequest, request.engineExecutionListener)
     }
 
-    private fun <T> execute(
+    private fun execute(
         descriptor: TestDescriptor,
-        executor: TestExecutor<T>,
         request: EngineDiscoveryRequest,
         listener: EngineExecutionListener
     ) {
         listener.executionStarted(descriptor)
-        val result = try {
+        val result = run(descriptor, request, listener)
+        listener.executionFinished(descriptor, result)
+    }
+
+    private fun run(
+        descriptor: TestDescriptor,
+        request: EngineDiscoveryRequest,
+        listener: EngineExecutionListener,
+    ): TestExecutionResult {
+        return try {
             if (descriptor is MinutestNodeDescriptor) {
-                when (descriptor.node) {
-                    is Context<*, *> ->
+                when (descriptor.runnableNode) {
+                    is RunnableContext ->
                         executeDynamicChildren(
                             descriptor,
-                            executor.andThen(descriptor.node as Context<T, *>),
                             request,
                             listener
                         )
-                    is Test<*> ->
-                        executeTest(
-                            descriptor.node as Test<T>,
-                            executor
-                        )
+                    is RunnableTest ->
+                        descriptor.runnableNode.invoke()
                 }
             } else {
-                executeStaticChildren(descriptor, executor, request, listener)
+                executeStaticChildren(descriptor, request, listener)
             }
-
             TestExecutionResult.successful()
         } catch (e: IncompleteExecutionException) {
             TestExecutionResult.aborted(e)
         } catch (t: Throwable) {
             TestExecutionResult.failed(t)
         }
-
-        listener.executionFinished(descriptor, result)
     }
 
     private fun executeDynamicChildren(
         parent: MinutestNodeDescriptor,
-        executor: TestExecutor<*>,
         request: EngineDiscoveryRequest,
         listener: EngineExecutionListener
     ) {
@@ -89,34 +84,30 @@ class MinutestTestEngine : TestEngine {
             if (request.selectsByUniqueId(child)) {
                 listener.dynamicTestRegistered(child)
                 parent.addChild(child)
-                execute(child, executor, request, listener)
+                execute(child, request, listener)
             }
         }
     }
 
     private fun MinutestNodeDescriptor.childrenAsDescriptors() =
-        when (node) {
-            is Context<*, *> ->
-                node.children.map { child -> MinutestNodeDescriptor(this, child) }
-            is Test<*> ->
-                emptyList()
+        when (runnableNode) {
+            is RunnableContext ->
+                runnableNode.children.map { child ->
+                    MinutestNodeDescriptor(this, child)
+                }
+            is RunnableTest -> emptyList()
         }
 
     private fun executeStaticChildren(
         test: TestDescriptor,
-        executor: TestExecutor<*>,
         request: EngineDiscoveryRequest,
         listener: EngineExecutionListener
     ) {
         test.children.forEach { child ->
             if (request.selectsByUniqueId(child)) {
-                execute(child, executor, request, listener)
+                execute(child, request, listener)
             }
         }
-    }
-
-    private fun <T> executeTest(node: Test<T>, executor: TestExecutor<T>) {
-        executor.runTest(node)
     }
 
     companion object {
@@ -134,21 +125,20 @@ private const val testType = "minutest-test"
 
 private class MinutestNodeDescriptor(
     parent: TestDescriptor,
-    val node: Node<*>,
+    val runnableNode: RunnableNode,
     private val source: TestSource? = null
-
 ) : TestDescriptor {
 
     private var _parent: TestDescriptor? = parent
     private val _children = LinkedHashSet<TestDescriptor>()
-    private val _uniqueId = parent.uniqueId.append(node.descriptorIdType(), node.name)
+    private val _uniqueId = parent.uniqueId.append(runnableNode.descriptorIdType(), runnableNode.name)
 
-    override fun getDisplayName() = node.name
+    override fun getDisplayName() = runnableNode.name
     override fun getUniqueId(): UniqueId = _uniqueId
     override fun getSource() = Optional.ofNullable(source)
-    override fun getType() = when (node) {
-        is Context<*, *> -> CONTAINER
-        is Test -> TEST
+    override fun getType() = when (runnableNode) {
+        is RunnableContext -> CONTAINER
+        is RunnableTest -> TEST
     }
 
     override fun getParent() = Optional.ofNullable(_parent)
@@ -185,13 +175,11 @@ private class MinutestNodeDescriptor(
     override fun getTags() = emptySet<TestTag>()
 }
 
-
-private fun Node<*>.descriptorIdType(): String {
-    return when (this) {
-        is Context<*, *> -> contextType
-        is Test -> testType
+private fun RunnableNode.descriptorIdType(): String =
+    when (this) {
+        is RunnableContext -> contextType
+        is RunnableTest -> testType
     }
-}
 
 private fun scan(
     root: MinutestEngineDescriptor,
@@ -202,7 +190,7 @@ private fun scan(
             emptyList() // Cannot select by method
         else ->
             findRootContextPerPackage(discoveryRequest)
-                .map { thing: Context<Unit, Unit> -> MinutestNodeDescriptor(root, thing) }
+                .map { rootContext -> MinutestNodeDescriptor(root, rootContext.toRootRunnableNode()) }
                 .filter { discoveryRequest.selectsByUniqueId(it) }
     }
 
