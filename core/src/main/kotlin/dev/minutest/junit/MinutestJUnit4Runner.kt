@@ -14,7 +14,9 @@ import org.opentest4j.TestAbortedException
 
 class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<Node<Unit>>(type) {
 
-    override fun getChildren(): List<Node<Unit>> = listOf(testClass.onlyConstructor.newInstance().rootContextFromMethods())
+    override fun getChildren(): List<Node<Unit>> = listOf(
+        testClass.onlyConstructor.newInstance().rootContextFromMethods()
+    )
 
     override fun runChild(child: Node<Unit>, notifier: RunNotifier) = child.run(RootExecutor, notifier)
 
@@ -26,9 +28,9 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<Node<Unit>>(type) {
     }
 
     private fun <F> Test<F>.run(executor: TestExecutor<F>, notifier: RunNotifier) {
-        // We want to rely on runLeaf to fire events for us, but ignoring a test is a special case. So we run the test
-        // first - if it turns out to have been skipped we fire the event for that, otherwise we make a statement
-        // for runChild to chew on.
+        // We want to rely on runLeaf to fire events for us, but ignoring a test is a special case.
+        // So we run the test first - if it turns out to have been skipped we fire the event for that,
+        // otherwise we make a statement that will throw the exception when runLeaf chews on it.
         val thrown: Throwable? = exceptionIfAnyFromRunning(this, executor)
         if (thrown is TestAbortedException)
             notifier.fireTestIgnored(this.toDescription(executor))
