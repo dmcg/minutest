@@ -44,11 +44,11 @@ fun RootContextBuilder.toTestFactory(): Iterable<DynamicNode> =
 
 private fun RunnableNode.toDynamicNode() =
     when (this) {
-        is RunnableTest<*> -> this.toDynamicTest()
+        is RunnableTest -> this.toDynamicTest()
         is RunnableContext<*, *> -> this.toDynamicContainer()
     }
 
-private fun <F> RunnableTest<F>.toDynamicTest() =
+private fun RunnableTest.toDynamicTest() =
     dynamicTest(name, test.testUri()) {
         this.invoke()
     }
@@ -62,7 +62,7 @@ private fun <PF, F> RunnableContext<PF, F>.toDynamicContainer() =
 
 private fun Node<Unit>.toRootListOfDynamicNodes(): List<DynamicNode> =
     when (val runnableNode = this.toRootRunnableNode()) {
-        is RunnableTest<*> ->
+        is RunnableTest ->
             listOf(runnableNode.toDynamicTest())
         is RunnableContext<*, *> ->
             runnableNode.toListOfDynamicNodes()

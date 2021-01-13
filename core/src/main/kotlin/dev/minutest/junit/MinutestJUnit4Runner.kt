@@ -24,11 +24,11 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode>(type) {
 
     private fun RunnableNode.run(notifier: RunNotifier): Unit =
         when (this) {
-            is RunnableTest<*> -> this.run(notifier)
+            is RunnableTest -> this.run(notifier)
             is RunnableContext<*, *> -> this.run(notifier)
         }
 
-    private fun <F> RunnableTest<F>.run(notifier: RunNotifier) {
+    private fun RunnableTest.run(notifier: RunNotifier) {
         // We want to rely on runLeaf to fire events for us, but ignoring a test is a special case.
         // So we run the test first - if it turns out to have been skipped we fire the event for that,
         // otherwise we make a statement that will throw the exception when runLeaf chews on it.
@@ -50,11 +50,11 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode>(type) {
 }
 
 private fun RunnableNode.toDescription(): Description = when (this) {
-    is RunnableTest<*> -> toDescription()
+    is RunnableTest -> toDescription()
     is RunnableContext<*, *> -> this.toDescription()
 }
 
-private fun <F> RunnableTest<F>.toDescription() =
+private fun RunnableTest.toDescription() =
     Description.createTestDescription(
         testDescriptor.name,
         this.name
@@ -67,7 +67,7 @@ private fun <PF, F> RunnableContext<PF, F>.toDescription() =
         }
     }
 
-private fun <F> exceptionIfAnyFromRunning(test: RunnableTest<F>): Throwable? =
+private fun exceptionIfAnyFromRunning(test: RunnableTest): Throwable? =
     try {
         test.invoke()
         null
