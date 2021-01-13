@@ -10,13 +10,15 @@ import dev.minutest.TestDescriptor
  */
 internal fun Node<Unit>.toRootRunnableNode(): RunnableNode = toRunnableNode(RootExecutor)
 
-
+/**
+ * RunnableNodes are a view of the [Node] tree provided to hide the gory details
+ * of fixture types and [TestExecutor]s from test runners.
+ */
 sealed class RunnableNode(
     val testDescriptor: TestDescriptor
 ) {
     abstract val name: String
 }
-
 
 internal class RunnableTest internal constructor(
     internal val test: Test<*>,
@@ -30,8 +32,8 @@ internal class RunnableTest internal constructor(
     }
 }
 
-internal class RunnableContext<PF, F>(
-    internal val context: Context<PF, F>,
+internal class RunnableContext(
+    internal val context: Context<*, *>,
     val children: List<RunnableNode>,
     testDescriptor: TestDescriptor
 ) : RunnableNode(testDescriptor) {
@@ -44,12 +46,12 @@ private fun <F> Node<F>.toRunnableNode(executor: TestExecutor<F>): RunnableNode 
         is Context<F, *> -> this.toRunnableContext(executor)
     }
 
-internal fun <F> Test<F>.toRunnableTest(executor: TestExecutor<F>) =
+private fun <F> Test<F>.toRunnableTest(executor: TestExecutor<F>) =
     RunnableTest(this, executor) { executor.runTest(this) }
 
-internal fun <PF, F> Context<PF, F>.toRunnableContext(
+private fun <PF, F> Context<PF, F>.toRunnableContext(
     executor: TestExecutor<PF>
-): RunnableContext<PF, F> {
+): RunnableContext {
     val childExecutor = executor.andThen(this) // there has to be just one of these
     // as they hold state about what tests in a context have been run
 

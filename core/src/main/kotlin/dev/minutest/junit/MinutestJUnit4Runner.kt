@@ -25,7 +25,7 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode>(type) {
     private fun RunnableNode.run(notifier: RunNotifier): Unit =
         when (this) {
             is RunnableTest -> this.run(notifier)
-            is RunnableContext<*, *> -> this.run(notifier)
+            is RunnableContext -> this.run(notifier)
         }
 
     private fun RunnableTest.run(notifier: RunNotifier) {
@@ -39,7 +39,7 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode>(type) {
             runLeaf(thrown.asStatement(), this.toDescription(), notifier)
     }
 
-    private fun <PF, F> RunnableContext<PF, F>.run(notifier: RunNotifier) {
+    private fun RunnableContext.run(notifier: RunNotifier) {
         children.forEach { child ->
             child.run(notifier)
         }
@@ -51,7 +51,7 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode>(type) {
 
 private fun RunnableNode.toDescription(): Description = when (this) {
     is RunnableTest -> toDescription()
-    is RunnableContext<*, *> -> this.toDescription()
+    is RunnableContext -> this.toDescription()
 }
 
 private fun RunnableTest.toDescription() =
@@ -60,7 +60,7 @@ private fun RunnableTest.toDescription() =
         this.name
     )
 
-private fun <PF, F> RunnableContext<PF, F>.toDescription() =
+private fun RunnableContext.toDescription() =
     Description.createSuiteDescription(this.name).also { description ->
         this.children.forEach {
             description.addChild(it.toDescription())
