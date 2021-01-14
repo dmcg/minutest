@@ -10,8 +10,18 @@ internal data class MinutestRootContextBuilder<F>(
     private val delegate: MinutestContextBuilder<Unit, F>
 ) : RootContextBuilder, NodeBuilder<Unit> by delegate {
 
-    constructor(name: String, type: FixtureType, block: TestContextBuilder<Unit, F>.() -> Unit) : this(
-        MinutestContextBuilder(name, unitFixtureType, type, UnsafeFixtureFactory(unitFixtureType), block = block)
+    constructor(
+        name: String,
+        type: FixtureType,
+        block: TestContextBuilder<Unit, F>.() -> Unit
+    ) : this(
+        MinutestContextBuilder(
+            name,
+            unitFixtureType,
+            type,
+            UnsafeFixtureFactory(unitFixtureType),
+            block = block
+        )
     )
 
     override fun buildNode(): Node<Unit> {
