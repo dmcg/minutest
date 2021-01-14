@@ -22,8 +22,7 @@ internal interface TestExecutor<F> : TestDescriptor {
     fun <G> andThen(childContext: Context<F, G>): TestExecutor<G> =
         ContextExecutor(this, childContext)
 
-    // Allows executor to know when to close its context
-    fun onTestComplete(test: Test<F>)
+    // Allows child executor to tell us that its context is complete
     fun onContextComplete(context: Context<F, *>)
 }
 
@@ -68,7 +67,7 @@ internal class ContextExecutor<PF, F>(
         // is opened first.
     }
 
-    override fun onTestComplete(test: Test<F>) {
+    private fun onTestComplete(test: Test<F>) {
         synchronized(this) {
             incompleteTests.makeSureWeRemove(test)
             maybeClose()
@@ -130,7 +129,6 @@ internal object RootExecutor : TestExecutor<Unit>, RootDescriptor {
     }
 
     // Doesn't track any particular context, so doesn't care
-    override fun onTestComplete(test: Test<Unit>) = Unit
     override fun onContextComplete(context: Context<Unit, *>) = Unit
 }
 
