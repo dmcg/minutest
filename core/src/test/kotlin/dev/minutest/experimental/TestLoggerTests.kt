@@ -1,6 +1,7 @@
 package dev.minutest.experimental
 
 import dev.minutest.assertLogged
+import dev.minutest.internal.AmalgamatedRootContext
 import dev.minutest.internal.RootExecutor
 import dev.minutest.internal.andThenTestName
 import org.junit.jupiter.api.Test
@@ -47,13 +48,21 @@ class TestLoggerTests {
     }
 
     private fun doStuff(logger: TestLogger) {
+        val stubContext = AmalgamatedRootContext("meh", emptyList())
+
+        logger.contextOpened(stubContext, RootExecutor.andThenTestName("root"))
         logger.testComplete(Unit, RootExecutor.andThenTestName("root").andThenTestName("test in root"))
         logger.testComplete(Unit, RootExecutor.andThenTestName("root").andThenTestName("test 2 in root"))
+        logger.contextOpened(stubContext, RootExecutor.andThenTestName("root").andThenTestName("outer"))
         logger.testComplete(Unit, RootExecutor.andThenTestName("root").andThenTestName("outer").andThenTestName("test in outer"))
+        logger.contextOpened(stubContext, RootExecutor.andThenTestName("root").andThenTestName("outer").andThenTestName("inner"))
         logger.testComplete(Unit, RootExecutor.andThenTestName("root").andThenTestName("outer").andThenTestName("inner").andThenTestName("test in inner"))
+        logger.contextClosed(stubContext)
+        logger.contextClosed(stubContext)
         logger.testComplete(Unit, RootExecutor.andThenTestName("root").andThenTestName("test 3 in root"))
         logger.testSkipped(Unit, RootExecutor.andThenTestName("root").andThenTestName("skipped test in root"), IncompleteExecutionException())
         logger.testAborted(Unit, RootExecutor.andThenTestName("root").andThenTestName("aborted test in root"), TestAbortedException())
         logger.testFailed(Unit, RootExecutor.andThenTestName("root").andThenTestName("failed test in root"), RuntimeException())
     }
+
 }

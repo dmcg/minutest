@@ -14,6 +14,7 @@ internal data class ContextWrapper<PF, F>(
     override val markers: List<Any>,
     override val children: List<Node<F>>,
     val runner: (Testlet<F>, parentFixture: PF, TestDescriptor) -> F,
+    val onOpen: (TestDescriptor) -> Unit,
     val onClose: () -> Unit
 ) : Context<PF, F>() {
 
@@ -27,8 +28,16 @@ internal data class ContextWrapper<PF, F>(
         markers: List<Any> = delegate.markers,
         children: List<Node<F>> = delegate.children,
         runner: (Testlet<F>, parentFixture: PF, TestDescriptor) -> F = delegate::runTest,
+        onOpen: (TestDescriptor) -> Unit = delegate::open,
         onClose: () -> Unit = delegate::close
-    ) : this(name, markers, children, runner, onCloseFor(delegate, onClose))
+    ) : this(
+        name,
+        markers,
+        children,
+        runner,
+        onOpenFor(delegate, onOpen),
+        onCloseFor(delegate, onClose)
+    )
 
     override fun runTest(
         testlet: Testlet<F>,
@@ -39,12 +48,29 @@ internal data class ContextWrapper<PF, F>(
     override fun withTransformedChildren(transform: NodeTransform<F>) =
         copy(children = children.map { transform(it) })
 
+    override fun open(testDescriptor: TestDescriptor) = onOpen.invoke(testDescriptor)
     override fun close() = onClose.invoke()
 }
 
+// We always want to call open on the delegate, but only once
+private fun <PF, F> onOpenFor(
+    delegate: Context<PF, F>,
+    specified: (TestDescriptor) -> Unit
+): (TestDescriptor) -> Unit =
+    if (specified == delegate::open)
+        specified
+    else {
+        { testDescriptor ->
+            delegate.open(testDescriptor)
+            specified(testDescriptor)
+        }
+    }
+
 // We always want to call close on the delegate, but only once
 private fun <PF, F> onCloseFor(delegate: Context<PF, F>, specified: () -> Unit): () -> Unit =
-    if (specified == delegate::close) specified else {
+    if (specified == delegate::close)
+        specified
+    else {
         {
             delegate.close()
             specified()

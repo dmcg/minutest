@@ -10,6 +10,7 @@ import org.junit.platform.launcher.EngineFilter
 import org.junit.platform.launcher.LauncherDiscoveryRequest
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 import org.junit.platform.launcher.core.LauncherFactory
+import org.opentest4j.MultipleFailuresError
 import kotlin.streams.toList
 
 fun executeTests(
@@ -30,6 +31,14 @@ fun executeTests(
 }
 
 fun executeTests(root: RootContextBuilder): List<Throwable> = executeTests(root.toTestFactory())
+
+fun List<Throwable>.andFailIfTheyFail() {
+    when {
+        this.size == 1 -> throw this[0]
+        this.isNotEmpty() -> throw MultipleFailuresError("things failed", this)
+    }
+}
+
 
 inline fun <reified T : Any> runTestsInClass(engineID: String): List<String> = runTestsInClass(
     discoveryRequest(engineID, DiscoverySelectors.selectClass(T::class.java)))

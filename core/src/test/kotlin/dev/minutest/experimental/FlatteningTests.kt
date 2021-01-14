@@ -34,7 +34,12 @@ class FlatteningTests {
                 }
             }
         }
-        checkLog(tests /* empty */)
+        // We see the contexts opened because, while the test is not run, the wrapper that
+        // flattens is run.
+        checkLog(tests,
+            "▾ root",
+            "  ▾ flattened"
+        )
     }
 
     @Test fun `each item is tested`() {
@@ -62,10 +67,10 @@ class FlatteningTests {
             }
         }
         checkLog(tests,
-            "before one",
-            "test one",
             "▾ root",
             "  ▾ flattened",
+            "before one",
+            "test one",
             "    ✓ is a string",
             "after one",
             "before two",
@@ -101,10 +106,10 @@ class FlatteningTests {
             }
         }
         val allErrors = checkLog(tests,
-            "before one",
-            "test one",
             "▾ root",
             "  ▾ flattened",
+            "before one",
+            "test one",
             "    X is two",
             "after one",
             "before two",

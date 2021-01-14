@@ -13,6 +13,7 @@ internal data class MinutestContextBuilder<PF, F>(
     private val fixtureType: FixtureType,
     private var fixtureFactory: FixtureFactory<PF, F>,
     private val children: MutableList<NodeBuilder<F>> = mutableListOf(),
+    private val beforeAlls: MutableList<(TestDescriptor) -> Unit> = mutableListOf(),
     private val befores: MutableList<(F, TestDescriptor) -> F> = mutableListOf(),
     private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
     private val afterAlls: MutableList<() -> Unit> = mutableListOf(),
@@ -115,6 +116,10 @@ internal data class MinutestContextBuilder<PF, F>(
         return child
     }
 
+    override fun beforeAll(f: (TestDescriptor) -> Unit) {
+        beforeAlls.add(f)
+    }
+
     override fun afterAll(f: () -> Unit) {
         afterAlls.add(f)
     }
@@ -126,6 +131,7 @@ internal data class MinutestContextBuilder<PF, F>(
             markers,
             parentFixtureType,
             fixtureType,
+            beforeAlls,
             befores,
             afters,
             afterAlls,

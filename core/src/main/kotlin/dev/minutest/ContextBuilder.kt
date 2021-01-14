@@ -104,6 +104,11 @@ abstract class TestContextBuilder<PF, F> {
     val PF.parentFixture: PF get() = this
 
     /**
+     * Apply an operation before any test or subcontexts.
+     */
+    abstract fun beforeAll(f: (TestDescriptor) -> Unit)
+
+    /**
      * Apply an operation after all the tests and sub-contexts have completed.
      */
     abstract fun afterAll(f: () -> Unit)

@@ -15,6 +15,10 @@ class TestEventsTests {
 
     val listener = object : TestEventListener {
 
+        override fun <PF, F> contextOpened(context: Context<PF, F>, testDescriptor: TestDescriptor) {
+            log.add("Opened " + testDescriptor.fullName())
+        }
+
         override fun <F> testStarting(fixture: F, testDescriptor: TestDescriptor) {
             log.add("Starting " + testDescriptor.fullName())
         }
@@ -41,7 +45,6 @@ class TestEventsTests {
     }
 
     @Test fun firesEvents() {
-
         val tests = rootContext {
             addTransform { node ->
                 node.telling(listener)
@@ -77,10 +80,13 @@ class TestEventsTests {
         }
         executeTests(tests)
         assertLogged(log,
+            "Opened [root]",
             "Starting [root, in root]",
             "Completed [root, in root]",
+            "Opened [root, outer]",
             "Starting [root, outer, in outer]",
             "Completed [root, outer, in outer]",
+            "Opened [root, outer, inner]",
             "Starting [root, outer, inner, in inner]",
             "Completed [root, outer, inner, in inner]",
             "Starting [root, outer, inner, fails]",
@@ -98,5 +104,48 @@ class TestEventsTests {
             "afterAll root",
             "Closed root"
         )
+    }
+
+    @Test fun `fires events with no test in root`() {
+        val tests = rootContext {
+            addTransform { node ->
+                node.telling(listener)
+            }
+            context("context") {
+                test("in context") {}
+                afterAll {
+                    log.add("afterAll context")
+                }
+            }
+            afterAll {
+                log.add("afterAll root")
+            }
+        }
+        executeTests(tests)
+        assertLogged(log,
+            "Opened [root]",
+            "Opened [root, context]",
+            "Starting [root, context, in context]",
+            "Completed [root, context, in context]",
+            "afterAll context",
+            "Closed context",
+            "afterAll root",
+            "Closed root"
+        )
+    }
+
+    @Test fun `no events unless there are tests`() {
+        val tests = rootContext {
+            addTransform { node ->
+                node.telling(listener)
+            }
+            context("context") {
+            }
+            afterAll {
+                log.add("afterAll root")
+            }
+        }
+        executeTests(tests)
+        assertLogged(log)
     }
 }

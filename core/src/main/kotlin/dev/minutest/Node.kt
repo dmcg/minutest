@@ -31,6 +31,7 @@ abstract class Context<PF, F> : Node<PF>() {
      */
     internal abstract fun withTransformedChildren(transform: NodeTransform<F>): Context<PF, F>
 
+    abstract fun open(testDescriptor: TestDescriptor)
     abstract fun close()
 }
 

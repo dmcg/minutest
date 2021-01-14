@@ -1,6 +1,7 @@
 package dev.minutest.internal
 
 import dev.minutest.*
+import dev.minutest.internal.ContextExecutor.ContextState.*
 
 /**
  * The TestExecutor is built as the test running infrastructure traverses down the
@@ -30,13 +31,13 @@ internal class ContextExecutor<PF, F>(
     override val parent: TestExecutor<PF>,
     private val context: Context<PF, F>
 ) : TestExecutor<F> {
-
     override val name get() = context.name
 
     private val incompleteTests: MutableList<Test<F>> =
         context.children.filterIsInstance<Test<F>>().toMutableList()
     private val incompleteContexts: MutableList<Context<F, *>> =
         context.children.filterIsInstance<Context<F, *>>().toMutableList()
+    private var state = UNOPENED
 
     override fun runTest(test: Test<F>) {
         try {
@@ -54,32 +55,58 @@ internal class ContextExecutor<PF, F>(
         testDescriptor: TestDescriptor,
         testlet: Testlet<F>
     ) {
-        parent.runTest(testDescriptor) { fixture, _ /* see below */ ->
+        parent.runTest(testDescriptor) { fixture, _ /* 1 */ ->
+            maybeOpen(this) /* 2 */
             context.runTest(testlet, fixture, testDescriptor)
             fixture
         }
-        // NB use the testDescriptor supplied to this runTest so that we always see
+
+        // 1 - NB use the testDescriptor supplied to this runTest so that we always see
         // the longest path - the one the root to this context.
+
+        // 2 - We ask our the parent to try to open us - that way the outermost context
+        // is opened first.
     }
 
     override fun onTestComplete(test: Test<F>) {
-        incompleteTests.makeSureWeRemove(test)
-        maybeClose()
+        synchronized(this) {
+            incompleteTests.makeSureWeRemove(test)
+            maybeClose()
+        }
     }
 
     override fun onContextComplete(context: Context<F, *>) {
-        incompleteContexts.makeSureWeRemove(context)
-        maybeClose()
+        synchronized(this) {
+            incompleteContexts.makeSureWeRemove(context)
+            maybeClose()
+        }
+    }
+
+    private fun maybeOpen(testDescriptor: TestDescriptor) {
+        synchronized(this) {
+            check(state != CLOSED) { "Context was already closed" }
+            if (state == UNOPENED) {
+                context.open(testDescriptor)
+                state = OPENED
+            }
+        }
     }
 
     private fun maybeClose() {
         if (incompleteTests.isEmpty() && incompleteContexts.isEmpty()) {
+            check(state != UNOPENED) { "Context was never opened" }
+            check(state != CLOSED) { "Context was already closed" }
             try {
                 context.close()
             } finally {
+                state = CLOSED
                 parent.onContextComplete(this.context)
             }
         }
+    }
+
+    private enum class ContextState {
+        UNOPENED, OPENED, CLOSED
     }
 }
 
@@ -87,7 +114,7 @@ internal class ContextExecutor<PF, F>(
  * The root executor has no [Context], it just supplies the [Unit] fixture.
  */
 internal object RootExecutor : TestExecutor<Unit>, RootDescriptor {
-    override val name = ""
+    override val name = "ROOT"
     override val parent: Nothing? = null
 
     override fun runTest(

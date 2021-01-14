@@ -6,12 +6,13 @@ import dev.minutest.*
  * Once the DSL has been evaluated, its contexts are converted to a [PreparedContext]
  * ready to be run.
  */
-internal data class PreparedContext<PF, F> (
+internal data class PreparedContext<PF, F>(
     override val name: String,
     override val children: List<Node<F>>,
     override val markers: List<Any>,
     private val parentFixtureType: FixtureType,
     private val fixtureType: FixtureType,
+    private val beforeAlls: List<(TestDescriptor) -> Unit>,
     private val befores: List<(F, TestDescriptor) -> F>,
     private val afters: List<(FixtureValue<F>, TestDescriptor) -> Unit>,
     private var afterAlls: List<() -> Unit>,
@@ -28,6 +29,12 @@ internal data class PreparedContext<PF, F> (
             .tryMap { f -> testlet(f, testDescriptor) }
             .also { applyAftersTo(it, testDescriptor) }
             .orThrow()
+    }
+
+    override fun open(testDescriptor: TestDescriptor) {
+        beforeAlls.forEach {
+            it(testDescriptor)
+        }
     }
 
     override fun close() {

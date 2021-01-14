@@ -37,6 +37,10 @@ internal data class AmalgamatedRootContext(
         TODO("not implemented")
     }
 
+    override fun open(testDescriptor: TestDescriptor) {
+        // we shouldn't be holding any resources
+    }
+
     override fun close() {
         // we shouldn't be holding any resources
     }

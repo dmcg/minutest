@@ -23,7 +23,11 @@ class TestLogger(
         val noSymbols: (NodeType) -> String = { "" }
     }
 
-    private var lastPath = emptyList<String>()
+    private var currentIndent = ""
+
+    override fun <PF, F> contextOpened(context: Context<PF, F>, testDescriptor: TestDescriptor) {
+        log(NodeType.CONTEXT, testDescriptor)
+    }
 
     override fun <F> testStarting(fixture: F, testDescriptor: TestDescriptor) = Unit
 
@@ -43,24 +47,14 @@ class TestLogger(
         log(NodeType.TEST_SKIPPED, testDescriptor)
     }
 
-    override fun <PF, F> contextClosed(context: Context<PF, F>) = Unit
+    override fun <PF, F> contextClosed(context: Context<PF, F>) {
+        currentIndent = currentIndent.substring(indent.length)
+    }
 
     private fun log(nodeType: NodeType, testDescriptor: TestDescriptor) {
-        val path = testDescriptor.fullName()
-        val commonPrefix = lastPath.commonPrefix(path)
-        if (path == lastPath) {
-            // copes with repeated tests with the same name
-            log.add(indent.repeat(testDescriptor.fullName().size - 1) + prefixer(nodeType) + testDescriptor.name)
+        log.add(currentIndent + prefixer(nodeType) + testDescriptor.name)
+        if (nodeType == NodeType.CONTEXT) {
+            currentIndent += indent
         }
-        else
-            path.subList(commonPrefix.size, path.size).forEachIndexed { i, name ->
-                val isContext = name != testDescriptor.name
-                val icon = prefixer(if (isContext) NodeType.CONTEXT else nodeType)
-                log.add(indent.repeat(commonPrefix.size + i) + icon + name)
-            }
-        lastPath = path
     }
 }
-
-private fun <E> List<E>.commonPrefix(that: List<E>): List<E> =
-    this.zip(that).takeWhile { (a, b) -> a == b }.map { (a, _) -> a }

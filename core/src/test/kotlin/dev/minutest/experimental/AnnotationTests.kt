@@ -9,9 +9,9 @@ class AnnotationTests : JUnit5Minutests {
     fun tests() = rootContext {
 
         isAnnotatable(test("no annotations") {})
-        isAnnotatable(unitAnnotation - test("single annotation") {})
-        isAnnotatable(unitAnnotation - context("single annotation") {
-            test("in single annotation") {}
+        isAnnotatable(unitAnnotation - test("single annotation test") {})
+        isAnnotatable(unitAnnotation - context("single annotation context") {
+            test("test in single annotation context") {}
         })
 
         isAnnotatable(unitAnnotation + anyAnnotation - test("2 annotations") {})
@@ -28,8 +28,9 @@ class AnnotationTests : JUnit5Minutests {
         checkedAgainst(
             "root",
             "  no annotations",
-            "  single annotation",
-            "    in single annotation",
+            "  single annotation test",
+            "  single annotation context",
+            "    test in single annotation context",
             "  2 annotations",
             "  2 annotations again",
             "  3 annotations",
