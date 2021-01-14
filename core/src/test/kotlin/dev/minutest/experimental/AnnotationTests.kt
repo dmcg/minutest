@@ -36,7 +36,8 @@ class AnnotationTests : JUnit5Minutests {
             "  3 annotations",
             "  3 annotations again",
             "  annotate with",
-            "    in annotate with"
+            "    in annotate with",
+            logger = noSymbolsLogger()
         )
     }
 

@@ -2,6 +2,7 @@ package dev.minutest.scenarios
 
 import dev.minutest.executeTests
 import dev.minutest.experimental.checkedAgainst
+import dev.minutest.experimental.noSymbolsLogger
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Test
 
@@ -14,7 +15,8 @@ class ScenarioNamingTests {
             checkedAgainst(
                 "root",
                 "  Scenario",
-                "    Given given1, And given2, Then then1, When when1, And when2, Then then2, And then3, When when3, And when4, Then then4"
+                "    Given given1, And given2, Then then1, When when1, And when2, Then then2, And then3, When when3, And when4, Then then4",
+                logger = noSymbolsLogger()
             )
             Scenario("Scenario") {
                 GivenFixture("given1") {
@@ -39,7 +41,8 @@ class ScenarioNamingTests {
             checkedAgainst(
                 "root",
                 "  Scenario",
-                "    Given given1, And given2, Then…, When when1, And when2, Then…, And…, When when3, And when4, Then…"
+                "    Given given1, And given2, Then…, When when1, And when2, Then…, And…, When when3, And when4, Then…",
+                logger = noSymbolsLogger()
             )
             Scenario("Scenario") {
                 GivenFixture("given1") {
@@ -63,7 +66,8 @@ class ScenarioNamingTests {
         val tests = rootContext<Unit> {
             checkedAgainst(
                 "root",
-                "  Scenario"
+                "  Scenario",
+                logger = noSymbolsLogger()
             )
             Scenario("Scenario") {
                 When("when") {}.Then("then") {}
@@ -78,7 +82,8 @@ class ScenarioNamingTests {
         val tests = rootContext<Unit> {
             checkedAgainst(
                 "root",
-                "  When when, Then then"
+                "  When when, Then then",
+                logger = noSymbolsLogger()
             )
             Scenario {
                 When("when") {}.Then("then") {}
@@ -94,7 +99,8 @@ class ScenarioNamingTests {
             checkedAgainst(
                 "root",
                 "  Given given, When when, Then then",
-                "    test"
+                "    test",
+                logger = noSymbolsLogger()
             )
             Scenario {
                 GivenFixture("given") {}

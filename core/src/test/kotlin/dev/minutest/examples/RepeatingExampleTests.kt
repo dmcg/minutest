@@ -31,19 +31,19 @@ class RepeatingExampleTests : JUnit5Minutests {
 
         // Minutest will check that the following tests are run
         willRun(
-            "root",
-            "  check 1 is 1 - run 1",
-            "  check 1 is 1 - run 2",
-            "  check 1 is 1 - run 3",
-            "  context 1",
-            "    check 2 is 2",
-            "    check 3 is 3",
-            "  context 2",
-            "    check 2 is 2",
-            "    check 3 is 3",
-            "  context 3",
-            "    check 2 is 2",
-            "    check 3 is 3"
+            "▾ root",
+            "  ✓ check 1 is 1 - run 1",
+            "  ✓ check 1 is 1 - run 2",
+            "  ✓ check 1 is 1 - run 3",
+            "  ▾ context 1",
+            "    ✓ check 2 is 2",
+            "    ✓ check 3 is 3",
+            "  ▾ context 2",
+            "    ✓ check 2 is 2",
+            "    ✓ check 3 is 3",
+            "  ▾ context 3",
+            "    ✓ check 2 is 2",
+            "    ✓ check 3 is 3"
         )
     }
 }

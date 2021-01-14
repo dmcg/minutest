@@ -2,6 +2,7 @@ package dev.minutest.examples.experimental
 
 import com.natpryce.hamkrest.*
 import com.natpryce.hamkrest.assertion.assertThat
+import dev.minutest.experimental.noSymbolsLogger
 import dev.minutest.experimental.willRun
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
@@ -61,7 +62,8 @@ class ScenariosHamkrestExampleTests : JUnit5Minutests {
                 " And source is empty," +
                 " When moving back," +
                 " Then result is equal to true," +
-                " And fixture has source that contains all [\"apple\", \"banana\"] and has size that is equal to 2 and has destination that is empty"
+                " And fixture has source that contains all [\"apple\", \"banana\"] and has size that is equal to 2 and has destination that is empty",
+            logger = noSymbolsLogger()
         )
     }
 }

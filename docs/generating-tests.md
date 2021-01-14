@@ -67,16 +67,16 @@ class GeneratingExampleTests : JUnit5Minutests {
 
         // Minutest will check that the following tests are run
         willRun(
-            "root",
-            "  an empty stack",
-            "    is empty",
-            "    can push",
-            "    cant pop",
-            "  a stack with one item",
-            "    is not empty",
-            "    can push",
-            "    can pop",
-            "    has the item on top"
+            "▾ root",
+            "  ▾ an empty stack",
+            "    ✓ is empty",
+            "    ✓ can push",
+            "    ✓ cant pop",
+            "  ▾ a stack with one item",
+            "    ✓ is not empty",
+            "    ✓ can push",
+            "    ✓ can pop",
+            "    ✓ has the item on top"
         )
     }
 }

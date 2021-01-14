@@ -41,7 +41,8 @@ fun <PF, F> TestContextBuilder<PF, F>.willRun(
     checker: (List<String>, List<String>) -> Unit = ::defaultChecker
 ) = this.checkedAgainst(expected.toList(), logger, checker)
 
-private fun defaultLogger() = TestLogger(mutableListOf(), prefixer = TestLogger.noSymbols)
+fun defaultLogger() = TestLogger(mutableListOf())
+fun noSymbolsLogger() = TestLogger(mutableListOf(), prefixer = TestLogger.noSymbols)
 
 // Raw to keep dependency on JUnit to a minimum
 private fun <F> defaultChecker(expected: F, actual: F) {

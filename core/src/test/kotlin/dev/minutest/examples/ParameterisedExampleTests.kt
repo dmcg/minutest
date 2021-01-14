@@ -30,16 +30,16 @@ class ParameterisedExampleTests : JUnit5Minutests {
 
         // Minutest will check that the following tests are run
         willRun(
-            "root",
-            "  palindromes",
-            "    a is a palindrome",
-            "    oo is a palindrome",
-            "    racecar is a palindrome",
-            "    able was I ere I saw elba is a palindrome",
-            "  not palindromes",
-            "     is not a palindrome",
-            "    ab is not a palindrome",
-            "    a man a plan a canal pananma is not a palindrome"
+            "▾ root",
+            "  ▾ palindromes",
+            "    ✓ a is a palindrome",
+            "    ✓ oo is a palindrome",
+            "    ✓ racecar is a palindrome",
+            "    ✓ able was I ere I saw elba is a palindrome",
+            "  ▾ not palindromes",
+            "    ✓  is not a palindrome",
+            "    ✓ ab is not a palindrome",
+            "    ✓ a man a plan a canal pananma is not a palindrome"
         )
     }
 }

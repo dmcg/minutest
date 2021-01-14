@@ -42,8 +42,8 @@ class FlatterScenariosExampleTests : JUnit5Minutests {
         }
 
         willRun(
-            "Moving Between Lists",
-            "  When source is populated, And source moveInto destination," +
+            "▾ Moving Between Lists",
+            "  ✓ When source is populated, And source moveInto destination," +
                 " Then destination contains source items, And source is empty"
         )
     }

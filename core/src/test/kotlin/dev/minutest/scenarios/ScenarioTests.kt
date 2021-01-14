@@ -3,6 +3,7 @@ package dev.minutest.scenarios
 import dev.minutest.assertLogged
 import dev.minutest.executeTests
 import dev.minutest.experimental.checkedAgainst
+import dev.minutest.experimental.noSymbolsLogger
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -19,7 +20,8 @@ class ScenarioTests {
             checkedAgainst(
                 "root",
                 "  Scenario",
-                "    Given the string banana, When nothing happens, Then the fixture is banana, And it has 6 chars"
+                "    Given the string banana, When nothing happens, Then the fixture is banana, And it has 6 chars",
+                logger = noSymbolsLogger()
             )
             Scenario("Scenario") {
                 GivenFixture("the string banana") {

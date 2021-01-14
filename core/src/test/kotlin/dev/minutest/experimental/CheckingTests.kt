@@ -19,7 +19,9 @@ class CheckingTests {
                     "root",
                     "  top test",
                     "  inner",
-                    "    inner test"),
+                    "    inner test"
+                ),
+                logger = noSymbolsLogger(),
                 checker = ::assertEquals
             )
 
@@ -38,6 +40,7 @@ class CheckingTests {
         val tests = rootContext {
             checkedAgainst(
                 emptyList(),
+                logger = noSymbolsLogger(),
                 checker = ::assertEquals
             )
             test("test") {}
