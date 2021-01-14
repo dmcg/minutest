@@ -19,6 +19,9 @@ internal data class PreparedContext<PF, F>(
     private val fixtureFactory: (PF, TestDescriptor) -> F
 ) : Context<PF, F>() {
 
+    // This is used to run the tests in this context, and also to run testlets
+    // representing tests in the sub-contexts, so that all this context's
+    // lifecycle functions are run for them too. See [TestExecutor].
     override fun runTest(
         testlet: Testlet<F>,
         parentFixture: PF,
