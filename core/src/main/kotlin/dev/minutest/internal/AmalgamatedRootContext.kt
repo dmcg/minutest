@@ -7,6 +7,8 @@ import dev.minutest.*
  *
  * Used where we find more than one [TestFactory] in a JUnit5 test, or to collect all
  * the tests in a package using the MinutestTestEngine.
+ *
+ * Maybe it shouldn't exist - the RunnableNode might be able to do the job.
  */
 internal data class AmalgamatedRootContext(
     override val name: String,
