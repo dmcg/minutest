@@ -14,25 +14,22 @@ internal fun Node<Unit>.toRootRunnableNode(): RunnableNode = toRunnableNode(Root
  * RunnableNodes are a view of the [Node] tree provided to hide the gory details
  * of fixture types and [TestExecutor]s from test runners.
  */
-sealed class RunnableNode(
-) {
+sealed class RunnableNode {
     abstract val testDescriptor: TestDescriptor
     abstract val name: String
-    abstract val sourceReference: SourceReference?
+    abstract val markers: List<Any>
 }
 
-internal class RunnableTest internal constructor(
+internal class RunnableTest(
     private val test: Test<*>,
     override val testDescriptor: TestDescriptor,
     private val f: () -> Unit
-) : RunnableNode() {
+) : RunnableNode(), () -> Unit {
 
     override val name get() = test.name
+    override val markers get() = test.markers
 
-    override val sourceReference get() =
-        test.markers.filterIsInstance<SourceReference>().firstOrNull()
-
-    fun invoke() {
+    override operator fun invoke() {
         f()
     }
 }
@@ -44,10 +41,11 @@ internal class RunnableContext(
 ) : RunnableNode() {
 
     override val name get() = context.name
-
-    override val sourceReference get() =
-        context.markers.filterIsInstance<SourceReference>().firstOrNull()
+    override val markers get() = context.markers
 }
+
+val RunnableNode.sourceReference get() =
+    markers.filterIsInstance<SourceReference>().firstOrNull()
 
 private fun <F> Node<F>.toRunnableNode(executor: TestExecutor<F>): RunnableNode =
     when (this) {
