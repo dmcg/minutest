@@ -12,7 +12,11 @@ class TestLogger(
 ) : TestEventListener {
 
     enum class NodeType(val prefix: String) {
-        CONTEXT("▾ "), TEST_COMPLETE("✓ "), TEST_FAILED("X "), TEST_ABORTED("- "), TEST_SKIPPED("- ")
+        CONTEXT("▾ "),
+        TEST_COMPLETE("✓ "),
+        TEST_FAILED("X "),
+        TEST_ABORTED("- "),
+        TEST_SKIPPED("- ")
     }
 
     companion object {
