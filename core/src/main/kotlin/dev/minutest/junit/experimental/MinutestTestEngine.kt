@@ -1,14 +1,13 @@
 package dev.minutest.junit.experimental
 
-import dev.minutest.internal.*
+import dev.minutest.internal.RunnableContext
+import dev.minutest.internal.RunnableTest
+import dev.minutest.internal.findRootContextPerPackage
+import dev.minutest.internal.toRootRunnableNode
 import org.junit.platform.engine.*
-import org.junit.platform.engine.TestDescriptor.Type.CONTAINER
-import org.junit.platform.engine.TestDescriptor.Type.TEST
 import org.junit.platform.engine.discovery.*
 import org.junit.platform.engine.support.descriptor.EngineDescriptor
 import org.opentest4j.IncompleteExecutionException
-import java.util.*
-import kotlin.collections.LinkedHashSet
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
@@ -112,6 +111,8 @@ class MinutestTestEngine : TestEngine {
 
     companion object {
         const val engineId = "minutest"
+        internal const val contextType = "minutest-context"
+        internal const val testType = "minutest-test"
     }
 }
 
@@ -119,67 +120,6 @@ private class MinutestEngineDescriptor(
     uniqueId: UniqueId,
     val discoveryRequest: EngineDiscoveryRequest
 ) : EngineDescriptor(uniqueId, "Minutest")
-
-private const val contextType = "minutest-context"
-private const val testType = "minutest-test"
-
-private class MinutestNodeDescriptor(
-    parent: TestDescriptor,
-    val runnableNode: RunnableNode,
-    private val source: TestSource? = null
-) : TestDescriptor {
-
-    private var _parent: TestDescriptor? = parent
-    private val _children = LinkedHashSet<TestDescriptor>()
-    private val _uniqueId = parent.uniqueId.append(runnableNode.descriptorIdType(), runnableNode.name)
-
-    override fun getDisplayName() = runnableNode.name
-    override fun getUniqueId(): UniqueId = _uniqueId
-    override fun getSource() = Optional.ofNullable(source)
-    override fun getType() = when (runnableNode) {
-        is RunnableContext -> CONTAINER
-        is RunnableTest -> TEST
-    }
-
-    override fun getParent() = Optional.ofNullable(_parent)
-    override fun setParent(parent: TestDescriptor?) {
-        _parent = parent
-    }
-
-    override fun mayRegisterTests(): Boolean = true
-    override fun getChildren() = _children.toMutableSet()
-
-    override fun addChild(descriptor: TestDescriptor) {
-        _children.add(descriptor)
-        descriptor.setParent(this)
-    }
-
-    override fun removeChild(descriptor: TestDescriptor) {
-        if (_children.remove(descriptor)) {
-            descriptor.setParent(null)
-        }
-    }
-
-    override fun removeFromHierarchy() {
-        _parent?.removeChild(this)
-        _parent = null
-    }
-
-    override fun findByUniqueId(uniqueId: UniqueId?): Optional<TestDescriptor> =
-        if (uniqueId == this._uniqueId) {
-            Optional.of(this)
-        } else {
-            _children.asSequence().map { findByUniqueId(uniqueId) }.firstOrNull { it.isPresent } ?: Optional.empty()
-        }
-
-    override fun getTags() = emptySet<TestTag>()
-}
-
-private fun RunnableNode.descriptorIdType(): String =
-    when (this) {
-        is RunnableContext -> contextType
-        is RunnableTest -> testType
-    }
 
 private fun scan(
     root: MinutestEngineDescriptor,

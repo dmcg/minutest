@@ -37,9 +37,9 @@ private fun RunnableContext.toDynamicContainer() =
 private fun RunnableContext.toListOfDynamicNodes(): List<DynamicNode> =
     children.map { it.toDynamicNode() }
 
-private val RunnableNode.testUri: URI? get() = sourceReference?.toURI()
+internal val RunnableNode.testUri: URI? get() = sourceReference?.toUri()
 
-private fun SourceReference.toURI(): URI = File(path).toURI().let { fileUri ->
+private fun SourceReference.toUri(): URI = File(path).toURI().let { fileUri ->
     URI(
         fileUri.scheme,
         fileUri.userInfo,
