@@ -98,7 +98,7 @@ internal object RootExecutor : TestExecutor<Unit>, RootDescriptor {
 
     override fun runTest(test: Test<Unit>) {
         // this ends up being called if you SKIP the root test,
-        // as we substitute the context with at test that throws!
+        // as we substitute the context with a test that throws!
         runTest(this.andThenTestName(test.name), test)
     }
 
