@@ -1,133 +1,110 @@
 package dev.minutest.experimental
 
-import dev.minutest.*
-import org.junit.jupiter.api.Test
+import dev.minutest.RootContextBuilder
+import dev.minutest.TestDescriptor
+import dev.minutest.junit.JUnit5Minutests
+import dev.minutest.rootContext
 import kotlin.test.fail
 
 
-class SkipAndFocusTests {
+class SkipAndFocusTests : JUnit5Minutests {
 
-    private val log = mutableListOf<String>()
     private val noop: Unit.(TestDescriptor) -> Unit = {}
 
-    @Test fun noop() {
-        val tests = rootContext {
-            logTo(log)
-            test("t1", noop)
-            test("t2", noop)
-        }
-        checkLog(tests,
-            "▾ root",
+    fun noop() = rootContext {
+        test("t1", noop)
+        test("t2", noop)
+        willRun(
+            "▾ noop",
             "  ✓ t1",
             "  ✓ t2"
         )
     }
 
-    @Test fun `skip test`() {
-        val tests = rootContext {
-            logTo(log)
-            SKIP - test("t1") { fail("t1 wasn't skipped") }
-            test("t2", noop)
-        }
-        checkLog(tests,
-            "▾ root",
+    fun `skip test`() = rootContext {
+        SKIP - test("t1") { fail("t1 wasn't skipped") }
+        test("t2", noop)
+        willRun(
+            "▾ skip test",
             "  - t1",
             "  ✓ t2"
         )
     }
 
-    @Test fun `skip context`() {
-        val tests = rootContext {
-            logTo(log)
-            SKIP - context("c1") {
-                test("c1/t1") { fail("c1/t1 wasn't skipped") }
-            }
-            test("t2", noop)
+    fun `skip context`() = rootContext {
+        SKIP - context("c1") {
+            test("c1/t1") { fail("c1/t1 wasn't skipped") }
         }
-        checkLog(tests,
-            "▾ root",
+        test("t2", noop)
+        willRun(
+            "▾ skip context",
             "  - c1",
             "  ✓ t2"
         )
     }
 
-    @Test fun `focus test skips unfocused`() {
-        val tests = rootContext {
-            logTo(log)
-            test("t1") { fail("t1 wasn't skipped") }
-            FOCUS - test("t2", noop)
-        }
-        checkLog(tests,
-            "▾ root",
+    fun `focus test skips unfocused`() = rootContext {
+        test("t1") { fail("t1 wasn't skipped") }
+        FOCUS - test("t2", noop)
+        willRun(
+            "▾ focus test skips unfocused",
             "  - t1",
             "  ✓ t2"
         )
     }
 
-    @Test fun `focus context skips unfocused`() {
-        val tests = rootContext {
-            logTo(log)
-            test("t1") { fail("t1 wasn't skipped") }
-            FOCUS - context("c1") {
-                test("c1/t1", noop)
-            }
+    fun `focus context skips unfocused`() = rootContext {
+        test("t1") { fail("t1 wasn't skipped") }
+        FOCUS - context("c1") {
+            test("c1/t1", noop)
         }
-        checkLog(tests,
-            "▾ root",
+        willRun(
+            "▾ focus context skips unfocused",
             "  - t1",
             "  ▾ c1",
             "    ✓ c1/t1"
         )
     }
 
-    @Test fun `focus downtree skips unfocused from root`() {
-        val tests = rootContext {
-            logTo(log)
-            test("t1") { fail("t1 wasn't skipped") }
-            context("c1") {
-                FOCUS - test("c1/t1", noop)
-            }
+    fun `focus downtree skips unfocused from root`() = rootContext {
+        test("t1") { fail("t1 wasn't skipped") }
+        context("c1") {
+            FOCUS - test("c1/t1", noop)
         }
-        checkLog(tests,
-            "▾ root",
+        willRun(
+            "▾ focus downtree skips unfocused from root",
             "  - t1",
             "  ▾ c1",
             "    ✓ c1/t1"
         )
     }
 
-    @Test fun `focus doesn't resurrect a skipped context`() {
-        val tests = rootContext {
-            logTo(log)
-            SKIP - context("c1") {
-                FOCUS - test("c1/t1") {
-                    fail("was resurrected by focus despite skip")
-                }
+    fun `focus doesn't resurrect a skipped context`() = rootContext {
+        SKIP - context("c1") {
+            FOCUS - test("c1/t1") {
+                fail("was resurrected by focus despite skip")
             }
         }
-        checkLog(tests,
-            "▾ root",
+        willRun(
+            "▾ focus doesn't resurrect a skipped context",
             "  - c1"
         )
     }
 
-    @Test fun `deep thing`() {
-        val tests = rootContext {
-            logTo(log)
-            test("t1") { fail("t1 wasn't skipped") }
-            context("c1") {
-                FOCUS - test("c1/t1", noop)
-                context("c1/c1") {
-                    test("c1/c1/t1") { fail("c1/c1/t1 wasn't skipped") }
-                }
-                FOCUS - context("c1/c2") {
-                    test("c1/c2/t1", noop)
-                    SKIP - test("c1/c2/t2") { fail("c1/c2/t2 wasn't skipped") }
-                }
+    fun `deep thing`() = rootContext {
+        test("t1") { fail("t1 wasn't skipped") }
+        context("c1") {
+            FOCUS - test("c1/t1", noop)
+            context("c1/c1") {
+                test("c1/c1/t1") { fail("c1/c1/t1 wasn't skipped") }
+            }
+            FOCUS - context("c1/c2") {
+                test("c1/c2/t1", noop)
+                SKIP - test("c1/c2/t2") { fail("c1/c2/t2 wasn't skipped") }
             }
         }
-        checkLog(tests,
-            "▾ root",
+        willRun(
+            "▾ deep thing",
             "  - t1",
             "  ▾ c1",
             "    ✓ c1/t1",
@@ -138,20 +115,13 @@ class SkipAndFocusTests {
         )
     }
 
-    @Test fun `skip from root`() {
-        val tests = SKIP - rootContext {
-            logTo(log)
-            test("root was skipped") {
-                fail("root wasn't skipped")
-            }
+    // TODO - this isn't appearing in IntelliJ - is that a problem?
+    fun `skip from root`(): RootContextBuilder = SKIP - rootContext {
+        test("root was skipped") {
+            fail("root wasn't skipped")
         }
-        checkLog(tests,
-            "- root"
+        willRun(
+            "- skip from root"
         )
-    }
-
-    private fun checkLog(tests: RootContextBuilder, vararg expected: String) {
-        executeTests(tests)
-        assertLogged(log, *expected)
     }
 }

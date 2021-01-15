@@ -12,11 +12,10 @@ import org.junit.jupiter.api.Test as JUnitTest
 
 class TestLoggerTests {
 
-    val log = mutableListOf<String>()
-
     @JUnitTest fun test() {
-        doStuff(TestLogger(log))
-        assertLogged(log,
+        val logger = TestLogger()
+        doStuff(logger)
+        assertLogged(logger.toStrings(),
             "▾ root",
             "  ✓ test in root",
             "  ✓ test 2 in root",
@@ -32,8 +31,9 @@ class TestLoggerTests {
     }
 
     @JUnitTest fun testPlain() {
-        doStuff(TestLogger(log, indent = "..", prefixer = TestLogger.noSymbols))
-        assertLogged(log,
+        val logger = TestLogger(indent = "..", prefixer = TestLogger.noSymbols)
+        doStuff(logger)
+        assertLogged(logger.toStrings(),
             "root",
             "..test in root",
             "..test 2 in root",

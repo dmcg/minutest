@@ -7,11 +7,19 @@ fun <PF, F> TestContextBuilder<PF, F>.checkedAgainst(
     logger: TestLogger = defaultLogger(),
     check: (List<String>) -> Unit
 ) {
+    annotateWith(
+        RootAnnotation { node ->
+            node.telling(logger)
+        }
+    )
+
     addTransform { node ->
         when (node) {
-            is Context<PF, *> -> {
-                ContextWrapper(node.telling(logger), onClose = { check(logger.log) })
-            }
+            is Context<PF, *> ->
+                ContextWrapper(
+                    node,
+                    onClose = { check(logger.toStrings()) }
+                )
             else -> TODO("checking when root is just a test")
         }
     }
@@ -41,8 +49,8 @@ fun <PF, F> TestContextBuilder<PF, F>.willRun(
     checker: (List<String>, List<String>) -> Unit = ::defaultChecker
 ) = this.checkedAgainst(expected.toList(), logger, checker)
 
-fun defaultLogger() = TestLogger(mutableListOf())
-fun noSymbolsLogger() = TestLogger(mutableListOf(), prefixer = TestLogger.noSymbols)
+fun defaultLogger() = TestLogger()
+fun noSymbolsLogger() = TestLogger(prefixer = TestLogger.noSymbols)
 
 // Raw to keep dependency on JUnit to a minimum
 private fun <F> assertEquals(expected: F, actual: F) {

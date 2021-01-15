@@ -9,7 +9,7 @@ import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
 
 class TestLogger(
-    val log: MutableList<String> = mutableListOf(),
+    private val log: MutableList<String> = mutableListOf(),
     val indent: String = "  ",
     val prefixer: (EventType) -> String = EventType::prefix
 ) : TestEventListener {
@@ -82,4 +82,22 @@ class TestLogger(
         val node: Node<*>,
         val testDescriptor: TestDescriptor
     )
+
+    fun toStrings(): List<String> {
+        var currentIndent = ""
+        return events.mapNotNull { (eventType, _, testDescriptor) ->
+            when (eventType) {
+                CONTEXT_OPENED -> (currentIndent + prefixer(eventType) + testDescriptor.name).also {
+                    currentIndent += indent
+                }
+                CONTEXT_CLOSED -> {
+                    currentIndent = currentIndent.substring(indent.length)
+                    null
+                }
+                TEST_STARTING -> null
+                else -> (currentIndent + prefixer(eventType) + testDescriptor.name)
+            }
+
+        }
+    }
 }
