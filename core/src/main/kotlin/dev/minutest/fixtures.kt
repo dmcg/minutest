@@ -12,34 +12,3 @@ fun <F: AutoCloseable> ContextBuilder<F>.closeableFixture(
         fixture.close()
     }
 }
-
-/**
- * Define a fixture that needs a disposable dependency.
- */
-fun <F, D : Any> ContextBuilder<F>.dependentFixture(
-    dependencyBuilder: () -> D,
-    dependencyDisposer: (D) -> Unit,
-    factory: (Unit).(D) -> F
-) = dependentFixture(
-    dependencyBuilder = { dependencyBuilder() },
-    dependencyDisposer = { dependency, _ -> dependencyDisposer(dependency) },
-    factory = { dependency, _ -> factory(dependency) }
-)
-
-/**
- * Define a fixture that needs a disposable dependency (pedantic version).
- */
-fun <F, D : Any> ContextBuilder<F>.dependentFixture(
-    dependencyBuilder: (TestDescriptor) -> D,
-    dependencyDisposer: (D, TestDescriptor) -> Unit,
-    factory: (Unit).(D, TestDescriptor) -> F
-) {
-    lateinit var dependency: D // lateinit as we want to build dependency as late as possible but still see it in the after
-    fixture { testDescriptor ->
-        dependency = dependencyBuilder(testDescriptor)
-        factory(dependency, testDescriptor)
-    }
-    after { testDescriptor ->
-        dependencyDisposer(dependency, testDescriptor)
-    }
-}

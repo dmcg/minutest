@@ -10,15 +10,15 @@ class AfterAllTests {
 
     // this is a very special case for testing testing - don't do this normally
     val log = mutableListOf<String>()
-    private lateinit var expectedLog: List<String>
+    private lateinit var expectedLog: Set<String>
 
     @AfterEach fun checkLog() {
-        assertEquals(expectedLog, log)
+        assertEquals(expectedLog, log.toSet())
     }
 
     @TestFactory fun `top level`() = rootContext<MutableList<String>> {
 
-        expectedLog = listOf("test 1", "test 2", "after all")
+        expectedLog = setOf("test 1", "test 2", "after all")
 
         fixture { log }
 
@@ -37,7 +37,7 @@ class AfterAllTests {
 
     @TestFactory fun `not top level`() = rootContext<MutableList<String>> {
 
-        expectedLog = listOf("test 1", "test 2", "after all")
+        expectedLog = setOf("test 1", "test 2", "after all")
 
         fixture { log }
 

@@ -8,6 +8,13 @@ fun assertLogged(log: List<String>, vararg expected: String) {
     assertEquals(expected.toList().joinToString("\n"), log.joinToString("\n"))
 }
 
+fun assertLoggedInAnyOrder(log: List<String>, vararg expected: String) {
+    assertEquals(
+        expected.toSet().joinToString("\n"),
+        log.toSet().joinToString("\n")
+    )
+}
+
 fun assertNothingLogged(log: List<String>) {
     assertEquals(emptyList<String>(), log)
 }

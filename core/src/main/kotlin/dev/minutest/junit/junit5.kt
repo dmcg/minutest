@@ -7,11 +7,14 @@ import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest
 import java.io.File
 import java.net.URI
+import java.util.concurrent.ExecutorService
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-internal fun Node<Unit>.toRootListOfDynamicNodes(): List<DynamicNode> =
-    when (val runnableNode = this.toRootRunnableNode()) {
+internal fun Node<Unit>.toRootListOfDynamicNodes(
+    executorService: ExecutorService? = null
+): List<DynamicNode> =
+    when (val runnableNode = this.toRootRunnableNode(executorService)) {
         is RunnableTest -> listOf(runnableNode.toDynamicTest())
         is RunnableContext -> runnableNode.toListOfDynamicNodes()
     }

@@ -1,6 +1,6 @@
 package dev.minutest.junit.experimental
 
-import dev.minutest.assertLogged
+import dev.minutest.assertLoggedInAnyOrder
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import org.junit.jupiter.api.AfterAll
@@ -61,7 +61,7 @@ class JUnitRulesTests : JUnit5Minutests {
         @AfterAll
         fun checkTestIsRun() {
             // The (root) is the name of the root context created to hold the two test method root contexts
-            assertLogged(log,
+            assertLoggedInAnyOrder(log,
                 "non-null fixture.test in root(root)",
                 "non-null fixture.context.test in context(root)",
                 "null fixture.test in root(root)",

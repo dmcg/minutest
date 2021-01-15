@@ -4,11 +4,11 @@ import com.oneeyedmen.kSera.expecting
 import com.oneeyedmen.kSera.invoke
 import com.oneeyedmen.kSera.mock
 import com.oneeyedmen.kSera.returnValue
-import dev.minutest.ContextBuilder
-import dev.minutest.dependentFixture
+import dev.minutest.closeableFixture
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import org.jmock.Mockery
+import org.jmock.lib.concurrent.Synchroniser
 
 interface Key {
     val isTurned: Boolean
@@ -37,19 +37,23 @@ class ControlPanel(
 
 class JMockExampleTests : JUnit5Minutests {
 
-    class Fixture(val mockery: Mockery) {
+    class Fixture(val mockery: Mockery): AutoCloseable {
         val key = mockery.mock<Key>()
         val beeper = mockery.mock<Beeper>()
         val rocket = mockery.mock<Rocket>()
 
         val controlPanel = ControlPanel(key, beeper, rocket)
+
+        override fun close() {
+            mockery.assertIsSatisfied()
+        }
     }
 
     fun tests() = rootContext<Fixture> {
 
         // jmockFixture manages the mockery lifecycle
-        jmockFixture { mockery ->
-            Fixture(mockery)
+        closeableFixture {
+            Fixture(synchronisedMockery())
         }
 
         context("key not turned") {
@@ -91,10 +95,7 @@ class JMockExampleTests : JUnit5Minutests {
     }
 }
 
-private fun <F> ContextBuilder<F>.jmockFixture(
-    factory: (Unit).(mockery: Mockery) -> F
-) = dependentFixture(
-    dependencyBuilder = ::Mockery,
-    dependencyDisposer = Mockery::assertIsSatisfied,
-    factory = factory
-)
+// Syncronised because Minutest runs tests in parallel
+private fun synchronisedMockery() = Mockery().apply {
+    setThreadingPolicy(Synchroniser())
+}

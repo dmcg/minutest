@@ -83,7 +83,7 @@ internal class ContextExecutor<PF, F>(
 
     private fun maybeOpen(testDescriptor: TestDescriptor) {
         synchronized(this) {
-            check(state != CLOSED) { "Context was already closed" }
+            check(state != CLOSED) { "Context $contextPath was already closed" }
             if (state == UNOPENED) {
                 context.open(testDescriptor)
                 state = OPENED
@@ -93,8 +93,8 @@ internal class ContextExecutor<PF, F>(
 
     private fun maybeClose() {
         if (incompleteTests.isEmpty() && incompleteContexts.isEmpty()) {
-            check(state != UNOPENED) { "Context was never opened" }
-            check(state != CLOSED) { "Context was already closed" }
+            check(state != UNOPENED) { "Context $contextPath never opened" }
+            check(state != CLOSED) { "Context $contextPath was already closed" }
             try {
                 context.close()
             } finally {
@@ -103,6 +103,8 @@ internal class ContextExecutor<PF, F>(
             }
         }
     }
+
+    private val contextPath get() = this.fullName()
 
     private enum class ContextState {
         UNOPENED, OPENED, CLOSED

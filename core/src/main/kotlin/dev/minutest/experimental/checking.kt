@@ -45,13 +45,25 @@ fun defaultLogger() = TestLogger(mutableListOf())
 fun noSymbolsLogger() = TestLogger(mutableListOf(), prefixer = TestLogger.noSymbols)
 
 // Raw to keep dependency on JUnit to a minimum
-private fun <F> defaultChecker(expected: F, actual: F) {
+private fun <F> assertEquals(expected: F, actual: F) {
     assert(actual == expected) {
         """
             Test log checking failed
             Expected : $expected
             Actual   : $actual""".trimIndent()
     }
+}
+
+fun defaultChecker(expected: List<String>, actual:List<String>) {
+//    assertEquals(expected, actual)
+    aysncChecker(expected, actual)
+}
+
+fun aysncChecker(expected: List<String>, actual:List<String>) {
+    assertEquals(
+        expected.map(String::trim).toSet(),
+        actual.map(String::trim).toSet()
+    )
 }
 
 fun <PF, F> TestContextBuilder<PF, F>.logTo(log: MutableList<String>) {

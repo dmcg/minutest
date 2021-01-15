@@ -15,7 +15,7 @@ sealed class RunnableNode {
     abstract val markers: List<Any>
 }
 
-internal class RunnableTest(
+internal data class RunnableTest(
     override val testDescriptor: TestDescriptor,
     private val test: Test<*>,
     private val f: () -> Unit
