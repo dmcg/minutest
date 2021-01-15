@@ -1,7 +1,10 @@
 package dev.minutest.experimental
 
 import dev.minutest.Context
+import dev.minutest.Node
+import dev.minutest.Test
 import dev.minutest.TestDescriptor
+import dev.minutest.experimental.TestLogger.EventType.*
 import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
 
@@ -30,49 +33,53 @@ class TestLogger(
     private var currentIndent = ""
 
     override fun <PF, F> contextOpened(context: Context<PF, F>, testDescriptor: TestDescriptor) {
-        addAndLog(EventType.CONTEXT_OPENED, testDescriptor)
+        addAndLog(TestEvent(CONTEXT_OPENED, context, testDescriptor))
     }
 
-    override fun <F> testStarting(fixture: F, testDescriptor: TestDescriptor) {
-        add(EventType.TEST_STARTING, testDescriptor)
+    override fun <F> testStarting(test: Test<F>, fixture: F, testDescriptor: TestDescriptor) {
+        add(TestEvent(TEST_STARTING, test, testDescriptor))
     }
 
-    override fun <F> testComplete(fixture: F, testDescriptor: TestDescriptor) {
-        addAndLog(EventType.TEST_COMPLETE, testDescriptor)
+    override fun <F> testComplete(test: Test<F>, fixture: F, testDescriptor: TestDescriptor) {
+        addAndLog(TestEvent(TEST_COMPLETE, test, testDescriptor))
     }
 
-    override fun <F> testFailed(fixture: F, testDescriptor: TestDescriptor, t: Throwable) {
-        addAndLog(EventType.TEST_FAILED, testDescriptor)
+    override fun <F> testFailed(test: Test<F>, fixture: F, testDescriptor: TestDescriptor, t: Throwable) {
+        addAndLog(TestEvent(TEST_FAILED, test, testDescriptor))
     }
 
-    override fun <F> testAborted(fixture: F, testDescriptor: TestDescriptor, t: TestAbortedException) {
-        addAndLog(EventType.TEST_ABORTED, testDescriptor)
+    override fun <F> testAborted(test: Test<F>, fixture: F, testDescriptor: TestDescriptor, t: TestAbortedException) {
+        addAndLog(TestEvent(TEST_ABORTED, test, testDescriptor))
     }
 
-    override fun <F> testSkipped(fixture: F, testDescriptor: TestDescriptor, t: IncompleteExecutionException) {
-        addAndLog(EventType.TEST_SKIPPED, testDescriptor)
+    override fun <F> testSkipped(test: Test<F>, fixture: F, testDescriptor: TestDescriptor, t: IncompleteExecutionException) {
+        addAndLog(TestEvent(TEST_SKIPPED, test, testDescriptor))
     }
 
     override fun <PF, F> contextClosed(context: Context<PF, F>, testDescriptor: TestDescriptor) {
         currentIndent = currentIndent.substring(indent.length)
-        add(EventType.CONTEXT_CLOSED, testDescriptor)
+        add(TestEvent(CONTEXT_CLOSED, context, testDescriptor))
     }
 
-    private fun addAndLog(eventType: EventType, testDescriptor: TestDescriptor) {
-        add(eventType, testDescriptor)
-        log(eventType, testDescriptor)
+    private fun addAndLog(testEvent: TestEvent) {
+        add(testEvent)
+        log(testEvent)
     }
 
-    private fun add(eventType: EventType, testDescriptor: TestDescriptor) {
-        events.add(TestEvent(eventType, testDescriptor))
+    private fun add(testEvent: TestEvent) {
+        events.add(testEvent)
     }
 
-    private fun log(eventType: EventType, testDescriptor: TestDescriptor) {
+    private fun log(testEvent: TestEvent) {
+        val (eventType, _, testDescriptor) = testEvent
         log.add(currentIndent + prefixer(eventType) + testDescriptor.name)
-        if (eventType == EventType.CONTEXT_OPENED) {
+        if (eventType == CONTEXT_OPENED)
             currentIndent += indent
-        }
     }
 
-    data class TestEvent(val eventType: EventType, val testDescriptor: TestDescriptor)
+    data class TestEvent(
+        val eventType: EventType,
+        val node: Node<*>,
+        val testDescriptor: TestDescriptor
+    )
 }

@@ -15,29 +15,29 @@ fun <F> Node<F>.telling(listener: TestEventListener): Node<F> =
 
 fun <PF, F> Context<PF, F>.telling(listener: TestEventListener): Context<PF, F> =
     ContextWrapper(this,
-        onOpen = { listener.contextOpened(this@telling, it) },
+        onOpen = { listener.contextOpened(this, it) },
         children = children.map { it.telling(listener) },
-        onClose = { listener.contextClosed(this@telling, it) }
+        onClose = { listener.contextClosed(this, it) }
     )
 
 private fun <F> Test<F>.telling(listener: TestEventListener) = copy(
     f = { fixture, testDescriptor ->
-        listener.testStarting(fixture, testDescriptor)
+        listener.testStarting(this, fixture, testDescriptor)
         try {
             this(fixture, testDescriptor).also {
-                listener.testComplete(fixture, testDescriptor)
+                listener.testComplete(this, fixture, testDescriptor)
             }
         } catch (skipped: TestSkippedException) {
-            listener.testSkipped(fixture, testDescriptor, skipped)
+            listener.testSkipped(this, fixture, testDescriptor, skipped)
             throw skipped
         } catch (skipped: MinutestSkippedException) {
-            listener.testSkipped(fixture, testDescriptor, skipped)
+            listener.testSkipped(this, fixture, testDescriptor, skipped)
             throw skipped
         } catch (aborted: TestAbortedException) {
-            listener.testAborted(fixture, testDescriptor, aborted)
+            listener.testAborted(this, fixture, testDescriptor, aborted)
             throw aborted
         } catch (t: Throwable) {
-            listener.testFailed(fixture, testDescriptor, t)
+            listener.testFailed(this, fixture, testDescriptor, t)
             throw t
         }
     }

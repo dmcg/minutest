@@ -2,11 +2,11 @@ package dev.minutest.experimental
 
 import dev.minutest.*
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
 import org.opentest4j.TestSkippedException
+import org.junit.jupiter.api.Test as JUnitTest
 
 
 class TestEventsTests {
@@ -19,23 +19,23 @@ class TestEventsTests {
             log.add("Opened " + testDescriptor.fullName())
         }
 
-        override fun <F> testStarting(fixture: F, testDescriptor: TestDescriptor) {
+        override fun <F> testStarting(test: Test<F>, fixture: F, testDescriptor: TestDescriptor) {
             log.add("Starting " + testDescriptor.fullName())
         }
 
-        override fun <F> testComplete(fixture: F, testDescriptor: TestDescriptor) {
+        override fun <F> testComplete(test: Test<F>, fixture: F, testDescriptor: TestDescriptor) {
             log.add("Completed " + testDescriptor.fullName())
         }
 
-        override fun <F> testFailed(fixture: F, testDescriptor: TestDescriptor, t: Throwable) {
+        override fun <F> testFailed(test: Test<F>, fixture: F, testDescriptor: TestDescriptor, t: Throwable) {
             log.add("Failed " + testDescriptor.fullName())
         }
 
-        override fun <F> testAborted(fixture: F, testDescriptor: TestDescriptor, t: TestAbortedException) {
+        override fun <F> testAborted(test: Test<F>, fixture: F, testDescriptor: TestDescriptor, t: TestAbortedException) {
             log.add("Aborted " + testDescriptor.fullName())
         }
 
-        override fun <F> testSkipped(fixture: F, testDescriptor: TestDescriptor, t: IncompleteExecutionException) {
+        override fun <F> testSkipped(test: Test<F>, fixture: F, testDescriptor: TestDescriptor, t: IncompleteExecutionException) {
             log.add("Skipped " + testDescriptor.fullName())
         }
 
@@ -44,7 +44,7 @@ class TestEventsTests {
         }
     }
 
-    @Test fun firesEvents() {
+    @JUnitTest fun firesEvents() {
         val tests = rootContext {
             addTransform { node ->
                 node.telling(listener)
@@ -106,7 +106,7 @@ class TestEventsTests {
         )
     }
 
-    @Test fun `fires events with no test in root`() {
+    @JUnitTest fun `fires events with no test in root`() {
         val tests = rootContext {
             addTransform { node ->
                 node.telling(listener)
@@ -134,7 +134,7 @@ class TestEventsTests {
         )
     }
 
-    @Test fun `no events unless there are tests`() {
+    @JUnitTest fun `no events unless there are tests`() {
         val tests = rootContext {
             addTransform { node ->
                 node.telling(listener)
