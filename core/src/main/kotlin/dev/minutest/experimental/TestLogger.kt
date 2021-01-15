@@ -30,8 +30,6 @@ class TestLogger(
         val noSymbols: (EventType) -> String = { "" }
     }
 
-    private var currentIndent = ""
-
     override fun <PF, F> contextOpened(context: Context<PF, F>, testDescriptor: TestDescriptor) {
         addAndLog(TestEvent(CONTEXT_OPENED, context, testDescriptor))
     }
@@ -57,7 +55,6 @@ class TestLogger(
     }
 
     override fun <PF, F> contextClosed(context: Context<PF, F>, testDescriptor: TestDescriptor) {
-        currentIndent = currentIndent.substring(indent.length)
         add(TestEvent(CONTEXT_CLOSED, context, testDescriptor))
     }
 
@@ -72,9 +69,7 @@ class TestLogger(
 
     private fun log(testEvent: TestEvent) {
         val (eventType, _, testDescriptor) = testEvent
-        log.add(currentIndent + prefixer(eventType) + testDescriptor.name)
-        if (eventType == CONTEXT_OPENED)
-            currentIndent += indent
+        log.add(prefixer(eventType) + testDescriptor.fullName().joinToString("/"))
     }
 
     data class TestEvent(

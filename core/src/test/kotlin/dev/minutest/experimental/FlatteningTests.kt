@@ -38,7 +38,7 @@ class FlatteningTests {
         // flattens is run.
         checkLog(tests,
             "▾ root",
-            "  ▾ flattened"
+            "▾ root/flattened"
         )
     }
 
@@ -68,18 +68,18 @@ class FlatteningTests {
         }
         checkLog(tests,
             "▾ root",
-            "  ▾ flattened",
+            "▾ root/flattened",
             "before one",
             "test one",
-            "    ✓ is a string",
+            "✓ root/flattened/is a string",
             "after one",
             "before two",
             "test two",
-            "    ✓ is a string",
+            "✓ root/flattened/is a string",
             "after two",
             "before three",
             "test three",
-            "    ✓ is a string",
+            "✓ root/flattened/is a string",
             "after three")
     }
 
@@ -107,18 +107,18 @@ class FlatteningTests {
         }
         val allErrors = checkLog(tests,
             "▾ root",
-            "  ▾ flattened",
+            "▾ root/flattened",
             "before one",
             "test one",
-            "    X is two",
+            "X root/flattened/is two",
             "after one",
             "before two",
             "test two",
-            "    ✓ is two",
+            "✓ root/flattened/is two",
             "after two",
             "before three",
             "test three",
-            "    X is two",
+            "X root/flattened/is two",
             "after three")
         assertAll(
             { assertEquals(1, allErrors.size) },

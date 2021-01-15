@@ -10,8 +10,8 @@ fun assertLogged(log: List<String>, vararg expected: String) {
 
 fun assertLoggedInAnyOrder(log: List<String>, vararg expected: String) {
     assertEquals(
-        expected.toSet().joinToString("\n"),
-        log.toSet().joinToString("\n")
+        expected.sorted().joinToString("\n"),
+        log.sorted().joinToString("\n")
     )
 }
 

@@ -42,14 +42,14 @@ class JUnit4MinutestsTests : JUnit4Minutests() {
         @AfterClass @JvmStatic fun check() {
             assertLogged(testLog,
                 "▾ root",
-                "  ✓ test",
-                "  ▾ context",
-                "    ✓ test x",
-                "    ▾ another context",
-                "      ✓ test y",
-                "    ▾ context whose name is wrong if you just run this test in IntelliJ",
-                "      ✓ test",
-                "    - skipped"
+                "✓ root/test",
+                "▾ root/context",
+                "✓ root/context/test x",
+                "▾ root/context/another context",
+                "✓ root/context/another context/test y",
+                "▾ root/context/context whose name is wrong if you just run this test in IntelliJ",
+                "✓ root/context/context whose name is wrong if you just run this test in IntelliJ/test",
+                "- root/context/skipped"
             )
         }
     }
