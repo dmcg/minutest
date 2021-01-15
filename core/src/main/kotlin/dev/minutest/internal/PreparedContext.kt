@@ -15,7 +15,7 @@ internal data class PreparedContext<PF, F>(
     private val beforeAlls: List<(TestDescriptor) -> Unit>,
     private val befores: List<(F, TestDescriptor) -> F>,
     private val afters: List<(FixtureValue<F>, TestDescriptor) -> Unit>,
-    private var afterAlls: List<() -> Unit>,
+    private var afterAlls: List<(TestDescriptor) -> Unit>,
     private val fixtureFactory: (PF, TestDescriptor) -> F
 ) : Context<PF, F>() {
 
@@ -40,9 +40,9 @@ internal data class PreparedContext<PF, F>(
         }
     }
 
-    override fun close() {
+    override fun close(testDescriptor: TestDescriptor) {
         afterAlls.forEach {
-            it()
+            it(testDescriptor)
         }
     }
 

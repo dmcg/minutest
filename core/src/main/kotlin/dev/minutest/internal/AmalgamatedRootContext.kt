@@ -41,7 +41,7 @@ internal data class AmalgamatedRootContext(
         // we shouldn't be holding any resources
     }
 
-    override fun close() {
+    override fun close(testDescriptor: TestDescriptor) {
         // we shouldn't be holding any resources
     }
 }

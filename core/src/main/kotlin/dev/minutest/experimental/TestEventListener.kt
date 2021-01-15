@@ -12,5 +12,5 @@ interface TestEventListener {
     fun <F> testSkipped(fixture: F, testDescriptor: TestDescriptor, t: IncompleteExecutionException) {}
     fun <F> testAborted(fixture: F, testDescriptor: TestDescriptor, t: TestAbortedException) {}
     fun <F> testFailed(fixture: F, testDescriptor: TestDescriptor, t: Throwable) {}
-    fun <PF, F> contextClosed(context: Context<PF, F>) {}
+    fun <PF, F> contextClosed(context: Context<PF, F>, testDescriptor: TestDescriptor) {}
 }

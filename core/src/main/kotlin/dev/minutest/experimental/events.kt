@@ -15,9 +15,9 @@ fun <F> Node<F>.telling(listener: TestEventListener): Node<F> =
 
 fun <PF, F> Context<PF, F>.telling(listener: TestEventListener): Context<PF, F> =
     ContextWrapper(this,
-        onOpen = { testDescriptor -> listener.contextOpened(this@telling, testDescriptor) },
+        onOpen = { listener.contextOpened(this@telling, it) },
         children = children.map { it.telling(listener) },
-        onClose = { listener.contextClosed(this@telling) }
+        onClose = { listener.contextClosed(this@telling, it) }
     )
 
 private fun <F> Test<F>.telling(listener: TestEventListener) = copy(

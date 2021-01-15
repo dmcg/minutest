@@ -96,7 +96,7 @@ internal class ContextExecutor<PF, F>(
             check(state != UNOPENED) { "Context $contextPath never opened" }
             check(state != CLOSED) { "Context $contextPath was already closed" }
             try {
-                context.close()
+                context.close(this)
             } finally {
                 state = CLOSED
                 parent.onContextComplete(this.context)

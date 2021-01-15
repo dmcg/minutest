@@ -16,7 +16,7 @@ internal data class MinutestContextBuilder<PF, F>(
     private val beforeAlls: MutableList<(TestDescriptor) -> Unit> = mutableListOf(),
     private val befores: MutableList<(F, TestDescriptor) -> F> = mutableListOf(),
     private val afters: MutableList<(FixtureValue<F>, TestDescriptor) -> Unit> = mutableListOf(),
-    private val afterAlls: MutableList<() -> Unit> = mutableListOf(),
+    private val afterAlls: MutableList<(TestDescriptor) -> Unit> = mutableListOf(),
     private val markers: MutableList<Any> = mutableListOf(),
     private val transforms: MutableList<NodeTransform<PF>> = mutableListOf(),
     private val block: TestContextBuilder<PF, F>.() -> Unit
@@ -120,7 +120,7 @@ internal data class MinutestContextBuilder<PF, F>(
         beforeAlls.add(f)
     }
 
-    override fun afterAll(f: () -> Unit) {
+    override fun afterAll(f: (TestDescriptor) -> Unit) {
         afterAlls.add(f)
     }
 

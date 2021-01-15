@@ -111,7 +111,7 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Apply an operation after all the tests and sub-contexts have completed.
      */
-    abstract fun afterAll(f: () -> Unit)
+    abstract fun afterAll(f: (TestDescriptor) -> Unit)
 
     /**
      * Internal implementation, only public to be accessible to inline functions.

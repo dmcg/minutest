@@ -15,7 +15,7 @@ internal data class ContextWrapper<PF, F>(
     override val children: List<Node<F>>,
     val runner: (Testlet<F>, parentFixture: PF, TestDescriptor) -> F,
     val onOpen: (TestDescriptor) -> Unit,
-    val onClose: () -> Unit
+    val onClose: (TestDescriptor) -> Unit
 ) : Context<PF, F>() {
 
     /**
@@ -29,7 +29,7 @@ internal data class ContextWrapper<PF, F>(
         children: List<Node<F>> = delegate.children,
         runner: (Testlet<F>, parentFixture: PF, TestDescriptor) -> F = delegate::runTest,
         onOpen: (TestDescriptor) -> Unit = delegate::open,
-        onClose: () -> Unit = delegate::close
+        onClose: (TestDescriptor) -> Unit = delegate::close
     ) : this(
         name,
         markers,
@@ -49,7 +49,7 @@ internal data class ContextWrapper<PF, F>(
         copy(children = children.map { transform(it) })
 
     override fun open(testDescriptor: TestDescriptor) = onOpen.invoke(testDescriptor)
-    override fun close() = onClose.invoke()
+    override fun close(testDescriptor: TestDescriptor) = onClose.invoke(testDescriptor)
 }
 
 // We always want to call open on the delegate, but only once
@@ -67,12 +67,15 @@ private fun <PF, F> onOpenFor(
     }
 
 // We always want to call close on the delegate, but only once
-private fun <PF, F> onCloseFor(delegate: Context<PF, F>, specified: () -> Unit): () -> Unit =
+private fun <PF, F> onCloseFor(
+    delegate: Context<PF, F>,
+    specified: (TestDescriptor) -> Unit
+): (TestDescriptor) -> Unit =
     if (specified == delegate::close)
         specified
     else {
-        {
-            delegate.close()
-            specified()
+        { testDescriptor ->
+            delegate.close(testDescriptor)
+            specified(testDescriptor)
         }
     }

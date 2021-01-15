@@ -8,53 +8,71 @@ import org.opentest4j.TestAbortedException
 class TestLogger(
     val log: MutableList<String> = mutableListOf(),
     val indent: String = "  ",
-    val prefixer: (NodeType) -> String = NodeType::prefix
+    val prefixer: (EventType) -> String = EventType::prefix
 ) : TestEventListener {
 
-    enum class NodeType(val prefix: String) {
-        CONTEXT("▾ "),
+    val events = mutableListOf<TestEvent>()
+
+    enum class EventType(val prefix: String) {
+        CONTEXT_OPENED("▾ "),
+        TEST_STARTING("⋯ "),
         TEST_COMPLETE("✓ "),
         TEST_FAILED("X "),
         TEST_ABORTED("- "),
-        TEST_SKIPPED("- ")
+        TEST_SKIPPED("- "),
+        CONTEXT_CLOSED("▴ "),
     }
 
     companion object {
-        val noSymbols: (NodeType) -> String = { "" }
+        val noSymbols: (EventType) -> String = { "" }
     }
 
     private var currentIndent = ""
 
     override fun <PF, F> contextOpened(context: Context<PF, F>, testDescriptor: TestDescriptor) {
-        log(NodeType.CONTEXT, testDescriptor)
+        addAndLog(EventType.CONTEXT_OPENED, testDescriptor)
     }
 
-    override fun <F> testStarting(fixture: F, testDescriptor: TestDescriptor) = Unit
+    override fun <F> testStarting(fixture: F, testDescriptor: TestDescriptor) {
+        add(EventType.TEST_STARTING, testDescriptor)
+    }
 
     override fun <F> testComplete(fixture: F, testDescriptor: TestDescriptor) {
-        log(NodeType.TEST_COMPLETE, testDescriptor)
+        addAndLog(EventType.TEST_COMPLETE, testDescriptor)
     }
 
     override fun <F> testFailed(fixture: F, testDescriptor: TestDescriptor, t: Throwable) {
-        log(NodeType.TEST_FAILED, testDescriptor)
+        addAndLog(EventType.TEST_FAILED, testDescriptor)
     }
 
     override fun <F> testAborted(fixture: F, testDescriptor: TestDescriptor, t: TestAbortedException) {
-        log(NodeType.TEST_ABORTED, testDescriptor)
+        addAndLog(EventType.TEST_ABORTED, testDescriptor)
     }
 
     override fun <F> testSkipped(fixture: F, testDescriptor: TestDescriptor, t: IncompleteExecutionException) {
-        log(NodeType.TEST_SKIPPED, testDescriptor)
+        addAndLog(EventType.TEST_SKIPPED, testDescriptor)
     }
 
-    override fun <PF, F> contextClosed(context: Context<PF, F>) {
+    override fun <PF, F> contextClosed(context: Context<PF, F>, testDescriptor: TestDescriptor) {
         currentIndent = currentIndent.substring(indent.length)
+        add(EventType.CONTEXT_CLOSED, testDescriptor)
     }
 
-    private fun log(nodeType: NodeType, testDescriptor: TestDescriptor) {
-        log.add(currentIndent + prefixer(nodeType) + testDescriptor.name)
-        if (nodeType == NodeType.CONTEXT) {
+    private fun addAndLog(eventType: EventType, testDescriptor: TestDescriptor) {
+        add(eventType, testDescriptor)
+        log(eventType, testDescriptor)
+    }
+
+    private fun add(eventType: EventType, testDescriptor: TestDescriptor) {
+        events.add(TestEvent(eventType, testDescriptor))
+    }
+
+    private fun log(eventType: EventType, testDescriptor: TestDescriptor) {
+        log.add(currentIndent + prefixer(eventType) + testDescriptor.name)
+        if (eventType == EventType.CONTEXT_OPENED) {
             currentIndent += indent
         }
     }
+
+    data class TestEvent(val eventType: EventType, val testDescriptor: TestDescriptor)
 }
