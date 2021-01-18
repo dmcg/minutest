@@ -12,16 +12,9 @@ import dev.minutest.*
  */
 internal data class AmalgamatedRootContext(
     override val name: String,
-    private val contextBuilderBuilders: List<() -> RootContextBuilder>,
+    override val children: List<Node<Unit>>,
     override val markers: List<Any> = emptyList()
 ) : Context<Unit, Unit>() {
-
-    // lazy because we don't want to create all the test trees when we are first created
-    override val children: List<Node<Unit>> by lazy {
-        contextBuilderBuilders.map { f ->
-            f().buildNode()
-        }
-    }
 
     override fun runTest(
         testlet: Testlet<Unit>,

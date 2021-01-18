@@ -28,7 +28,7 @@ internal fun findRootContextPerPackage(scannerConfig: ClassGraph.() -> Unit, cla
         .filter { it.visibility == PUBLIC }
         .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
         .map { (packageName, functions: List<RootContextFun>) ->
-            AmalgamatedRootContext(packageName, functions.renamed())
+            AmalgamatedRootContext(packageName, functions.renamed().map { it.invoke().buildNode() })
         }
 
 @Suppress("UNCHECKED_CAST") // reflection

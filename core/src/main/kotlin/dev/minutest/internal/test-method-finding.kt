@@ -18,9 +18,7 @@ internal fun Any.rootContextFromMethods(): Node<Unit> {
         else -> AmalgamatedRootContext(
             "root",
             contextBuilderMethods.map { method ->
-                {
-                    method.invoke(this).withNameUnlessSpecified(method.name)
-                }
+                    method.invoke(this).withNameUnlessSpecified(method.name).buildNode()
             })
     }
 }
