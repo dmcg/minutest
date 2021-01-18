@@ -9,7 +9,7 @@ import dev.minutest.internal.askType
  */
 @JvmName("rootContextUnit")
 fun rootContext(
-    name: String = "root",
+    name: String? = null,
     builder: TestContextBuilder<Unit, Unit>.() -> Unit
 ): RootContextBuilder = rootContext<Unit>(name, builder)
 
@@ -19,13 +19,13 @@ fun rootContext(
  * You must supply a fixture by calling [TestContextBuilder.fixture].
  */
 inline fun <reified F> rootContext(
-    name: String = "root",
+    name: String? = null,
     noinline builder: TestContextBuilder<Unit, F>.() -> Unit
 ): RootContextBuilder = rootWithoutFixture(name, askType<F>(), builder)
 
 @PublishedApi
 internal fun <F> rootWithoutFixture(
-    name: String,
+    name: String? = null,
     type: FixtureType,
     block: TestContextBuilder<Unit, F>.() -> Unit
 ) = MinutestRootContextBuilder(name, type, block = block)

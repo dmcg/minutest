@@ -11,12 +11,12 @@ internal data class MinutestRootContextBuilder<F>(
 ) : RootContextBuilder, NodeBuilder<Unit> by delegate {
 
     constructor(
-        name: String,
+        name: String? = null,
         type: FixtureType,
         block: TestContextBuilder<Unit, F>.() -> Unit
     ) : this(
         MinutestContextBuilder(
-            name,
+            name ?: defaultRootName,
             unitFixtureType,
             type,
             UnsafeFixtureFactory(unitFixtureType),
@@ -30,9 +30,13 @@ internal data class MinutestRootContextBuilder<F>(
         return rootContext.transformedBy(deduplicatedTransformsInTree)
     }
 
-    override fun withName(newName: String) = MinutestRootContextBuilder(
-        delegate.copy(name = newName)
-    )
+    override fun withNameUnlessSpecified(newName: String) =
+        when (delegate.name) {
+            defaultRootName -> MinutestRootContextBuilder(
+                delegate.copy(name = newName)
+            )
+            else -> this
+        }
 }
 
 // TODO - this should probably be breadth-first
@@ -43,3 +47,5 @@ internal fun Node<*>.findRootTransforms(): List<RootTransform> {
         is Context<*, *> -> myTransforms + this.children.flatMap { it.findRootTransforms() }
     }
 }
+
+private val defaultRootName = "root"

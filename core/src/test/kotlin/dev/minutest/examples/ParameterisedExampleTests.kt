@@ -30,7 +30,7 @@ class ParameterisedExampleTests : JUnit5Minutests {
 
         // Minutest will check that the following tests are run
         willRun(
-            "▾ root",
+            "▾ tests",
             "  ▾ palindromes",
             "    ✓ a is a palindrome",
             "    ✓ oo is a palindrome",

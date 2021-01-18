@@ -9,7 +9,7 @@ import org.opentest4j.TestAbortedException
 
 class JUnit4MinutestsTests : JUnit4Minutests() {
 
-    fun tests() = rootContext<String> {
+    fun `my tests`() = rootContext<String> {
 
         logTo(testLog)
 
@@ -41,15 +41,15 @@ class JUnit4MinutestsTests : JUnit4Minutests() {
 
         @AfterClass @JvmStatic fun check() {
             assertLogged(testLog,
-                "▾ root",
-                "✓ root/test",
-                "▾ root/context",
-                "✓ root/context/test x",
-                "▾ root/context/another context",
-                "✓ root/context/another context/test y",
-                "▾ root/context/context whose name is wrong if you just run this test in IntelliJ",
-                "✓ root/context/context whose name is wrong if you just run this test in IntelliJ/test",
-                "- root/context/skipped"
+                "▾ my tests",
+                "✓ my tests/test",
+                "▾ my tests/context",
+                "✓ my tests/context/test x",
+                "▾ my tests/context/another context",
+                "✓ my tests/context/another context/test y",
+                "▾ my tests/context/context whose name is wrong if you just run this test in IntelliJ",
+                "✓ my tests/context/context whose name is wrong if you just run this test in IntelliJ/test",
+                "- my tests/context/skipped"
             )
         }
     }

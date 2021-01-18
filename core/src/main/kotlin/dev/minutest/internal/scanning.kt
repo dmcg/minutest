@@ -43,7 +43,7 @@ private fun TypeSignature.name() = (this as? ClassRefTypeSignature)?.baseClassNa
 
 private fun Iterable<RootContextFun>.renamed(): List<() -> RootContextBuilder> =
     this.map { f: RootContextFun ->
-        { f().withName(f.name) }
+        { f().withNameUnlessSpecified(f.name) }
     }
 
 private typealias RootContextFun = KFunction0<RootContextBuilder>

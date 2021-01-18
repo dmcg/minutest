@@ -67,7 +67,7 @@ class GeneratingExampleTests : JUnit5Minutests {
 
         // Minutest will check that the following tests are run
         willRun(
-            "▾ root",
+            "▾ tests",
             "  ▾ an empty stack",
             "    ✓ is empty",
             "    ✓ can push",

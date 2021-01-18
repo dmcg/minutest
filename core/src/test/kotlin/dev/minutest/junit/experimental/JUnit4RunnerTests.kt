@@ -9,12 +9,12 @@ import samples.runners.JUnit4Sample
 
 class JUnit4RunnerTests {
 
-    @Test fun test() {
+    @Test fun junit4() {
         checkRunnersExampleLog(
             runTestsInClass<JUnit4Sample>(VintageTestDescriptor.ENGINE_ID),
             "JUnit Vintage",
             "JUnit4Sample",
-            "root",
+            "junit 4 tests",
             abortRatherThanSkip = false
         )
     }

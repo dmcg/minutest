@@ -11,13 +11,16 @@ import org.junit.runners.model.Statement
 /**
  * Apply a JUnit test rule in a fixture
  */
-fun <PF, F, R : TestRule> TestContextBuilder<PF, F>.applyRule(ruleExtractor: F.() -> R) {
+fun <PF, F, R : TestRule> TestContextBuilder<PF, F>.applyRule(
+    descriptionClassName: String,
+    ruleExtractor: F.() -> R) {
     addTransform(
-        TestRuleTransform(ruleExtractor)
+        TestRuleTransform(descriptionClassName, ruleExtractor)
     )
 }
 
 private class TestRuleTransform<PF, F, R : TestRule>(
+    private val descriptionClassName: String,
     private val ruleExtractor: F.() -> R
 ) : NodeTransform<PF> {
 
@@ -60,6 +63,6 @@ private class TestRuleTransform<PF, F, R : TestRule>(
     }
 
     private fun TestDescriptor.toTestDescription(): Description = fullName().let {
-        createTestDescription(it.first(), it.drop(1).joinToString("."))
+        createTestDescription(descriptionClassName, it.joinToString("."))
     }
 }

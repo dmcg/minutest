@@ -27,5 +27,5 @@ interface Annotatable<F> {
  * Marker interface for the root [Context] block.
  */
 interface RootContextBuilder : NodeBuilder<Unit> {
-    fun withName(newName: String): RootContextBuilder
+    fun withNameUnlessSpecified(newName: String): RootContextBuilder
 }

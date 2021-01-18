@@ -1,39 +1,53 @@
 package dev.minutest
 
+import dev.minutest.junit.JUnit5Minutests
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test as JupiterTest
 
-class NamingTests {
+class SingleRootNamingTests : JUnit5Minutests {
 
-    @JupiterTest
-    fun `names are passed to deriveFixture`() {
-        val log = mutableListOf<List<String>>()
-
-        class Fixture(val name: List<String>)
-
-        executeTests(rootContext<Fixture> {
-
-            deriveFixture { testDescriptor ->
-                Fixture(testDescriptor.fullName())
-            }
-
-            context("outer") {
-                test("outer test") { log.add(name) }
-
-                context("inner") {
-                    test("inner test 1") { log.add(name) }
-                    test("inner test 2") { log.add(name) }
+    fun name() = rootContext {
+        context("outer") {
+            context("inner") {
+                test("test") { testDescriptor ->
+                    assertEquals("name/outer/inner/test", testDescriptor.pathAsString())
                 }
             }
-        })
+        }
+    }
+}
 
-        assertEquals(
-            listOf(
-                listOf("root", "outer", "outer test"),
-                listOf("root", "outer", "inner", "inner test 1"),
-                listOf("root", "outer", "inner", "inner test 2")
-            ),
-            log
-        )
+class SingleRootOverrideNamingTests : JUnit5Minutests {
+
+    fun name() = rootContext("override name") {
+        context("outer") {
+            context("inner") {
+                test("test") { testDescriptor ->
+                    assertEquals("override name/outer/inner/test", testDescriptor.pathAsString())
+                }
+            }
+        }
+    }
+}
+
+class TwoRootNamingTests : JUnit5Minutests {
+
+    fun name() = rootContext {
+        context("outer") {
+            context("inner") {
+                test("test") { testDescriptor ->
+                    assertEquals("name/outer/inner/test", testDescriptor.pathAsString())
+                }
+            }
+        }
+    }
+
+    fun name2() = rootContext("override name") {
+        context("outer") {
+            context("inner") {
+                test("test") { testDescriptor ->
+                    assertEquals("override name/outer/inner/test", testDescriptor.pathAsString())
+                }
+            }
+        }
     }
 }

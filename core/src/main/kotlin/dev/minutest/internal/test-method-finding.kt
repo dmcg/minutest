@@ -13,16 +13,23 @@ internal fun Any.rootContextFromMethods(): Node<Unit> {
     val contextBuilderMethods = this::class.testMethods()
     return when {
         contextBuilderMethods.isEmpty() -> error("No test methods found")
-        contextBuilderMethods.size == 1 -> contextBuilderMethods.first().invoke(this).buildNode()
+        contextBuilderMethods.size == 1 ->
+            createSingleRoot(contextBuilderMethods.first())
         else -> AmalgamatedRootContext(
             "root",
             contextBuilderMethods.map { method ->
                 {
-                    method.invoke(this).withName(method.name)
+                    method.invoke(this).withNameUnlessSpecified(method.name)
                 }
             })
     }
 }
+
+private fun Any.createSingleRoot(function: KFunction1<Any, RootContextBuilder>): Node<Unit> =
+    function
+        .invoke(this)
+        .withNameUnlessSpecified(function.name)
+        .buildNode()
 
 private fun KClass<*>.testMethods(): List<KFunction1<Any, RootContextBuilder>> =
     memberFunctions

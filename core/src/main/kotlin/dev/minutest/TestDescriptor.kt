@@ -14,4 +14,6 @@ interface TestDescriptor {
 
     fun fullName(): List<String> = path().map(TestDescriptor::name)
 
+    fun pathAsString() = fullName().joinToString("/")
+
 }

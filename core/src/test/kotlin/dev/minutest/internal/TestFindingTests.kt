@@ -21,7 +21,7 @@ class TestFindingTests : JUnit5Minutests {
             test("single root context from method") {
                 val root = fixture.rootContextFromMethods() as Context<*, *>
                 assertAll("root",
-                    { assertEquals("root", root.name) },
+                    { assertEquals("test method", root.name) },
                     { assertEquals(listOf("test in tests"), root.children.map(Node<*>::name))}
                 )
             }
@@ -69,7 +69,7 @@ class TestFindingTests : JUnit5Minutests {
 }
 
 class ClassWithOnlyOneContextMethod {
-    fun tests() = rootContext<String> {
+    fun `test method`() = rootContext<String> {
         fixture { "banana" }
         test("test in tests") {}
     }

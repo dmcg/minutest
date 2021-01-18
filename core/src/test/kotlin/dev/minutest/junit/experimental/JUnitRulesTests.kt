@@ -26,7 +26,7 @@ class JUnitRulesTests : JUnit5Minutests {
             Fixture()
         }
 
-        applyRule { fixture.rule }
+        applyRule(this@JUnitRulesTests::class.java.simpleName) { fixture.rule }
 
         test("test in root") {}
 
@@ -44,7 +44,7 @@ class JUnitRulesTests : JUnit5Minutests {
             null
         }
 
-        applyRule {
+        applyRule(this@JUnitRulesTests::class.java.simpleName) {
             // We can't go to the fixture for the rule, but we can just return one
             staticRule
         }
@@ -60,12 +60,11 @@ class JUnitRulesTests : JUnit5Minutests {
         @JvmStatic
         @AfterAll
         fun checkTestIsRun() {
-            // The (root) is the name of the root context created to hold the two test method root contexts
             assertLoggedInAnyOrder(log,
-                "non-null fixture.test in root(root)",
-                "non-null fixture.context.test in context(root)",
-                "null fixture.test in root(root)",
-                "null fixture.context.test in context(root)"
+                "non-null fixture.test in root(JUnitRulesTests)",
+                "non-null fixture.context.test in context(JUnitRulesTests)",
+                "null fixture.test in root(JUnitRulesTests)",
+                "null fixture.context.test in context(JUnitRulesTests)"
             )
         }
     }

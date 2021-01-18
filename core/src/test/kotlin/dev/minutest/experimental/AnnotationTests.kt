@@ -26,7 +26,7 @@ class AnnotationTests : JUnit5Minutests {
         }
 
         checkedAgainst(
-            "root",
+            "tests",
             "  no annotations",
             "  single annotation test",
             "  single annotation context",
