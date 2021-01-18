@@ -6,6 +6,8 @@ import dev.minutest.rootContext
 import org.junit.jupiter.api.AfterAll
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
+import java.util.*
+import java.util.Collections.synchronizedList
 
 class JUnitRulesTests : JUnit5Minutests {
 
@@ -70,7 +72,7 @@ class JUnitRulesTests : JUnit5Minutests {
     }
 }
 
-private val log = mutableListOf<String>()
+private val log: MutableList<String> = synchronizedList(mutableListOf<String>())
 
 private val staticRule = object : TestWatcher() {
     override fun succeeded(description: Description) {
