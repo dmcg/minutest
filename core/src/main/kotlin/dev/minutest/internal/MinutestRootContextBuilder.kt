@@ -48,4 +48,4 @@ internal fun Node<*>.findRootTransforms(): List<RootTransform> {
     }
 }
 
-private val defaultRootName = "root"
+private const val defaultRootName = "root"

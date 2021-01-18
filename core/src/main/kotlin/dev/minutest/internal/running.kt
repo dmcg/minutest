@@ -5,6 +5,16 @@ import dev.minutest.Node
 import dev.minutest.Test
 import java.util.concurrent.ExecutorService
 
+internal fun Node<Unit>.toRootRunnableNodes(
+    executorService: ExecutorService? = null
+): List<RunnableNode> =
+    when (this) {
+        is AmalgamatedRootContext -> this.children.map { it.toRootRunnableNode(executorService) }
+        else -> when (val runnableNode = toRootRunnableNode(executorService)) {
+            is RunnableTest -> listOf(runnableNode)
+            is RunnableContext -> runnableNode.children
+        }
+    }
 /**
  * Create the root [RunnableNode] for a tree of tests.
  */

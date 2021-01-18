@@ -25,17 +25,6 @@ interface JUnit5Minutests {
             .toRootListOfDynamicNodes(Executors.newFixedThreadPool(10))
 }
 
-interface EagerJUnit5Minutests {
-
-    /**
-     * Provided so that JUnit will run the tests
-     */
-    @TestFactory
-    fun minutests(): Iterable<DynamicNode> =
-        rootContextFromMethods()
-            .toRootListOfDynamicNodes(Executors.newFixedThreadPool(10))
-}
-
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory].
  *

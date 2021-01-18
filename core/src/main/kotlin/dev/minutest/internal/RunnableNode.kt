@@ -27,6 +27,10 @@ internal data class RunnableTest(
     override operator fun invoke() {
         f()
     }
+
+    override fun toString(): String {
+        return "Runnable test with name $name and path ${testDescriptor.pathAsString()}"
+    }
 }
 
 internal class RunnableContext(

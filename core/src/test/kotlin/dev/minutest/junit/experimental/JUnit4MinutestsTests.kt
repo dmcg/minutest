@@ -7,7 +7,9 @@ import org.junit.AfterClass
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.opentest4j.TestAbortedException
 
-class JUnit4MinutestsTests : JUnit4Minutests() {
+class JUnit4MinutestsTests
+//    : JUnit4Minutests()
+{
 
     fun `my tests`() = rootContext<String> {
 

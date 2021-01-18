@@ -13,15 +13,8 @@ import java.util.concurrent.ExecutorService
 
 internal fun Node<Unit>.toRootListOfDynamicNodes(
     executorService: ExecutorService? = null
-): List<DynamicNode> {
-    return when (this) {
-        is AmalgamatedRootContext -> this.children.map { it.toRootRunnableNode(executorService).toDynamicNode() }
-        else -> when (val runnableNode = toRootRunnableNode(executorService)) {
-            is RunnableTest -> listOf(runnableNode.toDynamicTest())
-            is RunnableContext -> runnableNode.children.map { it.toDynamicNode() }
-        }
-    }
-}
+): List<DynamicNode> =
+    this.toRootRunnableNodes(executorService).map { it.toDynamicNode() }
 
 private fun RunnableNode.toDynamicNode() =
     when (this) {
