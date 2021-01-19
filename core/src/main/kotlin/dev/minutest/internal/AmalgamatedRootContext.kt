@@ -37,4 +37,6 @@ internal data class AmalgamatedRootContext(
     override fun close(testDescriptor: TestDescriptor) {
         // we shouldn't be holding any resources
     }
+
+    override val id get() = NodeId.forBuilder(this)
 }

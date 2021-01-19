@@ -30,7 +30,7 @@ private object ShouldCompile {
         override fun <F> transform(node: Node<F>): Node<F> =
             when (node) {
                 is Context<F, *> -> node
-                is Test<F> -> Test(node.name, node.markers) { fixture, testDescriptor ->
+                is Test<F> -> Test(node.name, node.markers, node.id) { fixture, testDescriptor ->
                     println("Before ${testDescriptor.name}: $fixture")
                     node.invoke(fixture, testDescriptor).also {
                         println("After ${testDescriptor.name}: $it")

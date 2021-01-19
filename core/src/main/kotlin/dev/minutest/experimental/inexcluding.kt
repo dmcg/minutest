@@ -44,4 +44,4 @@ private fun <F> Test<F>.inexcluded(skipIsDefault: Boolean): Test<F> = when {
 
 private fun Context<*, *>.hasAFocusedChild(): Boolean = this.hasA { it.hasMarker(FOCUS) }
 
-private fun <F> Node<F>.skipped() = Test<F>(name, markers) { _, _ -> throw MinutestSkippedException() }
+private fun <F> Node<F>.skipped() = Test<F>(name, markers, id) { _, _ -> throw MinutestSkippedException() }

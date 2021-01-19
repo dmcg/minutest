@@ -10,6 +10,7 @@ internal data class PreparedContext<PF, F>(
     override val name: String,
     override val children: List<Node<F>>,
     override val markers: List<Any>,
+    override val id: NodeId,
     private val parentFixtureType: FixtureType,
     private val fixtureType: FixtureType,
     private val beforeAlls: List<(TestDescriptor) -> Unit>,

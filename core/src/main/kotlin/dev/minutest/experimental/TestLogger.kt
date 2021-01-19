@@ -81,5 +81,42 @@ class TestLogger(
                 else -> (prefixer(eventType) + testDescriptor.pathAsString())
             }
         }
+    }    
+
+    private fun Node<*>.putEventsInto(collector: MutableList<TestEvent>) {
+        val myEvents = events.filter { it.node.id == this.id }
+        when (this) {
+            is Context<*, *> -> {
+                collector.addAll(myEvents.filter { it.eventType != CONTEXT_CLOSED } )
+                    // this is != CONTEXT_CLOSED so that we see TEST_SKIPPED events if context was converted to skip test
+                this.children.forEach { child ->
+                    child.putEventsInto(collector)
+                }
+                collector.addAll(myEvents.filter { it.eventType == CONTEXT_CLOSED } )
+            }
+            is Test<*> -> {
+                collector.addAll(myEvents )
+            }
+        }
+    }
+
+    fun toStrings(context: Context<*, *>): List<String> {
+        val eventsInOrignalOrder = mutableListOf<TestEvent>().apply {
+            context.putEventsInto(this)
+        }
+
+        var indent = ""
+        return eventsInOrignalOrder.mapNotNull { (eventType, _, testDescriptor) ->
+            when (eventType) {
+                CONTEXT_OPENED -> (indent + prefixer(eventType) + testDescriptor.name)
+                    .also { indent += "  "}
+                CONTEXT_CLOSED -> {
+                    indent = indent.substring(2)
+                    null
+                }
+                TEST_STARTING -> null
+                else -> indent + prefixer(eventType) + testDescriptor.name
+            }
+        }
     }
 }

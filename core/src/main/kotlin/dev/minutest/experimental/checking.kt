@@ -18,7 +18,9 @@ fun <PF, F> TestContextBuilder<PF, F>.checkedAgainst(
             is Context<PF, *> ->
                 ContextWrapper(
                     node,
-                    onClose = { check(logger.toStrings()) }
+                    onClose = {
+                        check(logger.toStrings(node))
+                    }
                 )
             else -> TODO("checking when root is just a test")
         }
@@ -29,7 +31,6 @@ fun <PF, F> TestContextBuilder<PF, F>.checkedAgainst(
     expected: List<String>,
     logger: TestLogger = defaultLogger(),
     checker: (List<String>, List<String>) -> Unit = ::defaultChecker
-
 ) = this.checkedAgainst(logger) { log ->
     checker(expected, log)
 }

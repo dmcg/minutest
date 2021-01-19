@@ -115,7 +115,6 @@ class SkipAndFocusTests : JUnit5Minutests {
         )
     }
 
-    // TODO - this isn't appearing in IntelliJ - is that a problem?
     fun `skip from root`(): RootContextBuilder = SKIP - rootContext {
         test("root was skipped") {
             fail("root wasn't skipped")

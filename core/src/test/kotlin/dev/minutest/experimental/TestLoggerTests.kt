@@ -1,5 +1,6 @@
 package dev.minutest.experimental
 
+import dev.minutest.NodeId
 import dev.minutest.Test
 import dev.minutest.assertLogged
 import dev.minutest.internal.AmalgamatedRootContext
@@ -17,16 +18,16 @@ class TestLoggerTests {
         doStuff(logger)
         assertLogged(logger.toStrings(),
             "▾ root",
-            "  ✓ test in root",
-            "  ✓ test 2 in root",
-            "  ▾ outer",
-            "    ✓ test in outer",
-            "    ▾ inner",
-            "      ✓ test in inner",
-            "  ✓ test 3 in root",
-            "  - skipped test in root",
-            "  - aborted test in root",
-            "  X failed test in root"
+            "✓ root/test in root",
+            "✓ root/test 2 in root",
+            "▾ root/outer",
+            "✓ root/outer/test in outer",
+            "▾ root/outer/inner",
+            "✓ root/outer/inner/test in inner",
+            "✓ root/test 3 in root",
+            "- root/skipped test in root",
+            "- root/aborted test in root",
+            "X root/failed test in root",
         )
     }
 
@@ -34,23 +35,23 @@ class TestLoggerTests {
         val logger = TestLogger(prefixer = TestLogger.noSymbols)
         doStuff(logger)
         assertLogged(logger.toStrings(),
-            "root",
-            "  test in root",
-            "  test 2 in root",
-            "  outer",
-            "    test in outer",
-            "    inner",
-            "      test in inner",
-            "  test 3 in root",
-            "  skipped test in root",
-            "  aborted test in root",
-            "  failed test in root"
+           "root",
+           "root/test in root",
+           "root/test 2 in root",
+           "root/outer",
+           "root/outer/test in outer",
+           "root/outer/inner",
+           "root/outer/inner/test in inner",
+           "root/test 3 in root",
+           "root/skipped test in root",
+           "root/aborted test in root",
+           "root/failed test in root",
         )
     }
 
     private fun doStuff(logger: TestLogger) {
         val stubContext = AmalgamatedRootContext("meh", emptyList())
-        val stubTest = Test<Unit>("dummy", emptyList(), { f, _  -> f})
+        val stubTest = Test<Unit>("dummy", emptyList(), NodeId.forBuilder(this), { f, _  -> f})
 
         logger.contextOpened(stubContext, RootExecutor.andThenTestName("root"))
         logger.testComplete(stubTest, Unit, RootExecutor.andThenTestName("root").andThenTestName("test in root"))

@@ -12,6 +12,7 @@ import dev.minutest.*
 internal data class ContextWrapper<PF, F>(
     override val name: String,
     override val markers: List<Any>,
+    override val id: NodeId,
     override val children: List<Node<F>>,
     val runner: (Testlet<F>, parentFixture: PF, TestDescriptor) -> F,
     val onOpen: (TestDescriptor) -> Unit,
@@ -33,6 +34,7 @@ internal data class ContextWrapper<PF, F>(
     ) : this(
         name,
         markers,
+        delegate.id,
         children,
         runner,
         onOpenFor(delegate, onOpen),

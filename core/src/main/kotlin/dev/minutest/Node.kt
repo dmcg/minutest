@@ -9,6 +9,8 @@ package dev.minutest
 sealed class Node<F> {
     abstract val name: String
     internal abstract val markers: List<Any>
+
+    abstract val id: NodeId
 }
 
 /**
@@ -41,5 +43,14 @@ abstract class Context<PF, F> : Node<PF>() {
 data class Test<F>(
     override val name: String,
     override val markers: List<Any>,
+    override val id: NodeId,
     private val f: Testlet<F>
 ) : Node<F>(), Testlet<F> by f
+
+data class NodeId(val value: Int) {
+    companion object {
+        internal fun forBuilder(o: Any): NodeId {
+            return NodeId(System.identityHashCode(o))
+        }
+    }
+}
