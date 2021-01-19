@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import java.util.stream.Stream
 
 /**
  * Mix-in this interface to run your tests with JUnit 5
@@ -18,9 +19,9 @@ interface JUnit5Minutests {
     @TestFactory
     @Execution(ExecutionMode.SAME_THREAD) // we want to control parallel
         // execution _within_ a context
-    fun minutests(): Iterable<DynamicNode> =
+    fun minutests(): Stream<DynamicNode> =
         rootContextFromMethods()
-            .toRootListOfDynamicNodes()
+            .toRootStreamfDynamicNodes()
 }
 
 /**
@@ -30,8 +31,8 @@ interface JUnit5Minutests {
  */
 fun testFactoryFor(
     root: RootContextBuilder,
-): Iterable<DynamicNode> =
-    root.buildNode().toRootListOfDynamicNodes()
+): Stream<DynamicNode> =
+    root.buildNode().toRootStreamfDynamicNodes()
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]
@@ -39,5 +40,5 @@ fun testFactoryFor(
  * @see [testFactoryFor(RootContextBuilder)]
  */
 fun RootContextBuilder.toTestFactory(
-): Iterable<DynamicNode> =
+): Stream<DynamicNode> =
     testFactoryFor(this)

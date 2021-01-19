@@ -7,13 +7,14 @@ import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest
 import java.io.File
 import java.net.URI
+import java.util.stream.Stream
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-internal fun Node<Unit>.toRootListOfDynamicNodes(
-): List<DynamicNode> {
+internal fun Node<Unit>.toRootStreamfDynamicNodes(
+): Stream<DynamicNode> {
     val rootContext = this.toRootContext()
-    return rootContext.toListOfDynamicNodes()
+    return rootContext.toListOfDynamicNodes().stream()
 }
 
 private fun RunnableNode.toDynamicNode() =

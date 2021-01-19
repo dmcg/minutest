@@ -11,10 +11,10 @@ import org.junit.platform.launcher.LauncherDiscoveryRequest
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 import org.junit.platform.launcher.core.LauncherFactory
 import org.opentest4j.MultipleFailuresError
-import kotlin.streams.toList
+import java.util.stream.Stream
 
 fun executeTests(
-    tests: Iterable<DynamicNode>,
+    tests: Stream<out DynamicNode>,
     exceptions: MutableList<Throwable> = mutableListOf()
 ): List<Throwable> {
     tests.forEach { dynamicNode ->
@@ -24,7 +24,7 @@ fun executeTests(
             } catch (x: Throwable) {
                 exceptions.add(x)
             }
-            is DynamicContainer -> executeTests(dynamicNode.children.toList(), exceptions)
+            is DynamicContainer -> executeTests(dynamicNode.children, exceptions)
         }
     }
     return exceptions
