@@ -20,6 +20,11 @@ class MinutestTestEngineTests {
         assertTestRun({ selectors(selectPackage("samples.minutestRunner.a")) },
             "plan started",
             "started: Minutest",
+            "started: example context in class",
+            "registered: a passing test",
+            "started: a passing test",
+            "successful: a passing test",
+            "successful: example context in class",
             "started: samples.minutestRunner.a",
             "registered: example context",
             "started: example context",
@@ -50,6 +55,7 @@ class MinutestTestEngineTests {
     fun `initial test plan contains the packages discovered to declare top level contexts`() {
         assertDiscovered({ selectors(selectPackage("samples.minutestRunner.a")) },
             "Minutest",
+            "example context in class",
             "samples.minutestRunner.a"
         )
     }
@@ -88,6 +94,11 @@ class MinutestTestEngineTests {
             },
             "plan started",
             "started: Minutest",
+            "started: example context in class",
+            "registered: a passing test",
+            "started: a passing test",
+            "successful: a passing test",
+            "successful: example context in class",
             "started: samples.minutestRunner.a",
             "registered: example context",
             "started: example context",
@@ -133,6 +144,11 @@ class MinutestTestEngineTests {
             },
             "plan started",
             "started: Minutest",
+            "started: example context in class",
+            "registered: a passing test",
+            "started: a passing test",
+            "successful: a passing test",
+            "successful: example context in class",
             "started: samples.minutestRunner.a",
             "registered: example context",
             "started: example context",
