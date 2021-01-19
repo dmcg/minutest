@@ -1,11 +1,14 @@
 package dev.minutest
 
 import dev.minutest.junit.JUnit5Minutests
+import dev.minutest.junit.MinutestJUnit4Runner
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.platform.commons.annotation.Testable
+import org.junit.runner.RunWith
 
-class SingleRootNamingTests : JUnit5Minutests {
+abstract class SingleRootNamingTests {
 
-    fun name() = rootContext {
+    open fun name() = rootContext {
         context("outer") {
             context("inner") {
                 test("test") { testDescriptor ->
@@ -16,9 +19,19 @@ class SingleRootNamingTests : JUnit5Minutests {
     }
 }
 
-class SingleRootOverrideNamingTests : JUnit5Minutests {
+class SingleRootNamingTests5 : SingleRootNamingTests(), JUnit5Minutests
 
-    fun name() = rootContext("override name") {
+@RunWith(MinutestJUnit4Runner::class)
+class SingleRootNamingTests4 : SingleRootNamingTests()
+
+class SingleRootNamingTestsX: SingleRootNamingTests() {
+    @Testable
+    override fun name() = super.name()
+}
+
+abstract class SingleRootOverrideNamingTests {
+
+    open fun name() = rootContext("override name") {
         context("outer") {
             context("inner") {
                 test("test") { testDescriptor ->
@@ -29,9 +42,19 @@ class SingleRootOverrideNamingTests : JUnit5Minutests {
     }
 }
 
-class TwoRootNamingTests : JUnit5Minutests {
+class SingleRootOverrideNamingTests5 : SingleRootOverrideNamingTests(), JUnit5Minutests
 
-    fun name() = rootContext {
+@RunWith(MinutestJUnit4Runner::class)
+class SingleRootOverrideNamingTests4 : SingleRootNamingTests()
+
+class SingleRootOverrideNamingTestsX: SingleRootOverrideNamingTests() {
+    @Testable
+    override fun name() = super.name()
+}
+
+abstract class TwoRootNamingTests {
+
+    open fun name() = rootContext {
         context("outer") {
             context("inner") {
                 test("test") { testDescriptor ->
@@ -41,7 +64,7 @@ class TwoRootNamingTests : JUnit5Minutests {
         }
     }
 
-    fun name2() = rootContext("override name") {
+    open fun name2() = rootContext("override name") {
         context("outer") {
             context("inner") {
                 test("test") { testDescriptor ->
@@ -50,4 +73,16 @@ class TwoRootNamingTests : JUnit5Minutests {
             }
         }
     }
+}
+
+class TwoRootNamingTests5 : TwoRootNamingTests(), JUnit5Minutests
+
+@RunWith(MinutestJUnit4Runner::class)
+class TwoRootNamingTests4 : TwoRootNamingTests()
+
+class TwoRootNamingTestsX: TwoRootNamingTests() {
+    @Testable
+    override fun name() = super.name()
+    @Testable
+    override fun name2() = super.name2()
 }

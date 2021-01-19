@@ -5,7 +5,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.util.*
 
-class SingleTestNamingTests : JUnit5Minutests {
+class TestDescriptorTests : JUnit5Minutests {
 
     val log: MutableList<String> = Collections.synchronizedList(mutableListOf<String>())
 

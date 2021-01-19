@@ -3,7 +3,7 @@ package dev.minutest.junit.experimental
 import dev.minutest.internal.RunnableContext
 import dev.minutest.internal.RunnableTest
 import dev.minutest.internal.findRootContextPerPackage
-import dev.minutest.internal.toRootRunnableNode
+import dev.minutest.internal.toRootContext
 import org.junit.platform.engine.*
 import org.junit.platform.engine.discovery.*
 import org.junit.platform.engine.support.descriptor.EngineDescriptor
@@ -130,7 +130,7 @@ private fun scan(
             emptyList() // Cannot select by method
         else ->
             findRootContextPerPackage(discoveryRequest)
-                .map { rootContext -> MinutestNodeDescriptor(root, rootContext.toRootRunnableNode()) }
+                .map { rootContext -> MinutestNodeDescriptor(root, rootContext.toRootContext()) }
                 .filter { discoveryRequest.selectsByUniqueId(it) }
     }
 

@@ -6,6 +6,9 @@ import dev.minutest.Test
 import java.util.concurrent.ExecutorService
 
 
+/**
+ * Create a [RunnableContext] representing the roots of a tree of tests.
+ */
 internal fun Node<Unit>.toRootContext(
 ): RunnableContext =
     when (this) {
@@ -14,21 +17,14 @@ internal fun Node<Unit>.toRootContext(
             // are themselves roots
             RunnableContext(
                 RootExecutor, // never used
-                this.children.map { it.toRootRunnableNode() },
+                this.children.map { it.toRunnableNode(RootExecutor) },
                 this
             )
-        else -> when (val runnableNode = toRootRunnableNode()) {
+        else -> when (val runnableNode = toRunnableNode(RootExecutor)) {
             is RunnableContext -> runnableNode
             is RunnableTest -> TODO("Root is test")
         }
     }
-
-/**
- * Create the root [RunnableNode] for a tree of tests.
- */
-internal fun Node<Unit>.toRootRunnableNode(
-): RunnableNode =
-    toRunnableNode(RootExecutor)
 
 private fun <F> Node<F>.toRunnableNode(
     executor: TestExecutor<F>,
