@@ -68,7 +68,10 @@ class BeforeAndAfterRootTests4 : BeforeAndAfterAllRootTests() {
 // I can't find a way to get an automated check of this
 class BeforeAndAfterRootTestsX: BeforeAndAfterAllRootTests() {
     override fun log(s: String) {
-        println(s)
+        // Commented out because otherwise IntelliJ's test output
+        // shows every one three times (I think its confused with
+        // parallel test runs).
+        // println(s)
     }
 
     @Testable

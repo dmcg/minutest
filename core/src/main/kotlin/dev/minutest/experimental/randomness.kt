@@ -31,10 +31,7 @@ fun <F> ContextBuilder<F>.randomTest(
 private val rootTestStateDir = Paths.get("build", "minutest")
 
 private fun TestDescriptor.testStateFile(filename: String): File =
-    fullName().fold(rootTestStateDir, Path::resolve).resolve(filename).toFile().also {
-        println(it)
-    }
-
+    fullName().fold(rootTestStateDir, Path::resolve).resolve(filename).toFile()
 
 private fun File.maybeReadInt(): Int? {
     return try {
