@@ -68,17 +68,9 @@ internal class ContextExecutor<PF, F>(
     }
 
     private fun onTestComplete(test: Test<F>) {
-        synchronized(this) {
-            incompleteTests.makeSureWeRemove(test)
-            maybeClose()
-        }
     }
 
     override fun onContextComplete(context: Context<F, *>) {
-        synchronized(this) {
-            incompleteContexts.makeSureWeRemove(context)
-            maybeClose()
-        }
     }
 
     private fun maybeOpen(testDescriptor: TestDescriptor) {
@@ -87,19 +79,6 @@ internal class ContextExecutor<PF, F>(
             if (state == UNOPENED) {
                 context.open(testDescriptor)
                 state = OPENED
-            }
-        }
-    }
-
-    private fun maybeClose() {
-        if (incompleteTests.isEmpty() && incompleteContexts.isEmpty()) {
-            check(state != UNOPENED) { "Context $contextPath never opened" }
-            check(state != CLOSED) { "Context $contextPath was already closed" }
-            try {
-                context.close(this)
-            } finally {
-                state = CLOSED
-                parent.onContextComplete(this.context)
             }
         }
     }

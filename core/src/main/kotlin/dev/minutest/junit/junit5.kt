@@ -14,7 +14,9 @@ import java.util.stream.Stream
 internal fun Node<Unit>.toRootStreamfDynamicNodes(
 ): Stream<DynamicNode> {
     val rootContext = this.toRootContext()
-    return rootContext.toListOfDynamicNodes().stream()
+    return rootContext.toListOfDynamicNodes().stream().onClose {
+        rootContext.close()
+    }
 }
 
 private fun RunnableNode.toDynamicNode() =
@@ -32,7 +34,9 @@ private fun RunnableContext.toDynamicContainer() =
     DynamicContainer.dynamicContainer(
         name,
         testUri,
-        toListOfDynamicNodes().stream()
+        toListOfDynamicNodes().stream().onClose {
+            this.close()
+        }
     )
 
 private fun RunnableContext.toListOfDynamicNodes(): List<DynamicNode> =

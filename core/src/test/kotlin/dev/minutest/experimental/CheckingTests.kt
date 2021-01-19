@@ -5,7 +5,7 @@ import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.opentest4j.AssertionFailedError
+import org.junit.jupiter.api.assertThrows
 
 
 class CheckingTests {
@@ -35,20 +35,15 @@ class CheckingTests {
         assertTrue(executeTests(tests).isEmpty())
     }
 
-    @Test fun `when checking fails`() {
+    @Test fun `throws if checking fails`() {
 
         val tests = rootContext {
-            checkedAgainst(
-                emptyList(),
-                logger = noSymbolsLogger(),
-                checker = ::assertEquals
-            )
+            checkedAgainst(emptyList(), checker = ::assertEquals)
             test("test") {}
         }
 
-        assertEquals(
-            AssertionFailedError::class.java,
-            executeTests(tests).single()::class.java
-        )
+        assertThrows<AssertionError> {
+            executeTests(tests)
+        }
     }
 }

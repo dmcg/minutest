@@ -134,7 +134,7 @@ class TestEventsTests {
         )
     }
 
-    @JUnitTest fun `no events unless there are tests`() {
+    @JUnitTest fun `afterAll is called even with no tests`() {
         val tests = rootContext {
             addTransform { node ->
                 node.telling(listener)
@@ -146,6 +146,10 @@ class TestEventsTests {
             }
         }
         executeTests(tests)
-        assertLogged(log)
+        assertLogged(log,
+            "Closed context",
+            "afterAll root",
+            "Closed root"
+        )
     }
 }

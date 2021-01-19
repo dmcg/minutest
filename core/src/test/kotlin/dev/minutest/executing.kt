@@ -27,6 +27,7 @@ fun executeTests(
             is DynamicContainer -> executeTests(dynamicNode.children, exceptions)
         }
     }
+    tests.close()
     return exceptions
 }
 

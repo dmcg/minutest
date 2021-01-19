@@ -41,6 +41,10 @@ internal class RunnableContext(
 
     override val name get() = context.name
     override val markers get() = context.markers
+
+    fun close() {
+        context.close(testDescriptor)
+    }
 }
 
 val RunnableNode.sourceReference get() =
