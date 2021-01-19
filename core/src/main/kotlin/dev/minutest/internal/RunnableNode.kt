@@ -43,7 +43,7 @@ internal class RunnableContext(
     override val markers get() = context.markers
 
     fun close() {
-        context.close(testDescriptor)
+        context.close(testDescriptor.andThenTestName(name))
     }
 }
 

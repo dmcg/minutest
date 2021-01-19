@@ -53,15 +53,17 @@ class MinutestTestEngine : TestEngine {
     ): TestExecutionResult {
         return try {
             if (descriptor is MinutestNodeDescriptor) {
-                when (descriptor.runnableNode) {
-                    is RunnableContext ->
+                when (val runnableNode = descriptor.runnableNode) {
+                    is RunnableContext -> {
                         executeDynamicChildren(
                             descriptor,
                             request,
                             listener
                         )
+                        runnableNode.close()
+                    }
                     is RunnableTest ->
-                        descriptor.runnableNode.invoke()
+                        runnableNode.invoke()
                 }
             } else {
                 executeStaticChildren(descriptor, request, listener)

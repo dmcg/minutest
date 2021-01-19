@@ -46,6 +46,7 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode>(type) {
 // TODO - If we don't fire this event, IntelliJ gets confused and shows contexts still in progress.
 // If we do fire it, then RunListenerAdapter fires it again, confusing other things.
 //        notifier.fireTestFinished(toDescription(executor))
+        this.close()
     }
 }
 
