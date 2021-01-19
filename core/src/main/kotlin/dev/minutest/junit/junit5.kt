@@ -11,8 +11,10 @@ import java.net.URI
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
 internal fun Node<Unit>.toRootListOfDynamicNodes(
-): List<DynamicNode> =
-    this.toRootRunnableNodes().map { it.toDynamicNode() }
+): List<DynamicNode> {
+    val rootContext = this.toRootContext()
+    return rootContext.toListOfDynamicNodes()
+}
 
 private fun RunnableNode.toDynamicNode() =
     when (this) {
