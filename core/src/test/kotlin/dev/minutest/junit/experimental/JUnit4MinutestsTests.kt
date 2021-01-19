@@ -1,19 +1,18 @@
 package dev.minutest.junit.experimental
 
-import dev.minutest.assertLogged
+import dev.minutest.experimental.TestLogger
+import dev.minutest.experimental.defaultChecker
 import dev.minutest.experimental.logTo
 import dev.minutest.rootContext
 import org.junit.AfterClass
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.opentest4j.TestAbortedException
 
-class JUnit4MinutestsTests
-//    : JUnit4Minutests()
-{
+class JUnit4MinutestsTests : JUnit4Minutests() {
 
     fun `my tests`() = rootContext<String> {
 
-        logTo(testLog)
+        logTo(testLogger)
 
         fixture { "banana" }
 
@@ -39,10 +38,11 @@ class JUnit4MinutestsTests
     }
 
     companion object {
-        private val testLog = mutableListOf<String>()
+        private val testLogger = TestLogger()
 
         @AfterClass @JvmStatic fun check() {
-            assertLogged(testLog,
+            defaultChecker(
+                listOf(
                 "▾ my tests",
                 "✓ my tests/test",
                 "▾ my tests/context",
@@ -52,6 +52,8 @@ class JUnit4MinutestsTests
                 "▾ my tests/context/context whose name is wrong if you just run this test in IntelliJ",
                 "✓ my tests/context/context whose name is wrong if you just run this test in IntelliJ/test",
                 "- my tests/context/skipped"
+                ),
+                testLogger.toStrings()
             )
         }
     }

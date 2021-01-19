@@ -1,9 +1,6 @@
 package dev.minutest.experimental
 
-import dev.minutest.RootContextBuilder
-import dev.minutest.assertLogged
-import dev.minutest.executeTests
-import dev.minutest.rootContext
+import dev.minutest.*
 import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -14,11 +11,12 @@ import org.opentest4j.MultipleFailuresError
 
 class FlatteningTests {
 
-    private val log = mutableListOf<String>()
+    private val testLogger = TestLogger()
+    private val miscLog = mutableListOf<String>().synchronized()
 
     @Test fun `empty sequence`() {
         val tests = rootContext<Sequence<String>> {
-            logTo(log)
+            logTo(testLogger)
 
             fixture { emptySequence() }
             derivedContext<String>("flattened") {
@@ -30,7 +28,7 @@ class FlatteningTests {
                 }
 
                 after {
-                    log.add("after")
+                    miscLog.add("after")
                 }
             }
         }
@@ -44,7 +42,7 @@ class FlatteningTests {
 
     @Test fun `each item is tested`() {
         val tests = rootContext<Sequence<String>> {
-            logTo(log)
+            logTo(testLogger)
 
             fixture { sequenceOf("one", "two", "three") }
             derivedContext<String>("flattened") {
@@ -52,82 +50,90 @@ class FlatteningTests {
                 flatten()
 
                 before {
-                    log.add("before $fixture")
+                    miscLog.add("before $fixture")
                 }
 
                 test("is a string") {
-                    log.add("test $fixture")
+                    miscLog.add("test $fixture")
                     @Suppress("USELESS_IS_CHECK")
                     assertTrue(fixture is String)
                 }
 
                 after {
-                    log.add("after $fixture")
+                    miscLog.add("after $fixture")
                 }
             }
         }
         checkLog(tests,
             "▾ root",
             "▾ root/flattened",
+            "✓ root/flattened/is a string",
+            "✓ root/flattened/is a string",
+            "✓ root/flattened/is a string",
+        )
+        assertLoggedInAnyOrder(miscLog,
             "before one",
             "test one",
-            "✓ root/flattened/is a string",
             "after one",
             "before two",
             "test two",
-            "✓ root/flattened/is a string",
             "after two",
             "before three",
             "test three",
-            "✓ root/flattened/is a string",
-            "after three")
+            "after three"
+        )
     }
 
     @Test fun `throws single MultipleFailuresError with failures`() {
         val tests = rootContext<Sequence<String>> {
-            logTo(log)
+            logTo(testLogger)
             fixture { sequenceOf("one", "two", "three") }
             derivedContext<String>("flattened") {
 
                 flatten()
 
                 before {
-                    log.add("before $fixture")
+                    miscLog.add("before $fixture")
                 }
 
                 test("is two") {
-                    log.add("test $fixture")
+                    miscLog.add("test $fixture")
                     assertEquals("two", fixture)
                 }
 
                 after {
-                    log.add("after $fixture")
+                    miscLog.add("after $fixture")
                 }
             }
         }
         val allErrors = checkLog(tests,
             "▾ root",
             "▾ root/flattened",
-            "before one",
-            "test one",
             "X root/flattened/is two",
-            "after one",
-            "before two",
-            "test two",
             "✓ root/flattened/is two",
-            "after two",
-            "before three",
-            "test three",
             "X root/flattened/is two",
-            "after three")
+        )
         assertAll(
             { assertEquals(1, allErrors.size) },
             { assertEquals(2, (allErrors[0] as MultipleFailuresError).failures.size) }
         )
+
+        assertLoggedInAnyOrder(miscLog,
+            "before one",
+            "test one",
+            "after one",
+            "before two",
+            "test two",
+            "after two",
+            "before three",
+            "test three",
+            "after three"
+        )
+
     }
 
     private fun checkLog(tests: RootContextBuilder, vararg expected: String) =
         executeTests(tests).also {
-            assertLogged(log, *expected)
+            assertLoggedInAnyOrder(testLogger.toStrings(), *expected)
         }
 }

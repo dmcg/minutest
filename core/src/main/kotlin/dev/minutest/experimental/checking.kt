@@ -74,6 +74,6 @@ fun aysncChecker(expected: List<String>, actual:List<String>) {
     )
 }
 
-fun <PF, F> TestContextBuilder<PF, F>.logTo(log: MutableList<String>) {
-    annotateWith(RootAnnotation { node -> node.telling(TestLogger(log)) })
+fun <PF, F> TestContextBuilder<PF, F>.logTo(logger: TestLogger) {
+    annotateWith(RootAnnotation { node -> node.telling(logger) })
 }

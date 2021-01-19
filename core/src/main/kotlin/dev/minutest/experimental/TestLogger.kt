@@ -10,12 +10,10 @@ import org.opentest4j.TestAbortedException
 import java.util.Collections.synchronizedList
 
 class TestLogger(
-    private val log: MutableList<String> = mutableListOf(),
-    val indent: String = "  ",
     val prefixer: (EventType) -> String = EventType::prefix
 ) : TestEventListener {
 
-    val events = synchronizedList(mutableListOf<TestEvent>())
+    private val events: MutableList<TestEvent> = synchronizedList(mutableListOf<TestEvent>())
 
     enum class EventType(val prefix: String) {
         CONTEXT_OPENED("▾ "),
@@ -32,7 +30,7 @@ class TestLogger(
     }
 
     override fun <PF, F> contextOpened(context: Context<PF, F>, testDescriptor: TestDescriptor) {
-        addAndLog(TestEvent(CONTEXT_OPENED, context, testDescriptor))
+        add(TestEvent(CONTEXT_OPENED, context, testDescriptor))
     }
 
     override fun <F> testStarting(test: Test<F>, fixture: F, testDescriptor: TestDescriptor) {
@@ -40,37 +38,32 @@ class TestLogger(
     }
 
     override fun <F> testComplete(test: Test<F>, fixture: F, testDescriptor: TestDescriptor) {
-        addAndLog(TestEvent(TEST_COMPLETE, test, testDescriptor))
+        add(TestEvent(TEST_COMPLETE, test, testDescriptor))
     }
 
     override fun <F> testFailed(test: Test<F>, fixture: F, testDescriptor: TestDescriptor, t: Throwable) {
-        addAndLog(TestEvent(TEST_FAILED, test, testDescriptor))
+        add(TestEvent(TEST_FAILED, test, testDescriptor))
     }
 
     override fun <F> testAborted(test: Test<F>, fixture: F, testDescriptor: TestDescriptor, t: TestAbortedException) {
-        addAndLog(TestEvent(TEST_ABORTED, test, testDescriptor))
+        add(TestEvent(TEST_ABORTED, test, testDescriptor))
     }
 
-    override fun <F> testSkipped(test: Test<F>, fixture: F, testDescriptor: TestDescriptor, t: IncompleteExecutionException) {
-        addAndLog(TestEvent(TEST_SKIPPED, test, testDescriptor))
+    override fun <F> testSkipped(
+        test: Test<F>,
+        fixture: F,
+        testDescriptor: TestDescriptor,
+        t: IncompleteExecutionException
+    ) {
+        add(TestEvent(TEST_SKIPPED, test, testDescriptor))
     }
 
     override fun <PF, F> contextClosed(context: Context<PF, F>, testDescriptor: TestDescriptor) {
         add(TestEvent(CONTEXT_CLOSED, context, testDescriptor))
     }
 
-    private fun addAndLog(testEvent: TestEvent) {
-        add(testEvent)
-        log(testEvent)
-    }
-
     private fun add(testEvent: TestEvent) {
         events.add(testEvent)
-    }
-
-    private fun log(testEvent: TestEvent) {
-        val (eventType, _, testDescriptor) = testEvent
-        log.add(prefixer(eventType) + testDescriptor.fullName().joinToString("/"))
     }
 
     data class TestEvent(
@@ -87,7 +80,6 @@ class TestLogger(
                 TEST_STARTING -> null
                 else -> (prefixer(eventType) + testDescriptor.pathAsString())
             }
-
         }
     }
 }

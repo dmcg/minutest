@@ -31,20 +31,20 @@ class TestLoggerTests {
     }
 
     @JUnitTest fun testPlain() {
-        val logger = TestLogger(indent = "..", prefixer = TestLogger.noSymbols)
+        val logger = TestLogger(prefixer = TestLogger.noSymbols)
         doStuff(logger)
         assertLogged(logger.toStrings(),
             "root",
-            "..test in root",
-            "..test 2 in root",
-            "..outer",
-            "....test in outer",
-            "....inner",
-            "......test in inner",
-            "..test 3 in root",
-            "..skipped test in root",
-            "..aborted test in root",
-            "..failed test in root"
+            "  test in root",
+            "  test 2 in root",
+            "  outer",
+            "    test in outer",
+            "    inner",
+            "      test in inner",
+            "  test 3 in root",
+            "  skipped test in root",
+            "  aborted test in root",
+            "  failed test in root"
         )
     }
 
