@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test as JUnitTest
 
 class TestEventsTests {
 
-    val log = mutableListOf<String>()
+    val log = mutableListOf<String>().synchronized()
 
     val listener = object : TestEventListener {
 
@@ -79,7 +79,7 @@ class TestEventsTests {
             }
         }
         executeTests(tests)
-        assertLogged(log,
+        assertLoggedInAnyOrder(log,
             "Opened [root]",
             "Starting [root, in root]",
             "Completed [root, in root]",
@@ -122,7 +122,7 @@ class TestEventsTests {
             }
         }
         executeTests(tests)
-        assertLogged(log,
+        assertLoggedInAnyOrder(log,
             "Opened [root]",
             "Opened [root, context]",
             "Starting [root, context, in context]",
@@ -146,7 +146,7 @@ class TestEventsTests {
             }
         }
         executeTests(tests)
-        assertLogged(log,
+        assertLoggedInAnyOrder(log,
             "Closed context",
             "afterAll root",
             "Closed root"

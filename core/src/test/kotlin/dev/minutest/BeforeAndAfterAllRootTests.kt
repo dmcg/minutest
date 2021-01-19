@@ -7,7 +7,6 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.platform.commons.annotation.Testable
 import org.junit.runner.RunWith
-import java.util.Collections.synchronizedList
 
 open class Checking {
     val classLog = mutableListOf<String>().synchronized()
@@ -75,7 +74,3 @@ class BeforeAndAfterRootTestsX: BeforeAndAfterAllRootTests() {
     @Testable
     override fun rootTests() = super.rootTests()
 }
-
-@Suppress("UNCHECKED_CAST")
-fun <T, L: List<T>> L.synchronized(): L = synchronizedList(this) as L
-

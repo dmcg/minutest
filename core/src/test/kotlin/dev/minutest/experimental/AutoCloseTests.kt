@@ -1,14 +1,15 @@
 package dev.minutest.experimental
 
-import dev.minutest.assertLogged
+import dev.minutest.assertLoggedInAnyOrder
 import dev.minutest.executeTests
 import dev.minutest.rootContext
+import dev.minutest.synchronized
 import org.junit.jupiter.api.Test as JUnitTest
 
 
 class AutoCloseTests {
 
-    val log = mutableListOf<String>()
+    val log = mutableListOf<String>().synchronized()
 
     @JUnitTest fun test() {
         val tests = rootContext {
@@ -36,7 +37,7 @@ class AutoCloseTests {
         }
 
         executeTests(tests)
-        assertLogged(log,
+        assertLoggedInAnyOrder(log,
             "test 1", "resource created", "resource accessed",
             "test 2", "resource accessed",
             "resource closed")
@@ -64,6 +65,6 @@ class AutoCloseTests {
         }
 
         executeTests(tests)
-        assertLogged(log, "test 1")
+        assertLoggedInAnyOrder(log, "test 1")
     }
 }

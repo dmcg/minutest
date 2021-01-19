@@ -1,13 +1,14 @@
 package dev.minutest.junit
 
-import dev.minutest.assertLogged
+import dev.minutest.assertLoggedInAnyOrder
 import dev.minutest.rootContext
+import dev.minutest.synchronized
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 
-private val log = mutableListOf<String>()
+private val log = mutableListOf<String>().synchronized()
 private var hashCode: Int = 0
 
 /**
@@ -21,7 +22,7 @@ object JUnit5ObjectLifecycleTests : JUnit5Minutests {
 
     @AfterAll @JvmStatic fun afterAll() {
         log.add("afterAll")
-        assertLogged(log, "init", "beforeAll", "beforeEach", "1", "2", "afterEach", "afterAll")
+        assertLoggedInAnyOrder(log, "init", "beforeAll", "beforeEach", "1", "2", "afterEach", "afterAll")
     }
 
     init {

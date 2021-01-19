@@ -7,6 +7,7 @@ import dev.minutest.TestDescriptor
 import dev.minutest.experimental.TestLogger.EventType.*
 import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
+import java.util.Collections.synchronizedList
 
 class TestLogger(
     private val log: MutableList<String> = mutableListOf(),
@@ -14,7 +15,7 @@ class TestLogger(
     val prefixer: (EventType) -> String = EventType::prefix
 ) : TestEventListener {
 
-    val events = mutableListOf<TestEvent>()
+    val events = synchronizedList(mutableListOf<TestEvent>())
 
     enum class EventType(val prefix: String) {
         CONTEXT_OPENED("▾ "),
@@ -79,18 +80,12 @@ class TestLogger(
     )
 
     fun toStrings(): List<String> {
-        var currentIndent = ""
         return events.mapNotNull { (eventType, _, testDescriptor) ->
             when (eventType) {
-                CONTEXT_OPENED -> (currentIndent + prefixer(eventType) + testDescriptor.name).also {
-                    currentIndent += indent
-                }
-                CONTEXT_CLOSED -> {
-                    currentIndent = currentIndent.substring(indent.length)
-                    null
-                }
+                CONTEXT_OPENED -> (prefixer(eventType) + testDescriptor.pathAsString())
+                CONTEXT_CLOSED -> null
                 TEST_STARTING -> null
-                else -> (currentIndent + prefixer(eventType) + testDescriptor.name)
+                else -> (prefixer(eventType) + testDescriptor.pathAsString())
             }
 
         }

@@ -1,13 +1,14 @@
 package dev.minutest.junit
 
-import dev.minutest.assertLogged
+import dev.minutest.assertLoggedInAnyOrder
 import dev.minutest.rootContext
+import dev.minutest.synchronized
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 
-private val log = mutableListOf<String>()
+private val log = mutableListOf<String>().synchronized()
 
 /**
  * Just to remind me what is run and when.
@@ -21,7 +22,7 @@ class JUnit5ClassLifecycleTests : JUnit5Minutests {
 
         @AfterAll @JvmStatic fun afterAll() {
             log.add("afterAll")
-            assertLogged(log, "beforeAll", "init", "beforeEach", "1", "2", "afterEach", "afterAll")
+            assertLoggedInAnyOrder(log, "beforeAll", "init", "beforeEach", "1", "2", "afterEach", "afterAll")
         }
     }
 

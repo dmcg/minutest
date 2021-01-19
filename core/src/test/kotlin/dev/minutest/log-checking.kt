@@ -2,7 +2,10 @@ package dev.minutest
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import java.util.*
 
+@Suppress("UNCHECKED_CAST")
+fun <T, L: List<T>> L.synchronized(): L = Collections.synchronizedList(this) as L
 
 fun assertLogged(log: List<String>, vararg expected: String) {
     assertEquals(expected.toList().joinToString("\n"), log.joinToString("\n"))
