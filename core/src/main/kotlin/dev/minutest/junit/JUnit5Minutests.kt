@@ -21,7 +21,7 @@ interface JUnit5Minutests {
         // execution _within_ a context
     fun minutests(): Stream<DynamicNode> =
         rootContextFromMethods()
-            .toRootStreamfDynamicNodes()
+            .toRootStreamofDynamicNodes()
 }
 
 /**
@@ -32,7 +32,7 @@ interface JUnit5Minutests {
 fun testFactoryFor(
     root: RootContextBuilder,
 ): Stream<DynamicNode> =
-    root.buildNode().toRootStreamfDynamicNodes()
+    root.buildNode().toRootStreamofDynamicNodes()
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]

@@ -13,24 +13,13 @@ internal fun Node<Unit>.toRootContext(
             // In this case we need to build a RunnableContext where the children
             // are themselves roots
             RunnableContext(
-                RootExecutor,
+                RootExecutor, // never used
                 this.children.map { it.toRootRunnableNode() },
                 this
             )
         else -> when (val runnableNode = toRootRunnableNode()) {
             is RunnableContext -> runnableNode
             is RunnableTest -> TODO("Root is test")
-        }
-    }
-
-
-internal fun Node<Unit>.toRootRunnableNodes(
-): List<RunnableNode> =
-    when (this) {
-        is AmalgamatedRootContext -> this.children.map { it.toRootRunnableNode() }
-        else -> when (val runnableNode = toRootRunnableNode()) {
-            is RunnableTest -> listOf(runnableNode)
-            is RunnableContext -> runnableNode.children
         }
     }
 
@@ -51,9 +40,10 @@ private fun <F> Node<F>.toRunnableNode(
 
 private fun <F> Test<F>.toRunnableTest(
     executor: TestExecutor<F>,
-): RunnableTest {
-    return RunnableTest(executor, this) { executor.runTest(this) }
-}
+): RunnableTest =
+    RunnableTest(executor, this) {
+        executor.runTest(this)
+    }
 
 private fun <PF, F> Context<PF, F>.toRunnableContext(
     executor: TestExecutor<PF>,

@@ -21,9 +21,6 @@ internal interface TestExecutor<F> : TestDescriptor {
     // Compose with a child context to get an executor for that child
     fun <G> andThen(childContext: Context<F, G>): TestExecutor<G> =
         ContextExecutor(this, childContext)
-
-    // Allows child executor to tell us that its context is complete
-    fun onContextComplete(context: Context<F, *>)
 }
 
 internal class ContextExecutor<PF, F>(
@@ -32,18 +29,10 @@ internal class ContextExecutor<PF, F>(
 ) : TestExecutor<F> {
     override val name get() = context.name
 
-    private val incompleteTests: MutableList<Test<F>> =
-        context.children.filterIsInstance<Test<F>>().toMutableList()
-    private val incompleteContexts: MutableList<Context<F, *>> =
-        context.children.filterIsInstance<Context<F, *>>().toMutableList()
     private var state = UNOPENED
 
     override fun runTest(test: Test<F>) {
-        try {
-            runTest(this.andThenTestName(test.name), test)
-        } finally {
-            onTestComplete(test)
-        }
+        runTest(this.andThenTestName(test.name), test)
     }
 
     /**
@@ -67,15 +56,8 @@ internal class ContextExecutor<PF, F>(
         // is opened first.
     }
 
-    private fun onTestComplete(test: Test<F>) {
-    }
-
-    override fun onContextComplete(context: Context<F, *>) {
-    }
-
     private fun maybeOpen(testDescriptor: TestDescriptor) {
         synchronized(this) {
-            check(state != CLOSED) { "Context $contextPath was already closed" }
             if (state == UNOPENED) {
                 context.open(testDescriptor)
                 state = OPENED
@@ -83,10 +65,8 @@ internal class ContextExecutor<PF, F>(
         }
     }
 
-    private val contextPath get() = this.fullName()
-
     private enum class ContextState {
-        UNOPENED, OPENED, CLOSED
+        UNOPENED, OPENED
     }
 }
 
@@ -108,17 +88,9 @@ internal object RootExecutor : TestExecutor<Unit>, RootDescriptor {
         // as we substitute the context with a test that throws!
         runTest(this.andThenTestName(test.name), test)
     }
-
-    // Doesn't track any particular context, so doesn't care
-    override fun onContextComplete(context: Context<Unit, *>) = Unit
 }
 
 internal fun TestDescriptor.andThenTestName(name: String): TestDescriptor = object : TestDescriptor {
     override val name = name
     override val parent: TestDescriptor = this@andThenTestName
-}
-
-private fun <T> MutableList<T>.makeSureWeRemove(item: T) {
-    val wasThere = remove(item)
-    check(wasThere) { "Item $item was not in list to be removed" }
 }

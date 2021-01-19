@@ -11,13 +11,14 @@ import java.util.stream.Stream
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-internal fun Node<Unit>.toRootStreamfDynamicNodes(
-): Stream<DynamicNode> {
-    val rootContext = this.toRootContext()
-    return rootContext.toListOfDynamicNodes().stream().onClose {
-        rootContext.close()
-    }
-}
+internal fun Node<Unit>.toRootStreamofDynamicNodes(): Stream<DynamicNode> =
+    toRootContext().toStreamOfDynamicNodes()
+
+private fun RunnableContext.toStreamOfDynamicNodes(): Stream<DynamicNode> =
+    children
+        .map { it.toDynamicNode() }
+        .stream()
+        .onClose { close() }
 
 private fun RunnableNode.toDynamicNode() =
     when (this) {
@@ -34,13 +35,8 @@ private fun RunnableContext.toDynamicContainer() =
     DynamicContainer.dynamicContainer(
         name,
         testUri,
-        toListOfDynamicNodes().stream().onClose {
-            this.close()
-        }
+        toStreamOfDynamicNodes()
     )
-
-private fun RunnableContext.toListOfDynamicNodes(): List<DynamicNode> =
-    children.map { it.toDynamicNode() }
 
 internal val RunnableNode.testUri: URI? get() = sourceReference?.toUri()
 
