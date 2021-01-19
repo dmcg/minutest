@@ -28,7 +28,7 @@ internal fun findRootContextPerPackage(scannerConfig: ClassGraph.() -> Unit, cla
         .filter { it.visibility == PUBLIC }
         .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
         .map { (packageName, functions: List<RootContextFun>) ->
-            AmalgamatedRootContext(packageName, functions.renamed().map { it.invoke().buildNode() })
+            AmalgamatedRootContext(packageName, functions.renamed().map { it.buildNode() })
         }
 
 @Suppress("UNCHECKED_CAST") // reflection
@@ -41,9 +41,9 @@ private fun MethodInfo.definesTopLevelContext() =
 
 private fun TypeSignature.name() = (this as? ClassRefTypeSignature)?.baseClassName
 
-private fun Iterable<RootContextFun>.renamed(): List<() -> RootContextBuilder> =
+private fun Iterable<RootContextFun>.renamed(): List<RootContextBuilder> =
     this.map { f: RootContextFun ->
-        { f().withNameUnlessSpecified(f.name) }
+        f().withNameUnlessSpecified(f.name)
     }
 
 private typealias RootContextFun = KFunction0<RootContextBuilder>
