@@ -1,126 +1,132 @@
 package dev.minutest
 
-import dev.minutest.junit.toTestFactory
 import dev.minutest.testing.runTests
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.fail
 import java.io.IOException
 
 
 class BeforeAndAfterTests {
 
-    // this is a very special case for testing testing - don't do this normally
     val log = mutableListOf<String>()
-    private lateinit var expectedLog: List<String>
 
-    @AfterEach fun checkLog() {
-        assertEquals(expectedLog, log)
-    }
+    @Test
+    fun `plain before and after`() {
+        val tests = rootContext<MutableList<String>> {
+            fixture { log }
 
-    fun `plain before and after`() = rootContext<MutableList<String>> {
-
-        expectedLog = listOf("before 1", "before 2", "test", "after 1", "after 2")
-
-        fixture { log }
-
-        before {
-            assertEquals(emptyList<String>(), this)
-            add("before 1")
-        }
-
-        before {
-            assertEquals(listOf("before 1"), this)
-            add("before 2")
-        }
-
-        after {
-            assertEquals(listOf("before 1", "before 2", "test"), this)
-            add("after 1")
-        }
-
-        after {
-            assertEquals(listOf("before 1", "before 2", "test", "after 1"), this)
-            add("after 2")
-        }
-
-        test("test") {
-            assertEquals(listOf("before 1", "before 2"), this)
-            add("test")
-        }
-    }.toTestFactory()
-
-    @TestFactory fun `before_`() = rootContext<List<String>> {
-
-        expectedLog = listOf("before 1", "before 2", "test")
-
-        fixture { emptyList() }
-
-        before_ {
-            assertEquals(emptyList<String>(), this)
-            this + "before 1"
-        }
-
-        before_ {
-            assertEquals(listOf("before 1"), this)
-            this + "before 2"
-        }
-
-        after {
-            assertEquals(listOf("before 1", "before 2", "test"), this)
-            log.addAll(fixture)
-        }
-
-        test_("test") {
-            assertEquals(listOf("before 1", "before 2"), this)
-            this + "test"
-        }
-    }.toTestFactory()
-
-    @TestFactory fun `nested before and after`() = rootContext<MutableList<String>> {
-
-        expectedLog = listOf("outer before 1", "inner before", "inner fixture", "test", "inner after", "outer after")
-
-        fixture { log }
-
-        before {
-            assertEquals(emptyList<String>(), this)
-            add("outer before 1")
-        }
-
-        after {
-            assertEquals(listOf("outer before 1", "inner before", "inner fixture", "test", "inner after"), this)
-            add("outer after")
-        }
-
-        context("inner") {
             before {
-                assertEquals(listOf("outer before 1"), this)
-                add("inner before")
+                assertEquals(emptyList<String>(), this)
+                add("before 1")
             }
 
-            modifyFixture {
-                assertEquals(listOf("outer before 1", "inner before"), this)
-                add("inner fixture")
+            before {
+                assertEquals(listOf("before 1"), this)
+                add("before 2")
             }
 
             after {
-                assertEquals(listOf("outer before 1", "inner before", "inner fixture", "test"), this)
-                add("inner after")
+                assertEquals(listOf("before 1", "before 2", "test"), this)
+                add("after 1")
+            }
+
+            after {
+                assertEquals(listOf("before 1", "before 2", "test", "after 1"), this)
+                add("after 2")
             }
 
             test("test") {
-                assertEquals(listOf("outer before 1", "inner before", "inner fixture"), this)
+                assertEquals(listOf("before 1", "before 2"), this)
                 add("test")
             }
         }
-    }.toTestFactory()
+        expect(
+            whenRunning = tests,
+            expectedLog = listOf("before 1", "before 2", "test", "after 1", "after 2"),
+        )
+    }
 
-    @Test fun `after run on test failure`() {
+    @Test
+    fun before_() {
+        val tests = rootContext<List<String>> {
+            fixture { emptyList() }
 
-        val test = rootContext<MutableList<String>> {
+            before_ {
+                assertEquals(emptyList<String>(), this)
+                this + "before 1"
+            }
+
+            before_ {
+                assertEquals(listOf("before 1"), this)
+                this + "before 2"
+            }
+
+            after {
+                assertEquals(listOf("before 1", "before 2", "test"), this)
+                log.addAll(fixture)
+            }
+
+            test_("test") {
+                assertEquals(listOf("before 1", "before 2"), this)
+                this + "test"
+            }
+        }
+        expect(
+            whenRunning = tests,
+            expectedLog = listOf("before 1", "before 2", "test"),
+        )
+    }
+
+    @Test
+    fun `nested before and after`() {
+        val tests = rootContext<MutableList<String>> {
+            fixture { log }
+
+            before {
+                assertEquals(emptyList<String>(), this)
+                add("outer before 1")
+            }
+
+            after {
+                assertEquals(listOf("outer before 1", "inner before", "inner fixture", "test", "inner after"), this)
+                add("outer after")
+            }
+
+            context("inner") {
+                before {
+                    assertEquals(listOf("outer before 1"), this)
+                    add("inner before")
+                }
+
+                modifyFixture {
+                    assertEquals(listOf("outer before 1", "inner before"), this)
+                    add("inner fixture")
+                }
+
+                after {
+                    assertEquals(listOf("outer before 1", "inner before", "inner fixture", "test"), this)
+                    add("inner after")
+                }
+
+                test("test") {
+                    assertEquals(listOf("outer before 1", "inner before", "inner fixture"), this)
+                    add("test")
+                }
+            }
+        }
+        expect(
+            whenRunning = tests,
+            expectedLog = listOf(
+                "outer before 1", "inner before", "inner fixture",
+                "test", "inner after", "outer after"
+            ),
+        )
+    }
+
+    @Test
+    fun `after run on test failure`() {
+        val tests = rootContext<MutableList<String>> {
             fixture { log }
 
             after {
@@ -133,13 +139,16 @@ class BeforeAndAfterTests {
                 throw Exception("in test")
             }
         }
-        checkItems(runTests(test), { it.message == "in test" })
-        expectedLog = listOf("test", "after")
+        expect(
+            whenRunning = tests,
+            expectedLog = listOf("test", "after"),
+            { it.message == "in test" }
+        )
     }
 
-    @Test fun `after is run if before fails`() {
-
-        val test = rootContext<MutableList<String>> {
+    @Test
+    fun `after is run if before fails`() {
+        val tests = rootContext<MutableList<String>> {
             fixture { log }
 
             before {
@@ -156,15 +165,18 @@ class BeforeAndAfterTests {
                 add("test")
             }
         }
-
-        checkItems(runTests(test), { it is IOException })
-        expectedLog = listOf("before", "after")
+        expect(
+            whenRunning = tests,
+            expectedLog = listOf("before", "after"),
+            { it is IOException }
+        )
     }
 
-    @Test fun `afters are run with the last successful before fixture`() {
+    @Test
+    fun `afters are run with the last successful before fixture`() {
 
         // use an immutable fixture to prove the point
-        val test = rootContext<List<String>> {
+        val tests = rootContext<List<String>> {
             fixture {
                 log.add("top")
                 listOf("top")
@@ -200,13 +212,16 @@ class BeforeAndAfterTests {
                 }
             }
         }
-        checkItems(runTests(test), { it.message == "in inner fixture" })
-        expectedLog = listOf("top", "outer", "inner", "after outer")
+        expect(
+            whenRunning = tests,
+            expectedLog = listOf("top", "outer", "inner", "after outer"),
+            { it.message == "in inner fixture" }
+        )
     }
 
-    @Test fun `afters abort if they throw`() {
-
-        val test = rootContext {
+    @Test
+    fun `afters abort if they throw`() {
+        val tests = rootContext {
 
             test("test") {
                 log.add("test")
@@ -226,14 +241,17 @@ class BeforeAndAfterTests {
             }
         }
 
-        checkItems(runTests(test), { it.message == "in after 2" })
-        expectedLog = listOf("test", "after 1", "after 2")
+        expect(
+            whenRunning = tests,
+            expectedLog = listOf("test", "after 1", "after 2"),
+            { it.message == "in after 2" }
+        )
     }
 
-    @Test fun `fails with the last exception`() {
-
+    @Test
+    fun `fails with the last exception`() {
         // use an immutable fixture to prove the point
-        val test = rootContext {
+        val tests = rootContext {
 
             test_("test") {
                 log.add("test")
@@ -243,10 +261,22 @@ class BeforeAndAfterTests {
             after {
                 throw Exception("in after")
             }
-
         }
 
-        checkItems(runTests(test), { it.message == "in after" })
-        expectedLog = listOf("test")
+        expect(
+            whenRunning = tests,
+            expectedLog = listOf("test"),
+            { it.message == "in after" }
+        )
+    }
+
+    private fun expect(
+        whenRunning: RootContextBuilder,
+        expectedLog: List<String>,
+        vararg exceptionMatchers: (Throwable) -> Boolean
+    ) {
+        val exceptions = runTests(whenRunning)
+        checkItems(exceptions, *exceptionMatchers)
+        assertEquals(expectedLog, log)
     }
 }
