@@ -1,6 +1,10 @@
 package dev.minutest.experimental
 
-import dev.minutest.*
+import dev.minutest.RootContextBuilder
+import dev.minutest.assertLoggedInAnyOrder
+import dev.minutest.rootContext
+import dev.minutest.synchronized
+import dev.minutest.testing.runTests
 import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -133,7 +137,7 @@ class FlatteningTests {
     }
 
     private fun checkLog(tests: RootContextBuilder, vararg expected: String) =
-        executeTests(tests).also {
+        runTests(tests).also {
             assertLoggedInAnyOrder(testLogger.toStrings(), *expected)
         }
 }

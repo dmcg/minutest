@@ -1,7 +1,7 @@
 package dev.minutest.scenarios
 
-import dev.minutest.executeTests
 import dev.minutest.rootContext
+import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import kotlin.test.assertEquals
@@ -28,7 +28,7 @@ class ScenarioErrorReportingTests {
                 }
             }
         }
-        val error = executeTests(tests).first()
+        val error = runTests(tests).first()
         assertEquals(
             listOf(
                 "",
@@ -55,7 +55,7 @@ class ScenarioErrorReportingTests {
                 }
             }
         }
-        val error = executeTests(tests).first()
+        val error = runTests(tests).first()
         assertEquals(
             listOf(
                 "",
@@ -82,7 +82,7 @@ class ScenarioErrorReportingTests {
                 }
             }
         }
-        val error = executeTests(tests).first()
+        val error = runTests(tests).first()
         assertEquals(
             listOf(
                 "",

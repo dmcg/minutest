@@ -1,6 +1,7 @@
 package dev.minutest
 
 import dev.minutest.junit.toTestFactory
+import dev.minutest.testing.runTests
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -132,7 +133,7 @@ class BeforeAndAfterTests {
                 throw Exception("in test")
             }
         }
-        checkItems(executeTests(test), { it.message == "in test" })
+        checkItems(runTests(test), { it.message == "in test" })
         expectedLog = listOf("test", "after")
     }
 
@@ -156,7 +157,7 @@ class BeforeAndAfterTests {
             }
         }
 
-        checkItems(executeTests(test), { it is IOException })
+        checkItems(runTests(test), { it is IOException })
         expectedLog = listOf("before", "after")
     }
 
@@ -199,7 +200,7 @@ class BeforeAndAfterTests {
                 }
             }
         }
-        checkItems(executeTests(test), { it.message == "in inner fixture" })
+        checkItems(runTests(test), { it.message == "in inner fixture" })
         expectedLog = listOf("top", "outer", "inner", "after outer")
     }
 
@@ -225,7 +226,7 @@ class BeforeAndAfterTests {
             }
         }
 
-        checkItems(executeTests(test), { it.message == "in after 2" })
+        checkItems(runTests(test), { it.message == "in after 2" })
         expectedLog = listOf("test", "after 1", "after 2")
     }
 
@@ -245,7 +246,7 @@ class BeforeAndAfterTests {
 
         }
 
-        checkItems(executeTests(test), { it.message == "in after" })
+        checkItems(runTests(test), { it.message == "in after" })
         expectedLog = listOf("test")
     }
 }

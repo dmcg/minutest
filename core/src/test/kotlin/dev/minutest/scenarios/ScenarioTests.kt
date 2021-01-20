@@ -1,10 +1,10 @@
 package dev.minutest.scenarios
 
 import dev.minutest.assertLogged
-import dev.minutest.executeTests
 import dev.minutest.experimental.checkedAgainst
 import dev.minutest.experimental.noSymbolsLogger
 import dev.minutest.rootContext
+import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -40,7 +40,7 @@ class ScenarioTests {
                 }
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
         assertLogged(log,
             "in when",
             "in then",
@@ -65,7 +65,7 @@ class ScenarioTests {
                 }
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
         assertLogged(log,
             "in and",
             "in then"
@@ -91,7 +91,7 @@ class ScenarioTests {
                 }
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
         assertLogged(log,
             "in then",
             "in and",
@@ -119,7 +119,7 @@ class ScenarioTests {
                 }
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
         assertLogged(log,
             "in then",
             "in and"
@@ -155,7 +155,7 @@ class ScenarioTests {
                 }
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
         assertLogged(log,
             "in when",
             "in and",
@@ -188,7 +188,7 @@ class ScenarioTests {
                 }
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
         assertLogged(log,
             "in then",
             "in and"
@@ -209,7 +209,7 @@ class ScenarioTests {
                 }
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
         assertLogged(log,
             "in then",
             "in and"
@@ -237,7 +237,7 @@ class ScenarioTests {
                 }
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
         assertLogged(log,
             "in when",
             "in then"

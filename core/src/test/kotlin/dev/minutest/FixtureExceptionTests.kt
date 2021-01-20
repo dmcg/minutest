@@ -1,5 +1,6 @@
 package dev.minutest
 
+import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Test
 import java.io.FileNotFoundException
 
@@ -15,6 +16,6 @@ class FixtureExceptionTests  {
             test("there needs to be a test to run anything") {}
 
         }
-        checkItems(executeTests(tests), { it is FileNotFoundException })
+        checkItems(runTests(tests), { it is FileNotFoundException })
     }
 }

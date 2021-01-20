@@ -1,9 +1,9 @@
 package dev.minutest.scenarios
 
-import dev.minutest.executeTests
 import dev.minutest.experimental.checkedAgainst
 import dev.minutest.experimental.noSymbolsLogger
 import dev.minutest.rootContext
+import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Test
 
 
@@ -32,7 +32,7 @@ class ScenarioNamingTests {
                 }
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
     }
 
     @Test
@@ -58,7 +58,7 @@ class ScenarioNamingTests {
                 }
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
     }
 
     @Test
@@ -73,7 +73,7 @@ class ScenarioNamingTests {
                 When("when") {}.Then("then") {}
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
     }
 
     @Test
@@ -89,7 +89,7 @@ class ScenarioNamingTests {
                 When("when") {}.Then("then") {}
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
     }
 
     @Test
@@ -107,7 +107,7 @@ class ScenarioNamingTests {
                 When("when") {}.Then("then") {}
             }
         }
-        executeTests(tests).orFail()
+        runTests(tests).orFail()
     }
 }
 

@@ -3,6 +3,7 @@ package dev.minutest
 import dev.minutest.experimental.SKIP
 import dev.minutest.experimental.minus
 import dev.minutest.junit.JUnit5Minutests
+import dev.minutest.testing.runTestsInClass
 import org.junit.vintage.engine.descriptor.VintageTestDescriptor
 import samples.assumptions.JUnit4AssumptionsTest
 import samples.assumptions.JUnit5AssumptionsTest

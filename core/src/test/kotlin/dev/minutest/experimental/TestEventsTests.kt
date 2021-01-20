@@ -1,6 +1,7 @@
 package dev.minutest.experimental
 
 import dev.minutest.*
+import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.fail
 import org.opentest4j.IncompleteExecutionException
@@ -78,7 +79,7 @@ class TestEventsTests {
                 log.add("afterAll root")
             }
         }
-        executeTests(tests)
+        runTests(tests)
         assertLoggedInAnyOrder(log,
             "Opened [root]",
             "Starting [root, in root]",
@@ -121,7 +122,7 @@ class TestEventsTests {
                 log.add("afterAll root")
             }
         }
-        executeTests(tests)
+        runTests(tests)
         assertLoggedInAnyOrder(log,
             "Opened [root]",
             "Opened [root, context]",
@@ -145,7 +146,7 @@ class TestEventsTests {
                 log.add("afterAll root")
             }
         }
-        executeTests(tests)
+        runTests(tests)
         assertLoggedInAnyOrder(log,
             "Closed context",
             "afterAll root",

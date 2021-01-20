@@ -1,6 +1,6 @@
 package dev.minutest.junit
 
-import dev.minutest.runTestsInClass
+import dev.minutest.testing.runTestsInClass
 import org.junit.jupiter.api.Test
 import samples.runners.JUnit5Sample
 

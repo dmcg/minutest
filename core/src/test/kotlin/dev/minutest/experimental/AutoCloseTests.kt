@@ -1,9 +1,9 @@
 package dev.minutest.experimental
 
 import dev.minutest.assertLoggedInAnyOrder
-import dev.minutest.executeTests
 import dev.minutest.rootContext
 import dev.minutest.synchronized
+import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Test as JUnitTest
 
 
@@ -36,7 +36,7 @@ class AutoCloseTests {
             }
         }
 
-        executeTests(tests)
+        runTests(tests)
         assertLoggedInAnyOrder(log,
             "test 1", "resource created", "resource accessed",
             "test 2", "resource accessed",
@@ -64,7 +64,7 @@ class AutoCloseTests {
 
         }
 
-        executeTests(tests)
+        runTests(tests)
         assertLoggedInAnyOrder(log, "test 1")
     }
 }

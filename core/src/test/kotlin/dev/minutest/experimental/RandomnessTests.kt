@@ -1,7 +1,7 @@
 package dev.minutest.experimental
 
-import dev.minutest.executeTests
 import dev.minutest.rootContext
+import dev.minutest.testing.runTests
 import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -13,7 +13,7 @@ class RandomnessTests {
     fun reuses_random_seed_until_test_passes() {
         val randomValues = mutableListOf<Int>()
 
-        fun executeTests(shouldPass: Boolean) = executeTests( // *
+        fun executeTests(shouldPass: Boolean) = runTests( // *
             rootContext {
                 randomTest("the test") { random, _ ->
                     randomValues += random.nextInt()

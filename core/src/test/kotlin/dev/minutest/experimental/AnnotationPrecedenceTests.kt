@@ -1,6 +1,7 @@
 package dev.minutest.experimental
 
 import dev.minutest.*
+import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Test as JUnitTest
 
 
@@ -11,7 +12,7 @@ class AnnotationPrecedenceTests {
     @JUnitTest
     fun `first test transform is outer`() {
 
-        executeTests(
+        runTests(
             rootContext {
                 transform("1") + transform("2") - test("test") {}
             }
@@ -27,7 +28,7 @@ class AnnotationPrecedenceTests {
     @JUnitTest
     fun `first context transform is outer`() {
 
-        executeTests(
+        runTests(
             rootContext {
                 transform("1") + transform("2") - context("inner") {
                     test("test") {}
@@ -45,7 +46,7 @@ class AnnotationPrecedenceTests {
     @JUnitTest
     fun `first root context transform is outer`() {
 
-        executeTests(
+        runTests(
             transform("1") + transform("2") - rootContext {
                 test("test") {}
             }
@@ -61,7 +62,7 @@ class AnnotationPrecedenceTests {
     @JUnitTest
     fun `first internal transform is outer`() {
 
-        executeTests(
+        runTests(
             rootContext {
                 annotateWith(transform("1"))
                 annotateWith(transform("2"))
@@ -79,7 +80,7 @@ class AnnotationPrecedenceTests {
     @JUnitTest
     fun `external annotations are outside internal`() {
 
-        executeTests(
+        runTests(
             rootContext {
                 transform("1") - context("inner") {
                     annotateWith(transform("2"))
@@ -98,7 +99,7 @@ class AnnotationPrecedenceTests {
     @JUnitTest
     fun `external annotations are outside internal for rootContext`() {
 
-        executeTests(
+        runTests(
             transform("1") - rootContext {
                 annotateWith(transform("2"))
                 test("test") {}

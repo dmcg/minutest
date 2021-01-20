@@ -1,7 +1,7 @@
 package dev.minutest.experimental
 
-import dev.minutest.executeTests
 import dev.minutest.rootContext
+import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -32,7 +32,7 @@ class CheckingTests {
             }
         }
 
-        assertTrue(executeTests(tests).isEmpty())
+        assertTrue(runTests(tests).isEmpty())
     }
 
     @Test fun `throws if checking fails`() {
@@ -43,7 +43,7 @@ class CheckingTests {
         }
 
         assertThrows<AssertionError> {
-            executeTests(tests)
+            runTests(tests)
         }
     }
 }
