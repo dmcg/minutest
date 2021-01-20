@@ -10,6 +10,7 @@ sealed class Node<F> {
     abstract val name: String
     internal abstract val markers: List<Any>
 
+    // The id should be passed through any wrappers around this node
     abstract val id: NodeId
 }
 
