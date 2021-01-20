@@ -1,5 +1,6 @@
 package dev.minutest
 
+import dev.minutest.internal.translatingAssumptions
 
 /**
  * [Node]s form a tree of [Context]s and [Test]s.
@@ -46,7 +47,9 @@ data class Test<F>(
     override val markers: List<Any>,
     override val id: NodeId,
     private val f: Testlet<F>
-) : Node<F>(), Testlet<F> by f
+) : Node<F>(),
+    Testlet<F> by f.translatingAssumptions()
+
 
 data class NodeId(val value: Int) {
     companion object {

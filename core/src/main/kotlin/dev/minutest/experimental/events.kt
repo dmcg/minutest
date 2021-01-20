@@ -37,18 +37,8 @@ private fun <F> Test<F>.telling(listener: TestEventListener) = copy(
             listener.testAborted(this, fixture, testDescriptor, aborted)
             throw aborted
         } catch (t: Throwable) {
-            t.assumptionViolatedasTestAborted()?.let {
-                listener.testAborted(this, fixture, testDescriptor, it)
-            } ?: listener.testFailed(this, fixture, testDescriptor, t)
+            listener.testFailed(this, fixture, testDescriptor, t)
             throw t
         }
     }
 )
-
-fun Throwable.assumptionViolatedasTestAborted(): TestAbortedException? =
-    when (this::class.qualifiedName) {
-        // by name so that we don't need the jar file
-        "org.junit.AssumptionViolatedException" -> TestAbortedException(this.message)
-        else -> null
-    }
-

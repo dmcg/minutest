@@ -45,7 +45,11 @@ internal class ContextExecutor<PF, F>(
     ) {
         parent.runTest(testDescriptor) { fixture, _ /* 1 */ ->
             maybeOpen(this) /* 2 */
-            context.runTest(testlet, fixture, testDescriptor)
+            context.runTest(
+                testlet.translatingAssumptions(),
+                fixture,
+                testDescriptor
+            )
             fixture
         }
 

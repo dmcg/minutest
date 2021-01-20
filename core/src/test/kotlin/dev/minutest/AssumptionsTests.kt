@@ -6,6 +6,7 @@ import dev.minutest.junit.experimental.JUnit4Minutests
 import org.junit.Assert
 import org.junit.Assume
 import org.junit.jupiter.api.Assumptions
+import org.junit.platform.commons.annotation.Testable
 
 
 private fun assumptionsContract(assumer: (Boolean) -> Unit) =
@@ -50,8 +51,9 @@ class AssumptionsTests4 : JUnit4Minutests() {
 }
 
 class AssumptionsTestsX {
-    // TODO - can't run these until runner bug fixed
+    @Testable
     fun junit4() = assumptionsContract(Assume::assumeTrue)
 
+    @Testable
     fun junit5() = assumptionsContract(Assumptions::assumeTrue)
 }
