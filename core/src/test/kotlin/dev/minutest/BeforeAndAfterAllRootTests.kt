@@ -1,15 +1,17 @@
 package dev.minutest
 
 import dev.minutest.junit.JUnit5Minutests
-import dev.minutest.junit.MinutestJUnit4Runner
+import dev.minutest.junit.experimental.JUnit4Minutests
 import org.junit.AfterClass
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.platform.commons.annotation.Testable
-import org.junit.runner.RunWith
 
 open class Checking {
     val classLog = mutableListOf<String>().synchronized()
+    fun log(s: String) {
+        classLog.add(s)
+    }
     fun checkLog() {
         assertEquals(
             setOf(
@@ -22,10 +24,8 @@ open class Checking {
     }
 }
 
-abstract class BeforeAndAfterAllRootTests {
-    abstract fun log(s: String)
-
-    open fun rootTests() = rootContext {
+private fun contract(log: (s: String) -> Unit) =
+    rootContext("rootTests") {
         beforeAll { testDescriptor ->
             log(testDescriptor.pathAsString() + " : beforeAll")
         }
@@ -33,12 +33,11 @@ abstract class BeforeAndAfterAllRootTests {
             log(testDescriptor.pathAsString() + " : test")
         }
         afterAll { testDescriptor ->
-            log(testDescriptor.pathAsString()  + " : afterAll")
+            log(testDescriptor.pathAsString() + " : afterAll")
         }
     }
-}
 
-class BeforeAndAfterRootTests5 : BeforeAndAfterAllRootTests(), JUnit5Minutests {
+class BeforeAndAfterRootTests5 : JUnit5Minutests {
     companion object : Checking() {
         @JvmStatic
         @AfterAll
@@ -46,13 +45,10 @@ class BeforeAndAfterRootTests5 : BeforeAndAfterAllRootTests(), JUnit5Minutests {
             checkLog()
         }
     }
-    override fun log(s: String) {
-        classLog.add(s)
-    }
+    fun tests() = contract { log(it) }
 }
 
-@RunWith(MinutestJUnit4Runner::class)
-class BeforeAndAfterRootTests4 : BeforeAndAfterAllRootTests() {
+class BeforeAndAfterRootTests4 : JUnit4Minutests() {
     companion object : Checking() {
         @JvmStatic
         @AfterClass
@@ -60,14 +56,12 @@ class BeforeAndAfterRootTests4 : BeforeAndAfterAllRootTests() {
             checkLog()
         }
     }
-    override fun log(s: String) {
-        classLog.add(s)
-    }
+    fun tests() = contract { log(it) }
 }
 
-// I can't find a way to get an automated check of this
-class BeforeAndAfterRootTestsX: BeforeAndAfterAllRootTests() {
-    override fun log(s: String) {
+// I can't find a sensible way to get an automated check of this
+class BeforeAndAfterRootTestsX {
+    fun log(s: String) {
         // Commented out because otherwise IntelliJ's test output
         // shows every one three times (I think its confused with
         // parallel test runs).
@@ -75,5 +69,5 @@ class BeforeAndAfterRootTestsX: BeforeAndAfterAllRootTests() {
     }
 
     @Testable
-    override fun rootTests() = super.rootTests()
+    fun tests() = contract(::log)
 }
