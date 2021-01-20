@@ -1,18 +1,13 @@
 package dev.minutest.junit.experimental
 
-import dev.minutest.experimental.TestLogger
-import dev.minutest.experimental.defaultChecker
-import dev.minutest.experimental.logTo
+import dev.minutest.experimental.willRun
 import dev.minutest.rootContext
-import org.junit.AfterClass
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.opentest4j.TestAbortedException
 
 class JUnit4MinutestsTests : JUnit4Minutests() {
 
     fun `my tests`() = rootContext<String> {
-
-        logTo(testLogger)
 
         fixture { "banana" }
 
@@ -35,26 +30,17 @@ class JUnit4MinutestsTests : JUnit4Minutests() {
                 throw TestAbortedException("should be skipped")
             }
         }
-    }
 
-    companion object {
-        private val testLogger = TestLogger()
-
-        @AfterClass @JvmStatic fun check() {
-            defaultChecker(
-                listOf(
-                "▾ my tests",
-                "✓ my tests/test",
-                "▾ my tests/context",
-                "✓ my tests/context/test x",
-                "▾ my tests/context/another context",
-                "✓ my tests/context/another context/test y",
-                "▾ my tests/context/context whose name is wrong if you just run this test in IntelliJ",
-                "✓ my tests/context/context whose name is wrong if you just run this test in IntelliJ/test",
-                "- my tests/context/skipped"
-                ),
-                testLogger.toStrings()
-            )
-        }
+        willRun(
+            "▾ my tests",
+            "  ✓ test",
+            "  ▾ context",
+            "    ✓ test x",
+            "    ▾ another context",
+            "      ✓ test y",
+            "  ▾ context whose name is wrong if you just run this test in IntelliJ",
+            "    ✓ test",
+            "  - skipped"
+        )
     }
 }

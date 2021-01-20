@@ -64,15 +64,7 @@ private fun <F> assertEquals(expected: F, actual: F) {
 }
 
 fun defaultChecker(expected: List<String>, actual:List<String>) {
-//    assertEquals(expected, actual)
-    aysncChecker(expected, actual)
-}
-
-fun aysncChecker(expected: List<String>, actual:List<String>) {
-    assertEquals(
-        expected.map(String::trim).toSet(),
-        actual.map(String::trim).toSet()
-    )
+    assertEquals(expected, actual)
 }
 
 fun <PF, F> TestContextBuilder<PF, F>.logTo(logger: TestLogger) {
