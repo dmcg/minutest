@@ -8,7 +8,7 @@ import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.kotlinFunction
 
-internal fun findRootContextPerPackage(
+internal fun findRootNodes(
     scannerConfig: ClassGraph.() -> Unit,
     classFilter: (ClassInfo) -> Boolean = { true }
 ) : List<Node<Unit>> {

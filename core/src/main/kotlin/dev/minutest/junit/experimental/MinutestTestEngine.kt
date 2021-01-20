@@ -2,7 +2,7 @@ package dev.minutest.junit.experimental
 
 import dev.minutest.internal.RunnableContext
 import dev.minutest.internal.RunnableTest
-import dev.minutest.internal.findRootContextPerPackage
+import dev.minutest.internal.findRootNodes
 import dev.minutest.internal.toRootContext
 import org.junit.platform.engine.*
 import org.junit.platform.engine.discovery.*
@@ -131,13 +131,13 @@ private fun scan(
         discoveryRequest.getSelectorsByType<MethodSelector>().isNotEmpty() ->
             emptyList() // Cannot select by method
         else ->
-            findRootContextPerPackage(discoveryRequest)
+            findRootNodes(discoveryRequest)
                 .map { rootContext -> MinutestNodeDescriptor(root, rootContext.toRootContext()) }
                 .filter { discoveryRequest.selectsByUniqueId(it) }
     }
 
-private fun findRootContextPerPackage(discoveryRequest: EngineDiscoveryRequest) =
-    findRootContextPerPackage(
+private fun findRootNodes(discoveryRequest: EngineDiscoveryRequest) =
+    findRootNodes(
         scannerConfig = {
             discoveryRequest.forEach<PackageSelector> { whitelistPackages(it.packageName) }
             discoveryRequest.forEach<ClassSelector> { whitelistClasses(it.className) }

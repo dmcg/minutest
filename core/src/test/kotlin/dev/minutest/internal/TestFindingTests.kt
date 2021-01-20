@@ -31,7 +31,7 @@ class TestFindingTests : JUnit5Minutests {
             test("single root context with child context from each method") {
                 val root = fixture.rootContextFromMethods() as Context<*, *>
                 assertAll("root",
-                    { assertEquals("root", root.name) },
+                    { assertEquals("dev.minutest.internal.ClassWithTwoContextMethods", root.name) },
                     { assertEquals(listOf("tests", "testsToo"), root.children.map(Node<*>::name))}
                 )
             }

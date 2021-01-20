@@ -16,7 +16,7 @@ internal fun Any.rootContextFromMethods(): Node<Unit> {
         contextBuilderMethods.size == 1 ->
             createSingleRoot(contextBuilderMethods.first())
         else -> AmalgamatedRootContext(
-            "root",
+            this::class.qualifiedName!!,
             contextBuilderMethods.map { method ->
                     method.invoke(this).withNameUnlessSpecified(method.name).buildNode()
             })
