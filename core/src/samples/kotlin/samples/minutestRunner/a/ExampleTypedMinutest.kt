@@ -4,8 +4,10 @@ package samples.minutestRunner.a
 
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions
+import org.junit.platform.commons.annotation.Testable
 import java.util.*
 
+@Testable
 fun `example typed context`() = rootContext<Stack<String>> {
     fixture { Stack() }
     

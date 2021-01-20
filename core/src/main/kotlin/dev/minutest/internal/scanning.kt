@@ -26,14 +26,16 @@ internal fun findRootContextPerPackage(
         .filter(classFilter)
         .flatMap { it.declaredMethodInfo.asSequence() }
 
-    val classBasedOnes: List<Node<Unit>> = methodInfos
-        .filter { it.definesMethodContext() }
+    val (methods, functions) = methodInfos
+        .filter { it.definesARootContext() }
+        .partition { !it.isStatic }
+
+    val methodContexts: List<Node<Unit>> = methods
         .mapNotNull { it.toKotlinFunction()?.javaMethod?.declaringClass }
         .toSet()
         .map { it.constructors.single().newInstance().rootContextFromMethods() }
 
-    val topLevelOnes = methodInfos
-        .filter { it.definesTopLevelContext() }
+    val topLevelContexts = functions
         .mapNotNull { it.toKotlinFunction() }
         // Check Kotlin visibility because a public static Java method might have internal visibility in Kotlin
         .filter { it.visibility == PUBLIC }
@@ -41,18 +43,14 @@ internal fun findRootContextPerPackage(
         .map { (packageName, functions: List<RootContextFun>) ->
             AmalgamatedRootContext(packageName, functions.renamed().map { it.buildNode() })
         }
-    return classBasedOnes + topLevelOnes
+    return methodContexts + topLevelContexts
 }
 
 @Suppress("UNCHECKED_CAST") // reflection
 private fun MethodInfo.toKotlinFunction(): RootContextFun? =
     loadClassAndGetMethod().kotlinFunction as? RootContextFun
 
-private fun MethodInfo.definesTopLevelContext() =
-    isStatic && isPublic && parameterInfo.isEmpty() && !isBridge &&
-        typeSignatureOrTypeDescriptor.resultType.name() == RootContextBuilder::class.java.name
-
-private fun MethodInfo.definesMethodContext() =
+private fun MethodInfo.definesARootContext() =
     isPublic && parameterInfo.isEmpty() && !isBridge &&
         typeSignatureOrTypeDescriptor.resultType.name() == RootContextBuilder::class.java.name
         && hasAnnotation("org.junit.platform.commons.annotation.Testable")
