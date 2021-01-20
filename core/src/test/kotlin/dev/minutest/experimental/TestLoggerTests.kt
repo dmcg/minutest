@@ -5,7 +5,7 @@ import dev.minutest.Test
 import dev.minutest.assertLogged
 import dev.minutest.internal.AmalgamatedRootContext
 import dev.minutest.internal.RootExecutor
-import dev.minutest.internal.andThenTestName
+import dev.minutest.internal.andThenName
 import org.opentest4j.IncompleteExecutionException
 import org.opentest4j.TestAbortedException
 import org.junit.jupiter.api.Test as JUnitTest
@@ -53,20 +53,20 @@ class TestLoggerTests {
         val stubContext = AmalgamatedRootContext("meh", emptyList())
         val stubTest = Test<Unit>("dummy", emptyList(), NodeId.forBuilder(this)) { _, _ -> }
 
-        logger.contextOpened(stubContext, RootExecutor.andThenTestName("root"))
-        logger.testComplete(stubTest, Unit, RootExecutor.andThenTestName("root").andThenTestName("test in root"))
-        logger.testComplete(stubTest, Unit, RootExecutor.andThenTestName("root").andThenTestName("test 2 in root"))
-        logger.contextOpened(stubContext, RootExecutor.andThenTestName("root").andThenTestName("outer"))
-        logger.testComplete(stubTest, Unit, RootExecutor.andThenTestName("root").andThenTestName("outer").andThenTestName("test in outer"))
-        logger.contextOpened(stubContext, RootExecutor.andThenTestName("root").andThenTestName("outer").andThenTestName("inner"))
-        logger.testComplete(stubTest, Unit, RootExecutor.andThenTestName("root").andThenTestName("outer").andThenTestName("inner").andThenTestName("test in inner"))
-        logger.contextClosed(stubContext, RootExecutor.andThenTestName("root").andThenTestName("outer").andThenTestName("inner"))
-        logger.contextClosed(stubContext, RootExecutor.andThenTestName("root").andThenTestName("outer"))
-        logger.testComplete(stubTest, Unit, RootExecutor.andThenTestName("root").andThenTestName("test 3 in root"))
-        logger.testSkipped(stubTest, Unit, RootExecutor.andThenTestName("root").andThenTestName("skipped test in root"), IncompleteExecutionException())
-        logger.testAborted(stubTest, Unit, RootExecutor.andThenTestName("root").andThenTestName("aborted test in root"), TestAbortedException())
-        logger.testFailed(stubTest, Unit, RootExecutor.andThenTestName("root").andThenTestName("failed test in root"), RuntimeException())
-        logger.contextClosed(stubContext, RootExecutor.andThenTestName("root"))
+        logger.contextOpened(stubContext, RootExecutor.andThenName("root"))
+        logger.testComplete(stubTest, Unit, RootExecutor.andThenName("root").andThenName("test in root"))
+        logger.testComplete(stubTest, Unit, RootExecutor.andThenName("root").andThenName("test 2 in root"))
+        logger.contextOpened(stubContext, RootExecutor.andThenName("root").andThenName("outer"))
+        logger.testComplete(stubTest, Unit, RootExecutor.andThenName("root").andThenName("outer").andThenName("test in outer"))
+        logger.contextOpened(stubContext, RootExecutor.andThenName("root").andThenName("outer").andThenName("inner"))
+        logger.testComplete(stubTest, Unit, RootExecutor.andThenName("root").andThenName("outer").andThenName("inner").andThenName("test in inner"))
+        logger.contextClosed(stubContext, RootExecutor.andThenName("root").andThenName("outer").andThenName("inner"))
+        logger.contextClosed(stubContext, RootExecutor.andThenName("root").andThenName("outer"))
+        logger.testComplete(stubTest, Unit, RootExecutor.andThenName("root").andThenName("test 3 in root"))
+        logger.testSkipped(stubTest, Unit, RootExecutor.andThenName("root").andThenName("skipped test in root"), IncompleteExecutionException())
+        logger.testAborted(stubTest, Unit, RootExecutor.andThenName("root").andThenName("aborted test in root"), TestAbortedException())
+        logger.testFailed(stubTest, Unit, RootExecutor.andThenName("root").andThenName("failed test in root"), RuntimeException())
+        logger.contextClosed(stubContext, RootExecutor.andThenName("root"))
     }
 
 }

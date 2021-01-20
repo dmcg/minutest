@@ -32,7 +32,7 @@ internal class ContextExecutor<PF, F>(
     private var state = UNOPENED
 
     override fun runTest(test: Test<F>) {
-        runTest(this.andThenTestName(test.name), test)
+        runTest(this.andThenName(test.name), test)
     }
 
     /**
@@ -80,17 +80,18 @@ internal object RootExecutor : TestExecutor<Unit>, RootDescriptor {
     override fun runTest(
         testDescriptor: TestDescriptor,
         testlet: Testlet<Unit>
-    ): Unit =
+    ) {
         testlet(Unit, testDescriptor)
+    }
 
     override fun runTest(test: Test<Unit>) {
         // this ends up being called if you SKIP the root test,
         // as we substitute the context with a test that throws!
-        runTest(this.andThenTestName(test.name), test)
+        runTest(this.andThenName(test.name), test)
     }
 }
 
-internal fun TestDescriptor.andThenTestName(name: String): TestDescriptor = object : TestDescriptor {
+internal fun TestDescriptor.andThenName(name: String): TestDescriptor = object : TestDescriptor {
     override val name = name
-    override val parent: TestDescriptor = this@andThenTestName
+    override val parent: TestDescriptor = this@andThenName
 }

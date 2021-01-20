@@ -8,7 +8,7 @@ interface TestDescriptor {
     val parent: TestDescriptor?
 
     fun path(): List<TestDescriptor> = generateSequence(this, TestDescriptor::parent)
-        .filter { it !is RootDescriptor }
+        .takeWhile { it !is RootDescriptor }
         .toList()
         .reversed()
 
