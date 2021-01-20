@@ -6,47 +6,38 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
 
 
-class JUnit5TestsWithFunction : JUnit5Minutests {
+// Just sanity checks in case we ever move away from this as the default runner
+class JUnit5MinutestsTests : JUnit5Minutests {
 
-    fun myTests() = rootContext<String> {
+    fun `plain fixture`() = rootContext<String> {
         fixture { "banana" }
 
         test("test") {
             assertEquals("banana", this)
         }
     }
-}
 
-class JUnit5TestsWithPlainFixture : JUnit5Minutests {
-
-    fun tests() = rootContext<String> {
-        fixture { "banana" }
-
-        test("test") {
-            assertEquals("banana", this)
-        }
-    }
-}
-
-class JUnit5TestsWithGenericFixture : JUnit5Minutests {
-
-    fun tests() = rootContext<Stack<String>> {
+    fun `generic fixture`() = rootContext<Stack<String>> {
         fixture { Stack() }
 
         test("test") {
             assertTrue(this.isEmpty())
         }
     }
-}
 
-class JUnit5TestsWithNullableFixture : JUnit5Minutests {
-
-    fun tests() = rootContext<String?> {
+    fun `nullable fixture`() = rootContext<String?> {
         fixture { "banana" }
 
         test("test") {
-            val copy: String = this ?: "kumquat"
-            assertEquals("banana", copy)
+            assertEquals("banana", this ?: "kumquat")
+        }
+    }
+
+    fun `nullable fixture that is null`() = rootContext<String?> {
+        fixture { null }
+
+        test("test") {
+            assertEquals("kumquat", this ?: "kumquat")
         }
     }
 }
