@@ -1,6 +1,5 @@
 package dev.minutest.testing
 
-import dev.minutest.JUnit5TestLogger
 import org.junit.platform.engine.DiscoverySelector
 import org.junit.platform.engine.discovery.DiscoverySelectors
 import org.junit.platform.launcher.EngineFilter

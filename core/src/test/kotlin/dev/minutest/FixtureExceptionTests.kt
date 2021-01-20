@@ -16,6 +16,8 @@ class FixtureExceptionTests  {
             test("there needs to be a test to run anything") {}
 
         }
-        checkItems(runTests(tests), { it is FileNotFoundException })
+        runTests(tests).hasExceptionsMatching(
+            { it is FileNotFoundException }
+        )
     }
 }

@@ -1,4 +1,4 @@
-package dev.minutest
+package dev.minutest.testing
 
 import org.junit.platform.engine.TestExecutionResult
 import org.junit.platform.engine.TestExecutionResult.Status.FAILED
@@ -6,7 +6,7 @@ import org.junit.platform.launcher.TestExecutionListener
 import org.junit.platform.launcher.TestIdentifier
 import org.junit.platform.launcher.TestPlan
 
-internal class JUnit5TestLogger : TestExecutionListener {
+class JUnit5TestLogger : TestExecutionListener {
     private val _log = mutableListOf<String>()
     
     val log: List<String> get() = _log.toList()

@@ -1,6 +1,5 @@
 package dev.minutest
 
-import dev.minutest.junit.toTestFactory
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.fail
@@ -15,7 +14,7 @@ class FixtureNotSuppliedTests {
         assertThrows<IllegalStateException> {
             rootContext<String> {
                 test("there needs to be a test") {}
-            }.toTestFactory()
+            }.buildNode()
         }
     }
 
@@ -27,7 +26,7 @@ class FixtureNotSuppliedTests {
                     fixture
                 }
                 test("there needs to be a test") {}
-            }.toTestFactory()
+            }.buildNode()
         }
     }
 
@@ -37,7 +36,7 @@ class FixtureNotSuppliedTests {
             rootContext<String> {
                 fixture { "banana" }
                 fixture { "banana" }
-            }.toTestFactory()
+            }.buildNode()
         }
     }
 
@@ -48,7 +47,7 @@ class FixtureNotSuppliedTests {
                 context("subcontext") {
                     test("there needs to be a test") {}
                 }
-            }.toTestFactory()
+            }.buildNode()
         }
     }
 
@@ -60,7 +59,7 @@ class FixtureNotSuppliedTests {
                 derivedContext<String>("subcontext") {
                     test("there needs to be a test") {}
                 }
-            }.toTestFactory()
+            }.buildNode()
         }
     }
 
@@ -75,7 +74,7 @@ class FixtureNotSuppliedTests {
                         if (this != null) fail("")
                     }
                 }
-            }.toTestFactory()
+            }.buildNode()
         }
     }
 
@@ -88,7 +87,7 @@ class FixtureNotSuppliedTests {
                     test("test") {
                     }
                 }
-            }.toTestFactory()
+            }.buildNode()
         }
 
         // It should be OK for Unit though
@@ -99,6 +98,6 @@ class FixtureNotSuppliedTests {
                 test("test") {
                 }
             }
-        }.toTestFactory()
+        }.buildNode()
     }
 }

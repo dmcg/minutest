@@ -1,48 +1,80 @@
 package dev.minutest
 
-import dev.minutest.junit.JUnit5Minutests
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import java.util.*
+import dev.minutest.testing.runTests
+import org.junit.jupiter.api.Test
 
-class TestDescriptorTests : JUnit5Minutests {
+class TestDescriptorTests {
 
-    val log: MutableList<String> = Collections.synchronizedList(mutableListOf<String>())
+    @Test
+    fun `names are passed to fixures and tests`() {
 
-    @AfterEach
-    fun checkLog() {
-        assertEquals(
-            setOf(
-                "names are passed to fixures and tests/outer/outer test : fixture",
-                "names are passed to fixures and tests/outer/outer test : test",
-                "names are passed to fixures and tests/outer/inner/inner test 1 : fixture",
-                "names are passed to fixures and tests/outer/inner/inner test 1 : test",
-                "names are passed to fixures and tests/outer/inner/inner test 2 : fixture",
-                "names are passed to fixures and tests/outer/inner/inner test 2 : test"
-            ),
-            log.toSet()
+        val log = mutableListOf<String>().synchronized()
+
+        runTests(
+            rootContext {
+
+                beforeAll { testDescriptor ->
+                    log.add(testDescriptor.pathAsString() + " : beforeAll")
+                }
+
+                fixture { testDescriptor ->
+                    log.add(testDescriptor.pathAsString() + " : fixture")
+                }
+
+                before { testDescriptor ->
+                    log.add(testDescriptor.pathAsString() + " : before")
+                }
+
+                context("outer") {
+                    test("outer test") { testDescriptor ->
+                        log.add(testDescriptor.pathAsString() + " : test")
+                    }
+
+                    context("inner") {
+                        beforeAll { testDescriptor ->
+                            log.add(testDescriptor.pathAsString() + " : beforeAll")
+                        }
+                        test("inner test 1") { testDescriptor ->
+                            log.add(testDescriptor.pathAsString() + " : test")
+                        }
+                        test("inner test 2") { testDescriptor ->
+                            log.add(testDescriptor.pathAsString() + " : test")
+                        }
+                        afterAll { testDescriptor ->
+                            log.add(testDescriptor.pathAsString() + " : afterAll")
+                        }
+                    }
+                }
+
+                after { testDescriptor ->
+                    log.add(testDescriptor.pathAsString() + " : after")
+                }
+
+                afterAll { testDescriptor ->
+                    log.add(testDescriptor.pathAsString() + " : afterAll")
+                }
+            }
+        ).withNoExceptions()
+
+        assertLoggedInAnyOrder(
+            log,
+            "root : afterAll",
+            "root/outer/outer test : fixture",
+            "root/outer/outer test : before",
+            "root/outer/outer test : after",
+            "root/outer/outer test : test",
+            "root/outer/inner : beforeAll",
+            "root/outer/inner/inner test 1 : fixture",
+            "root/outer/inner/inner test 1 : test",
+            "root/outer/inner/inner test 1 : before",
+            "root/outer/inner/inner test 1 : after",
+            "root/outer/inner/inner test 2 : fixture",
+            "root/outer/inner/inner test 2 : test",
+            "root/outer/inner/inner test 2 : before",
+            "root/outer/inner/inner test 2 : after",
+            "root/outer/inner : afterAll",
+            "root : beforeAll",
         )
-    }
 
-    fun `names are passed to fixures and tests`() = rootContext {
-
-        fixture { testDescriptor ->
-            log.add(testDescriptor.pathAsString() + " : fixture")
-        }
-
-        context("outer") {
-            test("outer test") { testDescriptor ->
-                log.add(testDescriptor.pathAsString() + " : test")
-            }
-
-            context("inner") {
-                test("inner test 1") { testDescriptor ->
-                    log.add(testDescriptor.pathAsString() + " : test")
-                }
-                test("inner test 2") { testDescriptor ->
-                    log.add(testDescriptor.pathAsString() + " : test")
-                }
-            }
-        }
     }
 }

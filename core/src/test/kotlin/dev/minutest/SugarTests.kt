@@ -4,6 +4,7 @@ import dev.minutest.junit.JUnit5Minutests
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
+// Tests parentFixture and fixture values
 class SugarTests : JUnit5Minutests {
 
     data class Fruit(val name: String)

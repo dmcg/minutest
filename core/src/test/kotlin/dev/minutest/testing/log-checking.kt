@@ -59,7 +59,7 @@ fun List<Throwable>.withNoExceptions() {
     assertEquals(emptyList<Throwable>(), this)
 }
 
-fun List<Throwable>.withExceptionsMatching(
+fun List<Throwable>.hasExceptionsMatching(
     vararg exceptionMatchers: (Throwable) -> Boolean
 ) {
     checkItems(this, *exceptionMatchers)

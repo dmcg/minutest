@@ -139,7 +139,7 @@ class BeforeAndAfterTests {
                     throw Exception("in test")
                 }
             }
-        }.withExceptionsMatching(
+        }.hasExceptionsMatching(
             { it.message == "in test" }
         )
     }
@@ -166,7 +166,7 @@ class BeforeAndAfterTests {
                     add("test")
                 }
             }
-        }.withExceptionsMatching(
+        }.hasExceptionsMatching(
             { it is IOException }
         )
     }
@@ -213,7 +213,7 @@ class BeforeAndAfterTests {
                     }
                 }
             }
-        }.withExceptionsMatching(
+        }.hasExceptionsMatching(
             { it.message == "in inner fixture" }
         )
     }
@@ -242,7 +242,7 @@ class BeforeAndAfterTests {
                     log.add("after 3")
                 }
             }
-        }.withExceptionsMatching(
+        }.hasExceptionsMatching(
             { it.message == "in after 2" }
         )
     }
@@ -264,7 +264,7 @@ class BeforeAndAfterTests {
                     throw Exception("in after")
                 }
             }
-        }.withExceptionsMatching(
+        }.hasExceptionsMatching(
             { it.message == "in after" }
         )
     }
