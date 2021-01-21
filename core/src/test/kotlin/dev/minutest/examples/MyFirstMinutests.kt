@@ -4,7 +4,9 @@ import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 
-// Mix-in JUnit5Minutests to run Minutests with JUnit 5 (JUnit 4 support is also available)
+// Mix-in JUnit5Minutests to run Minutests with JUnit 5
+//
+// (JUnit 4 support is also available, see [JUnit4Minutests].)
 class MyFirstMinutests : JUnit5Minutests {
 
     // tests are grouped in a context
