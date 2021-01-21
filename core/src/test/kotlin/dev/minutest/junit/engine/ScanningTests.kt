@@ -9,7 +9,9 @@ class ScanningTests {
 
     @Test
     fun `scanned tests have correct full names`() {
-        val scan: List<Node<*>> = findRootNodes({ whitelistPackages("samples.minutestRunner.a") })
+        val scan: List<Node<*>> = scanForRootNodes(
+            { whitelistPackages("samples.minutestRunner.a") }
+        )
 
         val log = mutableListOf<String>()
         scan.forEach {
@@ -35,7 +37,6 @@ private fun Node<*>.visit(log: MutableList<String>, indent: Int) {
     if (this is Context<*, *>) {
         this.children.forEach { it.visit(log, indent + 2) }
     }
-
 }
 
 private fun Int.spaces() = " ".repeat(this)

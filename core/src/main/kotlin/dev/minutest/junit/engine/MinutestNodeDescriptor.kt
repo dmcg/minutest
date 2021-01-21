@@ -57,13 +57,17 @@ internal class MinutestNodeDescriptor(
         if (uniqueId == this._uniqueId) {
             Optional.of(this)
         } else {
-            _children.asSequence().map { findByUniqueId(uniqueId) }.firstOrNull { it.isPresent } ?: Optional.empty()
+            _children.asSequence()
+                .map { findByUniqueId(uniqueId) }
+                .firstOrNull { it.isPresent }
+                ?: Optional.empty()
         }
 
     override fun getTags() = emptySet<TestTag>()
 }
 
-private val RunnableNode.testSource: TestSource? get() = testUri?.let { UriSource.from(it) }
+private val RunnableNode.testSource: TestSource? get() =
+    testUri?.let { UriSource.from(it) }
 
 private val RunnableNode.descriptorIdType: String
     get() = when (this) {

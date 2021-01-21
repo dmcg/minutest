@@ -1,5 +1,6 @@
 package dev.minutest.junit.engine
 
+import dev.minutest.Node
 import dev.minutest.internal.toRootContext
 import org.junit.platform.engine.*
 import org.junit.platform.engine.discovery.*
@@ -18,8 +19,10 @@ internal fun findRootNodes(
                 .filter { discoveryRequest.selectsByUniqueId(it) }
     }
 
-private fun findRootNodes(discoveryRequest: EngineDiscoveryRequest) =
-    findRootNodes(
+private fun findRootNodes(
+    discoveryRequest: EngineDiscoveryRequest
+): List<Node<Unit>> =
+    scanForRootNodes(
         scannerConfig = {
             discoveryRequest.forEach<PackageSelector> {
                 whitelistPackages(it.packageName)
