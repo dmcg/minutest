@@ -50,21 +50,10 @@ class MinutestTestEngine : TestEngine {
         descriptor: TestDescriptor,
         request: EngineDiscoveryRequest,
         listener: EngineExecutionListener,
-    ): TestExecutionResult {
-        return try {
+    ): TestExecutionResult =
+        try {
             if (descriptor is MinutestNodeDescriptor) {
-                when (val runnableNode = descriptor.runnableNode) {
-                    is RunnableContext -> {
-                        executeDynamicChildren(
-                            descriptor,
-                            request,
-                            listener
-                        )
-                        runnableNode.close()
-                    }
-                    is RunnableTest ->
-                        runnableNode.invoke()
-                }
+                executeMinutestNode(descriptor, request, listener)
             } else {
                 executeStaticChildren(descriptor, request, listener)
             }
@@ -73,6 +62,24 @@ class MinutestTestEngine : TestEngine {
             TestExecutionResult.aborted(e)
         } catch (t: Throwable) {
             TestExecutionResult.failed(t)
+        }
+
+    private fun executeMinutestNode(
+        descriptor: MinutestNodeDescriptor,
+        request: EngineDiscoveryRequest,
+        listener: EngineExecutionListener
+    ) {
+        when (val runnableNode = descriptor.runnableNode) {
+            is RunnableContext -> {
+                executeDynamicChildren(
+                    descriptor,
+                    request,
+                    listener
+                )
+                runnableNode.close()
+            }
+            is RunnableTest ->
+                runnableNode.invoke()
         }
     }
 
