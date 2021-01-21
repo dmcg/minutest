@@ -28,9 +28,8 @@ internal data class RunnableTest(
         f()
     }
 
-    override fun toString(): String {
-        return "Runnable test with name $name and path ${testDescriptor.pathAsString()}"
-    }
+    override fun toString() =
+        "Runnable test with name $name and path ${testDescriptor.pathAsString()}"
 }
 
 internal class RunnableContext(
@@ -47,6 +46,6 @@ internal class RunnableContext(
     }
 }
 
-val RunnableNode.sourceReference get() =
-    markers.filterIsInstance<SourceReference>().firstOrNull()
+val RunnableNode.sourceReference
+    get() = markers.filterIsInstance<SourceReference>().firstOrNull()
 
