@@ -10,7 +10,7 @@ class BeforeAndAfterTests {
 
     @Test
     fun `plain before and after`() {
-        check(
+        runWithLog(
             expectedLog = listOf("before 1", "before 2", "test", "after 1", "after 2")
         ) { log ->
             rootContext<MutableList<String>> {
@@ -46,7 +46,7 @@ class BeforeAndAfterTests {
 
     @Test
     fun before_() {
-        check(
+        runWithLog(
             expectedLog = listOf("before 1", "before 2", "test"),
         ) { log ->
             rootContext<List<String>> {
@@ -77,7 +77,7 @@ class BeforeAndAfterTests {
 
     @Test
     fun `nested before and after`() {
-        check(
+        runWithLog(
             expectedLog = listOf(
                 "outer before 1", "inner before", "inner fixture",
                 "test", "inner after", "outer after"
@@ -123,7 +123,7 @@ class BeforeAndAfterTests {
 
     @Test
     fun `after run on test failure`() {
-        check(
+        runWithLog(
             expectedLog = listOf("test", "after")
         ) { log ->
             rootContext<MutableList<String>> {
@@ -146,7 +146,7 @@ class BeforeAndAfterTests {
 
     @Test
     fun `after is run if before fails`() {
-        check(
+        runWithLog(
             expectedLog = listOf("before", "after"),
         ) { log ->
             rootContext<MutableList<String>> {
@@ -174,7 +174,7 @@ class BeforeAndAfterTests {
     @Test
     fun `afters are run with the last successful before fixture`() {
         // use an immutable fixture to prove the point
-        check(
+        runWithLog(
             expectedLog = listOf("top", "outer", "inner", "after outer"),
         ) { log ->
             rootContext<List<String>> {
@@ -220,7 +220,7 @@ class BeforeAndAfterTests {
 
     @Test
     fun `afters abort if they throw`() {
-        check(
+        runWithLog(
             expectedLog = listOf("test", "after 1", "after 2"),
         ) { log ->
             rootContext {
@@ -250,7 +250,7 @@ class BeforeAndAfterTests {
     @Test
     fun `fails with the last exception`() {
         // use an immutable fixture to prove the point
-        check(
+        runWithLog(
             expectedLog = listOf("test"),
         ) { log ->
             rootContext {

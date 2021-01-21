@@ -42,7 +42,7 @@ fun <T> checkItems(items: Collection<T>, vararg predicates: (T) -> Boolean) = it
         assertEquals(emptyList<String>(), failures)
     }
 
-fun check(
+fun runWithLog(
     expectedLog: List<String>,
     contextBuilder: (MutableList<String>) -> RootContextBuilder
 ): List<Throwable> {
