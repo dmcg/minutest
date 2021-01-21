@@ -10,7 +10,7 @@ import dev.minutest.TestDescriptor
  * of fixture types and [TestExecutor]s from test runners.
  */
 sealed class RunnableNode {
-    abstract val name: String
+    val name: String get() = testDescriptor.name
     abstract val testDescriptor: TestDescriptor
     abstract val markers: List<Any>
 }
@@ -21,7 +21,6 @@ internal data class RunnableTest(
     private val f: () -> Unit
 ) : RunnableNode(), () -> Unit {
 
-    override val name get() = test.name
     override val markers get() = test.markers
 
     override operator fun invoke() {
@@ -29,7 +28,7 @@ internal data class RunnableTest(
     }
 
     override fun toString() =
-        "Runnable test with name $name and path ${testDescriptor.pathAsString()}"
+        "RunnableTest ${testDescriptor.pathAsString()}"
 }
 
 internal class RunnableContext(
@@ -38,11 +37,10 @@ internal class RunnableContext(
     private val context: Context<*, *>
 ) : RunnableNode() {
 
-    override val name get() = context.name
     override val markers get() = context.markers
 
     fun close() {
-        context.close(testDescriptor.andThenName(name))
+        context.close(testDescriptor)
     }
 }
 

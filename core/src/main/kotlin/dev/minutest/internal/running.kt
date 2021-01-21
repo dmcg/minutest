@@ -19,7 +19,7 @@ internal fun Node<Unit>.toRootContext(
             // In this case we need to build a RunnableContext where the children
             // are themselves roots
             RunnableContext(
-                RootExecutor, // never used
+                RootExecutor.andThenName(this.name), // never used
                 this.children.map { it.toRunnableNode(RootExecutor, executorService) },
                 this
             )
@@ -42,7 +42,7 @@ private fun <F> Test<F>.toRunnableTest(
     executor: TestExecutor<F>,
     executorService: ExecutorService? = null
 ): RunnableTest =
-    RunnableTest(executor, this) {
+    RunnableTest(executor.andThenName(this.name), this) {
         executor.runTest(this)
     }.maybeEager(executorService)
 
@@ -53,7 +53,7 @@ private fun <PF, F> Context<PF, F>.toRunnableContext(
     val childExecutor = executor.andThen(this) // there has to be just one of these
     // as they hold state about what tests in a context have been run
     return RunnableContext(
-        executor,
+        executor.andThenName(name),
         children.map { it.toRunnableNode(childExecutor, executorService) },
         this
     )
@@ -63,6 +63,7 @@ private fun RunnableTest.maybeEager(executorService: ExecutorService?): Runnable
     executorService?.let { this.asEager(it) } ?: this
 
 private fun RunnableTest.asEager(executorService: ExecutorService): RunnableTest {
+    println("Eagerly executing ${this.testDescriptor.pathAsString()}")
     var exception: Throwable? = null
     val future = executorService.submit {
         try {
