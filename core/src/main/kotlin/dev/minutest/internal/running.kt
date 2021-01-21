@@ -17,13 +17,16 @@ internal fun Node<Unit>.toRootContext(
     when (this) {
         is AmalgamatedRootContext ->
             // In this case we need to build a RunnableContext where the children
-            // are themselves roots
+            // are themselves roots (have the RootExecutor rather than one started
+            // at this level).
             RunnableContext(
-                RootExecutor.andThenName(this.name), // never used
+                RootExecutor.andThenName(this.name),
                 this.children.map { it.toRunnableNode(RootExecutor, executorService) },
                 this
             )
-        else -> when (val runnableNode = toRunnableNode(RootExecutor, executorService)) {
+        else -> when (
+            val runnableNode = this.toRunnableNode(RootExecutor, executorService)
+        ) {
             is RunnableContext -> runnableNode
             is RunnableTest -> TODO("Root is test")
         }
@@ -63,7 +66,6 @@ private fun RunnableTest.maybeEager(executorService: ExecutorService?): Runnable
     executorService?.let { this.asEager(it) } ?: this
 
 private fun RunnableTest.asEager(executorService: ExecutorService): RunnableTest {
-    println("Eagerly executing ${this.testDescriptor.pathAsString()}")
     var exception: Throwable? = null
     val future = executorService.submit {
         try {
