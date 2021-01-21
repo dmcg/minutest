@@ -20,9 +20,10 @@ class MinutestTestEngine : TestEngine {
         uniqueId: UniqueId
     ): EngineDescriptor =
         MinutestEngineDescriptor(uniqueId, discoveryRequest).apply {
-            findRootNodes(this, discoveryRequest).forEach {
-                addChild(it)
-            }
+            if (discoveryRequest.selectsByUniqueId(uniqueId))
+                findRootNodes(this, discoveryRequest).forEach {
+                    addChild(it)
+                }
         }
 
     override fun execute(request: ExecutionRequest) {
@@ -128,8 +129,11 @@ internal class MinutestEngineDescriptor(
 ) : EngineDescriptor(uniqueId, "Minutest")
 
 internal fun EngineDiscoveryRequest.selectsByUniqueId(descriptor: TestDescriptor): Boolean =
+    selectsByUniqueId(descriptor.uniqueId)
+
+private fun EngineDiscoveryRequest.selectsByUniqueId(uniqueId: UniqueId): Boolean =
     getSelectorsByType<UniqueIdSelector>().run {
-        isEmpty() || any { selector -> descriptor.uniqueId.overlaps(selector.uniqueId) }
+        isEmpty() || any { selector -> uniqueId.overlaps(selector.uniqueId) }
     }
 
 private fun UniqueId.overlaps(that: UniqueId) =
@@ -138,6 +142,3 @@ private fun UniqueId.overlaps(that: UniqueId) =
 internal inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.getSelectorsByType()
     : List<T> =
     getSelectorsByType(T::class.java)
-
-
-
