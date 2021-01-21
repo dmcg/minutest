@@ -4,11 +4,11 @@ import dev.minutest.*
 import dev.minutest.internal.ContextExecutor.ContextState.*
 
 /**
- * The TestExecutor is built as the test running infrastructure traverses down the
+ * The TestExecutor is built as the test-running infrastructure traverses down the
  * context tree. So at a [Context], there is an executor which has a parent which
  * is an executor for the parent context and so up back to the singleton [RootExecutor].
  *
- * This saves [Context]s knowing their parent (and the difficulty of maintaining the
+ * This saves [Context]s knowing their parent, and the difficulty of maintaining the
  * relationship as we add wrapping contexts.
  */
 internal interface TestExecutor<F> : TestDescriptor {
