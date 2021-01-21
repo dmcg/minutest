@@ -1,4 +1,4 @@
-package dev.minutest.junit.experimental
+package dev.minutest.junit.engine
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

@@ -1,4 +1,4 @@
-package dev.minutest.junit.experimental
+package dev.minutest.junit.engine
 
 import dev.minutest.rootContext
 

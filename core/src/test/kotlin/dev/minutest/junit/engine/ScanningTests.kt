@@ -1,4 +1,4 @@
-package dev.minutest.internal
+package dev.minutest.junit.engine
 
 import dev.minutest.Context
 import dev.minutest.Node

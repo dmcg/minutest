@@ -1,14 +1,11 @@
-package dev.minutest.junit.experimental
+package dev.minutest.junit.engine
 
 import dev.minutest.internal.RunnableContext
 import dev.minutest.internal.RunnableTest
-import dev.minutest.internal.findRootNodes
-import dev.minutest.internal.toRootContext
 import org.junit.platform.engine.*
-import org.junit.platform.engine.discovery.*
+import org.junit.platform.engine.discovery.UniqueIdSelector
 import org.junit.platform.engine.support.descriptor.EngineDescriptor
 import org.opentest4j.IncompleteExecutionException
-import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
 /**
@@ -23,7 +20,7 @@ class MinutestTestEngine : TestEngine {
         uniqueId: UniqueId
     ): EngineDescriptor =
         MinutestEngineDescriptor(uniqueId, discoveryRequest).apply {
-            scan(this, discoveryRequest).forEach {
+            findRootNodes(this, discoveryRequest).forEach {
                 addChild(it)
             }
         }
@@ -125,54 +122,22 @@ class MinutestTestEngine : TestEngine {
     }
 }
 
-private class MinutestEngineDescriptor(
+internal class MinutestEngineDescriptor(
     uniqueId: UniqueId,
     val discoveryRequest: EngineDiscoveryRequest
 ) : EngineDescriptor(uniqueId, "Minutest")
 
-private fun scan(
-    root: MinutestEngineDescriptor,
-    discoveryRequest: EngineDiscoveryRequest
-): List<TestDescriptor> =
-    when {
-        discoveryRequest.getSelectorsByType<MethodSelector>().isNotEmpty() ->
-            emptyList() // Cannot select by method
-        else ->
-            findRootNodes(discoveryRequest)
-                .map { rootContext -> MinutestNodeDescriptor(root, rootContext.toRootContext()) }
-                .filter { discoveryRequest.selectsByUniqueId(it) }
+internal fun EngineDiscoveryRequest.selectsByUniqueId(descriptor: TestDescriptor): Boolean =
+    getSelectorsByType<UniqueIdSelector>().run {
+        isEmpty() || any { selector -> descriptor.uniqueId.overlaps(selector.uniqueId) }
     }
-
-private fun findRootNodes(discoveryRequest: EngineDiscoveryRequest) =
-    findRootNodes(
-        scannerConfig = {
-            discoveryRequest.forEach<PackageSelector> { whitelistPackages(it.packageName) }
-            discoveryRequest.forEach<ClassSelector> { whitelistClasses(it.className) }
-            discoveryRequest.forEach<DirectorySelector> { whitelistPaths(it.rawPath) }
-        },
-        classFilter = {
-            discoveryRequest.getFiltersByType<ClassNameFilter>().apply(it.name).included() &&
-                discoveryRequest.getFiltersByType<PackageNameFilter>().apply(it.packageName).included()
-        }
-    )
-
-private inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(block: (T) -> Unit) {
-    getSelectorsByType<T>().forEach(block)
-}
-
-private inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.getSelectorsByType(): List<T> =
-    getSelectorsByType(T::class.java)
-
-private inline fun <reified T : DiscoveryFilter<String>> EngineDiscoveryRequest.getFiltersByType(): Filter<String> =
-    combineFiltersByType(T::class)
-
-private fun EngineDiscoveryRequest.combineFiltersByType(filterClass: KClass<out DiscoveryFilter<String>>): Filter<String> =
-    Filter.composeFilters(getFiltersByType(filterClass.java))
-
-private fun EngineDiscoveryRequest.selectsByUniqueId(descriptor: TestDescriptor) =
-    getSelectorsByType<UniqueIdSelector>()
-        .run { isEmpty() || any { selector -> descriptor.uniqueId.overlaps(selector.uniqueId) } }
 
 private fun UniqueId.overlaps(that: UniqueId) =
     this.hasPrefix(that) || that.hasPrefix(this)
+
+internal inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.getSelectorsByType()
+    : List<T> =
+    getSelectorsByType(T::class.java)
+
+
 

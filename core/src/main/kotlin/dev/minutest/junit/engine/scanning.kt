@@ -1,7 +1,9 @@
-package dev.minutest.internal
+package dev.minutest.junit.engine
 
 import dev.minutest.Node
 import dev.minutest.RootContextBuilder
+import dev.minutest.internal.AmalgamatedRootContext
+import dev.minutest.internal.rootContextFromMethods
 import io.github.classgraph.*
 import kotlin.reflect.KFunction0
 import kotlin.reflect.KVisibility.PUBLIC

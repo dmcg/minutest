@@ -1,4 +1,4 @@
-package dev.minutest.junit.experimental
+package dev.minutest.junit.engine
 
 import dev.minutest.junit.checkRunnersExampleLog
 import dev.minutest.testing.runTestsInClass
