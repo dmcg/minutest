@@ -14,14 +14,9 @@ internal fun findRootNodes(
     root: MinutestEngineDescriptor,
     discoveryRequest: EngineDiscoveryRequest
 ): List<TestDescriptor> =
-    when {
-        discoveryRequest.getSelectorsByType<MethodSelector>().isNotEmpty() ->
-            emptyList() // Cannot select by method
-        else ->
-            findRootNodes(discoveryRequest)
-                .map { rootContext -> MinutestNodeDescriptor(root, rootContext.toRootContext()) }
-                .filter { discoveryRequest.selectsByUniqueId(it) }
-    }
+    findRootNodes(discoveryRequest)
+        .map { rootContext -> MinutestNodeDescriptor(root, rootContext.toRootContext()) }
+        .filter { discoveryRequest.selectsByUniqueId(it) }
 
 private fun findRootNodes(
     discoveryRequest: EngineDiscoveryRequest
@@ -60,16 +55,33 @@ private fun EngineDiscoveryRequest.combineFiltersByType(
 
 private fun shortcutClassSelection(discoveryRequest: EngineDiscoveryRequest): List<Node<Unit>>? {
     time("Minutest loading single test ") {
-        val classSelectors = discoveryRequest.getSelectorsByType<ClassSelector>()
+        val classSelectors = selectorsFrom(discoveryRequest)
         return when {
             classSelectors.isEmpty() -> null
             else ->
-                classSelectors.map {
-                    amalgamatedRootContext(Class.forName(it.className))
+                classSelectors.map { classAndMethodName ->
+                    amalgamatedRootContext(Class.forName(classAndMethodName.className))
+                        ?.selectJust(classAndMethodName.methodName)
                 }.filterNotNull()
         }
     }
 }
+
+private fun Node<Unit>.selectJust(methodName: String?): Node<Unit> {
+    return if (methodName == null || this !is AmalgamatedRootContext)
+        this
+    else
+        this.copy(children = children.filter { it.name == methodName })
+}
+
+private fun selectorsFrom(discoveryRequest: EngineDiscoveryRequest) =
+    discoveryRequest.getSelectorsByType<ClassSelector>().map {
+        ClassAndMethodNames(it.className, null)
+    } +
+        discoveryRequest.getSelectorsByType<MethodSelector>().map {
+            ClassAndMethodNames(it.className, it.methodName)
+        }
+
 
 private fun amalgamatedRootContext(klass: Class<*>): Node<Unit>? {
     if (quickCheckForNotOurs(klass))
@@ -101,3 +113,5 @@ private val Method.hasTestableAnnotation: Boolean
 private val KFunction<*>.hasTestableAnnotation
     get() =
         annotations.any { it is Testable }
+
+private class ClassAndMethodNames(val className: String, val methodName: String?)
