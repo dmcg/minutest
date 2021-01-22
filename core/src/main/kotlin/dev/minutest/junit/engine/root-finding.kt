@@ -2,9 +2,11 @@ package dev.minutest.junit.engine
 
 import dev.minutest.Node
 import dev.minutest.internal.*
+import dev.minutest.junit.JUnit5Minutests
 import org.junit.platform.commons.annotation.Testable
 import org.junit.platform.engine.*
 import org.junit.platform.engine.discovery.*
+import java.lang.reflect.Method
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 
@@ -24,23 +26,24 @@ internal fun findRootNodes(
 private fun findRootNodes(
     discoveryRequest: EngineDiscoveryRequest
 ): List<Node<Unit>> =
-    shortcutClassSelection(discoveryRequest) ?: scanForRootNodes(
-        scannerConfig = {
-            discoveryRequest.forEach<PackageSelector> {
-                whitelistPackages(it.packageName)
+    shortcutClassSelection(discoveryRequest)
+        ?: scanForRootNodes(
+            scannerConfig = {
+                discoveryRequest.forEach<PackageSelector> {
+                    whitelistPackages(it.packageName)
+                }
+                discoveryRequest.forEach<ClassSelector> {
+                    whitelistClasses(it.className)
+                }
+                discoveryRequest.forEach<DirectorySelector> {
+                    whitelistPaths(it.rawPath)
+                }
+            },
+            classFilter = {
+                discoveryRequest.getFiltersByType<ClassNameFilter>().apply(it.name).included() &&
+                    discoveryRequest.getFiltersByType<PackageNameFilter>().apply(it.packageName).included()
             }
-            discoveryRequest.forEach<ClassSelector> {
-                whitelistClasses(it.className)
-            }
-            discoveryRequest.forEach<DirectorySelector> {
-                whitelistPaths(it.rawPath)
-            }
-        },
-        classFilter = {
-            discoveryRequest.getFiltersByType<ClassNameFilter>().apply(it.name).included() &&
-                discoveryRequest.getFiltersByType<PackageNameFilter>().apply(it.packageName).included()
-        }
-    )
+        )
 
 private inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(block: (T) -> Unit) {
     getSelectorsByType<T>().forEach(block)
@@ -69,6 +72,8 @@ private fun shortcutClassSelection(discoveryRequest: EngineDiscoveryRequest): Li
 }
 
 private fun amalgamatedRootContext(klass: Class<*>): Node<Unit>? {
+    if (quickCheckForNotOurs(klass))
+        return null
     val staticBuilders = klass.staticMethodsAsContextBuilderBuilders { it.hasTestableAnnotation }
     return when {
         staticBuilders.isNotEmpty() ->
@@ -85,6 +90,13 @@ private fun amalgamatedRootContext(klass: Class<*>): Node<Unit>? {
         }
     }
 }
+
+private fun quickCheckForNotOurs(klass: Class<*>) =
+    JUnit5Minutests::class.java.isAssignableFrom(klass)
+        || klass.methods.none { it.hasTestableAnnotation }
+
+private val Method.hasTestableAnnotation: Boolean
+    get() = annotations.any { it is Testable }
 
 private val KFunction<*>.hasTestableAnnotation
     get() =
