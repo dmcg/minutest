@@ -6,7 +6,7 @@ import dev.minutest.Test
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
 
-private val pool = ForkJoinPool()
+private val pool = ForkJoinPool.commonPool()
 
 /**
  * Create a [RunnableContext] representing the roots of a tree of tests.
