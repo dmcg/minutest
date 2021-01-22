@@ -1,10 +1,12 @@
 package dev.minutest.junit.engine
 
 import dev.minutest.Node
-import dev.minutest.internal.toRootContext
+import dev.minutest.internal.*
+import org.junit.platform.commons.annotation.Testable
 import org.junit.platform.engine.*
 import org.junit.platform.engine.discovery.*
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 
 internal fun findRootNodes(
     root: MinutestEngineDescriptor,
@@ -22,7 +24,7 @@ internal fun findRootNodes(
 private fun findRootNodes(
     discoveryRequest: EngineDiscoveryRequest
 ): List<Node<Unit>> =
-    scanForRootNodes(
+    shortcutClassSelection(discoveryRequest) ?: scanForRootNodes(
         scannerConfig = {
             discoveryRequest.forEach<PackageSelector> {
                 whitelistPackages(it.packageName)
@@ -40,9 +42,7 @@ private fun findRootNodes(
         }
     )
 
-private inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(
-    block: (T) -> Unit
-) {
+private inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.forEach(block: (T) -> Unit) {
     getSelectorsByType<T>().forEach(block)
 }
 
@@ -54,3 +54,38 @@ private fun EngineDiscoveryRequest.combineFiltersByType(
     filterClass: KClass<out DiscoveryFilter<String>>
 ): Filter<String> =
     Filter.composeFilters(getFiltersByType(filterClass.java))
+
+private fun shortcutClassSelection(discoveryRequest: EngineDiscoveryRequest): List<Node<Unit>>? {
+    time("Minutest loading single test ") {
+        val classSelectors = discoveryRequest.getSelectorsByType<ClassSelector>()
+        return when {
+            classSelectors.isEmpty() -> null
+            else ->
+                classSelectors.map {
+                    amalgamatedRootContext(Class.forName(it.className))
+                }.filterNotNull()
+        }
+    }
+}
+
+private fun amalgamatedRootContext(klass: Class<*>): Node<Unit>? {
+    val staticBuilders = klass.staticMethodsAsContextBuilderBuilders { it.hasTestableAnnotation }
+    return when {
+        staticBuilders.isNotEmpty() ->
+            AmalgamatedRootContext(
+                klass.`package`.name ?: error("Trying find tests in class with no name"),
+                staticBuilders.map { method ->
+                    method.invoke().buildNode()
+                }
+            )
+        else -> klass.kotlin.constructors.singleOrNull()?.call()?.let { instance ->
+            instance.rootContextFromMethods(flattenSingleNode = false) {
+                it.hasTestableAnnotation
+            }
+        }
+    }
+}
+
+private val KFunction<*>.hasTestableAnnotation
+    get() =
+        annotations.any { it is Testable }

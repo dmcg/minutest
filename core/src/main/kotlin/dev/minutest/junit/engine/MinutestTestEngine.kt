@@ -2,6 +2,7 @@ package dev.minutest.junit.engine
 
 import dev.minutest.internal.RunnableContext
 import dev.minutest.internal.RunnableTest
+import dev.minutest.internal.time
 import org.junit.platform.engine.*
 import org.junit.platform.engine.discovery.UniqueIdSelector
 import org.junit.platform.engine.support.descriptor.EngineDescriptor
@@ -20,10 +21,12 @@ class MinutestTestEngine : TestEngine {
         uniqueId: UniqueId
     ): EngineDescriptor =
         MinutestEngineDescriptor(uniqueId, discoveryRequest).apply {
-            if (discoveryRequest.selectsByUniqueId(uniqueId))
-                findRootNodes(this, discoveryRequest).forEach {
-                    addChild(it)
-                }
+            time("Minutest scanning ") {
+                if (discoveryRequest.selectsByUniqueId(uniqueId))
+                    findRootNodes(this, discoveryRequest).forEach {
+                        addChild(it)
+                    }
+            }
         }
 
     override fun execute(request: ExecutionRequest) {
@@ -142,3 +145,4 @@ private fun UniqueId.overlaps(that: UniqueId) =
 internal inline fun <reified T : DiscoverySelector> EngineDiscoveryRequest.getSelectorsByType()
     : List<T> =
     getSelectorsByType(T::class.java)
+
