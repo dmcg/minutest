@@ -31,12 +31,14 @@ internal data class MinutestContextBuilder<PF, F>(
     }
 
     override fun deriveFixture(f: PF.(TestDescriptor) -> F) {
-        if (fixtureFactory is ExplicitFixtureFactory)
-            throw IllegalStateException("Fixture already set in context \"$name\"")
-        if (fixtureFactory.outputType.isSubtypeOf(parentFixtureType))
-            fixtureFactory = ExplicitFixtureFactory(parentFixtureType, fixtureType, f)
-        else
-            error("You can't deriveFixture in context \"$name\" because the parent context has no fixture")
+        when {
+            fixtureFactory is ExplicitFixtureFactory ->
+                throw IllegalStateException("Fixture already set in context \"$name\"")
+            fixtureFactory.outputType.isSubtypeOf(parentFixtureType) -> fixtureFactory =
+                ExplicitFixtureFactory(parentFixtureType, fixtureType, f)
+            else ->
+                error("You can't deriveFixture in context \"$name\" because the parent context has no fixture")
+        }
     }
 
     override fun before(operation: F.(TestDescriptor) -> Unit) {
