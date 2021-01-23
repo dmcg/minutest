@@ -4,7 +4,7 @@ import dev.minutest.internal.FixtureType
 import dev.minutest.internal.askType
 
 /**
- * [ContextBuilder]s allow definition of tests and sub-contexts, all of which have the fixture type [F].
+ * [ContextBuilder]s allow definition of tests and sub-contexts, all of which have the fixture type F.
  */
 typealias ContextBuilder<F> = TestContextBuilder<*, F>
 
@@ -17,7 +17,10 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Define a child-context, inheriting the fixture from the parent.
      */
-    abstract fun context(name: String, block: TestContextBuilder<F, F>.() -> Unit): Annotatable<F>
+    abstract fun context(
+        name: String,
+        block: TestContextBuilder<F, F>.() -> Unit
+    ): Annotatable<F>
 
     /**
      * Define a child-context with a different fixture type.
@@ -25,8 +28,11 @@ abstract class TestContextBuilder<PF, F> {
      * You will have to call [deriveFixture] in the sub-context to convert from the parent
      * to the child fixture type.
      */
-    inline fun <reified G> derivedContext(name: String, noinline block: TestContextBuilder<F, G>.() -> Unit)
-        : Annotatable<F> = internalDerivedContext(name = name, newFixtureType = askType<G>(), block = block)
+    inline fun <reified G> derivedContext(
+        name: String,
+        noinline block: TestContextBuilder<F, G>.() -> Unit
+    ): Annotatable<F> =
+        internalDerivedContext(name = name, newFixtureType = askType<G>(), block = block)
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
@@ -104,7 +110,7 @@ abstract class TestContextBuilder<PF, F> {
     val PF.parentFixture: PF get() = this
 
     /**
-     * Apply an operation before any test or subcontexts.
+     * Apply an operation before any test in this or sub-contexts.
      */
     abstract fun beforeAll(f: (TestDescriptor) -> Unit)
 
@@ -116,7 +122,8 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Internal implementation, only public to be accessible to inline functions.
      */
-    @PublishedApi internal abstract fun <G> internalDerivedContext(
+    @PublishedApi
+    internal abstract fun <G> internalDerivedContext(
         name: String,
         newFixtureType: FixtureType,
         block: TestContextBuilder<F, G>.() -> Unit
