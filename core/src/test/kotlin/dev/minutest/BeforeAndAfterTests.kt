@@ -102,7 +102,7 @@ class BeforeAndAfterTests {
                         add("inner before")
                     }
 
-                    modifyFixture {
+                    before {
                         assertEquals(listOf("outer before 1", "inner before"), this)
                         add("inner fixture")
                     }

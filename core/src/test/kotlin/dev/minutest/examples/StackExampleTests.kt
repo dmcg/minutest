@@ -21,7 +21,7 @@ class StackExampleTests : JUnit5Minutests {
 
         context("after pushing an element") {
 
-            modifyFixture {
+            before {
                 parentFixture.push("an element")
             }
 

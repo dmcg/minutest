@@ -22,7 +22,7 @@ class FixtureNotSuppliedTests {
     fun `throws IllegalStateException if no fixture specified when one is needed by a fixture`() {
         assertThrows<IllegalStateException> {
             rootContext<String> {
-                modifyFixture {
+                before {
                     fixture
                 }
                 test("there needs to be a test") {}

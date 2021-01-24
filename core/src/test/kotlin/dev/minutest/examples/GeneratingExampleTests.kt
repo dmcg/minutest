@@ -56,7 +56,7 @@ class GeneratingExampleTests : JUnit5Minutests {
         }
 
         context("a stack with one item") {
-            modifyFixture { push("one") }
+            before { push("one") }
 
             isEmpty(false)
             canPush()

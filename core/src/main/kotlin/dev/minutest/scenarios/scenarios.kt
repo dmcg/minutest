@@ -41,7 +41,7 @@ class ScenarioBuilder<F>(
         lateinit var cantAccessThisInCtor: GivenStep<F>
         givenSteps.add(
             GivenStep<F>("$prefix $description") {
-                modifyFixture {
+                before {
                     this@ScenarioBuilder.tryThrowingScenarioFailedException(cantAccessThisInCtor) {
                         operation().also { nextResult.value = it }
                     }

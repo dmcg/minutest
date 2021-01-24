@@ -57,7 +57,7 @@ class JMockExampleTests : JUnit5Minutests {
         }
 
         context("key not turned") {
-            modifyFixture {
+            before {
                 mockery.expecting {
                     allowing(key).isTurned.which will returnValue(false)
                 }
@@ -73,7 +73,7 @@ class JMockExampleTests : JUnit5Minutests {
         }
 
         context("key turned") {
-            modifyFixture {
+            before {
                 mockery.expecting {
                     allowing(key).isTurned.which will returnValue(true)
                 }

@@ -34,7 +34,7 @@ class ParentFixtureExampleTests : JUnit5Minutests {
         }
 
         context("context modifies fixture") {
-            modifyFixture {
+            before {
                 fruit = "apple"
             }
             test("sees the modified fixture") {

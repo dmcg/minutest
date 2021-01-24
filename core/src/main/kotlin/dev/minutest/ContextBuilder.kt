@@ -53,6 +53,7 @@ abstract class TestContextBuilder<PF, F> {
      * Apply an operation to the current fixture (accessible as the receiver 'this')
      * before running tests or sub-contexts.
      */
+    @Deprecated("Use before to modify the fixture", ReplaceWith("before(operation)"))
     fun modifyFixture(operation: F.(TestDescriptor) -> Unit): Unit = before(operation)
 
     /**
