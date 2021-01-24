@@ -1,5 +1,7 @@
 package dev.minutest
 
+import dev.minutest.Instrumented.test2
+import dev.minutest.Instrumented.test2_
 import dev.minutest.internal.FixtureType
 import dev.minutest.internal.askType
 
@@ -28,7 +30,7 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Define a child-context with a different fixture type.
      *
-     * You will have to call [deriveFixture] in the sub-context to convert from the parent
+     * You will have to call [given_] in the sub-context to convert from the parent
      * to the child fixture type.
      */
     inline fun <reified G> derivedContext(
@@ -80,7 +82,7 @@ abstract class TestContextBuilder<PF, F> {
         name: String,
         f: F.(testDescriptor: TestDescriptor) -> Unit
     ): Annotatable<F> {
-        return test2Instrumented(name) { fixture, testDescriptor ->
+        return test2(name) { fixture, testDescriptor ->
             fixture.f(testDescriptor)
         }
     }
@@ -95,7 +97,7 @@ abstract class TestContextBuilder<PF, F> {
         name: String,
         f: F.(testDescriptor: TestDescriptor) -> F
     ): Annotatable<F> {
-        return test2Instrumented_(name) { fixture, testDescriptor ->
+        return test2_(name) { fixture, testDescriptor ->
             fixture.f(testDescriptor)
         }
     }

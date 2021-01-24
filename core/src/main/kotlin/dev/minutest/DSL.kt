@@ -1,16 +1,5 @@
 package dev.minutest
 
-/**
- * Apply an operation to the current fixture before running tests or sub-contexts.
- */
-fun <PF, F> TestContextBuilder<PF, F>.beforeEachInstrumented(
-    operation: (fixture: F, testDescriptor: TestDescriptor) -> Unit
-) {
-    beforeEachInstrumented_ { fixture, testDescriptor ->
-        operation(fixture, testDescriptor)
-        fixture
-    }
-}
 
 /**
  * Apply an operation to the current fixture before running tests or sub-contexts.
@@ -37,19 +26,6 @@ fun <PF, F> TestContextBuilder<PF, F>.beforeEach_(
 }
 
 /**
- * Replace the current fixture before running tests or sub-contexts.
- */
-@Suppress("FunctionName")
-fun <PF, F> TestContextBuilder<PF, F>.beforeEachInstrumented_(
-    transform: (fixture: F, testDescriptor: TestDescriptor) -> F
-) {
-    addBefore { fixture, testDescriptor ->
-        transform(fixture, testDescriptor)
-    }
-}
-
-
-/**
  * Define the fixture that will be used in this context's tests and sub-contexts.
  *
  * The strange parameter type keeps compatibility with the other fixture methods, that have
@@ -65,40 +41,20 @@ fun <PF, F> TestContextBuilder<PF, F>.given(factory: () -> F) {
  * Define the fixture that will be used in this context's tests and sub-contexts by
  * transforming the parent fixture.
  */
-fun <PF, F> TestContextBuilder<PF, F>.given_(transform: (parentFixture: PF) -> F) {
+fun <PF, F> TestContextBuilder<PF, F>.given_(
+    transform: (parentFixture: PF) -> F
+) {
     setDerivedFixtureFactory { parentFixture, _ ->
         transform(parentFixture)
     }
 }
 
-/**
- * Define the fixture that will be used in this context's tests and sub-contexts.
- *
- * The strange parameter type keeps compatibility with the other fixture methods, that have
- * the parent fixture as the receiver.
- */
-fun <PF, F> TestContextBuilder<PF, F>.givenInstrumented(factory: (testDescriptor: TestDescriptor) -> F) {
-    setFixtureFactory { testDescriptor ->
-        factory(testDescriptor)
-    }
-}
-
 fun <PF, F> TestContextBuilder<PF, F>.test2(
     name: String,
-    f: (F).(fixture: F) -> Unit
+    f: F.(fixture: F) -> Unit
 ): Annotatable<F> {
     return addTest(name) { fixture, _ ->
         fixture.f(fixture)
-        fixture
-    }
-}
-
-fun <PF, F> TestContextBuilder<PF, F>.test2Instrumented(
-    name: String,
-    f: (fixture: F, testDescriptor: TestDescriptor) -> Unit
-): Annotatable<F> {
-    return addTest(name) { fixture, testDescriptor ->
-        f(fixture, testDescriptor)
         fixture
     }
 }
@@ -106,19 +62,10 @@ fun <PF, F> TestContextBuilder<PF, F>.test2Instrumented(
 @Suppress("FunctionName")
 fun <PF, F> TestContextBuilder<PF, F>.test2_(
     name: String,
-    f: (F).(fixture: F) -> F
+    f: F.(fixture: F) -> F
 ): Annotatable<F> {
     return addTest(name) { fixture, _ ->
         fixture.f(fixture)
-    }
-}
-
-fun <PF, F> TestContextBuilder<PF, F>.test2Instrumented_(
-    name: String,
-    f: (fixture: F, testDescriptor: TestDescriptor) -> F
-): Annotatable<F> {
-    return addTest(name) { fixture, testDescriptor ->
-        f(fixture, testDescriptor)
     }
 }
 
@@ -133,25 +80,5 @@ fun <PF, F> TestContextBuilder<PF, F>.test2Instrumented_(
 fun <PF, F> TestContextBuilder<PF, F>.afterEach(operation: F.(fixture: F) -> Unit) {
     addAfter { (value, _), _->
         value.operation(value)
-    }
-}
-
-/**
- * Apply an operation to the last known value of the current fixture
- * after running tests.
- *
- * Will be invoked even if tests or 'befores' throw exceptions.
- *
- * An exception thrown in an afterEach will prevent later afters running.
- *
- * Gives access to the last known value of the fixture and
- * any exception thrown by previous operations as a [FixtureValue].
-
- */
-fun <PF, F> TestContextBuilder<PF, F>.afterEachInstrumented(
-    operation: (fixtureValue: FixtureValue<F>, testDescriptor: TestDescriptor) -> Unit
-) {
-    addAfter { fixtureValue, testDescriptor ->
-        operation(fixtureValue, testDescriptor)
     }
 }

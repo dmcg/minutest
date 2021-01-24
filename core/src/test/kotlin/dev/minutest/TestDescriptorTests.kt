@@ -1,5 +1,9 @@
 package dev.minutest
 
+import dev.minutest.Instrumented.afterEach
+import dev.minutest.Instrumented.beforeEach
+import dev.minutest.Instrumented.given
+import dev.minutest.Instrumented.test2
 import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Test
 
@@ -17,16 +21,16 @@ class TestDescriptorTests {
                     log.add(testDescriptor.pathAsString() + " : beforeAll")
                 }
 
-                givenInstrumented { testDescriptor ->
+                given { testDescriptor ->
                     log.add(testDescriptor.pathAsString() + " : fixture")
                 }
 
-                beforeEachInstrumented { _, testDescriptor ->
+                beforeEach { _, testDescriptor ->
                     log.add(testDescriptor.pathAsString() + " : before")
                 }
 
                 context("outer") {
-                    test2Instrumented("outer test") { _, testDescriptor ->
+                    test2("outer test") { _, testDescriptor ->
                         log.add(testDescriptor.pathAsString() + " : test")
                     }
 
@@ -34,10 +38,10 @@ class TestDescriptorTests {
                         beforeAll { testDescriptor ->
                             log.add(testDescriptor.pathAsString() + " : beforeAll")
                         }
-                        test2Instrumented("inner test 1") { _, testDescriptor ->
+                        test2("inner test 1") { _, testDescriptor ->
                             log.add(testDescriptor.pathAsString() + " : test")
                         }
-                        test2Instrumented("inner test 2") { _, testDescriptor ->
+                        test2("inner test 2") { _, testDescriptor ->
                             log.add(testDescriptor.pathAsString() + " : test")
                         }
                         afterAll { testDescriptor ->
@@ -46,7 +50,7 @@ class TestDescriptorTests {
                     }
                 }
 
-                afterEachInstrumented { _, testDescriptor ->
+                afterEach { _, testDescriptor ->
                     log.add(testDescriptor.pathAsString() + " : after")
                 }
 
