@@ -4,6 +4,7 @@ import dev.minutest.ContextBuilder
 import dev.minutest.experimental.willRun
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
+import dev.minutest.test2
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertThrows
 import java.util.*
@@ -13,33 +14,33 @@ import java.util.*
 private typealias StringStack = Stack<String>
 
 private fun ContextBuilder<StringStack>.isEmpty(isEmpty: Boolean) =
-    test("is " + (if (isEmpty) "" else "not ") + "empty") {
-        assertEquals(isEmpty, size == 0)
+    test2("is " + (if (isEmpty) "" else "not ") + "empty") {
+        assertEquals(it.isEmpty(), size == 0)
         if (isEmpty)
-            assertThrows<EmptyStackException> { peek() }
+            assertThrows<EmptyStackException> { it.peek() }
         else
-            assertNotNull(peek())
+            assertNotNull(it.peek())
     }
 
-private fun ContextBuilder<StringStack>.canPush() = test("can push") {
-    val initialSize = size
+private fun ContextBuilder<StringStack>.canPush() = test2("can push") {
+    val initialSize = it.size
     val item = "*".repeat(initialSize + 1)
-    push(item)
-    assertEquals(item, peek())
-    assertEquals(initialSize + 1, size)
+    it.push(item)
+    assertEquals(item, it.peek())
+    assertEquals(initialSize + 1, it.size)
 }
 
-private fun ContextBuilder<StringStack>.canPop() = test("can pop") {
-    val initialSize = size
-    val top = peek()
-    assertEquals(top, pop())
+private fun ContextBuilder<StringStack>.canPop() = test2("can pop") {
+    val initialSize = it.size
+    val top = it.peek()
+    assertEquals(top, it.pop())
     assertEquals(initialSize - 1, size)
-    if (size > 0)
+    if (it.size > 0)
         assertNotEquals(top, peek())
 }
 
-private fun ContextBuilder<StringStack>.cantPop() = test("cant pop") {
-    assertThrows<EmptyStackException> { pop() }
+private fun ContextBuilder<StringStack>.cantPop() = test2("cant pop") {
+    assertThrows<EmptyStackException> { it.pop() }
 }
 
 class GeneratingExampleTests : JUnit5Minutests {
@@ -62,7 +63,7 @@ class GeneratingExampleTests : JUnit5Minutests {
             canPush()
             canPop()
 
-            test("has the item on top") {
+            test2("has the item on top") {
                 assertEquals("one", peek())
             }
         }

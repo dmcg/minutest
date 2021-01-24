@@ -3,6 +3,7 @@ package dev.minutest.examples.experimental
 import dev.minutest.experimental.flatten
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
+import dev.minutest.test2
 import org.junit.jupiter.api.Assertions.assertTrue
 
 @Suppress("USELESS_IS_CHECK")
@@ -24,15 +25,15 @@ class FlatteningExampleTests : JUnit5Minutests {
                 // will be invoked with each item in the sequence
             }
 
-            test("fixture is each item") {
-                assertTrue(this is String)
+            test2("fixture is each item") {
+                assertTrue(it is String)
             }
 
-            test("is not empty") {
-                assertTrue(isNotEmpty())
+            test2("is not empty") {
+                assertTrue(it.isNotEmpty())
             }
 
-            test("is two") {
+            test2("is two") {
                 // would fail for most cases, collected into a MultipleFailuresError
                 // assertEquals("two", this)
             }

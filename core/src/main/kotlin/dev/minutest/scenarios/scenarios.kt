@@ -5,6 +5,7 @@ package dev.minutest.scenarios
 import dev.minutest.ContextBuilder
 import dev.minutest.MinutestFixture
 import dev.minutest.scenarios.StepType.*
+import dev.minutest.test2
 
 fun <F> ContextBuilder<F>.Scenario(
     description: String? = null,
@@ -109,7 +110,7 @@ class ScenarioBuilder<F>(
     }
 
     private fun addTestForStepsTo(contextBuilder: ContextBuilder<F>, testName: String) {
-        contextBuilder.test(testName) {
+        contextBuilder.test2(testName) {
             testSteps.forEach { step ->
                 tryThrowingScenarioFailedException(step) {
                     step.f(this)

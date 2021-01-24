@@ -50,21 +50,21 @@ class TestEventsTests {
             addTransform { node ->
                 node.telling(listener)
             }
-            test("in root") {}
+            test2("in root") {}
             context("outer") {
-                test("in outer") {}
+                test2("in outer") {}
                 context("inner") {
-                    test("in inner") {}
-                    test("fails") {
+                    test2("in inner") {}
+                    test2("fails") {
                         fail("Deliberate")
                     }
-                    test("skipped with JUnit") {
+                    test2("skipped with JUnit") {
                         throw TestSkippedException()
                     }
-                    test("skipped with Minutest") {
+                    test2("skipped with Minutest") {
                         throw MinutestSkippedException()
                     }
-                    test("aborted") {
+                    test2("aborted") {
                         Assumptions.assumeFalse(true)
                     }
                     afterAll {
@@ -113,7 +113,7 @@ class TestEventsTests {
                 node.telling(listener)
             }
             context("context") {
-                test("in context") {}
+                test2("in context") {}
                 afterAll {
                     log.add("afterAll context")
                 }

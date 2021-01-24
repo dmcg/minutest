@@ -1,9 +1,6 @@
 package dev.minutest.experimental
 
-import dev.minutest.RootContextBuilder
-import dev.minutest.assertLoggedInAnyOrder
-import dev.minutest.rootContext
-import dev.minutest.synchronized
+import dev.minutest.*
 import dev.minutest.testing.runTests
 import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -27,7 +24,7 @@ class FlatteningTests {
 
                 flatten()
 
-                test("should not be run") {
+                test2("should not be run") {
                     fail("")
                 }
 
@@ -57,7 +54,7 @@ class FlatteningTests {
                     miscLog.add("before $fixture")
                 }
 
-                test("is a string") {
+                test2("is a string") {
                     miscLog.add("test $fixture")
                     @Suppress("USELESS_IS_CHECK")
                     assertTrue(fixture is String)
@@ -100,7 +97,7 @@ class FlatteningTests {
                     miscLog.add("before $fixture")
                 }
 
-                test("is two") {
+                test2("is two") {
                     miscLog.add("test $fixture")
                     assertEquals("two", fixture)
                 }

@@ -1,9 +1,9 @@
 package dev.minutest.examples.experimental
 
 import dev.minutest.ContextBuilder
-import dev.minutest.TestDescriptor
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
+import dev.minutest.test2
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -18,7 +18,7 @@ class CoroutinesExampleTests : JUnit5Minutests {
         fixture { "banana" }
 
         // You can use runBlockingTest in your test
-        test("use runBlocking") {
+        test2("use runBlocking") {
             runBlockingTest {
                 assertEquals("bananarama", fixture.slowPlus("rama"))
                 advanceUntilIdle()
@@ -27,7 +27,7 @@ class CoroutinesExampleTests : JUnit5Minutests {
         }
 
         // Or define an extension function on ContextBuilder
-        coTest("use coTest") { _, testCoroutineScope ->
+        coTest("use coTest") { fixture, testCoroutineScope ->
             assertEquals("bananarama", fixture.slowPlus("rama"))
             testCoroutineScope.advanceUntilIdle()
             assertEquals(10_000, testCoroutineScope.currentTime)
@@ -43,11 +43,11 @@ suspend fun String.slowPlus(other: String): String = (this + other).also {
 @ExperimentalCoroutinesApi
 private fun <F> ContextBuilder<F>.coTest(
     name: String,
-    f: suspend F.(testDescriptor: TestDescriptor, testCoroutineScope: TestCoroutineScope) -> Unit
+    f: suspend F.(fixture: F, testCoroutineScope: TestCoroutineScope) -> Unit
 ) =
-    test(name) { testDescriptor ->
+    test2(name) { fixture ->
         runBlockingTest {
-            f.invoke(this@test, testDescriptor, this)
+            (fixture).f(fixture, this)
         }
     }
 

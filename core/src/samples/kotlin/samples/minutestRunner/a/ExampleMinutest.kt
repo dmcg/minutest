@@ -4,17 +4,18 @@
 package samples.minutestRunner.a
 
 import dev.minutest.rootContext
+import dev.minutest.test2
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.platform.commons.annotation.Testable
 
 @Testable
 fun `example context`() = rootContext {
-    test("a failing test") {
+    test2("a failing test") {
         fail("example failure")
     }
-    
-    test("a passing test") {
+
+    test2("a passing test") {
         assertTrue(true, "example success")
     }
 }

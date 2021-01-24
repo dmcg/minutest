@@ -42,7 +42,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
         fixture { Fixture() }
 
         context("key not turned") {
-            test("light is off") {
+            test2("light is off") {
                 assertFalse(controlPanel.warningLightOn)
             }
             test2("cannot launch when pressing button") {
@@ -56,7 +56,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
             before {
                 controlPanel.turnKey()
             }
-            test("light is on") {
+            test2("light is on") {
                 assertTrue(controlPanel.warningLightOn)
             }
             test2("launches when pressing button") {

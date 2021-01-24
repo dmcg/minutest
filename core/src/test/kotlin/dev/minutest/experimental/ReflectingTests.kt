@@ -3,6 +3,7 @@ package dev.minutest.experimental
 import dev.minutest.internal.askType
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
+import dev.minutest.test2
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -13,40 +14,40 @@ class ReflectingTests : JUnit5Minutests {
 
         context("KType.creator") {
             context("works for") {
-                test("String") {
+                test2("String") {
                     assertEquals("", askType<String>().creator()!!.invoke())
                 }
-                test("String?") {
+                test2("String?") {
                     assertEquals("", askType<String?>().creator()!!.invoke())
                 }
-                test("Unit") {
+                test2("Unit") {
                     assertEquals(Unit, askType<Unit>().creator()!!.invoke())
                 }
-                test("HashMap") {
+                test2("HashMap") {
                     assertEquals(HashMap<String, String>(), askType<HashMap<String, String>>().creator()!!.invoke())
                 }
-                test("Any") {
+                test2("Any") {
                     assertEquals(Any::class, askType<Any>().creator()!!.invoke()::class)
                 }
-                test("public object") {
+                test2("public object") {
                     assertEquals(PublicObject, askType<PublicObject>().creator()!!.invoke())
                 }
             }
             context("is null for") {
-                test("private class") {
+                test2("private class") {
                     assertNull(askType<PrivateClass>().creator())
                 }
-                test("public class with private ctor") {
+                test2("public class with private ctor") {
                     assertNull(askType<PublicClassPrivateCtor>().creator())
                 }
-                test("private object") {
+                test2("private object") {
                     assertNull(askType<PrivateObject>().creator())
                 }
-                test("collection interfaces") {
+                test2("collection interfaces") {
                     assertNull(askType<List<*>>().creator())
                     assertNull(askType<Set<*>>().creator())
                 }
-                test("primitives") {
+                test2("primitives") {
                     assertNull(askType<Int>().creator())
                     assertNull(askType<Double>().creator())
                 }

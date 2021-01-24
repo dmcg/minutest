@@ -3,6 +3,7 @@ package dev.minutest.experimental
 import dev.minutest.assertLoggedInAnyOrder
 import dev.minutest.rootContext
 import dev.minutest.synchronized
+import dev.minutest.test2
 import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Test as JUnitTest
 
@@ -25,12 +26,12 @@ class AutoCloseTests {
                 }
             }
 
-            test("test 1") {
+            test2("test 1") {
                 log.add("test 1")
                 log.add(resource.toString())
             }
 
-            test("test 2") {
+            test2("test 2") {
                 log.add("test 2")
                 log.add(resource.toString())
             }
@@ -58,7 +59,7 @@ class AutoCloseTests {
                 }
             }
 
-            test("test 1") {
+            test2("test 1") {
                 log.add("test 1")
             }
 

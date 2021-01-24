@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 class TestDescriptorTests {
 
     @Test
-    fun `names are passed to fixures and tests`() {
+    fun `names are passed to fixtures and tests`() {
 
         val log = mutableListOf<String>().synchronized()
 
@@ -26,7 +26,7 @@ class TestDescriptorTests {
                 }
 
                 context("outer") {
-                    test("outer test") { testDescriptor ->
+                    instrumentedTest2("outer test") { _, testDescriptor ->
                         log.add(testDescriptor.pathAsString() + " : test")
                     }
 
@@ -34,10 +34,10 @@ class TestDescriptorTests {
                         beforeAll { testDescriptor ->
                             log.add(testDescriptor.pathAsString() + " : beforeAll")
                         }
-                        test("inner test 1") { testDescriptor ->
+                        instrumentedTest2("inner test 1") { _, testDescriptor ->
                             log.add(testDescriptor.pathAsString() + " : test")
                         }
-                        test("inner test 2") { testDescriptor ->
+                        instrumentedTest2("inner test 2") { _, testDescriptor ->
                             log.add(testDescriptor.pathAsString() + " : test")
                         }
                         afterAll { testDescriptor ->

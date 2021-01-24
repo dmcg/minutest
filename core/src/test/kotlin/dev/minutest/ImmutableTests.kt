@@ -13,9 +13,9 @@ class ImmutableTests : JUnit5Minutests {
             assertEquals(listOf("during"), this)
         }
 
-        test_("before has been called") {
-            assertEquals(emptyList<String>(), this)
-            this + "during"
+        test2_("before has been called") {
+            assertEquals(emptyList<String>(), it)
+            it + "during"
         }
     }
 }

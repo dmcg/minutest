@@ -26,7 +26,7 @@ class SugarTests : JUnit5Minutests {
                 Conserve("jam", parentFixture)
             }
 
-            test("test") {
+            test2("test") {
                 assertEquals("jam", this.type)
                 assertEquals("jam", fixture.type)
                 // Doesn't compile

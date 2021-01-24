@@ -29,7 +29,7 @@ private fun contract(log: (s: String) -> Unit) =
         beforeAll { testDescriptor ->
             log(testDescriptor.pathAsString() + " : beforeAll")
         }
-        test("required for JUnit not to skip") { testDescriptor ->
+        instrumentedTest2("required for JUnit not to skip") { _, testDescriptor ->
             log(testDescriptor.pathAsString() + " : test")
         }
         afterAll { testDescriptor ->

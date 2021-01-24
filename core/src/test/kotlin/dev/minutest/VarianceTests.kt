@@ -11,14 +11,14 @@ class VarianceTests : JUnit5Minutests {
 
         fixture { 42 }
 
-        test_("test") {
+        test2_("test") {
             @Suppress("USELESS_IS_CHECK")
             assertTrue(this is Number)
 
             // Not useless
-            assertTrue(this is Int)
+            assertTrue(it is Int)
 
-            assertEquals(42, this)
+            assertEquals(42, it)
             43
         }
 

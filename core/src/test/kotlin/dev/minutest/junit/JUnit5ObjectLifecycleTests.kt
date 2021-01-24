@@ -3,6 +3,7 @@ package dev.minutest.junit
 import dev.minutest.assertLoggedInAnyOrder
 import dev.minutest.rootContext
 import dev.minutest.synchronized
+import dev.minutest.test2
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -39,13 +40,13 @@ object JUnit5ObjectLifecycleTests : JUnit5Minutests {
     }
 
     fun tests1() = rootContext {
-        test("1") {
+        test2("1") {
             log.add("1")
         }
     }
 
     fun tests2() = rootContext {
-        test("2") {
+        test2("2") {
             log.add("2")
         }
     }

@@ -3,6 +3,7 @@ package dev.minutest.junit.experimental
 import dev.minutest.assertLoggedInAnyOrder
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
+import dev.minutest.test2
 import org.junit.jupiter.api.AfterAll
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
@@ -30,10 +31,10 @@ class JUnitRulesTests : JUnit5Minutests {
 
         applyRule(this@JUnitRulesTests::class.java.simpleName) { fixture.rule }
 
-        test("test in root") {}
+        test2("test in root") {}
 
         context("context") {
-            test("test in context") {}
+            test2("test in context") {}
         }
         after {
             log.add(rule.testDescription.toString())
@@ -51,10 +52,10 @@ class JUnitRulesTests : JUnit5Minutests {
             staticRule
         }
 
-        test("test in root") {}
+        test2("test in root") {}
 
         context("context") {
-            test("test in context") {}
+            test2("test in context") {}
         }
     }
 

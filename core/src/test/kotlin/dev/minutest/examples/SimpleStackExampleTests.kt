@@ -2,6 +2,7 @@ package dev.minutest.examples
 
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
+import dev.minutest.test2
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
@@ -17,21 +18,19 @@ class SimpleStackExampleTests : JUnit5Minutests {
             Stack()
         }
 
-        test("add an item") {
-            // In a test, 'this' is the fixture created above
-            assertTrue(this.isEmpty())
+        test2("add an item") {
+            // In a test, 'it' is the fixture created above
+            assertTrue(it.isEmpty())
 
             this.add("item")
-            assertFalse(this.isEmpty())
+            assertFalse(it.isEmpty())
         }
 
         // another test will use a new fixture instance
-        test("fixture is fresh") {
+        test2("fixture is fresh") { fixture ->
             // you can also access the fixture as 'fixture' if it reads nicer
             assertTrue(fixture.isEmpty())
-
-            // or use the implicit 'this'
-            assertFalse(isNotEmpty())
+            assertFalse(fixture.isNotEmpty())
         }
     }
 }

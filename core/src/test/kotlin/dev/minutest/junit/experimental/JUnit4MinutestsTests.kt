@@ -2,6 +2,7 @@ package dev.minutest.junit.experimental
 
 import dev.minutest.experimental.willRun
 import dev.minutest.rootContext
+import dev.minutest.test2
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.opentest4j.TestAbortedException
 
@@ -11,22 +12,22 @@ class JUnit4MinutestsTests : JUnit4Minutests() {
 
         fixture { "banana" }
 
-        test("test") {
-            assertEquals("banana", fixture)
+        test2("test") {
+            assertEquals("banana", it)
         }
 
         context("context") {
-            test("test x") {}
+            test2("test x") {}
             context("another context") {
-                test("test y") {}
+                test2("test y") {}
             }
             context("empty context") {
             }
             context("context whose name is wrong if you just run this test in IntelliJ") {
                 // TODO 2018-12-08 DMCG - fix nested context name in IntelliJ
-                test("test") {}
+                test2("test") {}
             }
-            test("skipped") {
+            test2("skipped") {
                 throw TestAbortedException("should be skipped")
             }
         }

@@ -67,26 +67,29 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Define a test on the current fixture (accessible as 'this').
      */
+    @Deprecated("use test2_", ReplaceWith("test2_(name, f)", "dev.minutest.test2_"))
     fun test(
         name: String,
         f: F.(testDescriptor: TestDescriptor) -> Unit
-    ): Annotatable<F> =
-        test_(name) { testDescriptor ->
-            this.apply {
-                f(testDescriptor)
-            }
+    ): Annotatable<F> {
+        return instrumentedTest2(name) { fixture, testDescriptor ->
+            fixture.f(testDescriptor)
         }
+    }
 
     /**
      * Define a test on the current fixture (accessible as the receiver 'this'), returning
      * a new fixture to be processed by 'afters'.
      */
     @Suppress("FunctionName")
+    @Deprecated("use test2_", ReplaceWith("test2_(name, f)", "dev.minutest.test2_"))
     fun test_(
         name: String,
         f: F.(testDescriptor: TestDescriptor) -> F
     ): Annotatable<F> {
-        return addTest(name, f)
+        return instrumentedTest2_(name) { fixture, testDescriptor ->
+            fixture.f(testDescriptor)
+        }
     }
 
     /**
@@ -179,8 +182,9 @@ abstract class TestContextBuilder<PF, F> {
     internal abstract fun setFixtureFactory(
         factory: (testDescriptor: TestDescriptor) -> F
     )
+
     internal abstract fun setDerivedFixtureFactory(
-        factory: (parentFixture: PF, testDescriptor:TestDescriptor) -> F
+        factory: (parentFixture: PF, testDescriptor: TestDescriptor) -> F
     )
 
     internal abstract fun addBefore(transform: (F, TestDescriptor) -> F)

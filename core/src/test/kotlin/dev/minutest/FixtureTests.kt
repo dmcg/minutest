@@ -15,17 +15,17 @@ class FixtureTests : JUnit5Minutests {
 
         fixture { Fixture("banana") }
 
-        test("can mutate fixture without affecting following tests") {
+        test2("can mutate fixture without affecting following tests") {
             fruit = "kumquat"
             assertEquals("kumquat", fruit)
         }
 
-        test("previous test did not affect me") {
+        test2("previous test did not affect me") {
             assertEquals("banana", fruit)
         }
 
         context("sub-context inheriting fixture") {
-            test("has the fixture from its parent") {
+            test2("has the fixture from its parent") {
                 assertEquals("banana", fruit)
             }
         }
@@ -33,7 +33,7 @@ class FixtureTests : JUnit5Minutests {
         context("sub-context overriding fixture") {
             fixture { Fixture("apple") }
 
-            test("does not have the fixture from its parent") {
+            test2("does not have the fixture from its parent") {
                 assertEquals("apple", fruit)
             }
         }
@@ -41,7 +41,7 @@ class FixtureTests : JUnit5Minutests {
         context("sub-context replacing fixture") {
             deriveFixture { Fixture("green $fruit") }
 
-            test("sees the replaced fixture") {
+            test2("sees the replaced fixture") {
                 assertEquals("green banana", fruit)
             }
         }
@@ -49,21 +49,21 @@ class FixtureTests : JUnit5Minutests {
         context("sub-context modifying fixture") {
             before { fruit = "green ${fruit}s" }
 
-            test("sees the modified fixture") {
+            test2("sees the modified fixture") {
                 assertEquals("green bananas", fruit)
             }
 
             context("sub-contexts see parent mods") {
                 before { fruit = "we have no $fruit" }
 
-                test("sees the modified fixture") {
+                test2("sees the modified fixture") {
                     assertEquals("we have no green bananas", fruit)
                 }
             }
         }
 
         context("sanity check") {
-            test("still not changed my context") {
+            test2("still not changed my context") {
                 assertEquals("banana", fruit)
             }
         }

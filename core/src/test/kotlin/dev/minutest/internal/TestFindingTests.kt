@@ -2,11 +2,8 @@
 
 package dev.minutest.internal
 
-import dev.minutest.Context
-import dev.minutest.ContextBuilder
-import dev.minutest.Node
+import dev.minutest.*
 import dev.minutest.junit.JUnit5Minutests
-import dev.minutest.rootContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.assertAll
@@ -18,7 +15,7 @@ class TestFindingTests : JUnit5Minutests {
     fun tests() = rootContext<Any> {
 
         context(ClassWithOnlyOneContextMethod::class) {
-            test("single root context from method") {
+            test2("single root context from method") {
                 val root = fixture.rootContextFromMethods(true) as Context<*, *>
                 assertAll("root",
                     { assertEquals("test method", root.name) },
@@ -28,7 +25,7 @@ class TestFindingTests : JUnit5Minutests {
         }
 
         context(ClassWithTwoContextMethods::class) {
-            test("single root context with child context from each method") {
+            test2("single root context with child context from each method") {
                 val root = fixture.rootContextFromMethods(true) as Context<*, *>
                 assertAll("root",
                     { assertEquals("dev.minutest.internal.ClassWithTwoContextMethods", root.name) },
@@ -38,19 +35,19 @@ class TestFindingTests : JUnit5Minutests {
         }
 
         context(ClassWithNoContextMethods::class) {
-            test("returns null") {
+            test2("returns null") {
                 assertNull(fixture.rootContextFromMethods(true))
             }
         }
 
         context(ClassWithNoPublicContextMethods::class) {
-            test("returns null") {
+            test2("returns null") {
                 assertNull(fixture.rootContextFromMethods(true))
             }
         }
 
         context(ClassWithNoZeroArgContextMethod::class) {
-            test("returns null") {
+            test2("returns null") {
                 assertNull(fixture.rootContextFromMethods(true))
             }
         }
@@ -65,17 +62,17 @@ class TestFindingTests : JUnit5Minutests {
 class ClassWithOnlyOneContextMethod {
     fun `test method`() = rootContext<String> {
         fixture { "banana" }
-        test("test in tests") {}
+        test2("test in tests") {}
     }
 }
 
 class ClassWithTwoContextMethods {
     fun tests() = rootContext<String> {
         fixture { "banana" }
-        test("test in tests") {}
+        test2("test in tests") {}
     }
     fun testsToo() = rootContext {
-        test("test in testsToo") {}
+        test2("test in testsToo") {}
     }
 }
 

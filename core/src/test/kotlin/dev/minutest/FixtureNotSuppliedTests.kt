@@ -13,7 +13,7 @@ class FixtureNotSuppliedTests {
     fun `throws IllegalStateException if no fixture specified when one is needed by a test`() {
         assertThrows<IllegalStateException> {
             rootContext<String> {
-                test("there needs to be a test") {}
+                test2("there needs to be a test") {}
             }.buildNode()
         }
     }
@@ -25,7 +25,7 @@ class FixtureNotSuppliedTests {
                 before {
                     fixture
                 }
-                test("there needs to be a test") {}
+                test2("there needs to be a test") {}
             }.buildNode()
         }
     }
@@ -45,7 +45,7 @@ class FixtureNotSuppliedTests {
         assertThrows<IllegalStateException> {
             rootContext<String> {
                 context("subcontext") {
-                    test("there needs to be a test") {}
+                    test2("there needs to be a test") {}
                 }
             }.buildNode()
         }
@@ -57,7 +57,7 @@ class FixtureNotSuppliedTests {
             rootContext<CharSequence> {
                 fixture { "banana" }
                 derivedContext<String>("subcontext") {
-                    test("there needs to be a test") {}
+                    test2("there needs to be a test") {}
                 }
             }.buildNode()
         }
@@ -69,7 +69,7 @@ class FixtureNotSuppliedTests {
             rootContext<String?> {
                 fixture { null }
                 derivedContext<String>("subcontext") {
-                    test("there needs to be a test") {
+                    test2("there needs to be a test") {
                         @Suppress("SENSELESS_COMPARISON") // except it isn't because it will be
                         if (this != null) fail("")
                     }
@@ -84,7 +84,7 @@ class FixtureNotSuppliedTests {
             rootContext<String> {
                 context("parent had no fixture") {
                     deriveFixture { this + "banana" } // this won't have been supplied, so we should forbid
-                    test("test") {
+                    test2("test") {
                     }
                 }
             }.buildNode()
@@ -95,7 +95,7 @@ class FixtureNotSuppliedTests {
             context("parent had no fixture") {
                 deriveFixture {
                 }
-                test("test") {
+                test2("test") {
                 }
             }
         }.buildNode()

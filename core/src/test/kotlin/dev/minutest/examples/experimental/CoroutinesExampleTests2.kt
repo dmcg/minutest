@@ -1,9 +1,9 @@
 package dev.minutest.examples.experimental
 
 import dev.minutest.ContextBuilder
-import dev.minutest.TestDescriptor
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
+import dev.minutest.test2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -53,11 +53,11 @@ class CoroutinesExampleTests2 : JUnit5Minutests {
 @ExperimentalCoroutinesApi
 private fun <F: TestCoroutineScope> ContextBuilder<F>.coTest(
     name: String,
-    f: suspend F.(testDescriptor: TestDescriptor) -> Unit
+    f: suspend F.(fixture: F) -> Unit
 ) =
-    test(name) { testDescriptor ->
-        this@test.runBlockingTest {
-            f.invoke(this@test, testDescriptor)
+    test2(name) { fixture ->
+        fixture.runBlockingTest {
+            fixture.f(fixture)
         }
     }
 

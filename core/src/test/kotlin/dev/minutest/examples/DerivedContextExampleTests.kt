@@ -2,6 +2,7 @@ package dev.minutest.examples
 
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
+import dev.minutest.test2
 import org.junit.jupiter.api.Assertions.assertTrue
 
 
@@ -24,7 +25,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
             Fruit("banana")
         }
 
-        test("takes Fruit") {
+        test2("takes Fruit") {
             assertTrue(fixture is Fruit)
         }
 
@@ -36,7 +37,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
                 FruitDrink(parentFixture, "smoothie")
             }
 
-            test("takes FruitDrink") {
+            test2("takes FruitDrink") {
                 assertTrue(fixture is FruitDrink)
             }
 

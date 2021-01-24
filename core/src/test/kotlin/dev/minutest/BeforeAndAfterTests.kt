@@ -36,8 +36,8 @@ class BeforeAndAfterTests {
                     add("after 2")
                 }
 
-                test("test") {
-                    assertEquals(listOf("before 1", "before 2"), this)
+                test2("test") {
+                    assertEquals(listOf("before 1", "before 2"), it)
                     add("test")
                 }
             }
@@ -67,9 +67,9 @@ class BeforeAndAfterTests {
                     log.addAll(fixture)
                 }
 
-                test_("test") {
-                    assertEquals(listOf("before 1", "before 2"), this)
-                    this + "test"
+                test2_("test") {
+                    assertEquals(listOf("before 1", "before 2"), it)
+                    it + "test"
                 }
             }
         }.withNoExceptions()
@@ -112,9 +112,9 @@ class BeforeAndAfterTests {
                         add("inner after")
                     }
 
-                    test("test") {
-                        assertEquals(listOf("outer before 1", "inner before", "inner fixture"), this)
-                        add("test")
+                    test2("test") {
+                        assertEquals(listOf("outer before 1", "inner before", "inner fixture"), it)
+                        it.add("test")
                     }
                 }
             }
@@ -134,8 +134,8 @@ class BeforeAndAfterTests {
                     add("after")
                 }
 
-                test("test") {
-                    add("test")
+                test2("test") {
+                    it.add("test")
                     throw Exception("in test")
                 }
             }
@@ -162,7 +162,7 @@ class BeforeAndAfterTests {
                     add("after")
                 }
 
-                test("not run") {
+                test2("not run") {
                     add("test")
                 }
             }
@@ -196,7 +196,7 @@ class BeforeAndAfterTests {
                             throw Exception("in inner fixture")
                         }
 
-                        test("wont run") {
+                        test2("wont run") {
                             fail("doesn't get here")
                         }
 
@@ -225,7 +225,7 @@ class BeforeAndAfterTests {
         ) { log ->
             rootContext {
 
-                test("test") {
+                test2("test") {
                     log.add("test")
                 }
 
@@ -255,7 +255,7 @@ class BeforeAndAfterTests {
         ) { log ->
             rootContext {
 
-                test_("test") {
+                test2_("test") {
                     log.add("test")
                     throw Exception("in test")
                 }

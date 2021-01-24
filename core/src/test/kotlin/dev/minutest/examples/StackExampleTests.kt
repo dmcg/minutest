@@ -2,6 +2,7 @@ package dev.minutest.examples
 
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
+import dev.minutest.test2
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
@@ -14,8 +15,8 @@ class StackExampleTests : JUnit5Minutests {
 
         context("when new") {
 
-            test("is empty") {
-                assertTrue(fixture.isEmpty())
+            test2("is empty") {
+                assertTrue(it.isEmpty())
             }
         }
 
@@ -25,8 +26,8 @@ class StackExampleTests : JUnit5Minutests {
                 parentFixture.push("an element")
             }
 
-            test("it is no longer empty") {
-                assertFalse(fixture.isEmpty())
+            test2("it is no longer empty") {
+                assertFalse(it.isEmpty())
             }
         }
     }

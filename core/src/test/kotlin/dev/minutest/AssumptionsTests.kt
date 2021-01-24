@@ -12,7 +12,7 @@ import org.junit.platform.commons.annotation.Testable
 private fun assumptionsContract(assumer: (Boolean) -> Unit) =
     rootContext("assumptions skip tests") {
 
-        test("assume in a test aborts it") {
+        test2("assume in a test aborts it") {
             assumer(false)
             Assert.fail("shouldn't get here")
         }
@@ -21,13 +21,13 @@ private fun assumptionsContract(assumer: (Boolean) -> Unit) =
             before {
                 assumer(false)
             }
-            test("should not be run") {
+            test2("should not be run") {
                 Assert.fail("shouldn't get here")
             }
         }
 
 
-        test("plain test") {
+        test2("plain test") {
         }
 
         willRun(
