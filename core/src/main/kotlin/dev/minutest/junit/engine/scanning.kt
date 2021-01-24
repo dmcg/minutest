@@ -10,9 +10,7 @@ import kotlin.reflect.KFunction0
 import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.kotlinFunction
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class)
 internal fun scanForRootNodes(
     scannerConfig: ClassGraph.() -> Unit,
     classFilter: (ClassInfo) -> Boolean = { true }
