@@ -13,7 +13,7 @@ import org.junit.runners.model.Statement
  */
 fun <PF, F, R : TestRule> TestContextBuilder<PF, F>.applyRule(
     descriptionClassName: String,
-    ruleExtractor: F.() -> R) {
+    ruleExtractor: F.(fixture: F) -> R) {
     addTransform(
         TestRuleTransform(descriptionClassName, ruleExtractor)
     )
@@ -21,7 +21,7 @@ fun <PF, F, R : TestRule> TestContextBuilder<PF, F>.applyRule(
 
 private class TestRuleTransform<PF, F, R : TestRule>(
     private val descriptionClassName: String,
-    private val ruleExtractor: F.() -> R
+    private val ruleExtractor: F.(fixture: F) -> R
 ) : NodeTransform<PF> {
 
     override fun invoke(node: Node<PF>): Node<PF> =
@@ -53,7 +53,7 @@ private class TestRuleTransform<PF, F, R : TestRule>(
             }
         }
 
-        ruleExtractor(fixture)
+        ruleExtractor(fixture, fixture)
             .apply(wrappedTestAsStatement, testDescriptor.toTestDescription()) // this is TestRule.apply
             .evaluate()
 

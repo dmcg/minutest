@@ -28,7 +28,7 @@ class FlatteningTests {
                     fail("")
                 }
 
-                after {
+                afterEach {
                     miscLog.add("after")
                 }
             }
@@ -60,8 +60,8 @@ class FlatteningTests {
                     assertTrue(it is String)
                 }
 
-                after {
-                    miscLog.add("after $fixture")
+                afterEach {
+                    miscLog.add("after $it")
                 }
             }
         }
@@ -102,8 +102,8 @@ class FlatteningTests {
                     assertEquals("two", it)
                 }
 
-                after {
-                    miscLog.add("after $fixture")
+                afterEach {
+                    miscLog.add("after $it")
                 }
             }
         }

@@ -1,5 +1,6 @@
 package dev.minutest.examples
 
+import dev.minutest.afterEach
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2_
@@ -22,8 +23,8 @@ class ImmutableExampleTests : JUnit5Minutests {
         }
 
         // which will be available for inspection in after
-        after {
-            assertEquals("item", first())
+        afterEach {
+            assertEquals("item", it.first())
         }
     }
 }

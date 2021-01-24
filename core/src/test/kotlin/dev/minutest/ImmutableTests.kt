@@ -9,8 +9,8 @@ class ImmutableTests : JUnit5Minutests {
     fun tests() = rootContext<List<String>> {
         fixture { emptyList() }
 
-        after {
-            assertEquals(listOf("during"), this)
+        afterEach {
+            assertEquals(listOf("during"), it)
         }
 
         test2_("before has been called") {

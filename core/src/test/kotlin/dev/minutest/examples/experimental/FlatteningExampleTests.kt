@@ -1,5 +1,6 @@
 package dev.minutest.examples.experimental
 
+import dev.minutest.afterEach
 import dev.minutest.beforeEach
 import dev.minutest.experimental.flatten
 import dev.minutest.junit.JUnit5Minutests
@@ -39,7 +40,7 @@ class FlatteningExampleTests : JUnit5Minutests {
                 // assertEquals("two", this)
             }
 
-            after {
+            afterEach {
                 // will be invoked with each item in the sequence
             }
         }

@@ -1,5 +1,6 @@
 package dev.minutest.examples
 
+import dev.minutest.afterEach
 import dev.minutest.closeableFixture
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
@@ -29,7 +30,7 @@ class CloseableFixtureExampleTests : JUnit5Minutests {
             writer.write("banana")
         }
 
-        after {
+        afterEach {
             assertThrows(IOException::class.java) {
                 writer.write("should be closed")
             }

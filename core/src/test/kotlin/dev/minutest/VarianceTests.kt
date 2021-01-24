@@ -22,9 +22,9 @@ class VarianceTests : JUnit5Minutests {
             43
         }
 
-        after {
-            assertTrue(this is Int)
-            assertEquals(43, this)
+        afterEach {
+            assertTrue(it is Int)
+            assertEquals(43, it)
         }
     }
 

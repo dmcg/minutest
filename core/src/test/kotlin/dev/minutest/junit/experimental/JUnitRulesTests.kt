@@ -1,5 +1,6 @@
 package dev.minutest.junit.experimental
 
+import dev.minutest.afterEach
 import dev.minutest.assertLoggedInAnyOrder
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
@@ -29,14 +30,16 @@ class JUnitRulesTests : JUnit5Minutests {
             Fixture()
         }
 
-        applyRule(this@JUnitRulesTests::class.java.simpleName) { fixture.rule }
+        applyRule(this@JUnitRulesTests::class.java.simpleName) { fixture ->
+            fixture.rule
+        }
 
         test2("test in root") {}
 
         context("context") {
             test2("test in context") {}
         }
-        after {
+        afterEach {
             log.add(rule.testDescription.toString())
         }
     }

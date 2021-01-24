@@ -1,6 +1,7 @@
 package dev.minutest.examples.experimental
 
 import dev.minutest.ContextBuilder
+import dev.minutest.afterEach
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -43,7 +44,7 @@ class CoroutinesExampleTests2 : JUnit5Minutests {
             assertEquals(10_000, currentTime)
         }
 
-        after {
+        afterEach {
             // TestCoroutineScope holds some resources
             cleanupTestCoroutines()
         }

@@ -8,7 +8,7 @@ fun <F: AutoCloseable> ContextBuilder<F>.closeableFixture(
 ) = fixture { testDescriptor ->
     factory(testDescriptor)
 }.also {
-    after {
-        fixture.close()
+    afterEach {
+        it.close()
     }
 }

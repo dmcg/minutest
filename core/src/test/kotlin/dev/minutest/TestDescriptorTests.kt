@@ -46,7 +46,7 @@ class TestDescriptorTests {
                     }
                 }
 
-                after { testDescriptor ->
+                afterEachInstrumented { _, testDescriptor ->
                     log.add(testDescriptor.pathAsString() + " : after")
                 }
 

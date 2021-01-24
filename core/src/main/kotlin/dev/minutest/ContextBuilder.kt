@@ -11,6 +11,7 @@ typealias ContextBuilder<F> = TestContextBuilder<*, F>
 /**
  * A [ContextBuilder] where the type of the parent fixture [PF] is also accessible.
  */
+@Suppress("DeprecatedCallableAddReplaceWith")
 @MinutestFixture // It isn't of course - but see explanation there.
 abstract class TestContextBuilder<PF, F> {
 
@@ -103,9 +104,9 @@ abstract class TestContextBuilder<PF, F> {
      */
     @Deprecated("Use beforeEach")
     fun before(operation: F.(TestDescriptor) -> Unit) {
-        before_ { testDescriptor ->
-            this.operation(testDescriptor)
-            this
+        addBefore { fixture, testDescriptor ->
+            fixture.operation(testDescriptor)
+            fixture
         }
     }
 
@@ -127,19 +128,11 @@ abstract class TestContextBuilder<PF, F> {
      *
      * An exception thrown in an after will prevent later afters running.
      */
-
+    @Deprecated("Use afterEach")
     fun after(operation: F.(TestDescriptor) -> Unit) {
         addAfter { result, testDescriptor ->
             result.value.operation(testDescriptor)
         }
-    }
-
-    /**
-     * Version of [after] that gives access to the last known value of the fixture and
-     * any exception thrown by previous operations as a [FixtureValue].
-     */
-    fun after2(operation: FixtureValue<F>.(TestDescriptor) -> Unit) {
-        addAfter(operation)
     }
 
     /**

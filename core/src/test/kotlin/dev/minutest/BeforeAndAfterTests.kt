@@ -26,14 +26,14 @@ class BeforeAndAfterTests {
                     add("before 2")
                 }
 
-                after {
-                    assertEquals(listOf("before 1", "before 2", "test"), this)
-                    add("after 1")
+                afterEach {
+                    assertEquals(listOf("before 1", "before 2", "test"), it)
+                    it.add("after 1")
                 }
 
-                after {
-                    assertEquals(listOf("before 1", "before 2", "test", "after 1"), this)
-                    add("after 2")
+                afterEach {
+                    assertEquals(listOf("before 1", "before 2", "test", "after 1"), it)
+                    it.add("after 2")
                 }
 
                 test2("test") {
@@ -62,9 +62,9 @@ class BeforeAndAfterTests {
                     it + "before 2"
                 }
 
-                after {
+                afterEach {
                     assertEquals(listOf("before 1", "before 2", "test"), this)
-                    log.addAll(fixture)
+                    log.addAll(it)
                 }
 
                 test2_("test") {
@@ -91,9 +91,9 @@ class BeforeAndAfterTests {
                     it.add("outer before 1")
                 }
 
-                after {
-                    assertEquals(listOf("outer before 1", "inner before", "inner fixture", "test", "inner after"), this)
-                    add("outer after")
+                afterEach {
+                    assertEquals(listOf("outer before 1", "inner before", "inner fixture", "test", "inner after"), it)
+                    it.add("outer after")
                 }
 
                 context("inner") {
@@ -107,9 +107,9 @@ class BeforeAndAfterTests {
                         it.add("inner fixture")
                     }
 
-                    after {
-                        assertEquals(listOf("outer before 1", "inner before", "inner fixture", "test"), this)
-                        add("inner after")
+                    afterEach {
+                        assertEquals(listOf("outer before 1", "inner before", "inner fixture", "test"), it)
+                        it.add("inner after")
                     }
 
                     test2("test") {
@@ -129,8 +129,8 @@ class BeforeAndAfterTests {
             rootContext<MutableList<String>> {
                 fixture { log }
 
-                after {
-                    assertEquals(listOf("test"), this)
+                afterEach {
+                    assertEquals(listOf("test"), it)
                     add("after")
                 }
 
@@ -157,8 +157,8 @@ class BeforeAndAfterTests {
                     throw IOException("deliberate")
                 }
 
-                after {
-                    assertEquals(listOf("before"), this)
+                afterEach {
+                    assertEquals(listOf("before"), it)
                     add("after")
                 }
 
@@ -201,15 +201,15 @@ class BeforeAndAfterTests {
                         }
 
                         // this isn't run because the fixture call didn't complete
-                        after {
+                        afterEach {
                             log.add("after inner")
                             fail("doesn't get here")
                         }
                     }
 
-                    after {
+                    afterEach {
                         log.add("after outer")
-                        assertEquals(listOf("top", "outer"), this)
+                        assertEquals(listOf("top", "outer"), it)
                     }
                 }
             }
@@ -229,16 +229,16 @@ class BeforeAndAfterTests {
                     log.add("test")
                 }
 
-                after {
+                afterEach {
                     log.add("after 1")
                 }
 
-                after {
+                afterEach {
                     log.add("after 2")
                     throw Exception("in after 2")
                 }
 
-                after {
+                afterEach {
                     log.add("after 3")
                 }
             }
@@ -260,7 +260,7 @@ class BeforeAndAfterTests {
                     throw Exception("in test")
                 }
 
-                after {
+                afterEach {
                     throw Exception("in after")
                 }
             }

@@ -86,3 +86,37 @@ fun <PF, F> TestContextBuilder<PF, F>.test2Instrumented_(
         f(fixture, testDescriptor)
     }
 }
+
+/**
+ * Apply an operation to the last known value of the current fixture
+ * after running tests.
+ *
+ * Will be invoked even if tests or 'befores' throw exceptions.
+ *
+ * An exception thrown in an afterEach will prevent later afters running.
+ */
+fun <PF, F> TestContextBuilder<PF, F>.afterEach(operation: F.(fixture: F) -> Unit) {
+    addAfter { (value, _), _->
+        value.operation(value)
+    }
+}
+
+/**
+ * Apply an operation to the last known value of the current fixture
+ * after running tests.
+ *
+ * Will be invoked even if tests or 'befores' throw exceptions.
+ *
+ * An exception thrown in an afterEach will prevent later afters running.
+ *
+ * Gives access to the last known value of the fixture and
+ * any exception thrown by previous operations as a [FixtureValue].
+
+ */
+fun <PF, F> TestContextBuilder<PF, F>.afterEachInstrumented(
+    operation: (fixtureValue: FixtureValue<F>, testDescriptor: TestDescriptor) -> Unit
+) {
+    addAfter { fixtureValue, testDescriptor ->
+        operation(fixtureValue, testDescriptor)
+    }
+}
