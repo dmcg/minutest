@@ -1,5 +1,7 @@
 package dev.minutest.examples
 
+import dev.minutest.given
+import dev.minutest.given_
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -21,7 +23,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
     // Our root fixture type is Fruit
     fun tests() = rootContext<Fruit>("Fruit Context") {
 
-        fixture {
+        given {
             Fruit("banana")
         }
 
@@ -33,7 +35,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
         derivedContext<FruitDrink>("FruitDrink Context") {
 
             // deriveFixture specifies how to convert a Fruit to a FruitDrink
-            deriveFixture {
+            given_ { parentFixture ->
                 FruitDrink(parentFixture, "smoothie")
             }
 
@@ -42,7 +44,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
             }
 
             // If you don't need access to the parent fixture, this would do
-            // fixture {
+            // given {
             //     FruitDrink(Fruit("kumquat"), "milkshake")
             // }
         }

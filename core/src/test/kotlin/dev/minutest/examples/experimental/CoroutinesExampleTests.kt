@@ -1,6 +1,7 @@
 package dev.minutest.examples.experimental
 
 import dev.minutest.ContextBuilder
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -15,7 +16,7 @@ class CoroutinesExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<String> {
 
-        fixture { "banana" }
+        given { "banana" }
 
         // You can use runBlockingTest in your test
         test2("use runBlocking") {

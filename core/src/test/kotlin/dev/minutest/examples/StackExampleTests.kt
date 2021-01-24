@@ -1,6 +1,7 @@
 package dev.minutest.examples
 
 import dev.minutest.beforeEach
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -12,7 +13,7 @@ class StackExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<Stack<Any>> {
 
-        fixture { Stack() }
+        given { Stack() }
 
         context("when new") {
 

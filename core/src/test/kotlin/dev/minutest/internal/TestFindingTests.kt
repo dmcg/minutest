@@ -54,21 +54,21 @@ class TestFindingTests : JUnit5Minutests {
     }
 
     private fun ContextBuilder<Any>.context(type: KClass<*>, tests: ContextBuilder<Any>.() -> Unit) = context(type.simpleName ?: "UNKNOWN") {
-        fixture { type.java.newInstance() }
+        given { type.java.newInstance() }
         tests()
     }
 }
 
 class ClassWithOnlyOneContextMethod {
     fun `test method`() = rootContext<String> {
-        fixture { "banana" }
+        given { "banana" }
         test2("test in tests") {}
     }
 }
 
 class ClassWithTwoContextMethods {
     fun tests() = rootContext<String> {
-        fixture { "banana" }
+        given { "banana" }
         test2("test in tests") {}
     }
     fun testsToo() = rootContext {

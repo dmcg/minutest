@@ -12,7 +12,7 @@ class DerivedContextTests : JUnit5Minutests {
 
     fun tests() = rootContext<Fixture> {
 
-        fixture { Fixture("banana") }
+        given { Fixture("banana") }
 
         test2("takes Fixture") {
             assertEquals("banana", fruit)
@@ -20,7 +20,7 @@ class DerivedContextTests : JUnit5Minutests {
 
         derivedContext<DerivedFixture>("inner converting fixture later") {
 
-            deriveFixture {
+            given_ { parentFixture ->
                 DerivedFixture(parentFixture, "smoothie")
             }
 

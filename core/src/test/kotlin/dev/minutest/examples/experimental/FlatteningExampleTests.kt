@@ -1,11 +1,8 @@
 package dev.minutest.examples.experimental
 
-import dev.minutest.afterEach
-import dev.minutest.beforeEach
+import dev.minutest.*
 import dev.minutest.experimental.flatten
 import dev.minutest.junit.JUnit5Minutests
-import dev.minutest.rootContext
-import dev.minutest.test2
 import org.junit.jupiter.api.Assertions.assertTrue
 
 @Suppress("USELESS_IS_CHECK")
@@ -15,7 +12,7 @@ class FlatteningExampleTests : JUnit5Minutests {
     fun tests() = rootContext<Sequence<String>> {
 
         // parent supplies a sequence of fixtures
-        fixture { listOf("one", "two", "three").asSequence() }
+        given { listOf("one", "two", "three").asSequence() }
 
         // child requires a single fixture
         derivedContext<String>("flattened") {

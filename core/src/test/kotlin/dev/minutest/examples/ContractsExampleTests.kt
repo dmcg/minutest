@@ -1,6 +1,7 @@
 package dev.minutest.examples
 
 import dev.minutest.ContextBuilder
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -30,7 +31,7 @@ fun ContextBuilder<MutableCollection<String>>.behavesAsMutableCollection() {
 class ArrayListTests : JUnit5Minutests {
 
     fun tests() = rootContext<MutableCollection<String>> {
-        fixture {
+        given {
             ArrayList()
         }
 
@@ -42,7 +43,7 @@ class ArrayListTests : JUnit5Minutests {
 class LinkedListTests : JUnit5Minutests {
 
     fun tests() = rootContext<MutableCollection<String>> {
-        fixture {
+        given {
             LinkedList()
         }
 

@@ -1,7 +1,7 @@
 package dev.minutest.examples
 
 import dev.minutest.afterEach
-import dev.minutest.closeableFixture
+import dev.minutest.givenClosable
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -22,7 +22,7 @@ class CloseableFixtureExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<Fixture> {
 
-        closeableFixture { testDescriptor ->
+        givenClosable { testDescriptor ->
             Fixture(File.createTempFile(testDescriptor.name, ".tmp"))
         }
 

@@ -8,7 +8,7 @@ import org.opentest4j.MultipleFailuresError
  */
 fun <F> TestContextBuilder<Sequence<F>, F>.flatten() {
 
-    deriveFixture {
+    given_ { parentFixture ->
         // 1 - By the time we get here, the parentFixture will contain just the one fixture we need for each test. See [2].
         parentFixture.first()
     }

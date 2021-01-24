@@ -1,5 +1,6 @@
 package dev.minutest.examples.experimental
 
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.junit.experimental.applyRule
 import dev.minutest.rootContext
@@ -17,7 +18,7 @@ class JUnitRulesExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<Fixture> {
 
-        fixture { Fixture() }
+        given { Fixture() }
 
         // tell the context to use the rule for each test in it and its children
         applyRule(this@JUnitRulesExampleTests::class.java.name) { this.testFolder }

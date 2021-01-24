@@ -5,7 +5,7 @@ import com.oneeyedmen.kSera.invoke
 import com.oneeyedmen.kSera.mock
 import com.oneeyedmen.kSera.returnValue
 import dev.minutest.beforeEach
-import dev.minutest.closeableFixture
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -54,7 +54,7 @@ class JMockExampleTests : JUnit5Minutests {
     fun tests() = rootContext<Fixture> {
 
         // jmockFixture manages the mockery lifecycle
-        closeableFixture {
+        given {
             Fixture(synchronisedMockery())
         }
 

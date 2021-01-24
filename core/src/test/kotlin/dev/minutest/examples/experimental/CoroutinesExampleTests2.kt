@@ -1,10 +1,7 @@
 package dev.minutest.examples.experimental
 
-import dev.minutest.ContextBuilder
-import dev.minutest.afterEach
+import dev.minutest.*
 import dev.minutest.junit.JUnit5Minutests
-import dev.minutest.rootContext
-import dev.minutest.test2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -35,7 +32,7 @@ class CoroutinesExampleTests2 : JUnit5Minutests {
 
     fun tests() = rootContext<Fixture> {
 
-        fixture { Fixture() }
+        given { Fixture() }
 
         // Now you can define coTest to use the Fixture
         coTest("fixture is now a TestCoroutineScope") {

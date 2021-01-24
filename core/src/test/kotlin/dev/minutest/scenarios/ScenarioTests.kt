@@ -3,6 +3,7 @@ package dev.minutest.scenarios
 import dev.minutest.assertLogged
 import dev.minutest.experimental.checkedAgainst
 import dev.minutest.experimental.noSymbolsLogger
+import dev.minutest.given
 import dev.minutest.rootContext
 import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Test
@@ -102,7 +103,7 @@ class ScenarioTests {
     @Test
     fun `Given passes result to Thens`() {
         val tests = rootContext<MutableList<String>> {
-            fixture { mutableListOf() }
+            given { mutableListOf() }
             Scenario("Scenario") {
                 Given("the string banana in the list") {
                     "banana".also {
@@ -129,7 +130,7 @@ class ScenarioTests {
     @Test
     fun `When And`() {
         val tests = rootContext<MutableList<String>> {
-            fixture { mutableListOf() }
+            given { mutableListOf() }
             Scenario("Scenario") {
                 GivenFixture("an empty list") {
                     mutableListOf()
@@ -167,7 +168,7 @@ class ScenarioTests {
     @Test
     fun `When passes result to Thens`() {
         val tests = rootContext<MutableList<String>> {
-            fixture { mutableListOf() }
+            given { mutableListOf() }
             Scenario("Scenario") {
                 GivenFixture("an empty list") {
                     mutableListOf()
@@ -198,7 +199,7 @@ class ScenarioTests {
     @Test
     fun `Standalone Then-And`() {
         val tests = rootContext<MutableList<String>> {
-            fixture { mutableListOf() }
+            given { mutableListOf() }
             Scenario("Scenario") {
                 Then("it is empty") {
                     log += "in then"
@@ -219,7 +220,7 @@ class ScenarioTests {
     @Test
     fun `Accessing local variables`() {
         val tests = rootContext<MutableList<String>> {
-            fixture { mutableListOf() }
+            given { mutableListOf() }
             Scenario("Scenario") {
                 Given("there is an item") {
                     fixture += "banana"

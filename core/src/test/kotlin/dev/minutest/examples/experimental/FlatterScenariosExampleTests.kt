@@ -1,6 +1,7 @@
 package dev.minutest.examples.experimental
 
 import dev.minutest.experimental.willRun
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.scenarios.Scenario
@@ -18,7 +19,7 @@ class FlatterScenariosExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<Fixture>("Moving Between Lists") {
 
-        fixture {
+        given {
             Fixture()
         }
 

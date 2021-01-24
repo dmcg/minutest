@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 class ImmutableTests : JUnit5Minutests {
 
     fun tests() = rootContext<List<String>> {
-        fixture { emptyList() }
+        given { emptyList() }
 
         afterEach {
             assertEquals(listOf("during"), it)

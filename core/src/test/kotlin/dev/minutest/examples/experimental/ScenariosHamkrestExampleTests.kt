@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.*
 import com.natpryce.hamkrest.assertion.assertThat
 import dev.minutest.experimental.noSymbolsLogger
 import dev.minutest.experimental.willRun
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.scenarios.*
@@ -24,7 +25,7 @@ class ScenariosHamkrestExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<Fixture>("Moving Between Lists") {
 
-        fixture {
+        given {
             Fixture()
         }
 

@@ -1,5 +1,6 @@
 package dev.minutest.examples.fixtures
 
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -12,7 +13,7 @@ class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
     fun tests() = rootContext<Arguments> {
 
         context("positive positive") {
-            fixture {
+            given {
                 Arguments(l = 3, r = 1)
             }
             test2("addition") {
@@ -24,7 +25,7 @@ class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
         }
 
         context("positive negative") {
-            fixture {
+            given {
                 Arguments(l = 3, r = -1)
             }
             test2("addition") {

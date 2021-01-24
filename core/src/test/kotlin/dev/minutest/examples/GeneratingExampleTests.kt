@@ -1,11 +1,8 @@
 package dev.minutest.examples
 
-import dev.minutest.ContextBuilder
-import dev.minutest.beforeEach
+import dev.minutest.*
 import dev.minutest.experimental.willRun
 import dev.minutest.junit.JUnit5Minutests
-import dev.minutest.rootContext
-import dev.minutest.test2
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertThrows
 import java.util.*
@@ -48,7 +45,7 @@ class GeneratingExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<StringStack> {
 
-        fixture { StringStack() }
+        given { StringStack() }
 
         context("an empty stack") {
             // invoke the extension functions to create tests

@@ -14,7 +14,7 @@ class BeforeAndAfterTests {
             expectedLog = listOf("before 1", "before 2", "test", "after 1", "after 2")
         ) { log ->
             rootContext<MutableList<String>> {
-                fixture { log }
+                given { log }
 
                 beforeEach {
                     assertEquals(emptyList<String>(), it)
@@ -50,7 +50,7 @@ class BeforeAndAfterTests {
             expectedLog = listOf("before 1", "before 2", "test"),
         ) { log ->
             rootContext<List<String>> {
-                fixture { emptyList() }
+                given { emptyList() }
 
                 beforeEach_ {
                     assertEquals(emptyList<String>(), it)
@@ -84,7 +84,7 @@ class BeforeAndAfterTests {
             )
         ) { log ->
             rootContext<MutableList<String>> {
-                fixture { log }
+                given { log }
 
                 beforeEach {
                     assertEquals(emptyList<String>(), it)
@@ -127,7 +127,7 @@ class BeforeAndAfterTests {
             expectedLog = listOf("test", "after")
         ) { log ->
             rootContext<MutableList<String>> {
-                fixture { log }
+                given { log }
 
                 afterEach {
                     assertEquals(listOf("test"), it)
@@ -150,7 +150,7 @@ class BeforeAndAfterTests {
             expectedLog = listOf("before", "after"),
         ) { log ->
             rootContext<MutableList<String>> {
-                fixture { log }
+                given { log }
 
                 beforeEach {
                     it.add("before")
@@ -178,20 +178,20 @@ class BeforeAndAfterTests {
             expectedLog = listOf("top", "outer", "inner", "after outer"),
         ) { log ->
             rootContext<List<String>> {
-                fixture {
+                given {
                     log.add("top")
                     listOf("top")
                 }
 
                 context("outer") {
 
-                    deriveFixture {
+                    given_ { parentFixture ->
                         log.add("outer")
-                        this.plus("outer")
+                        parentFixture.plus("outer")
                     }
 
                     context("inner") {
-                        fixture {
+                        given {
                             log.add("inner")
                             throw Exception("in inner fixture")
                         }

@@ -34,8 +34,8 @@ class FixtureNotSuppliedTests {
     fun `throws IllegalStateException if fixture is specified twice in a context`() {
         assertThrows<IllegalStateException> {
             rootContext<String> {
-                fixture { "banana" }
-                fixture { "banana" }
+                given { "banana" }
+                given { "banana" }
             }.buildNode()
         }
     }
@@ -55,7 +55,7 @@ class FixtureNotSuppliedTests {
     fun `throws IllegalStateException if parent fixture is not compatible and no deriveFixture specified`() {
         assertThrows<IllegalStateException> {
             rootContext<CharSequence> {
-                fixture { "banana" }
+                given { "banana" }
                 derivedContext<String>("subcontext") {
                     test2("there needs to be a test") {}
                 }
@@ -67,7 +67,7 @@ class FixtureNotSuppliedTests {
     fun `throws IllegalStateException if parent fixture is not nullably compatible and no deriveFixture specified`() {
         assertThrows<IllegalStateException> {
             rootContext<String?> {
-                fixture { null }
+                given { null }
                 derivedContext<String>("subcontext") {
                     test2("there needs to be a test") {
                         @Suppress("SENSELESS_COMPARISON") // except it isn't because it will be
@@ -83,7 +83,7 @@ class FixtureNotSuppliedTests {
         assertThrows<IllegalStateException> {
             rootContext<String> {
                 context("parent had no fixture") {
-                    deriveFixture { this + "banana" } // this won't have been supplied, so we should forbid
+                    given_ { parentFixture -> parentFixture + "banana" } // this won't have been supplied, so we should forbid
                     test2("test") {
                     }
                 }
@@ -93,7 +93,7 @@ class FixtureNotSuppliedTests {
         // It should be OK for Unit though
         rootContext<Unit> {
             context("parent had no fixture") {
-                deriveFixture {
+                given_ {
                 }
                 test2("test") {
                 }

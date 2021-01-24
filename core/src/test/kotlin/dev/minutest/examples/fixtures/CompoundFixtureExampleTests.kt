@@ -1,6 +1,7 @@
 package dev.minutest.examples.fixtures
 
 import dev.minutest.beforeEach
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -40,7 +41,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 
     fun tests() = rootContext<Fixture> {
-        fixture { Fixture() }
+        given { Fixture() }
 
         context("key not turned") {
             test2("light is off") {

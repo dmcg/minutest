@@ -9,7 +9,7 @@ class VarianceTests : JUnit5Minutests {
 
     fun `can supply and return subtype of fixture type`() = rootContext<Number> {
 
-        fixture { 42 }
+        given { 42 }
 
         test2_("test") {
             @Suppress("USELESS_IS_CHECK")

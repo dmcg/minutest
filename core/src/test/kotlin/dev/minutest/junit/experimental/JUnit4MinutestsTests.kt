@@ -1,6 +1,7 @@
 package dev.minutest.junit.experimental
 
 import dev.minutest.experimental.willRun
+import dev.minutest.given
 import dev.minutest.rootContext
 import dev.minutest.test2
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -10,7 +11,7 @@ class JUnit4MinutestsTests : JUnit4Minutests() {
 
     fun `my tests`() = rootContext<String> {
 
-        fixture { "banana" }
+        given { "banana" }
 
         test2("test") {
             assertEquals("banana", it)

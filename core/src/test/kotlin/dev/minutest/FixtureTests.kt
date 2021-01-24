@@ -13,7 +13,7 @@ class FixtureTests : JUnit5Minutests {
 
     fun `with fixtures`() = rootContext<Fixture> {
 
-        fixture { Fixture("banana") }
+        given { Fixture("banana") }
 
         test2("can mutate fixture without affecting following tests") {
             fruit = "kumquat"
@@ -31,7 +31,7 @@ class FixtureTests : JUnit5Minutests {
         }
 
         context("sub-context overriding fixture") {
-            fixture { Fixture("apple") }
+            given { Fixture("apple") }
 
             test2("does not have the fixture from its parent") {
                 assertEquals("apple", fruit)
@@ -39,7 +39,7 @@ class FixtureTests : JUnit5Minutests {
         }
 
         context("sub-context replacing fixture") {
-            deriveFixture { Fixture("green $fruit") }
+            given_ { parentFixture -> Fixture("green ${parentFixture.fruit}") }
 
             test2("sees the replaced fixture") {
                 assertEquals("green banana", fruit)

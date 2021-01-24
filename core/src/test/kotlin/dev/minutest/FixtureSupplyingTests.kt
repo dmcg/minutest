@@ -10,7 +10,7 @@ import kotlin.test.assertSame
 class FixtureSupplyingTests : JUnit5Minutests {
 
     fun `supply fixture at root`() = rootContext<String> {
-        fixture { "banana" }
+        given { "banana" }
         context("parent had fixture") {
             test2("test") {
                 assertEquals("banana", it)
@@ -20,7 +20,7 @@ class FixtureSupplyingTests : JUnit5Minutests {
 
     fun `supply fixture in sub-context`() = rootContext<String> {
         context("parent had no fixture") {
-            fixture { "banana" }
+            given { "banana" }
             test2("test") {
                 assertEquals("banana", it)
             }
@@ -30,7 +30,7 @@ class FixtureSupplyingTests : JUnit5Minutests {
     fun `supply fixture in sub-sub-context`() = rootContext<String> {
         context("parent had no fixture") {
             context("parent had no fixture") {
-                fixture { "banana" }
+                given { "banana" }
                 test2("test") {
                     assertEquals("banana", it)
                 }
@@ -40,7 +40,7 @@ class FixtureSupplyingTests : JUnit5Minutests {
 
     fun `supply fixture in derivedContext`() = rootContext {
         derivedContext<String>("parent had no fixture") {
-            fixture { "banana" }
+            given { "banana" }
             test2("test") {
                 assertEquals("banana", it)
             }
@@ -60,21 +60,21 @@ class FixtureSupplyingTests : JUnit5Minutests {
     }
 
     fun `fixture can be nullable and null`() = rootContext<String?> {
-        fixture { null }
+        given { null }
         test2("fixture is null") {
             assertNull(it)
         }
     }
 
     fun `fixture can be nullable and not null`() = rootContext<String?> {
-        fixture { "banana" }
+        given { "banana" }
         test2("fixture is not null") {
             assertNotNull(it)
         }
     }
 
     fun `derivedContext doesn't have to specify one if parent fixture will do`() = rootContext<String> {
-        fixture { "banana" }
+        given { "banana" }
         derivedContext<String>("Hasn't actually changed type") {
             test2("test") {
                 assertEquals("banana", it)

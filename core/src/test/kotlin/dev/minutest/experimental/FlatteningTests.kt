@@ -19,7 +19,7 @@ class FlatteningTests {
         val tests = rootContext<Sequence<String>> {
             logTo(testLogger)
 
-            fixture { emptySequence() }
+            given { emptySequence() }
             derivedContext<String>("flattened") {
 
                 flatten()
@@ -45,7 +45,7 @@ class FlatteningTests {
         val tests = rootContext<Sequence<String>> {
             logTo(testLogger)
 
-            fixture { sequenceOf("one", "two", "three") }
+            given { sequenceOf("one", "two", "three") }
             derivedContext<String>("flattened") {
 
                 flatten()
@@ -88,7 +88,7 @@ class FlatteningTests {
     @Test fun `throws single MultipleFailuresError with failures`() {
         val tests = rootContext<Sequence<String>> {
             logTo(testLogger)
-            fixture { sequenceOf("one", "two", "three") }
+            given { sequenceOf("one", "two", "three") }
             derivedContext<String>("flattened") {
 
                 flatten()

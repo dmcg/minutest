@@ -1,5 +1,6 @@
 package dev.minutest.examples;
 
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -14,7 +15,7 @@ class MyFirstMinutests : JUnit5Minutests {
     fun tests() = rootContext<Calculator> {
 
         // We need to tell Minutest how to build the fixture
-        fixture { Calculator() }
+        given { Calculator() }
 
         // define a test with a test block
         test2("addition") {

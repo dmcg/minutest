@@ -2,11 +2,8 @@
 
 package dev.minutest.scenarios
 
-import dev.minutest.ContextBuilder
-import dev.minutest.MinutestFixture
-import dev.minutest.beforeEach
+import dev.minutest.*
 import dev.minutest.scenarios.StepType.*
-import dev.minutest.test2
 
 fun <F> ContextBuilder<F>.Scenario(
     description: String? = null,
@@ -28,9 +25,9 @@ class ScenarioBuilder<F>(
         lateinit var cantAccessThisInCtor: GivenStep<F>
         givenSteps.add(
             GivenStep<F>("Given $description") {
-                fixture {
+                given {
                     this@ScenarioBuilder.tryThrowingScenarioFailedException(cantAccessThisInCtor) {
-                        factory().also { nextResult.value = it }
+                        factory(Unit).also { nextResult.value = it }
                     }
                 }
             }.also { cantAccessThisInCtor = it }

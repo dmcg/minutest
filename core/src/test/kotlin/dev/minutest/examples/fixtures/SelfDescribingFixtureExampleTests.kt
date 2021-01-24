@@ -1,6 +1,7 @@
 package dev.minutest.examples.fixtures
 
 import dev.minutest.ContextBuilder
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -35,6 +36,6 @@ class SelfDescribingFixtureExampleTests : JUnit5Minutests {
 }
 
 private fun <F> ContextBuilder<F>.context(f: F, builder: ContextBuilder<F>.() -> Unit) = context(f.toString()) {
-    fixture { f }
+    given { f }
     builder()
 }

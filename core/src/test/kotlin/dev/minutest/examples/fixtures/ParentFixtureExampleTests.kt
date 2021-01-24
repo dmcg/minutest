@@ -1,6 +1,7 @@
 package dev.minutest.examples.fixtures
 
 import dev.minutest.beforeEach
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -12,7 +13,7 @@ class ParentFixtureExampleTests : JUnit5Minutests {
     data class Fixture(var fruit: String)
 
     fun tests() = rootContext<Fixture> {
-        fixture {
+        given {
             Fixture("banana")
         }
 
@@ -27,7 +28,7 @@ class ParentFixtureExampleTests : JUnit5Minutests {
         }
 
         context("context replaces fixture") {
-            fixture {
+            given {
                 Fixture("kumquat")
             }
             test2("sees the replaced fixture") {

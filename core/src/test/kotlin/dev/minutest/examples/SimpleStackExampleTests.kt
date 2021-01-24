@@ -1,5 +1,6 @@
 package dev.minutest.examples
 
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -14,7 +15,7 @@ class SimpleStackExampleTests : JUnit5Minutests {
 
         // The fixture block tells Minutest how to create an instance of the fixture.
         // Minutest will call it once for every test.
-        fixture {
+        given {
             Stack()
         }
 

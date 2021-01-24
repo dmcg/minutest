@@ -1,6 +1,7 @@
 package dev.minutest.examples
 
 import dev.minutest.afterEach
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2_
@@ -13,7 +14,7 @@ class ImmutableExampleTests : JUnit5Minutests {
     fun tests() = rootContext<List<String>> {
 
         // List<String> is immutable
-        fixture { emptyList() }
+        given { emptyList() }
 
         // test_ allows you to return the fixture
         test2_("add an item and return the fixture") {

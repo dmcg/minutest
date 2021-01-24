@@ -52,46 +52,12 @@ abstract class TestContextBuilder<PF, F> {
     }
 
     /**
-     * Define the fixture that will be used in this context's tests and sub-contexts.
-     *
-     * The strange parameter type keeps compatibility with the other fixture methods, that have
-     * the parent fixture as the receiver.
-     */
-    fun given(factory: () -> F) {
-        setFixtureFactory { _ ->
-            factory()
-        }
-    }
-
-    /**
-     * Define the fixture that will be used in this context's tests and sub-contexts.
-     *
-     * The strange parameter type keeps compatibility with the other fixture methods, that have
-     * the parent fixture as the receiver.
-     */
-    fun givenInstrumented(factory: (testDescriptor: TestDescriptor) -> F) {
-        setFixtureFactory { testDescriptor ->
-            factory(testDescriptor)
-        }
-    }
-
-    /**
      * Define the fixture that will be used in this context's tests and sub-contexts by
      * transforming the parent fixture, accessible as the receiver 'this'.
      */
-    @Deprecated("use given { parentFixture -> .. } to derive a fixture")
+    @Deprecated("use given_ { parentFixture -> .. } to derive a fixture")
     fun deriveFixture(f: (PF).(testDescriptor: TestDescriptor) -> F) {
         setDerivedFixtureFactory(f)
-    }
-
-    /**
-     * Define the fixture that will be used in this context's tests and sub-contexts by
-     * transforming the parent fixture.
-     */
-    fun given(transform: (parentFixture: PF) -> F) {
-        setDerivedFixtureFactory { parentFixture, _ ->
-            transform(parentFixture)
-        }
     }
 
     /**
@@ -234,4 +200,38 @@ abstract class TestContextBuilder<PF, F> {
 
     internal abstract fun addBeforeAll(f: (TestDescriptor) -> Unit)
     internal abstract fun addAfterAll(f: (TestDescriptor) -> Unit)
+}
+
+/**
+ * Define the fixture that will be used in this context's tests and sub-contexts.
+ *
+ * The strange parameter type keeps compatibility with the other fixture methods, that have
+ * the parent fixture as the receiver.
+ */
+fun <PF, F> TestContextBuilder<PF, F>.given(factory: () -> F) {
+    setFixtureFactory { _ ->
+        factory()
+    }
+}
+
+/**
+ * Define the fixture that will be used in this context's tests and sub-contexts by
+ * transforming the parent fixture.
+ */
+fun <PF, F> TestContextBuilder<PF, F>.given_(transform: (parentFixture: PF) -> F) {
+    setDerivedFixtureFactory { parentFixture, _ ->
+        transform(parentFixture)
+    }
+}
+
+/**
+ * Define the fixture that will be used in this context's tests and sub-contexts.
+ *
+ * The strange parameter type keeps compatibility with the other fixture methods, that have
+ * the parent fixture as the receiver.
+ */
+fun <PF, F> TestContextBuilder<PF, F>.givenInstrumented(factory: (testDescriptor: TestDescriptor) -> F) {
+    setFixtureFactory { testDescriptor ->
+        factory(testDescriptor)
+    }
 }

@@ -12,7 +12,7 @@ class DynamicTests : JUnit5Minutests {
     )
 
     fun tests() = rootContext<Fixture> {
-        fixture { Fixture("banana") }
+        given { Fixture("banana") }
 
         context("same fixture for each") {
             (1..3).forEach { i ->
@@ -23,7 +23,7 @@ class DynamicTests : JUnit5Minutests {
         context("modify fixture for each test") {
             (1..3).forEach { i ->
                 context("banana count $i") {
-                    deriveFixture { Fixture("$i ${fruit}") }
+                    given_ { parentFixture ->  Fixture("$i ${parentFixture.fruit}") }
                     test2("test for $i") {
                         assertEquals("$i banana", fruit)
                     }

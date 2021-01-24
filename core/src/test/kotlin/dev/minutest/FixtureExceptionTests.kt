@@ -10,7 +10,7 @@ class FixtureExceptionTests  {
     @Test
     fun `throws exception thrown from fixture during execution`() {
         val tests = rootContext<String> {
-            fixture {
+            given {
                 throw FileNotFoundException()
             }
             test2("there needs to be a test to run anything") {}

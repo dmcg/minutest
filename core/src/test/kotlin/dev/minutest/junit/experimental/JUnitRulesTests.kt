@@ -1,10 +1,7 @@
 package dev.minutest.junit.experimental
 
-import dev.minutest.afterEach
-import dev.minutest.assertLoggedInAnyOrder
+import dev.minutest.*
 import dev.minutest.junit.JUnit5Minutests
-import dev.minutest.rootContext
-import dev.minutest.test2
 import org.junit.jupiter.api.AfterAll
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
@@ -26,7 +23,7 @@ class JUnitRulesTests : JUnit5Minutests {
     }
 
     fun `non-null fixture`() = rootContext<Fixture>(name = "non-null fixture") {
-        fixture {
+        given {
             Fixture()
         }
 
@@ -46,7 +43,7 @@ class JUnitRulesTests : JUnit5Minutests {
 
     // Show that we differentiate between a null fixture and a fixture that hasn't been set
     fun `null fixture`() = rootContext<Fixture?>(name = "null fixture") {
-        fixture {
+        given {
             null
         }
 

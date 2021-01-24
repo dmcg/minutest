@@ -1,5 +1,6 @@
 package dev.minutest.examples.fixtures
 
+import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
 import dev.minutest.test2
@@ -10,7 +11,7 @@ class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
     fun tests() = rootContext<List<String>> {
 
         context("empty") {
-            fixture {
+            given {
                 emptyList()
             }
             test2("is empty") {
@@ -23,7 +24,7 @@ class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
 
         // Note that the context name and the fixture state agree
         context("not empty") {
-            fixture {
+            given {
                 listOf("item")
             }
             test2("is not empty") {
