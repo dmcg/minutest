@@ -83,13 +83,19 @@ abstract class TestContextBuilder<PF, F> {
      * Apply an operation to the current fixture (accessible as the receiver 'this') before
      * running tests or sub-contexts.
      */
-    abstract fun before(operation: F.(TestDescriptor) -> Unit)
-
+    fun before(operation: F.(TestDescriptor) -> Unit) {
+        before_ { testDescriptor ->
+            this.operation(testDescriptor)
+            this
+        }
+    }
     /**
      * Replace the current fixture (accessible as the receiver 'this') before
      * running tests or sub-contexts.
      */
-    abstract fun before_(transform: F.(TestDescriptor) -> F)
+    fun before_(transform: F.(TestDescriptor) -> F) {
+        addBefore(transform)
+    }
 
     /**
      * Apply an operation to the last known value of the current fixture
@@ -99,13 +105,20 @@ abstract class TestContextBuilder<PF, F> {
      *
      * An exception thrown in an after will prevent later afters running.
      */
-    abstract fun after(operation: F.(TestDescriptor) -> Unit)
+
+    fun after(operation: F.(TestDescriptor) -> Unit) {
+        addAfter { result, testDescriptor ->
+            result.value.operation(testDescriptor)
+        }
+    }
 
     /**
      * Version of [after] that gives access to the last known value of the fixture and
      * any exception thrown by previous operations as a [FixtureValue].
      */
-    abstract fun after2(operation: FixtureValue<F>.(TestDescriptor) -> Unit)
+    fun after2(operation: FixtureValue<F>.(TestDescriptor) -> Unit) {
+        addAfter(operation)
+    }
 
     /**
      * Name the fixture to improve communication.
@@ -120,12 +133,16 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Apply an operation before any test in this or sub-contexts.
      */
-    abstract fun beforeAll(f: (TestDescriptor) -> Unit)
+    fun beforeAll(f: (TestDescriptor) -> Unit) {
+        addBeforeAll(f)
+    }
 
     /**
      * Apply an operation after all the tests and sub-contexts have completed.
      */
-    abstract fun afterAll(f: (TestDescriptor) -> Unit)
+    fun afterAll(f: (TestDescriptor) -> Unit) {
+        addAfterAll(f)
+    }
 
     /**
      * Internal implementation, only public to be accessible to inline functions.
@@ -141,4 +158,10 @@ abstract class TestContextBuilder<PF, F> {
         name: String,
         f: (F, TestDescriptor) -> F
     ): Annotatable<F>
+
+    internal abstract fun addBefore(transform: (F, TestDescriptor) -> F)
+    internal abstract fun addAfter(
+        operation: (FixtureValue<F>, TestDescriptor) -> Unit)
+    internal abstract fun addBeforeAll(f: (TestDescriptor) -> Unit)
+    internal abstract fun addAfterAll(f: (TestDescriptor) -> Unit)
 }

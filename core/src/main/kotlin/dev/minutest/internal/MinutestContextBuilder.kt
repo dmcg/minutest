@@ -45,24 +45,13 @@ internal data class MinutestContextBuilder<PF, F>(
         }
     }
 
-    override fun before(operation: F.(TestDescriptor) -> Unit) {
-        before_ { testDescriptor ->
-            this.operation(testDescriptor)
-            this
-        }
-    }
-
-    override fun before_(transform: F.(TestDescriptor) -> F) {
+    override fun addBefore(transform: (F, TestDescriptor) -> F) {
         befores.add(transform)
     }
 
-    override fun after(operation: F.(TestDescriptor) -> Unit) {
-        afters.add { result, testDescriptor ->
-            result.value.operation(testDescriptor)
-        }
-    }
-
-    override fun after2(operation: FixtureValue<F>.(TestDescriptor) -> Unit) {
+    override fun addAfter(
+        operation: (FixtureValue<F>, TestDescriptor) -> Unit
+    ) {
         afters.add(operation)
     }
 
@@ -128,11 +117,11 @@ internal data class MinutestContextBuilder<PF, F>(
         return child
     }
 
-    override fun beforeAll(f: (TestDescriptor) -> Unit) {
+    override fun addBeforeAll(f: (TestDescriptor) -> Unit) {
         beforeAlls.add(f)
     }
 
-    override fun afterAll(f: (TestDescriptor) -> Unit) {
+    override fun addAfterAll(f: (TestDescriptor) -> Unit) {
         afterAlls.add(f)
     }
 
