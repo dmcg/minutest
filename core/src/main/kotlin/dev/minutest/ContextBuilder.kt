@@ -96,6 +96,7 @@ abstract class TestContextBuilder<PF, F> {
      * Apply an operation to the current fixture (accessible as the receiver 'this') before
      * running tests or sub-contexts.
      */
+    @Deprecated("Use beforeEach")
     fun before(operation: F.(TestDescriptor) -> Unit) {
         before_ { testDescriptor ->
             this.operation(testDescriptor)
@@ -108,6 +109,7 @@ abstract class TestContextBuilder<PF, F> {
      * running tests or sub-contexts.
      */
     @Suppress("FunctionName")
+    @Deprecated("Use beforeEach_")
     fun before_(transform: F.(TestDescriptor) -> F) {
         addBefore(transform)
     }

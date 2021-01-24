@@ -52,14 +52,14 @@ class BeforeAndAfterTests {
             rootContext<List<String>> {
                 fixture { emptyList() }
 
-                before_ {
-                    assertEquals(emptyList<String>(), this)
-                    this + "before 1"
+                beforeEach_ {
+                    assertEquals(emptyList<String>(), it)
+                    it + "before 1"
                 }
 
-                before_ {
-                    assertEquals(listOf("before 1"), this)
-                    this + "before 2"
+                beforeEach_ {
+                    assertEquals(listOf("before 1"), it)
+                    it + "before 2"
                 }
 
                 after {
