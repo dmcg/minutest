@@ -25,19 +25,23 @@ internal data class MinutestContextBuilder<PF, F>(
     override fun fixture(factory: Unit.(testDescriptor: TestDescriptor) -> F) {
         if (fixtureFactory is ExplicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
-        fixtureFactory = ExplicitFixtureFactory(parentFixtureType, fixtureType) { _, testDescriptor ->
-            Unit.factory(testDescriptor)
-        }
+        fixtureFactory =
+            ExplicitFixtureFactory(parentFixtureType, fixtureType) { _, testDescriptor ->
+                Unit.factory(testDescriptor)
+            }
     }
 
     override fun deriveFixture(f: PF.(TestDescriptor) -> F) {
         when {
             fixtureFactory is ExplicitFixtureFactory ->
                 throw IllegalStateException("Fixture already set in context \"$name\"")
-            fixtureFactory.outputType.isSubtypeOf(parentFixtureType) -> fixtureFactory =
-                ExplicitFixtureFactory(parentFixtureType, fixtureType, f)
+            fixtureFactory.outputType.isSubtypeOf(parentFixtureType) ->
+                fixtureFactory = ExplicitFixtureFactory(parentFixtureType, fixtureType, f)
             else ->
-                error("You can't deriveFixture in context \"$name\" because the parent context has no fixture")
+                error(
+                    "You can't deriveFixture in context \"$name\" " +
+                        "because the parent context has no fixture"
+                )
         }
     }
 
@@ -53,7 +57,9 @@ internal data class MinutestContextBuilder<PF, F>(
     }
 
     override fun after(operation: F.(TestDescriptor) -> Unit) {
-        afters.add { result, testDescriptor -> result.value.operation(testDescriptor) }
+        afters.add { result, testDescriptor ->
+            result.value.operation(testDescriptor)
+        }
     }
 
     override fun after2(operation: FixtureValue<F>.(TestDescriptor) -> Unit) {
@@ -69,7 +75,10 @@ internal data class MinutestContextBuilder<PF, F>(
         return apply { sourceReferenceForBlockInvocation()?.let { addMarker(it) } }
     }
 
-    override fun context(name: String, block: TestContextBuilder<F, F>.() -> Unit) =
+    override fun context(
+        name: String,
+        block: TestContextBuilder<F, F>.() -> Unit
+    ) =
         newContext(
             name,
             fixtureType,
@@ -77,7 +86,8 @@ internal data class MinutestContextBuilder<PF, F>(
                 IdFixtureFactory(fixtureType)
             else
                 UnsafeFixtureFactory(fixtureFactory.outputType),
-            block)
+            block
+        )
 
     override fun <G> internalDerivedContext(
         name: String,
@@ -155,7 +165,9 @@ internal data class MinutestContextBuilder<PF, F>(
     }
 
     private fun thisContextDoesntReferenceTheFixture() =
-        befores.isEmpty() && afters.isEmpty() && !children.any { it is TestBuilder<F> }
+        befores.isEmpty() &&
+            afters.isEmpty() &&
+            !children.any { it is TestBuilder<F> }
 }
 
 private val sourceRoot = listOf(
@@ -167,7 +179,8 @@ private fun sourceReferenceForBlockInvocation(): SourceReference? {
     val elements = Thread.currentThread().stackTrace
     return elements.drop(2).find {
         val string = it.toString()
-        !string.startsWith("dev.minutest.internal") && !string.startsWith("dev.minutest.TestContextBuilder")
+        !string.startsWith("dev.minutest.internal")
+            && !string.startsWith("dev.minutest.TestContextBuilder")
     }?.toSourceReference(sourceRoot)
 }
 
@@ -175,7 +188,11 @@ private fun StackTraceElement.toSourceReference(sourceRoot: File): SourceReferen
     val fileName = fileName ?: return null
     val type = Class.forName(className)
     return SourceReference(
-        sourceRoot.toPath().resolve(type.`package`.name.replace(".", "/")).resolve(fileName).toFile().absolutePath,
-        lineNumber)
+        sourceRoot.toPath()
+            .resolve(type.`package`.name.replace(".", "/"))
+            .resolve(fileName).toFile()
+            .absolutePath,
+        lineNumber
+    )
 }
 

@@ -57,7 +57,10 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Define a test on the current fixture (accessible as 'this').
      */
-    fun test(name: String, f: F.(testDescriptor: TestDescriptor) -> Unit): Annotatable<F> =
+    fun test(
+        name: String,
+        f: F.(testDescriptor: TestDescriptor) -> Unit
+    ): Annotatable<F> =
         test_(name) { testDescriptor ->
             this.apply {
                 f(testDescriptor)
@@ -69,7 +72,10 @@ abstract class TestContextBuilder<PF, F> {
      * a new fixture to be processed by 'afters'.
      */
     @Suppress("FunctionName")
-    abstract fun test_(name: String, f: F.(testDescriptor: TestDescriptor) -> F): Annotatable<F>
+    abstract fun test_(
+        name: String,
+        f: F.(testDescriptor: TestDescriptor) -> F
+    ): Annotatable<F>
 
     /**
      * Apply an operation to the current fixture (accessible as the receiver 'this') before
