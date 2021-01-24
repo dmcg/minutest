@@ -1,4 +1,4 @@
-package dev.minutest.examples;
+package dev.minutest.examples
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

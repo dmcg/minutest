@@ -7,7 +7,7 @@ import kotlin.reflect.KVisibility
 
 internal fun FixtureType.creator(): (() -> Any)? {
     val classifier = this.classifier
-    if (classifier == Unit::class) return { Unit } // shortcut as we do this a lot
+    if (classifier == Unit::class) return { } // shortcut as we do this a lot
     val objectInstance = try {
         classifier.objectInstance
     } catch (x: Exception) {

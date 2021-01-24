@@ -62,7 +62,9 @@ private class TestRuleTransform<PF, F, R : TestRule>(
         } ?: throw IllegalStateException("fixture not initialised after TestRule evaluation")
     }
 
-    private fun TestDescriptor.toTestDescription(): Description = fullName().let {
-        createTestDescription(descriptionClassName, it.joinToString("."))
-    }
+    private fun TestDescriptor.toTestDescription(): Description =
+        createTestDescription(
+            descriptionClassName,
+            fullName().joinToString(".")
+        )
 }

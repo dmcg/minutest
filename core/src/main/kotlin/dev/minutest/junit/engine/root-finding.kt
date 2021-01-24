@@ -59,10 +59,10 @@ private fun shortcutClassSelection(discoveryRequest: EngineDiscoveryRequest): Li
         return when {
             classSelectors.isEmpty() -> null
             else ->
-                classSelectors.map { classAndMethodName ->
+                classSelectors.mapNotNull { classAndMethodName ->
                     amalgamatedRootContext(Class.forName(classAndMethodName.className))
                         ?.selectJust(classAndMethodName.methodName)
-                }.filterNotNull()
+                }
         }
     }
 }

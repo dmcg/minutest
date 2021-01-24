@@ -28,6 +28,7 @@ object Instrumented {
         }
     }
 
+    @Suppress("FunctionName")
     fun <PF, F> TestContextBuilder<PF, F>.given_(
         transform: (parentFixture: PF, testDescriptor: TestDescriptor) -> F
     ) {
@@ -46,6 +47,7 @@ object Instrumented {
         }
     }
 
+    @Suppress("FunctionName")
     fun <PF, F> TestContextBuilder<PF, F>.test2_(
         name: String,
         f: F.(fixture: F, testDescriptor: TestDescriptor) -> F

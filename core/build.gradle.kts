@@ -40,7 +40,7 @@ dependencies {
 }
 
 tasks {
-    withType<KotlinJvmCompile>() {
+    withType<KotlinJvmCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
         }

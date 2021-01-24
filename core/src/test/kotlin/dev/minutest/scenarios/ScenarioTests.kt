@@ -109,7 +109,7 @@ class ScenarioTests {
                     "banana".also {
                         fixture += it
                     }
-                }.Then("it is banana") { it ->
+                }.Then("it is banana") {
                     log += "in then"
                     assertEquals("banana", it)
                     assertEquals(listOf("banana"), this)
@@ -145,7 +145,7 @@ class ScenarioTests {
                     "kumquat".also {
                         this += it
                     }
-                }.Then("it is kumquat") { it ->
+                }.Then("it is kumquat") {
                     log += "in then"
                     assertEquals("kumquat", it)
                     assertEquals(listOf("banana", "kumquat"), this)
@@ -174,7 +174,7 @@ class ScenarioTests {
                     mutableListOf()
                 }
 
-                When("add in an element") {
+                val and = When("add in an element") {
                     "banana".also {
                         this += it
                     }

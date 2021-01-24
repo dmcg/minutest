@@ -33,7 +33,7 @@ class ControlPanel(
 
 class ScenariosExampleTests : JUnit5Minutests {
 
-    class Fixture() {
+    class Fixture {
         var beeped = false
         var launched = false
 

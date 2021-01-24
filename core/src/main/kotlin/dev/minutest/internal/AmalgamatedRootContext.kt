@@ -5,7 +5,7 @@ import dev.minutest.*
 /**
  * A [Context] that is a number of otherwise root contexts, smooshed together.
  *
- * Used where we find more than one [TestFactory] in a JUnit5 test, or to collect all
+ * Used where we find more than one TestFactory in a JUnit5 test, or to collect all
  * the tests in a package using the MinutestTestEngine.
  *
  * Maybe it shouldn't exist - the RunnableNode might be able to do the job.

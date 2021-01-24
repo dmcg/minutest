@@ -82,7 +82,7 @@ class TwoRootNamingTests4 : JUnit4Minutests() {
     fun tests2() = root2()
 }
 
-class TwoRootNamingTestsX() {
+class TwoRootNamingTestsX {
     @Testable
     fun tests1() = root1()
     @Testable

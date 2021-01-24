@@ -30,7 +30,7 @@ class ControlPanel(
 class CompoundFixtureExampleTests : JUnit5Minutests {
 
     // The fixture consists of all the state affected by tests
-    class Fixture() {
+    class Fixture {
         var beeped = false
         var launched = false
 

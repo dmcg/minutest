@@ -1,4 +1,4 @@
-package dev.minutest.examples;
+package dev.minutest.examples
 
 import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests

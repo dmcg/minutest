@@ -32,7 +32,7 @@ fun <PF, F> TestContextBuilder<PF, F>.beforeEach_(
  * the parent fixture as the receiver.
  */
 fun <PF, F> TestContextBuilder<PF, F>.given(factory: () -> F) {
-    setFixtureFactory { _ ->
+    setFixtureFactory {
         factory()
     }
 }
@@ -41,6 +41,7 @@ fun <PF, F> TestContextBuilder<PF, F>.given(factory: () -> F) {
  * Define the fixture that will be used in this context's tests and sub-contexts by
  * transforming the parent fixture.
  */
+@Suppress("FunctionName")
 fun <PF, F> TestContextBuilder<PF, F>.given_(
     transform: (parentFixture: PF) -> F
 ) {
