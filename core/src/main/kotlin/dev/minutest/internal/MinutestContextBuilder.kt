@@ -5,7 +5,7 @@ import dev.minutest.experimental.transformedBy
 import java.io.File
 
 /**
- * Internal implementation of [TestContextBuilder] which hides the details and the [NodeBuilder]ness.
+ * Internal state behind the DSL.
  */
 internal data class MinutestContextBuilder<PF, F>(
     val name: String,
@@ -22,16 +22,16 @@ internal data class MinutestContextBuilder<PF, F>(
     private val block: TestContextBuilder<PF, F>.() -> Unit
 ) : TestContextBuilder<PF, F>(), NodeBuilder<PF> {
 
-    override fun fixture(factory: Unit.(testDescriptor: TestDescriptor) -> F) {
+    override fun setFixtureFactory(factory: (testDescriptor: TestDescriptor) -> F) {
         if (fixtureFactory is ExplicitFixtureFactory)
             throw IllegalStateException("Fixture already set in context \"$name\"")
         fixtureFactory =
             ExplicitFixtureFactory(parentFixtureType, fixtureType) { _, testDescriptor ->
-                Unit.factory(testDescriptor)
+                factory(testDescriptor)
             }
     }
 
-    override fun deriveFixture(f: PF.(TestDescriptor) -> F) {
+    override fun setDerivedFixtureFactory(f: PF.(TestDescriptor) -> F) {
         when {
             fixtureFactory is ExplicitFixtureFactory ->
                 throw IllegalStateException("Fixture already set in context \"$name\"")

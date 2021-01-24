@@ -43,7 +43,11 @@ abstract class TestContextBuilder<PF, F> {
      * The strange parameter type keeps compatibility with the other fixture methods, that have
      * the parent fixture as the receiver.
      */
-    abstract fun fixture(factory: (Unit).(testDescriptor: TestDescriptor) -> F)
+    fun fixture(factory: (Unit).(testDescriptor: TestDescriptor) -> F) {
+        setFixtureFactory { testDescriptor ->
+            Unit.factory(testDescriptor)
+        }
+    }
 
     /**
      * Apply an operation to the current fixture (accessible as the receiver 'this')
@@ -55,7 +59,9 @@ abstract class TestContextBuilder<PF, F> {
      * Define the fixture that will be used in this context's tests and sub-contexts by
      * transforming the parent fixture, accessible as the receiver 'this'.
      */
-    abstract fun deriveFixture(f: (PF).(testDescriptor: TestDescriptor) -> F)
+    fun deriveFixture(f: (PF).(testDescriptor: TestDescriptor) -> F) {
+        setDerivedFixtureFactory(f)
+    }
 
     /**
      * Define a test on the current fixture (accessible as 'this').
@@ -92,6 +98,7 @@ abstract class TestContextBuilder<PF, F> {
             this
         }
     }
+
     /**
      * Replace the current fixture (accessible as the receiver 'this') before
      * running tests or sub-contexts.
@@ -167,9 +174,14 @@ abstract class TestContextBuilder<PF, F> {
         f: (F, TestDescriptor) -> F
     ): Annotatable<F>
 
+    internal abstract fun setFixtureFactory(factory: (testDescriptor: TestDescriptor) -> F)
+    internal abstract fun setDerivedFixtureFactory(f: PF.(TestDescriptor) -> F)
+
     internal abstract fun addBefore(transform: (F, TestDescriptor) -> F)
     internal abstract fun addAfter(
-        operation: (FixtureValue<F>, TestDescriptor) -> Unit)
+        operation: (FixtureValue<F>, TestDescriptor) -> Unit
+    )
+
     internal abstract fun addBeforeAll(f: (TestDescriptor) -> Unit)
     internal abstract fun addAfterAll(f: (TestDescriptor) -> Unit)
 }
