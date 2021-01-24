@@ -6,7 +6,10 @@ import dev.minutest.Test
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
 
-private val pool = ForkJoinPool.commonPool()
+private val pool: ForkJoinPool? = when {
+    System.getProperty("dev.minutest.parallel") != null -> ForkJoinPool.commonPool()
+    else -> null
+}
 
 /**
  * Create a [RunnableContext] representing the roots of a tree of tests.
