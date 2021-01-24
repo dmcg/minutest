@@ -16,12 +16,12 @@ class ParentFixtureExampleTests : JUnit5Minutests {
         }
 
         test2("sees the context's fixture") {
-            assertEquals("banana", fruit)
+            assertEquals("banana", it.fruit)
         }
 
         context("context inherits fixture") {
             test2("sees the parent context's fixture") {
-                assertEquals("banana", fruit)
+                assertEquals("banana", it.fruit)
             }
         }
 
@@ -30,16 +30,16 @@ class ParentFixtureExampleTests : JUnit5Minutests {
                 Fixture("kumquat")
             }
             test2("sees the replaced fixture") {
-                assertEquals("kumquat", fruit)
+                assertEquals("kumquat", it.fruit)
             }
         }
 
         context("context modifies fixture") {
-            before {
-                fruit = "apple"
+            beforeEach {
+                it.fruit = "apple"
             }
             test2("sees the modified fixture") {
-                assertEquals("apple", fruit)
+                assertEquals("apple", it.fruit)
             }
         }
     }

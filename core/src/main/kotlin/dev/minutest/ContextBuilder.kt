@@ -54,7 +54,12 @@ abstract class TestContextBuilder<PF, F> {
      * before running tests or sub-contexts.
      */
     @Deprecated("Use before to modify the fixture", ReplaceWith("before(operation)"))
-    fun modifyFixture(operation: F.(TestDescriptor) -> Unit): Unit = before(operation)
+    fun modifyFixture(operation: F.(TestDescriptor) -> Unit): Unit {
+        addBefore { fixture, testDescriptor ->
+            fixture.operation(testDescriptor)
+            fixture
+        }
+    }
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts by
@@ -105,6 +110,28 @@ abstract class TestContextBuilder<PF, F> {
     }
 
     /**
+     * Apply an operation to the current fixture before running tests or sub-contexts.
+     */
+    fun beforeEach(operation: F.(fixture: F) -> Unit) {
+        beforeEach_ { fixture ->
+            fixture.operation(fixture)
+            this
+        }
+    }
+
+    /**
+     * Apply an operation to the current fixture before running tests or sub-contexts.
+     */
+    fun instrumentedBeforeEach(
+        operation: F.(fixture: F, testDescriptor: TestDescriptor) -> Unit
+    ) {
+        instrumentedBeforeEach_ { fixture, testDescriptor ->
+            fixture.operation(fixture, testDescriptor)
+            this
+        }
+    }
+
+    /**
      * Replace the current fixture (accessible as the receiver 'this') before
      * running tests or sub-contexts.
      */
@@ -141,13 +168,15 @@ abstract class TestContextBuilder<PF, F> {
      * Name the fixture to improve communication.
      */
     @Deprecated("Use the new DSL to get the fixture as a lambda parameter")
-    val F.fixture: F get() = this
+    val F.fixture: F
+        get() = this
 
     /**
      * Name the parentFixture to improve communication.
      */
     @Deprecated("Use the new DSL to get the parent fixture as a lambda parameter")
-    val PF.parentFixture: PF get() = this
+    val PF.parentFixture: PF
+        get() = this
 
     /**
      * Apply an operation before any test in this or sub-contexts.

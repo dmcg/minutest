@@ -47,14 +47,14 @@ class FixtureTests : JUnit5Minutests {
         }
 
         context("sub-context modifying fixture") {
-            before { fruit = "green ${fruit}s" }
+            beforeEach { fruit = "green ${fruit}s" }
 
             test2("sees the modified fixture") {
                 assertEquals("green bananas", fruit)
             }
 
             context("sub-contexts see parent mods") {
-                before { fruit = "we have no $fruit" }
+                beforeEach { fruit = "we have no $fruit" }
 
                 test2("sees the modified fixture") {
                     assertEquals("we have no green bananas", fruit)

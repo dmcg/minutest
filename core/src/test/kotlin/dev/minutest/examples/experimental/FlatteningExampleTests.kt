@@ -21,7 +21,7 @@ class FlatteningExampleTests : JUnit5Minutests {
             // flatten does the magic
             flatten()
 
-            before {
+            beforeEach {
                 // will be invoked with each item in the sequence
             }
 

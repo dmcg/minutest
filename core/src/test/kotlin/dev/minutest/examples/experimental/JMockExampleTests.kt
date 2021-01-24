@@ -58,7 +58,7 @@ class JMockExampleTests : JUnit5Minutests {
         }
 
         context("key not turned") {
-            before {
+            beforeEach {
                 mockery.expecting {
                     allowing(key).isTurned.which will returnValue(false)
                 }
@@ -74,7 +74,7 @@ class JMockExampleTests : JUnit5Minutests {
         }
 
         context("key turned") {
-            before {
+            beforeEach {
                 mockery.expecting {
                     allowing(key).isTurned.which will returnValue(true)
                 }

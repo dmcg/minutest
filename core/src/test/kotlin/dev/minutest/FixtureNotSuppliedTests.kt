@@ -22,8 +22,8 @@ class FixtureNotSuppliedTests {
     fun `throws IllegalStateException if no fixture specified when one is needed by a fixture`() {
         assertThrows<IllegalStateException> {
             rootContext<String> {
-                before {
-                    fixture
+                beforeEach {
+                    it
                 }
                 test2("there needs to be a test") {}
             }.buildNode()

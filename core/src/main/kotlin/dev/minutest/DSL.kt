@@ -17,10 +17,10 @@ fun <PF, F> TestContextBuilder<PF, F>.beforeEach_(
  */
 @Suppress("FunctionName")
 fun <PF, F> TestContextBuilder<PF, F>.instrumentedBeforeEach_(
-    transform: (fixture: F) -> F
+    transform: F.(fixture: F, testDescriptor: TestDescriptor) -> F
 ) {
-    addBefore { fixture, _ ->
-        transform(fixture)
+    addBefore { fixture, testDescriptor ->
+        fixture.transform(fixture, testDescriptor)
     }
 }
 

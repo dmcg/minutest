@@ -18,7 +18,7 @@ private fun assumptionsContract(assumer: (Boolean) -> Unit) =
         }
 
         context("a context with assume in a fixture block") {
-            before {
+            beforeEach {
                 assumer(false)
             }
             test2("should not be run") {

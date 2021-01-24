@@ -50,8 +50,8 @@ class FlatteningTests {
 
                 flatten()
 
-                before {
-                    miscLog.add("before $fixture")
+                beforeEach {
+                    miscLog.add("before $it")
                 }
 
                 test2("is a string") {
@@ -93,8 +93,8 @@ class FlatteningTests {
 
                 flatten()
 
-                before {
-                    miscLog.add("before $fixture")
+                beforeEach {
+                    miscLog.add("before $it")
                 }
 
                 test2("is two") {

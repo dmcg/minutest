@@ -57,7 +57,7 @@ class GeneratingExampleTests : JUnit5Minutests {
         }
 
         context("a stack with one item") {
-            before { push("one") }
+            beforeEach { it.push("one") }
 
             isEmpty(false)
             canPush()

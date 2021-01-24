@@ -22,8 +22,8 @@ class StackExampleTests : JUnit5Minutests {
 
         context("after pushing an element") {
 
-            before {
-                parentFixture.push("an element")
+            beforeEach {
+                it.push("an element")
             }
 
             test2("it is no longer empty") {

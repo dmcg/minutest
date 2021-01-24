@@ -16,13 +16,13 @@ class BeforeAndAfterTests {
             rootContext<MutableList<String>> {
                 fixture { log }
 
-                before {
-                    assertEquals(emptyList<String>(), this)
+                beforeEach {
+                    assertEquals(emptyList<String>(), it)
                     add("before 1")
                 }
 
-                before {
-                    assertEquals(listOf("before 1"), this)
+                beforeEach {
+                    assertEquals(listOf("before 1"), it)
                     add("before 2")
                 }
 
@@ -86,9 +86,9 @@ class BeforeAndAfterTests {
             rootContext<MutableList<String>> {
                 fixture { log }
 
-                before {
-                    assertEquals(emptyList<String>(), this)
-                    add("outer before 1")
+                beforeEach {
+                    assertEquals(emptyList<String>(), it)
+                    it.add("outer before 1")
                 }
 
                 after {
@@ -97,14 +97,14 @@ class BeforeAndAfterTests {
                 }
 
                 context("inner") {
-                    before {
-                        assertEquals(listOf("outer before 1"), this)
-                        add("inner before")
+                    beforeEach {
+                        assertEquals(listOf("outer before 1"), it)
+                        it.add("inner before")
                     }
 
-                    before {
+                    beforeEach {
                         assertEquals(listOf("outer before 1", "inner before"), this)
-                        add("inner fixture")
+                        it.add("inner fixture")
                     }
 
                     after {
@@ -152,8 +152,8 @@ class BeforeAndAfterTests {
             rootContext<MutableList<String>> {
                 fixture { log }
 
-                before {
-                    add("before")
+                beforeEach {
+                    it.add("before")
                     throw IOException("deliberate")
                 }
 

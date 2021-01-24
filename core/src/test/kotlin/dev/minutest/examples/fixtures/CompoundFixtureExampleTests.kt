@@ -53,7 +53,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
         }
 
         context("key turned") {
-            before {
+            beforeEach {
                 controlPanel.turnKey()
             }
             test2("light is on") {

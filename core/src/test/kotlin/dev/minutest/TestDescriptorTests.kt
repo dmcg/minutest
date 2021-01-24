@@ -21,7 +21,7 @@ class TestDescriptorTests {
                     log.add(testDescriptor.pathAsString() + " : fixture")
                 }
 
-                before { testDescriptor ->
+                instrumentedBeforeEach { _, testDescriptor ->
                     log.add(testDescriptor.pathAsString() + " : before")
                 }
 
