@@ -2,6 +2,24 @@
 
 I still have to go through Slack posts to find older details, but in the meantime
 
+## 1.12.0
+
+This release is preparing for a v2, with some DSL improvements, and 
+parallel test running by default.
+
+Run tests in each root context in parallel by setting a system property dev.minutest.parallel.
+
+Lots of internal rework to support our own test engine and speeding things up.
+
+Starting to decouple the DSL from the test building.
+
+Some very minor API changes that I don't think anyone will notice. 
+
+## 1.11.0
+
+Experimental support for Scenarios
+
+Internal changes
 
 ## 1.10.0
 

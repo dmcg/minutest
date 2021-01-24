@@ -179,7 +179,9 @@ In Minutest it looks like this
 
 [start-insert]: <../core/src/test/kotlin/dev/minutest/examples/MyFirstMinutests.kt>
 ```kotlin
-// Mix-in JUnit5Minutests to run Minutests with JUnit 5 (JUnit 4 support is also available)
+// Mix-in JUnit5Minutests to run Minutests with JUnit 5
+//
+// (JUnit 4 support is also available, see [JUnit4Minutests].)
 class MyFirstMinutests : JUnit5Minutests {
 
     // tests are grouped in a context
@@ -315,16 +317,16 @@ class ParameterisedExampleTests : JUnit5Minutests {
 
         // Minutest will check that the following tests are run
         willRun(
-            "root",
-            "  palindromes",
-            "    a is a palindrome",
-            "    oo is a palindrome",
-            "    racecar is a palindrome",
-            "    able was I ere I saw elba is a palindrome",
-            "  not palindromes",
-            "     is not a palindrome",
-            "    ab is not a palindrome",
-            "    a man a plan a canal pananma is not a palindrome"
+            "▾ tests",
+            "  ▾ palindromes",
+            "    ✓ a is a palindrome",
+            "    ✓ oo is a palindrome",
+            "    ✓ racecar is a palindrome",
+            "    ✓ able was I ere I saw elba is a palindrome",
+            "  ▾ not palindromes",
+            "    ✓  is not a palindrome",
+            "    ✓ ab is not a palindrome",
+            "    ✓ a man a plan a canal pananma is not a palindrome"
         )
     }
 }
