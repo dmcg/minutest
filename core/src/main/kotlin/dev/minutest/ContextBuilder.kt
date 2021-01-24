@@ -17,10 +17,12 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Define a child-context, inheriting the fixture from the parent.
      */
-    abstract fun context(
+    fun context(
         name: String,
         block: TestContextBuilder<F, F>.() -> Unit
-    ): Annotatable<F>
+    ): Annotatable<F> {
+        return addContext(name, block)
+    }
 
     /**
      * Define a child-context with a different fixture type.
@@ -31,8 +33,9 @@ abstract class TestContextBuilder<PF, F> {
     inline fun <reified G> derivedContext(
         name: String,
         noinline block: TestContextBuilder<F, G>.() -> Unit
-    ): Annotatable<F> =
-        internalDerivedContext(name = name, newFixtureType = askType<G>(), block = block)
+    ): Annotatable<F> {
+        return addDerivedContext(name, askType<G>(), block)
+    }
 
     /**
      * Define the fixture that will be used in this context's tests and sub-contexts.
@@ -148,10 +151,15 @@ abstract class TestContextBuilder<PF, F> {
      * Internal implementation, only public to be accessible to inline functions.
      */
     @PublishedApi
-    internal abstract fun <G> internalDerivedContext(
+    internal abstract fun <G> addDerivedContext(
         name: String,
         newFixtureType: FixtureType,
         block: TestContextBuilder<F, G>.() -> Unit
+    ): Annotatable<F>
+
+    internal abstract fun addContext(
+        name: String,
+        block: TestContextBuilder<F, F>.() -> Unit
     ): Annotatable<F>
 
     internal abstract fun addTest(

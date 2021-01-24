@@ -64,11 +64,11 @@ internal data class MinutestContextBuilder<PF, F>(
         return apply { sourceReferenceForBlockInvocation()?.let { addMarker(it) } }
     }
 
-    override fun context(
+    override fun addContext(
         name: String,
         block: TestContextBuilder<F, F>.() -> Unit
-    ) =
-        newContext(
+    ): Annotatable<F> {
+        return addContext(
             name,
             fixtureType,
             if (fixtureFactory.isCompatibleWith(fixtureType, fixtureType))
@@ -77,12 +77,13 @@ internal data class MinutestContextBuilder<PF, F>(
                 UnsafeFixtureFactory(fixtureFactory.outputType),
             block
         )
+    }
 
-    override fun <G> internalDerivedContext(
+    override fun <G> addDerivedContext(
         name: String,
         newFixtureType: FixtureType,
         block: TestContextBuilder<F, G>.() -> Unit
-    ): Annotatable<F> = newContext(
+    ): Annotatable<F> = addContext(
         name,
         newFixtureType,
         UnsafeFixtureFactory(fixtureType),
@@ -97,20 +98,22 @@ internal data class MinutestContextBuilder<PF, F>(
         transforms.add(transform)
     }
 
-    private fun <G> newContext(
+    private fun <G> addContext(
         name: String,
         newFixtureType: FixtureType,
         fixtureFactory: FixtureFactory<F, G>,
         block: TestContextBuilder<F, G>.() -> Unit
-    ): Annotatable<F> = addChild(
-        MinutestContextBuilder(
-            name,
-            this.fixtureType,
-            newFixtureType,
-            fixtureFactory,
-            block = block
+    ): Annotatable<F> {
+        return addChild(
+            MinutestContextBuilder(
+                name,
+                this.fixtureType,
+                newFixtureType,
+                fixtureFactory,
+                block = block
+            )
         )
-    )
+    }
 
     private fun <T : NodeBuilder<F>> addChild(child: T): T {
         children.add(child.withMarkerForBlockInvocation())
