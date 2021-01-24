@@ -66,9 +66,9 @@ internal data class MinutestContextBuilder<PF, F>(
         afters.add(operation)
     }
 
-    override fun test_(
+    override fun addTest(
         name: String,
-        f: F.(TestDescriptor) -> F
+        f: (F, TestDescriptor) -> F
     ): Annotatable<F> = addChild(TestBuilder(name, f))
 
     private fun NodeBuilder<F>.withMarkerForBlockInvocation(): NodeBuilder<F> {

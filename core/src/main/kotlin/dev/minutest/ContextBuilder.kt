@@ -72,10 +72,12 @@ abstract class TestContextBuilder<PF, F> {
      * a new fixture to be processed by 'afters'.
      */
     @Suppress("FunctionName")
-    abstract fun test_(
+    fun test_(
         name: String,
         f: F.(testDescriptor: TestDescriptor) -> F
-    ): Annotatable<F>
+    ): Annotatable<F> {
+        return addTest(name, f)
+    }
 
     /**
      * Apply an operation to the current fixture (accessible as the receiver 'this') before
@@ -135,4 +137,8 @@ abstract class TestContextBuilder<PF, F> {
         block: TestContextBuilder<F, G>.() -> Unit
     ): Annotatable<F>
 
+    internal abstract fun addTest(
+        name: String,
+        f: (F, TestDescriptor) -> F
+    ): Annotatable<F>
 }
