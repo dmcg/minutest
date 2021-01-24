@@ -3,7 +3,7 @@ package dev.minutest.experimental
 import dev.minutest.Annotatable
 import dev.minutest.ContextBuilder
 import dev.minutest.TestDescriptor
-import dev.minutest.instrumentedTest2
+import dev.minutest.test2Instrumented
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
@@ -15,7 +15,7 @@ fun <F> ContextBuilder<F>.randomTest(
     name: String,
     block: F.(rng: Random, testDescriptor: TestDescriptor) -> F
 ): Annotatable<F> =
-    instrumentedTest2(name) { _, testDescriptor ->
+    test2Instrumented(name) { _, testDescriptor ->
         val seedFile = testDescriptor.testStateFile("random-seed")
         
         val seed = seedFile.maybeReadInt()

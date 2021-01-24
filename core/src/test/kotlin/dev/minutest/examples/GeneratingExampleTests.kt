@@ -1,6 +1,7 @@
 package dev.minutest.examples
 
 import dev.minutest.ContextBuilder
+import dev.minutest.beforeEach
 import dev.minutest.experimental.willRun
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext

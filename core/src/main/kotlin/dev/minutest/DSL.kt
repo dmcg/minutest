@@ -1,6 +1,30 @@
 package dev.minutest
 
 /**
+ * Apply an operation to the current fixture before running tests or sub-contexts.
+ */
+fun <PF, F> TestContextBuilder<PF, F>.beforeEachInstrumented(
+    operation: F.(fixture: F, testDescriptor: TestDescriptor) -> Unit
+) {
+    beforeEachInstrumented_ { fixture, testDescriptor ->
+        fixture.operation(fixture, testDescriptor)
+        this
+    }
+}
+
+/**
+ * Apply an operation to the current fixture before running tests or sub-contexts.
+ */
+fun <PF, F> TestContextBuilder<PF, F>.beforeEach(
+    operation: F.(fixture: F) -> Unit
+) {
+    beforeEach_ { fixture ->
+        fixture.operation(fixture)
+        this
+    }
+}
+
+/**
  * Replace the current fixture before running tests or sub-contexts.
  */
 @Suppress("FunctionName")
@@ -16,7 +40,7 @@ fun <PF, F> TestContextBuilder<PF, F>.beforeEach_(
  * Replace the current fixture before running tests or sub-contexts.
  */
 @Suppress("FunctionName")
-fun <PF, F> TestContextBuilder<PF, F>.instrumentedBeforeEach_(
+fun <PF, F> TestContextBuilder<PF, F>.beforeEachInstrumented_(
     transform: F.(fixture: F, testDescriptor: TestDescriptor) -> F
 ) {
     addBefore { fixture, testDescriptor ->
@@ -34,7 +58,7 @@ fun <PF, F> TestContextBuilder<PF, F>.test2(
     }
 }
 
-fun <PF, F> TestContextBuilder<PF, F>.instrumentedTest2(
+fun <PF, F> TestContextBuilder<PF, F>.test2Instrumented(
     name: String,
     f: (F).(fixture: F, testDescriptor: TestDescriptor) -> Unit
 ): Annotatable<F> {
@@ -44,6 +68,7 @@ fun <PF, F> TestContextBuilder<PF, F>.instrumentedTest2(
     }
 }
 
+@Suppress("FunctionName")
 fun <PF, F> TestContextBuilder<PF, F>.test2_(
     name: String,
     f: (F).(fixture: F) -> F
@@ -53,7 +78,7 @@ fun <PF, F> TestContextBuilder<PF, F>.test2_(
     }
 }
 
-fun <PF, F> TestContextBuilder<PF, F>.instrumentedTest2_(
+fun <PF, F> TestContextBuilder<PF, F>.test2Instrumented_(
     name: String,
     f: (fixture: F, testDescriptor: TestDescriptor) -> F
 ): Annotatable<F> {

@@ -21,12 +21,12 @@ class TestDescriptorTests {
                     log.add(testDescriptor.pathAsString() + " : fixture")
                 }
 
-                instrumentedBeforeEach { _, testDescriptor ->
+                beforeEachInstrumented { _, testDescriptor ->
                     log.add(testDescriptor.pathAsString() + " : before")
                 }
 
                 context("outer") {
-                    instrumentedTest2("outer test") { _, testDescriptor ->
+                    test2Instrumented("outer test") { _, testDescriptor ->
                         log.add(testDescriptor.pathAsString() + " : test")
                     }
 
@@ -34,10 +34,10 @@ class TestDescriptorTests {
                         beforeAll { testDescriptor ->
                             log.add(testDescriptor.pathAsString() + " : beforeAll")
                         }
-                        instrumentedTest2("inner test 1") { _, testDescriptor ->
+                        test2Instrumented("inner test 1") { _, testDescriptor ->
                             log.add(testDescriptor.pathAsString() + " : test")
                         }
-                        instrumentedTest2("inner test 2") { _, testDescriptor ->
+                        test2Instrumented("inner test 2") { _, testDescriptor ->
                             log.add(testDescriptor.pathAsString() + " : test")
                         }
                         afterAll { testDescriptor ->

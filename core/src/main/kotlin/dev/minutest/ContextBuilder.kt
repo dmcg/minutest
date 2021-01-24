@@ -54,7 +54,7 @@ abstract class TestContextBuilder<PF, F> {
      * before running tests or sub-contexts.
      */
     @Deprecated("Use before to modify the fixture", ReplaceWith("before(operation)"))
-    fun modifyFixture(operation: F.(TestDescriptor) -> Unit): Unit {
+    fun modifyFixture(operation: F.(TestDescriptor) -> Unit) {
         addBefore { fixture, testDescriptor ->
             fixture.operation(testDescriptor)
             fixture
@@ -77,7 +77,7 @@ abstract class TestContextBuilder<PF, F> {
         name: String,
         f: F.(testDescriptor: TestDescriptor) -> Unit
     ): Annotatable<F> {
-        return instrumentedTest2(name) { fixture, testDescriptor ->
+        return test2Instrumented(name) { fixture, testDescriptor ->
             fixture.f(testDescriptor)
         }
     }
@@ -92,7 +92,7 @@ abstract class TestContextBuilder<PF, F> {
         name: String,
         f: F.(testDescriptor: TestDescriptor) -> F
     ): Annotatable<F> {
-        return instrumentedTest2_(name) { fixture, testDescriptor ->
+        return test2Instrumented_(name) { fixture, testDescriptor ->
             fixture.f(testDescriptor)
         }
     }
@@ -105,28 +105,6 @@ abstract class TestContextBuilder<PF, F> {
     fun before(operation: F.(TestDescriptor) -> Unit) {
         before_ { testDescriptor ->
             this.operation(testDescriptor)
-            this
-        }
-    }
-
-    /**
-     * Apply an operation to the current fixture before running tests or sub-contexts.
-     */
-    fun beforeEach(operation: F.(fixture: F) -> Unit) {
-        beforeEach_ { fixture ->
-            fixture.operation(fixture)
-            this
-        }
-    }
-
-    /**
-     * Apply an operation to the current fixture before running tests or sub-contexts.
-     */
-    fun instrumentedBeforeEach(
-        operation: F.(fixture: F, testDescriptor: TestDescriptor) -> Unit
-    ) {
-        instrumentedBeforeEach_ { fixture, testDescriptor ->
-            fixture.operation(fixture, testDescriptor)
             this
         }
     }

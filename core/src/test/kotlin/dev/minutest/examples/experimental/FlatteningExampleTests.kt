@@ -1,5 +1,6 @@
 package dev.minutest.examples.experimental
 
+import dev.minutest.beforeEach
 import dev.minutest.experimental.flatten
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext

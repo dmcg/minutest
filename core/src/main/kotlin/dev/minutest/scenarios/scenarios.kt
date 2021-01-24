@@ -4,6 +4,7 @@ package dev.minutest.scenarios
 
 import dev.minutest.ContextBuilder
 import dev.minutest.MinutestFixture
+import dev.minutest.beforeEach
 import dev.minutest.scenarios.StepType.*
 import dev.minutest.test2
 
