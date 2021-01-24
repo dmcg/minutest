@@ -16,7 +16,7 @@ class TestFindingTests : JUnit5Minutests {
 
         context(ClassWithOnlyOneContextMethod::class) {
             test2("single root context from method") {
-                val root = fixture.rootContextFromMethods(true) as Context<*, *>
+                val root = it.rootContextFromMethods(true) as Context<*, *>
                 assertAll("root",
                     { assertEquals("test method", root.name) },
                     { assertEquals(listOf("test in tests"), root.children.map(Node<*>::name))}
@@ -26,7 +26,7 @@ class TestFindingTests : JUnit5Minutests {
 
         context(ClassWithTwoContextMethods::class) {
             test2("single root context with child context from each method") {
-                val root = fixture.rootContextFromMethods(true) as Context<*, *>
+                val root = it.rootContextFromMethods(true) as Context<*, *>
                 assertAll("root",
                     { assertEquals("dev.minutest.internal.ClassWithTwoContextMethods", root.name) },
                     { assertEquals(listOf("tests", "testsToo"), root.children.map(Node<*>::name))}
@@ -36,19 +36,19 @@ class TestFindingTests : JUnit5Minutests {
 
         context(ClassWithNoContextMethods::class) {
             test2("returns null") {
-                assertNull(fixture.rootContextFromMethods(true))
+                assertNull(it.rootContextFromMethods(true))
             }
         }
 
         context(ClassWithNoPublicContextMethods::class) {
             test2("returns null") {
-                assertNull(fixture.rootContextFromMethods(true))
+                assertNull(it.rootContextFromMethods(true))
             }
         }
 
         context(ClassWithNoZeroArgContextMethod::class) {
             test2("returns null") {
-                assertNull(fixture.rootContextFromMethods(true))
+                assertNull(it.rootContextFromMethods(true))
             }
         }
     }

@@ -55,9 +55,9 @@ class FlatteningTests {
                 }
 
                 test2("is a string") {
-                    miscLog.add("test $fixture")
+                    miscLog.add("test $it")
                     @Suppress("USELESS_IS_CHECK")
-                    assertTrue(fixture is String)
+                    assertTrue(it is String)
                 }
 
                 after {
@@ -98,8 +98,8 @@ class FlatteningTests {
                 }
 
                 test2("is two") {
-                    miscLog.add("test $fixture")
-                    assertEquals("two", fixture)
+                    miscLog.add("test $it")
+                    assertEquals("two", it)
                 }
 
                 after {

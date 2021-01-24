@@ -138,6 +138,7 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Name the fixture to improve communication.
      */
+    @Deprecated("Use the new DSL to get the fixture as a lambda parameter")
     val F.fixture: F get() = this
 
     /**

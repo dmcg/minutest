@@ -26,7 +26,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
         }
 
         test2("takes Fruit") {
-            assertTrue(fixture is Fruit)
+            assertTrue(it is Fruit)
         }
 
         // To change fixture type use derivedContext
@@ -38,7 +38,7 @@ class DerivedContextExampleTests : JUnit5Minutests {
             }
 
             test2("takes FruitDrink") {
-                assertTrue(fixture is FruitDrink)
+                assertTrue(it is FruitDrink)
             }
 
             // If you don't need access to the parent fixture, this would do

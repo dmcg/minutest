@@ -20,7 +20,7 @@ class CoroutinesExampleTests : JUnit5Minutests {
         // You can use runBlockingTest in your test
         test2("use runBlocking") {
             runBlockingTest {
-                assertEquals("bananarama", fixture.slowPlus("rama"))
+                assertEquals("bananarama", it.slowPlus("rama"))
                 advanceUntilIdle()
                 assertEquals(10_000, currentTime)
             }

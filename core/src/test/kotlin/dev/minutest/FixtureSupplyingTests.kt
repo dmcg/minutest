@@ -13,7 +13,7 @@ class FixtureSupplyingTests : JUnit5Minutests {
         fixture { "banana" }
         context("parent had fixture") {
             test2("test") {
-                assertEquals("banana", this)
+                assertEquals("banana", it)
             }
         }
     }
@@ -22,7 +22,7 @@ class FixtureSupplyingTests : JUnit5Minutests {
         context("parent had no fixture") {
             fixture { "banana" }
             test2("test") {
-                assertEquals("banana", this)
+                assertEquals("banana", it)
             }
         }
     }
@@ -32,7 +32,7 @@ class FixtureSupplyingTests : JUnit5Minutests {
             context("parent had no fixture") {
                 fixture { "banana" }
                 test2("test") {
-                    assertEquals("banana", this)
+                    assertEquals("banana", it)
                 }
             }
         }
@@ -42,34 +42,34 @@ class FixtureSupplyingTests : JUnit5Minutests {
         derivedContext<String>("parent had no fixture") {
             fixture { "banana" }
             test2("test") {
-                assertEquals("banana", this)
+                assertEquals("banana", it)
             }
         }
     }
 
     fun `need not specify Unit fixture`() = rootContext {
         test2("test") {
-            assertSame(Unit, fixture)
+            assertSame(Unit, it)
         }
     }
 
     fun `can specify Unit root context`() = rootContext<Unit> {
         test2("test") {
-            assertSame(Unit, fixture)
+            assertSame(Unit, it)
         }
     }
 
     fun `fixture can be nullable and null`() = rootContext<String?> {
         fixture { null }
         test2("fixture is null") {
-            assertNull(this)
+            assertNull(it)
         }
     }
 
     fun `fixture can be nullable and not null`() = rootContext<String?> {
         fixture { "banana" }
         test2("fixture is not null") {
-            assertNotNull(this)
+            assertNotNull(it)
         }
     }
 
@@ -77,17 +77,17 @@ class FixtureSupplyingTests : JUnit5Minutests {
         fixture { "banana" }
         derivedContext<String>("Hasn't actually changed type") {
             test2("test") {
-                assertEquals("banana", this)
+                assertEquals("banana", it)
             }
         }
         derivedContext<CharSequence>("Has changed to a compatible type") {
             test2("test") {
-                assertEquals("banana", this)
+                assertEquals("banana", it)
             }
         }
         derivedContext<String?>("Has changed to the nullable type") {
             test2("test") {
-                assertEquals("banana", this)
+                assertEquals("banana", it)
             }
         }
     }
