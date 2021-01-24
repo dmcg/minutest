@@ -175,8 +175,12 @@ abstract class TestContextBuilder<PF, F> {
         f: (F, TestDescriptor) -> F
     ): Annotatable<F>
 
-    internal abstract fun setFixtureFactory(factory: (testDescriptor: TestDescriptor) -> F)
-    internal abstract fun setDerivedFixtureFactory(f: PF.(TestDescriptor) -> F)
+    internal abstract fun setFixtureFactory(
+        factory: (testDescriptor: TestDescriptor) -> F
+    )
+    internal abstract fun setDerivedFixtureFactory(
+        factory: (parentFixture: PF, testDescriptor:TestDescriptor) -> F
+    )
 
     internal abstract fun addBefore(transform: (F, TestDescriptor) -> F)
     internal abstract fun addAfter(
