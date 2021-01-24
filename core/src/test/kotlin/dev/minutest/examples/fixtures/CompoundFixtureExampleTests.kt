@@ -2,6 +2,7 @@ package dev.minutest.examples.fixtures
 
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
+import dev.minutest.test2
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
@@ -44,7 +45,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
             test("light is off") {
                 assertFalse(controlPanel.warningLightOn)
             }
-            test("cannot launch when pressing button") {
+            test2("cannot launch when pressing button") {
                 controlPanel.pressButton()
                 assertTrue(beeped)
                 assertFalse(launched)
@@ -58,7 +59,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
             test("light is on") {
                 assertTrue(controlPanel.warningLightOn)
             }
-            test("launches when pressing button") {
+            test2("launches when pressing button") {
                 controlPanel.pressButton()
                 assertFalse(beeped)
                 assertTrue(launched)
