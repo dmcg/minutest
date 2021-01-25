@@ -54,16 +54,16 @@ private fun EngineDiscoveryRequest.combineFiltersByType(
     Filter.composeFilters(getFiltersByType(filterClass.java))
 
 private fun shortcutClassSelection(discoveryRequest: EngineDiscoveryRequest): List<Node<Unit>>? {
-    time("Minutest loading single test ") {
-        val classSelectors = selectorsFrom(discoveryRequest)
-        return when {
-            classSelectors.isEmpty() -> null
-            else ->
+    val classSelectors = selectorsFrom(discoveryRequest)
+    return when {
+        classSelectors.isEmpty() -> null
+        else ->
+            time("Minutest loading single test ") {
                 classSelectors.mapNotNull { classAndMethodName ->
                     amalgamatedRootContext(Class.forName(classAndMethodName.className))
                         ?.selectJust(classAndMethodName.methodName)
                 }
-        }
+            }
     }
 }
 
