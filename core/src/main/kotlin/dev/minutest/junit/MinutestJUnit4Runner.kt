@@ -9,12 +9,10 @@ import org.opentest4j.TestAbortedException
 
 class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode>(type) {
 
-    override fun getChildren(): List<RunnableNode> = listOf(
+    override fun getChildren(): List<RunnableNode> =
         rootContextForClass(
-            testClass.javaClass.kotlin,
-            flattenSingleNode = true
-        ).toRootContext()
-    )
+            testClass.javaClass.kotlin
+        )?.children?.map { it.toRootContext() } ?: error("Couldn't find any test methods")
 
     override fun runChild(child: RunnableNode, notifier: RunNotifier) =
         child.run(notifier)

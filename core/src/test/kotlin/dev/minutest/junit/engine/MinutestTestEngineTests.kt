@@ -21,11 +21,14 @@ class MinutestTestEngineTests {
             { selectors(selectPackage("samples.minutestRunner.a")) },
             "plan started",
             "started: Minutest",
+            "started: samples.minutestRunner.a.ExampleMinutestInClass",
+            "registered: example context in class",
             "started: example context in class",
             "registered: a passing test",
             "started: a passing test",
             "successful: a passing test",
             "successful: example context in class",
+            "successful: samples.minutestRunner.a.ExampleMinutestInClass",
             "started: samples.minutestRunner.a",
             "registered: example context",
             "started: example context",
@@ -57,7 +60,7 @@ class MinutestTestEngineTests {
         assertDiscovered(
             { selectors(selectPackage("samples.minutestRunner.a")) },
             "Minutest",
-            "example context in class",
+            "samples.minutestRunner.a.ExampleMinutestInClass",
             "samples.minutestRunner.a"
         )
     }
@@ -116,11 +119,14 @@ class MinutestTestEngineTests {
             },
             "plan started",
             "started: Minutest",
+            "started: samples.minutestRunner.a.ExampleMinutestInClass",
+            "registered: example context in class",
             "started: example context in class",
             "registered: a passing test",
             "started: a passing test",
             "successful: a passing test",
             "successful: example context in class",
+            "successful: samples.minutestRunner.a.ExampleMinutestInClass",
             "started: samples.minutestRunner.a",
             "registered: example context",
             "started: example context",
@@ -134,7 +140,7 @@ class MinutestTestEngineTests {
             "successful: example context",
             "successful: samples.minutestRunner.a",
             "successful: Minutest",
-            "plan finished"
+            "plan finished",
         )
     }
 
@@ -166,11 +172,14 @@ class MinutestTestEngineTests {
             },
             "plan started",
             "started: Minutest",
+            "started: samples.minutestRunner.a.ExampleMinutestInClass",
+            "registered: example context in class",
             "started: example context in class",
             "registered: a passing test",
             "started: a passing test",
             "successful: a passing test",
             "successful: example context in class",
+            "successful: samples.minutestRunner.a.ExampleMinutestInClass",
             "started: samples.minutestRunner.a",
             "registered: example context",
             "started: example context",
@@ -193,7 +202,7 @@ class MinutestTestEngineTests {
             "successful: example typed context",
             "successful: samples.minutestRunner.a",
             "successful: Minutest",
-            "plan finished"
+            "plan finished",
         )
     }
 

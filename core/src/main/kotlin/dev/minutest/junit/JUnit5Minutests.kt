@@ -20,7 +20,7 @@ interface JUnit5Minutests {
     @Execution(ExecutionMode.SAME_THREAD) // we want to control parallel
         // execution _within_ a context
     fun minutests(): Stream<DynamicNode> =
-        rootContextFromMethods(flattenSingleNode = true)
+        rootContextFromMethods()
             ?.toRootStreamofDynamicNodes()
             ?: error("No test methods found")
 }

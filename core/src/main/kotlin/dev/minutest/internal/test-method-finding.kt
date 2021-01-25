@@ -1,6 +1,5 @@
 package dev.minutest.internal
 
-import dev.minutest.Node
 import dev.minutest.RootContextBuilder
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -18,15 +17,12 @@ import kotlin.reflect.jvm.kotlinFunction
  * Flattens the contexts depending on whether one or more methods found
  */
 internal fun Any.rootContextFromMethods(
-    flattenSingleNode: Boolean,
     filter: (KFunction<RootContextBuilder>) -> Boolean = { true }
-): Node<Unit>? {
+): AmalgamatedRootContext? {
     val contextBuilderMethods = this.methodsAsContextBuilderBuilders(filter)
     return when {
         contextBuilderMethods.isEmpty() ->
             null
-        contextBuilderMethods.size == 1 && flattenSingleNode ->
-            contextBuilderMethods.first().invoke().buildNode()
         else ->
             AmalgamatedRootContext(
                 this::class.qualifiedName ?: error("Trying find tests in class with no name"),
@@ -38,11 +34,11 @@ internal fun Any.rootContextFromMethods(
 }
 
 internal fun rootContextForClass(
-    klass: KClass<*>,
-    flattenSingleNode: Boolean
-): Node<Unit> =
-    klass.constructors.singleOrNull()?.call()?.rootContextFromMethods(flattenSingleNode)
-        ?: error("Test class has to have just a no-arg constructor")
+    klass: KClass<*>
+): AmalgamatedRootContext? =
+    klass.constructors.singleOrNull()
+        ?.call()
+        ?.rootContextFromMethods()
 
 
 internal fun Any.methodsAsContextBuilderBuilders(

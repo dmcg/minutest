@@ -7,7 +7,7 @@ import kotlin.test.fail
 
 class JUnit4Sample : JUnit4Minutests() {
 
-    fun `junit 4 tests`() = rootContext {
+    fun tests() = rootContext {
         runnersExample()
     }
 

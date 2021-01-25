@@ -2,7 +2,6 @@ package dev.minutest.junit.engine
 
 import dev.minutest.junit.checkRunnersExampleLog
 import dev.minutest.testing.runTestsInClass
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import samples.runners.MinutestClassSample
 import samples.runners.MinutestMultiRootClassSample
@@ -18,8 +17,9 @@ class MinutestRunnerTests {
             substitutions = listOf(
                 "ENGINE_NAME" to "Minutest",
                 "TEST_NAME" to "samples.runners",
-                "ROOT_NAME" to "tests"
+                "CONTEXT_NAME" to "tests"
             ),
+            hasExtraRoot = true,
             abortRatherThanSkip = true,
             expected = expected
         )
@@ -31,22 +31,22 @@ class MinutestRunnerTests {
             substitutions = listOf(
                 "ENGINE_NAME" to "Minutest",
                 "TEST_NAME" to "samples.runners.MinutestClassSample",
-                "ROOT_NAME" to "tests"
+                "CONTEXT_NAME" to "tests"
             ),
+            hasExtraRoot = true,
             abortRatherThanSkip = true,
             expected = expected
         )
     }
 
-    @Disabled
     @Test fun multiRoot() {
         checkRunnersExampleLog(
             runTestsInClass<MinutestMultiRootClassSample>(MinutestTestEngine.engineId),
             substitutions = listOf(
                 "ENGINE_NAME" to "Minutest",
                 "TEST_NAME" to "samples.runners.MinutestMultiRootClassSample",
-                "ROOT_NAME" to "minutests()"
             ),
+            hasExtraRoot = true,
             abortRatherThanSkip = true,
             expected = multiRootExpected
         )

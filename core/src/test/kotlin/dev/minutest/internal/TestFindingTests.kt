@@ -16,17 +16,17 @@ class TestFindingTests : JUnit5Minutests {
 
         context(ClassWithOnlyOneContextMethod::class) {
             test2("single root context from method") {
-                val root = it.rootContextFromMethods(true) as Context<*, *>
+                val root = it.rootContextFromMethods() as Context<*, *>
                 assertAll("root",
-                    { assertEquals("test method", root.name) },
-                    { assertEquals(listOf("test in tests"), root.children.map(Node<*>::name))}
+                    { assertEquals("dev.minutest.internal.ClassWithOnlyOneContextMethod", root.name) },
+                    { assertEquals(listOf("test method"), root.children.map(Node<*>::name))}
                 )
             }
         }
 
         context(ClassWithTwoContextMethods::class) {
             test2("single root context with child context from each method") {
-                val root = it.rootContextFromMethods(true) as Context<*, *>
+                val root = it.rootContextFromMethods() as Context<*, *>
                 assertAll("root",
                     { assertEquals("dev.minutest.internal.ClassWithTwoContextMethods", root.name) },
                     { assertEquals(listOf("tests", "testsToo"), root.children.map(Node<*>::name))}
@@ -36,19 +36,19 @@ class TestFindingTests : JUnit5Minutests {
 
         context(ClassWithNoContextMethods::class) {
             test2("returns null") {
-                assertNull(it.rootContextFromMethods(true))
+                assertNull(it.rootContextFromMethods())
             }
         }
 
         context(ClassWithNoPublicContextMethods::class) {
             test2("returns null") {
-                assertNull(it.rootContextFromMethods(true))
+                assertNull(it.rootContextFromMethods())
             }
         }
 
         context(ClassWithNoZeroArgContextMethod::class) {
             test2("returns null") {
-                assertNull(it.rootContextFromMethods(true))
+                assertNull(it.rootContextFromMethods())
             }
         }
     }

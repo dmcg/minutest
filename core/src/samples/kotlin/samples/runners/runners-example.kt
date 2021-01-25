@@ -36,12 +36,15 @@ fun ContextBuilder<Unit>.runnersExample() {
 
 fun expectedRunnersLog(
     substitutions: List<Pair<String, String>>,
+    hasExtraRoot: Boolean = true,
     abortRatherThanSkip: Boolean = true,
     expectedLog: List<String>
 ): List<String> =
     expectedLog.map { line ->
         substitutions.fold(line) { it, sub -> it.replace(sub.first, sub.second) }
-    }.fixSkipped(abortRatherThanSkip)
+    }
+        .filterNot { hasExtraRoot && it.endsWith("ROOT_NAME") }
+        .fixSkipped(abortRatherThanSkip)
 
 private fun List<String>.fixSkipped(abortRatherThanSkip: Boolean): List<String> =
     when (abortRatherThanSkip) {
@@ -61,7 +64,8 @@ val expected = listOf(
     "plan started",
     "test started: ENGINE_NAME",
     "test started: TEST_NAME",
-    "test started: ROOT_NAME",
+    "test started: ROOT_NAME", // only in JUnit5
+    "test started: CONTEXT_NAME",
     "test started: test in root",
     "test successful: test in root",
     "test started: failing test in root",
@@ -78,7 +82,8 @@ val expected = listOf(
     "test started: context with skipped test",
     "test skipped: SHOULD NOT BE SEEN",
     "test successful: context with skipped test",
-    "test successful: ROOT_NAME",
+    "test successful: CONTEXT_NAME",
+    "test successful: ROOT_NAME", // only in JUnit5
     "test successful: TEST_NAME",
     "test successful: ENGINE_NAME",
     "plan finished"

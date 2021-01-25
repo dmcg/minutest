@@ -11,14 +11,15 @@ import samples.runners.multiRootExpected
 
 class JUnit4RunnerTests {
 
-    @Test fun junit4() {
+    @Test fun singleRootTestsAndFailures() {
         checkRunnersExampleLog(
             runTestsInClass<JUnit4Sample>(VintageTestDescriptor.ENGINE_ID),
             substitutions = listOf(
                 "ENGINE_NAME" to "JUnit Vintage",
                 "TEST_NAME" to "JUnit4Sample",
-                "ROOT_NAME" to "junit 4 tests"
+                "CONTEXT_NAME" to "tests"
             ),
+            hasExtraRoot = true,
             abortRatherThanSkip = false,
             expected = expected
         )
@@ -30,8 +31,8 @@ class JUnit4RunnerTests {
             substitutions = listOf(
                 "ENGINE_NAME" to "JUnit Vintage",
                 "TEST_NAME" to "JUnit4MultiRootSample",
-                "ROOT_NAME" to "samples.runners.JUnit4MultiRootSample"
             ),
+            hasExtraRoot = true,
             abortRatherThanSkip = true,
             expected = multiRootExpected
         )

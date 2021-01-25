@@ -96,7 +96,7 @@ private fun amalgamatedRootContext(klass: Class<*>): Node<Unit>? {
                 }
             )
         else -> klass.kotlin.constructors.singleOrNull()?.call()?.let { instance ->
-            instance.rootContextFromMethods(flattenSingleNode = false) {
+            instance.rootContextFromMethods() {
                 it.hasTestableAnnotation
             }
         }

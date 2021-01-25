@@ -16,8 +16,10 @@ class JUnit5RunnerTests {
             substitutions = listOf(
                 "ENGINE_NAME" to "JUnit Jupiter",
                 "TEST_NAME" to "JUnit5Sample",
-                "ROOT_NAME" to "minutests()"
+                "ROOT_NAME" to "minutests()",
+                "CONTEXT_NAME" to "tests"
             ),
+            hasExtraRoot = true,
             abortRatherThanSkip = true,
             expected = expected
         )
@@ -31,6 +33,7 @@ class JUnit5RunnerTests {
                 "TEST_NAME" to "JUnit5MultiRootSample",
                 "ROOT_NAME" to "minutests()"
             ),
+            hasExtraRoot = true,
             abortRatherThanSkip = true,
             expected = multiRootExpected
         )

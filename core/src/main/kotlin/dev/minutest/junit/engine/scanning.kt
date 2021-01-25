@@ -36,7 +36,7 @@ internal fun scanForRootNodes(
                 val methodContexts: List<Node<Unit>> = methods
                     .mapNotNull { it.toKotlinFunction()?.javaMethod?.declaringClass }
                     .toSet()
-                    .map { rootContextForClass(it.kotlin, flattenSingleNode = true) }
+                    .mapNotNull { rootContextForClass(it.kotlin) }
 
                 val topLevelContexts = functions
                     .mapNotNull { it.toKotlinFunction() }
