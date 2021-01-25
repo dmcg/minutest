@@ -12,7 +12,10 @@ class MinutestJUnit4Runner(type: Class<*>) : ParentRunner<RunnableNode>(type) {
     override fun getChildren(): List<RunnableNode> =
         rootContextForClass(
             testClass.javaClass.kotlin
-        )?.children?.map { it.toRootContext() } ?: error("Couldn't find any test methods")
+        )
+            ?.children
+            ?.map { it.toRootContext() }
+            ?: error("Couldn't find any test methods")
 
     override fun runChild(child: RunnableNode, notifier: RunNotifier) =
         child.run(notifier)

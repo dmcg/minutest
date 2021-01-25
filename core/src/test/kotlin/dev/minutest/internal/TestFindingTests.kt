@@ -16,7 +16,7 @@ class TestFindingTests : JUnit5Minutests {
 
         context(ClassWithOnlyOneContextMethod::class) {
             test2("single root context from method") {
-                val root = it.rootContextFromMethods() as Context<*, *>
+                val root = it.rootContextFromMethods()!!
                 assertAll("root",
                     { assertEquals("dev.minutest.internal.ClassWithOnlyOneContextMethod", root.name) },
                     { assertEquals(listOf("test method"), root.children.map(Node<*>::name))}
@@ -26,7 +26,7 @@ class TestFindingTests : JUnit5Minutests {
 
         context(ClassWithTwoContextMethods::class) {
             test2("single root context with child context from each method") {
-                val root = it.rootContextFromMethods() as Context<*, *>
+                val root = it.rootContextFromMethods()!!
                 assertAll("root",
                     { assertEquals("dev.minutest.internal.ClassWithTwoContextMethods", root.name) },
                     { assertEquals(listOf("tests", "testsToo"), root.children.map(Node<*>::name))}

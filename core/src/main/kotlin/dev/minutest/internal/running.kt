@@ -18,22 +18,28 @@ internal fun Node<Unit>.toRootContext(
     executorService: ExecutorService? = pool
 ): RunnableContext =
     when (this) {
-        is AmalgamatedRootContext ->
-            // In this case we need to build a RunnableContext where the children
-            // are themselves roots (have the RootExecutor rather than one started
-            // at this level).
-            RunnableContext(
-                RootExecutor.andThenName(this.name),
-                this.children.map { it.toRunnableNode(RootExecutor, executorService) },
-                this
-            )
-        else -> when (
-            val runnableNode = this.toRunnableNode(RootExecutor, executorService)
-        ) {
-            is RunnableContext -> runnableNode
-            is RunnableTest -> TODO("Root is test")
-        }
+        is AmalgamatedRootContext -> this.toRunnableContext(executorService)
+        else -> this.toRunnableNode(executorService)
     }
+
+private fun Node<Unit>.toRunnableNode(executorService: ExecutorService?) =
+    when (
+        val runnableNode = this.toRunnableNode(RootExecutor, executorService)
+    ) {
+        is RunnableContext -> runnableNode
+        is RunnableTest -> error("Root is test") // this will happen if you SKIP on JUnit 4 root
+    }
+
+// In this case we need to build a RunnableContext where the children
+// are themselves roots (have the RootExecutor rather than one started
+// at this level).
+private fun AmalgamatedRootContext.toRunnableContext(
+    executorService: ExecutorService?
+) = RunnableContext(
+    RootExecutor.andThenName(name),
+    children.map { it.toRunnableNode(RootExecutor, executorService) },
+    this
+)
 
 private fun <F> Node<F>.toRunnableNode(
     executor: TestExecutor<F>,

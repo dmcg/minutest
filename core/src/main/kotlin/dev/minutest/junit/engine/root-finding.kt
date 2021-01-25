@@ -1,6 +1,5 @@
 package dev.minutest.junit.engine
 
-import dev.minutest.Node
 import dev.minutest.internal.*
 import dev.minutest.junit.JUnit5Minutests
 import org.junit.platform.commons.annotation.Testable
@@ -20,7 +19,7 @@ internal fun findRootNodes(
 
 private fun findRootNodes(
     discoveryRequest: EngineDiscoveryRequest
-): List<Node<Unit>> =
+): List<AmalgamatedRootContext> =
     shortcutClassSelection(discoveryRequest)
         ?: scanForRootNodes(
             scannerConfig = {
@@ -53,7 +52,7 @@ private fun EngineDiscoveryRequest.combineFiltersByType(
 ): Filter<String> =
     Filter.composeFilters(getFiltersByType(filterClass.java))
 
-private fun shortcutClassSelection(discoveryRequest: EngineDiscoveryRequest): List<Node<Unit>>? {
+private fun shortcutClassSelection(discoveryRequest: EngineDiscoveryRequest): List<AmalgamatedRootContext>? {
     val classSelectors = selectorsFrom(discoveryRequest)
     return when {
         classSelectors.isEmpty() -> null
@@ -67,11 +66,10 @@ private fun shortcutClassSelection(discoveryRequest: EngineDiscoveryRequest): Li
     }
 }
 
-private fun Node<Unit>.selectJust(methodName: String?): Node<Unit> {
-    return if (methodName == null || this !is AmalgamatedRootContext)
-        this
-    else
-        this.copy(children = children.filter { it.name == methodName })
+private fun AmalgamatedRootContext.selectJust(methodName: String?): AmalgamatedRootContext =
+    when (methodName) {
+    null -> this
+    else -> this.copy(children = children.filter { it.name == methodName })
 }
 
 private fun selectorsFrom(discoveryRequest: EngineDiscoveryRequest) =
@@ -83,7 +81,7 @@ private fun selectorsFrom(discoveryRequest: EngineDiscoveryRequest) =
         }
 
 
-private fun amalgamatedRootContext(klass: Class<*>): Node<Unit>? {
+private fun amalgamatedRootContext(klass: Class<*>): AmalgamatedRootContext? {
     if (quickCheckForNotOurs(klass))
         return null
     val staticBuilders = klass.staticMethodsAsContextBuilderBuilders { it.hasTestableAnnotation }

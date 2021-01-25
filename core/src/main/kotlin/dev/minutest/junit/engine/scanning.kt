@@ -1,6 +1,5 @@
 package dev.minutest.junit.engine
 
-import dev.minutest.Node
 import dev.minutest.RootContextBuilder
 import dev.minutest.internal.AmalgamatedRootContext
 import dev.minutest.internal.rootContextForClass
@@ -14,7 +13,7 @@ import kotlin.reflect.jvm.kotlinFunction
 internal fun scanForRootNodes(
     scannerConfig: ClassGraph.() -> Unit,
     classFilter: (ClassInfo) -> Boolean = { true }
-): List<Node<Unit>> =
+): List<AmalgamatedRootContext> =
     time("ClassGraph scanning ") {
         classGraphWith(scannerConfig)
             .scan()
@@ -33,7 +32,7 @@ internal fun scanForRootNodes(
                     .filter { it.definesARootContext() }
                     .partition { !it.isStatic }
 
-                val methodContexts: List<Node<Unit>> = methods
+                val methodContexts = methods
                     .mapNotNull { it.toKotlinFunction()?.javaMethod?.declaringClass }
                     .toSet()
                     .mapNotNull { rootContextForClass(it.kotlin) }
