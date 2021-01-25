@@ -68,9 +68,9 @@ private fun shortcutClassSelection(discoveryRequest: EngineDiscoveryRequest): Li
 
 private fun AmalgamatedRootContext.selectJust(methodName: String?): AmalgamatedRootContext =
     when (methodName) {
-    null -> this
-    else -> this.copy(children = children.filter { it.name == methodName })
-}
+        null -> this
+        else -> this.withFilteredChildren { it.name == methodName }
+    }
 
 private fun selectorsFrom(discoveryRequest: EngineDiscoveryRequest) =
     discoveryRequest.getSelectorsByType<ClassSelector>().map {
@@ -89,7 +89,7 @@ private fun amalgamatedRootContext(klass: Class<*>): AmalgamatedRootContext? {
         staticBuilders.isNotEmpty() ->
             AmalgamatedRootContext(
                 klass.`package`.name ?: error("Trying find tests in class with no name"),
-                staticBuilders.map { method ->
+                staticBuilders.asSequence().map { method ->
                     method.invoke().buildNode()
                 }
             )

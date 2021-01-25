@@ -12,9 +12,13 @@ import dev.minutest.*
  */
 internal data class AmalgamatedRootContext(
     override val name: String,
-    override val children: List<Node<Unit>>,
+    val _children: Sequence<Node<Unit>>,
     override val markers: List<Any> = emptyList()
 ) : Context<Unit, Unit>() {
+
+    override val children by lazy {
+        _children.toList()
+    }
 
     override fun runTest(
         testlet: Testlet<Unit>,
@@ -25,7 +29,11 @@ internal data class AmalgamatedRootContext(
         testlet.invoke(Unit, testDescriptor)
     }
 
-    override fun withTransformedChildren(transform: NodeTransform<Unit>): Context<Unit, Unit> {
+    fun withFilteredChildren(predicate: (Node<Unit>) -> Boolean) =
+        this.copy(_children = _children.filter(predicate))
+
+    override fun withTransformedChildren(transform: NodeTransform<Unit>)
+        : Context<Unit, Unit> {
         // We shouldn't be able to call this
         TODO("not implemented")
     }

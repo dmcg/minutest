@@ -43,7 +43,7 @@ internal fun scanForRootNodes(
                     .filter { it.visibility == PUBLIC }
                     .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
                     .map { (packageName, functions: List<RootContextFun>) ->
-                        AmalgamatedRootContext(packageName, functions.renamed().map { it.buildNode() })
+                        AmalgamatedRootContext(packageName, functions.renamed().asSequence().map { it.buildNode() })
                     }
                 (methodContexts + topLevelContexts)
             }

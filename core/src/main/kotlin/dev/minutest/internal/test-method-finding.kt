@@ -26,7 +26,7 @@ internal fun Any.rootContextFromMethods(
         else ->
             AmalgamatedRootContext(
                 this::class.qualifiedName ?: error("Trying find tests in class with no name"),
-                contextBuilderMethods.map { method ->
+                contextBuilderMethods.asSequence().map { method ->
                     method.invoke().buildNode()
                 }
             )
