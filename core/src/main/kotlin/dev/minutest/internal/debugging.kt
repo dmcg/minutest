@@ -14,6 +14,6 @@ internal inline fun <T> time(prefix: String, f: () -> T): T {
     }
 }
 
-internal fun <T> T.printed() {
-    this.also(::println)
+internal fun <T> T.printed(): T {
+    return this.also(::println)
 }
