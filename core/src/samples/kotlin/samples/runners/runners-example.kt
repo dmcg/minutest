@@ -35,16 +35,12 @@ fun ContextBuilder<Unit>.runnersExample() {
 }
 
 fun expectedRunnersLog(
-    engineName: String,
-    testName: String,
-    rootName: String,
-    abortRatherThanSkip: Boolean = true
+    substitutions: List<Pair<String, String>>,
+    abortRatherThanSkip: Boolean = true,
+    expectedLog: List<String>
 ): List<String> =
-    expected.map {
-        it
-            .replace("ENGINE_NAME", engineName)
-            .replace("TEST_NAME", testName)
-            .replace("ROOT_NAME", rootName)
+    expectedLog.map { line ->
+        substitutions.fold(line) { it, sub -> it.replace(sub.first, sub.second) }
     }.fixSkipped(abortRatherThanSkip)
 
 private fun List<String>.fixSkipped(abortRatherThanSkip: Boolean): List<String> =
@@ -61,7 +57,7 @@ private fun List<String>.fixSkipped(abortRatherThanSkip: Boolean): List<String> 
             }
     }
 
-private val expected = listOf(
+val expected = listOf(
     "plan started",
     "test started: ENGINE_NAME",
     "test started: TEST_NAME",
@@ -82,6 +78,25 @@ private val expected = listOf(
     "test started: context with skipped test",
     "test skipped: SHOULD NOT BE SEEN",
     "test successful: context with skipped test",
+    "test successful: ROOT_NAME",
+    "test successful: TEST_NAME",
+    "test successful: ENGINE_NAME",
+    "plan finished"
+)
+
+val multiRootExpected = listOf(
+    "plan started",
+    "test started: ENGINE_NAME",
+    "test started: TEST_NAME",
+    "test started: ROOT_NAME",
+    "test started: moreTests",
+    "test started: test in moreTests",
+    "test successful: test in moreTests",
+    "test successful: moreTests",
+    "test started: tests",
+    "test started: test in tests",
+    "test successful: test in tests",
+    "test successful: tests",
     "test successful: ROOT_NAME",
     "test successful: TEST_NAME",
     "test successful: ENGINE_NAME",

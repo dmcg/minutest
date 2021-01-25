@@ -5,12 +5,13 @@ import samples.runners.expectedRunnersLog
 
 fun checkRunnersExampleLog(
     log: List<String>,
-    engineName: String,
-    testName: String,
-    rootName: String,
-    abortRatherThanSkip: Boolean = false
+    substitutions: List<Pair<String, String>>,
+    abortRatherThanSkip: Boolean = false,
+    expected: List<String>
 ) =
     assertLogged(
         log,
-        *expectedRunnersLog(engineName, testName, rootName, abortRatherThanSkip).toTypedArray()
+        *expectedRunnersLog(
+            substitutions, abortRatherThanSkip, expected
+        ).toTypedArray()
     )
