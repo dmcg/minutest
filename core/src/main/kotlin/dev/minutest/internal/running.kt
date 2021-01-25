@@ -14,20 +14,12 @@ private val pool: ForkJoinPool? = when {
 /**
  * Create a [RunnableContext] representing the roots of a tree of tests.
  */
-internal fun Node<Unit>.toRootContext(
+internal fun Context<Unit, *>.toRootContext(
     executorService: ExecutorService? = pool
 ): RunnableContext =
     when (this) {
         is AmalgamatedRootContext -> this.toRunnableContext(executorService)
-        else -> this.toRunnableNode(executorService)
-    }
-
-private fun Node<Unit>.toRunnableNode(executorService: ExecutorService?) =
-    when (
-        val runnableNode = this.toRunnableNode(RootExecutor, executorService)
-    ) {
-        is RunnableContext -> runnableNode
-        is RunnableTest -> error("Root is test") // this will happen if you SKIP on JUnit 4 root
+        else -> this.toRunnableContext(RootExecutor, executorService)
     }
 
 // In this case we need to build a RunnableContext where the children

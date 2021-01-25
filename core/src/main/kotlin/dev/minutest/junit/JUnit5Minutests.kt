@@ -1,5 +1,6 @@
 package dev.minutest.junit
 
+import dev.minutest.Context
 import dev.minutest.RootContextBuilder
 import dev.minutest.internal.rootContextFromMethods
 import org.junit.jupiter.api.DynamicNode
@@ -21,7 +22,7 @@ interface JUnit5Minutests {
         // execution _within_ a context
     fun minutests(): Stream<DynamicNode> =
         rootContextFromMethods()
-            ?.toRootStreamofDynamicNodes()
+            ?.toRootStreamOfDynamicNodes()
             ?: error("No test methods found")
 }
 
@@ -33,7 +34,9 @@ interface JUnit5Minutests {
 fun testFactoryFor(
     root: RootContextBuilder,
 ): Stream<DynamicNode> =
-    root.buildNode().toRootStreamofDynamicNodes()
+    (root.buildNode() as? Context<Unit, *>)?.toRootStreamOfDynamicNodes()
+        ?: error("Root node was a test, not a context\n" +
+            "This can happen if you skip on the root context, sorry.")
 
 /**
  * Convert a root context into a JUnit 5 [@org.junit.jupiter.api.TestFactory]

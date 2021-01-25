@@ -1,6 +1,6 @@
 package dev.minutest.junit
 
-import dev.minutest.Node
+import dev.minutest.Context
 import dev.minutest.internal.*
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicNode
@@ -11,7 +11,7 @@ import java.util.stream.Stream
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
-internal fun Node<Unit>.toRootStreamofDynamicNodes(): Stream<DynamicNode> =
+internal fun Context<Unit, *>.toRootStreamOfDynamicNodes(): Stream<DynamicNode> =
     toRootContext().toStreamOfDynamicNodes()
 
 private fun RunnableContext.toStreamOfDynamicNodes(): Stream<DynamicNode> =
