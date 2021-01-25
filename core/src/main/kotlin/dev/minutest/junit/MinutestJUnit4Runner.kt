@@ -55,7 +55,7 @@ private fun RunnableNode.toDescription(): Description = when (this) {
 
 private fun RunnableTest.toDescription() =
     Description.createTestDescription(
-        testDescriptor.name,
+        testDescriptor.fullName().elementAt(testDescriptor.fullName().size - 2),
         this.name
     )
 
