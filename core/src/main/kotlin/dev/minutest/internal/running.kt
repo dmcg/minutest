@@ -29,7 +29,7 @@ private fun AmalgamatedRootContext.toRunnableContext(
     executorService: ExecutorService?
 ) = RunnableContext(
     RootExecutor.andThenName(name),
-    children.map { it.toRunnableNode(RootExecutor, executorService) },
+    _children.map { it.toRunnableNode(RootExecutor, executorService) },
     this
 )
 
@@ -58,7 +58,9 @@ private fun <PF, F> Context<PF, F>.toRunnableContext(
     // as they hold state about what tests in a context have been run
     return RunnableContext(
         executor.andThenName(name),
-        children.map { it.toRunnableNode(childExecutor, executorService) },
+        children.map {
+            it.toRunnableNode(childExecutor, executorService)
+        }.asSequence(),
         this
     )
 }

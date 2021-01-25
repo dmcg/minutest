@@ -33,7 +33,7 @@ internal data class RunnableTest(
 
 internal class RunnableContext(
     override val testDescriptor: TestDescriptor,
-    val children: List<RunnableNode>,
+    val children: Sequence<RunnableNode>,
     private val context: Context<*, *>
 ) : RunnableNode() {
 

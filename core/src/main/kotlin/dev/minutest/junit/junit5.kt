@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DynamicTest
 import java.io.File
 import java.net.URI
 import java.util.stream.Stream
+import kotlin.streams.asStream
 
 // These are defined as extensions to avoid taking a dependency on JUnit in the main package
 
@@ -17,7 +18,7 @@ internal fun Context<Unit, *>.toRootStreamOfDynamicNodes(): Stream<DynamicNode> 
 private fun RunnableContext.toStreamOfDynamicNodes(): Stream<DynamicNode> =
     children
         .map { it.toDynamicNode() }
-        .stream()
+        .asStream()
         .onClose { close() }
 
 private fun RunnableNode.toDynamicNode() =

@@ -104,7 +104,7 @@ class MinutestTestEngine : TestEngine {
                 runnableNode.children.map { child ->
                     MinutestNodeDescriptor(this, child)
                 }
-            is RunnableTest -> emptyList()
+            is RunnableTest -> emptySequence()
         }
 
     private fun executeStaticChildren(
