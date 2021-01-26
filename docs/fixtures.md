@@ -62,27 +62,27 @@ class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
     fun tests() = rootContext<List<String>> {
 
         context("empty") {
-            fixture {
+            given {
                 emptyList()
             }
             test("is empty") {
-                assertTrue(fixture.isEmpty())
+                assertTrue(it.isEmpty())
             }
             test("no head") {
-                assertNull(fixture.firstOrNull())
+                assertNull(it.firstOrNull())
             }
         }
 
         // Note that the context name and the fixture state agree
         context("not empty") {
-            fixture {
+            given {
                 listOf("item")
             }
             test("is not empty") {
-                assertFalse(fixture.isEmpty())
+                assertFalse(it.isEmpty())
             }
             test("has head") {
-                assertEquals("item", fixture.firstOrNull())
+                assertEquals("item", it.firstOrNull())
             }
         }
     }
@@ -107,7 +107,7 @@ class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
     fun tests() = rootContext<Arguments> {
 
         context("positive positive") {
-            fixture {
+            given {
                 Arguments(l = 3, r = 1)
             }
             test("addition") {
@@ -119,7 +119,7 @@ class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
         }
 
         context("positive negative") {
-            fixture {
+            given {
                 Arguments(l = 3, r = -1)
             }
             test("addition") {
@@ -166,7 +166,7 @@ class ControlPanel(
 class CompoundFixtureExampleTests : JUnit5Minutests {
 
     // The fixture consists of all the state affected by tests
-    class Fixture() {
+    class Fixture {
         var beeped = false
         var launched = false
 
@@ -177,7 +177,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 
     fun tests() = rootContext<Fixture> {
-        fixture { Fixture() }
+        given { Fixture() }
 
         context("key not turned") {
             test("light is off") {
@@ -191,7 +191,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
         }
 
         context("key turned") {
-            modifyFixture {
+            beforeEach {
                 controlPanel.turnKey()
             }
             test("light is on") {
@@ -221,35 +221,35 @@ class ParentFixtureExampleTests : JUnit5Minutests {
     data class Fixture(var fruit: String)
 
     fun tests() = rootContext<Fixture> {
-        fixture {
+        given {
             Fixture("banana")
         }
 
         test("sees the context's fixture") {
-            assertEquals("banana", fruit)
+            assertEquals("banana", it.fruit)
         }
 
         context("context inherits fixture") {
             test("sees the parent context's fixture") {
-                assertEquals("banana", fruit)
+                assertEquals("banana", it.fruit)
             }
         }
 
         context("context replaces fixture") {
-            fixture {
+            given {
                 Fixture("kumquat")
             }
             test("sees the replaced fixture") {
-                assertEquals("kumquat", fruit)
+                assertEquals("kumquat", it.fruit)
             }
         }
 
         context("context modifies fixture") {
-            modifyFixture {
-                fruit = "apple"
+            beforeEach {
+                it.fruit = "apple"
             }
             test("sees the modified fixture") {
-                assertEquals("apple", fruit)
+                assertEquals("apple", it.fruit)
             }
         }
     }
@@ -280,28 +280,28 @@ class DerivedContextExampleTests : JUnit5Minutests {
     // Our root fixture type is Fruit
     fun tests() = rootContext<Fruit>("Fruit Context") {
 
-        fixture {
+        given {
             Fruit("banana")
         }
 
         test("takes Fruit") {
-            assertTrue(fixture is Fruit)
+            assertTrue(it is Fruit)
         }
 
         // To change fixture type use derivedContext
         derivedContext<FruitDrink>("FruitDrink Context") {
 
             // deriveFixture specifies how to convert a Fruit to a FruitDrink
-            deriveFixture {
+            given_ { parentFixture ->
                 FruitDrink(parentFixture, "smoothie")
             }
 
             test("takes FruitDrink") {
-                assertTrue(fixture is FruitDrink)
+                assertTrue(it is FruitDrink)
             }
 
             // If you don't need access to the parent fixture, this would do
-            // fixture {
+            // given {
             //     FruitDrink(Fruit("kumquat"), "milkshake")
             // }
         }
@@ -329,7 +329,7 @@ class CloseableFixtureExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<Fixture> {
 
-        closeableFixture { testDescriptor ->
+        givenClosable { testDescriptor ->
             Fixture(File.createTempFile(testDescriptor.name, ".tmp"))
         }
 
@@ -337,7 +337,7 @@ class CloseableFixtureExampleTests : JUnit5Minutests {
             writer.write("banana")
         }
 
-        after {
+        afterEach {
             assertThrows(IOException::class.java) {
                 writer.write("should be closed")
             }

@@ -12,18 +12,18 @@ class ImmutableExampleTests : JUnit5Minutests {
     fun tests() = rootContext<List<String>> {
 
         // List<String> is immutable
-        fixture { emptyList() }
+        given { emptyList() }
 
         // test_ allows you to return the fixture
         test_("add an item and return the fixture") {
-            val newList = this + "item"
+            val newList = it + "item"
             assertEquals("item", newList.first())
             newList
         }
 
         // which will be available for inspection in after
-        after {
-            assertEquals("item", first())
+        afterEach {
+            assertEquals("item", it.first())
         }
     }
 }

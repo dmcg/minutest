@@ -15,7 +15,7 @@ class JUnitRulesExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<Fixture> {
 
-        fixture { Fixture() }
+        given { Fixture() }
 
         // tell the context to use the rule for each test in it and its children
         applyRule(this@JUnitRulesExampleTests::class.java.name) { this.testFolder }
