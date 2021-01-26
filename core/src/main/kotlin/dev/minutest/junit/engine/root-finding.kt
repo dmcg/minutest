@@ -84,10 +84,11 @@ private fun selectorsFrom(discoveryRequest: EngineDiscoveryRequest) =
 private fun amalgamatedRootContext(javaClass: Class<*>): AmalgamatedRootContext? {
     if (quickCheckForNotOurs(javaClass))
         return null
-    return rootContextFromStaticMethods(javaClass)
-        ?: rootContextForClass(javaClass.kotlin) {
-            it.hasTestableAnnotation
-        }
+    return rootContextFromTopLevelFunctions(javaClass) {
+        it.hasTestableAnnotation
+    } ?: rootContextForClass(javaClass.kotlin) {
+        it.hasTestableAnnotation
+    }
 }
 
 private fun quickCheckForNotOurs(klass: Class<*>) =
@@ -102,23 +103,3 @@ private val KFunction<*>.hasTestableAnnotation
         annotations.any { it is Testable }
 
 private class ClassAndMethodNames(val className: String, val methodName: String?)
-
-private fun rootContextFromStaticMethods(
-    javaClass: Class<*>
-): AmalgamatedRootContext? {
-    val staticBuilders = javaClass.staticMethodsAsContextBuilderBuilders {
-        it.hasTestableAnnotation
-    }
-    return when {
-        staticBuilders.isEmpty() -> null
-        else ->
-            AmalgamatedRootContext(
-                javaClass.name
-            ) {
-                staticBuilders
-                    .map { method ->
-                        method.invoke().buildNode()
-                    }
-            }
-    }
-}

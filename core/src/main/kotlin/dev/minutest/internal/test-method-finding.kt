@@ -25,7 +25,7 @@ internal fun Any.rootContextFromMethods(
             lazyRootRootContext(
                 this::class.qualifiedName ?: "A class with no name",
                 contextBuilderMethods
-            ) { this }
+            ) { arrayOf(this) }
     }
 }
 
@@ -42,21 +42,37 @@ internal fun rootContextForClass(
             lazyRootRootContext(
                 klass.qualifiedName ?: "A class with no name",
                 contextBuilderMethods
-            ) { constructor.call() }
+            ) { arrayOf(constructor.call()) }
+    }
+}
+
+
+internal fun rootContextFromTopLevelFunctions(
+    javaClass: Class<*>,
+    filter: (KFunction<RootContextBuilder>) -> Boolean = { true }
+): AmalgamatedRootContext? {
+    val staticBuilders = javaClass.staticMethodsAsContextBuilderBuilders(filter)
+    return when {
+        staticBuilders.isEmpty() -> null
+        else ->
+            lazyRootRootContext(
+                javaClass.name,
+                staticBuilders
+            ) { emptyArray() }
     }
 }
 
 private fun lazyRootRootContext(
     name: String,
     contextBuilderMethods: List<KFunction<RootContextBuilder>>,
-    instanceProvider: () -> Any
+    instanceProvider: () -> Array<Any>
 ) = AmalgamatedRootContext(
     name
 ) {
     val instance = instanceProvider.invoke()
     contextBuilderMethods.map { method ->
         method
-            .call(instance)
+            .call(*instance)
             .withNameUnlessSpecified(method.name)
             .buildNode()
     }
@@ -81,19 +97,13 @@ internal fun <T : Any> KClass<T>.contextBuilderMethods(
 @Suppress("UNCHECKED_CAST")
 internal fun Class<*>.staticMethodsAsContextBuilderBuilders(
     filter: (KFunction<RootContextBuilder>) -> Boolean
-): List<() -> RootContextBuilder> =
+): List<KFunction<RootContextBuilder>> =
     methods
         .mapNotNull { it.kotlinFunction } // horrendously slow for first call
         .filter {
             it.returnType.classifier == RootContextBuilder::class
-                // only `this` receiver as parameters
                 && it.parameters.isEmpty()
                 && it.visibility == KVisibility.PUBLIC
                 && filter(it as KFunction<RootContextBuilder>)
-        }
-        .map { function ->
-            {
-                (function.call() as RootContextBuilder).withNameUnlessSpecified(function.name)
-            }
-        }
+        } as List<KFunction<RootContextBuilder>>
 
