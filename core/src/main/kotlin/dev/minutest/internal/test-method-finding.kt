@@ -71,8 +71,7 @@ internal fun Any.contextBuilderMethods(
 @Suppress("UNCHECKED_CAST")
 internal fun Class<*>.staticMethodsAsContextBuilderBuilders(
     filter: (KFunction<RootContextBuilder>) -> Boolean
-)
-    : List<() -> RootContextBuilder> =
+): List<() -> RootContextBuilder> =
     methods
         .mapNotNull { it.kotlinFunction } // horrendously slow for first call
         .filter {

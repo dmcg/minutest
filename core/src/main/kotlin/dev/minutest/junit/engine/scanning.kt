@@ -45,14 +45,12 @@ internal fun scanForRootNodes(
                     .map { (packageName, functions: List<RootContextFun>) ->
                         AmalgamatedRootContext(
                             packageName,
-                            functions.renamed().asSequence().map { it.buildNode() }
+                            functions.asSequence().renamed().map { it.buildNode() }
                         )
                     }
                 (methodContexts + topLevelContexts)
             }
     }
-
-
 
 private fun classGraphWith(scannerConfig: ClassGraph.() -> Unit) =
     ClassGraph()
@@ -74,7 +72,7 @@ private fun MethodInfo.definesARootContext() =
 
 private fun TypeSignature.name() = (this as? ClassRefTypeSignature)?.baseClassName
 
-private fun Iterable<RootContextFun>.renamed(): List<RootContextBuilder> =
+internal fun Sequence<RootContextFun>.renamed(): Sequence<RootContextBuilder> =
     this.map { f: RootContextFun ->
         f().withNameUnlessSpecified(f.name)
     }
