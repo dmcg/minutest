@@ -12,13 +12,11 @@ import dev.minutest.*
  */
 internal data class AmalgamatedRootContext(
     override val name: String,
-    val _children: Sequence<Node<Unit>>,
-    override val markers: List<Any> = emptyList()
+    override val markers: List<Any> = emptyList(),
+    val stork: () -> List<Node<Unit>>
 ) : Context<Unit, Unit>() {
 
-    override val children by lazy {
-        _children.toList()
-    }
+    override val children by lazy(stork)
 
     override fun runTest(
         testlet: Testlet<Unit>,
@@ -30,7 +28,7 @@ internal data class AmalgamatedRootContext(
     }
 
     fun withFilteredChildren(predicate: (Node<Unit>) -> Boolean) =
-        this.copy(_children = _children.filter(predicate))
+        this.copy(stork = { stork().filter(predicate) })
 
     override fun withTransformedChildren(transform: NodeTransform<Unit>)
         : Context<Unit, Unit> {

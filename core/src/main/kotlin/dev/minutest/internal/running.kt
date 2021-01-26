@@ -29,7 +29,10 @@ private fun AmalgamatedRootContext.toRunnableContext(
     executorService: ExecutorService?
 ) = RunnableContext(
     RootExecutor.andThenName(name),
-    _children.map { it.toRunnableNode(RootExecutor, executorService) },
+    Sequence {
+        children.map {
+            it.toRunnableNode(RootExecutor, executorService)
+        }.iterator() },
     this
 )
 

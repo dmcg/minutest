@@ -50,7 +50,7 @@ class TestLoggerTests {
     }
 
     private fun doStuff(logger: TestLogger) {
-        val stubContext = AmalgamatedRootContext("meh", emptySequence())
+        val stubContext = AmalgamatedRootContext("meh") { emptyList() }
         val stubTest = Test<Unit>("dummy", emptyList(), NodeId.forBuilder(this)) { _, _ -> }
 
         logger.contextOpened(stubContext, RootExecutor.andThenName("root"))

@@ -44,13 +44,12 @@ internal fun scanForRootNodes(
                     .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
                     .map { (packageName, functions: List<RootContextFun>) ->
                         AmalgamatedRootContext(
-                            packageName,
+                            packageName
+                        ) {
                             functions
-                                .asSequence()
-                                .constrainOnce()
                                 .renamed()
                                 .map { it.buildNode() }
-                        )
+                        }
                     }
                 (methodContexts + topLevelContexts)
             }
@@ -76,7 +75,7 @@ private fun MethodInfo.definesARootContext() =
 
 private fun TypeSignature.name() = (this as? ClassRefTypeSignature)?.baseClassName
 
-internal fun Sequence<RootContextFun>.renamed(): Sequence<RootContextBuilder> =
+internal fun List<RootContextFun>.renamed() =
     this.map { f: RootContextFun ->
         f().withNameUnlessSpecified(f.name)
     }

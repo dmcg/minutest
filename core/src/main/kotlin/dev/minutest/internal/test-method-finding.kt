@@ -13,55 +13,61 @@ import kotlin.reflect.jvm.kotlinFunction
  * Find nodes from the methods on this instance.
  *
  * Assumes we know receiver
- *
- * Flattens the contexts depending on whether one or more methods found
  */
 internal fun Any.rootContextFromMethods(
     filter: (KFunction<RootContextBuilder>) -> Boolean = { true }
 ): AmalgamatedRootContext? {
-    val contextBuilderMethods = this.methodsAsContextBuilderBuilders(filter)
+    val contextBuilderMethods = this::class.contextBuilderMethods(filter)
     return when {
         contextBuilderMethods.isEmpty() ->
             null
         else ->
-            AmalgamatedRootContext(
-                this::class.qualifiedName ?: error("Trying find tests in class with no name"),
+            lazyRootRootContext(
+                this::class.qualifiedName ?: "A class with no name",
                 contextBuilderMethods
-                    .asSequence()
-                    .constrainOnce()
-                    .map { method ->
-                        method.invoke().buildNode()
-                    }
-            )
+            ) { this }
     }
 }
 
 internal fun rootContextForClass(
     klass: KClass<*>,
     filter: (KFunction<RootContextBuilder>) -> Boolean = { true }
-): AmalgamatedRootContext? =
-    klass.constructors.singleOrNull()
-        ?.call()
-        ?.rootContextFromMethods(filter)
-
-
-internal fun Any.methodsAsContextBuilderBuilders(
-    filter: (KFunction<RootContextBuilder>) -> Boolean
-): List<() -> RootContextBuilder> =
-    contextBuilderMethods(filter).invokeOn(this)
-
-internal fun List<KFunction<RootContextBuilder>>.invokeOn(o: Any): List<() -> RootContextBuilder> =
-    map { method ->
-        {
-            method.call(o).withNameUnlessSpecified(method.name)
-        }
+): AmalgamatedRootContext? {
+    val contextBuilderMethods = klass.contextBuilderMethods(filter)
+    val constructor = klass.constructors.singleOrNull()
+    return when {
+        contextBuilderMethods.isEmpty() || constructor == null ->
+            null
+        else ->
+            lazyRootRootContext(
+                klass.qualifiedName ?: "A class with no name",
+                contextBuilderMethods
+            ) { constructor.call() }
     }
+}
+
+private fun lazyRootRootContext(
+    name: String,
+    contextBuilderMethods: List<KFunction<RootContextBuilder>>,
+    instanceProvider: () -> Any
+) = AmalgamatedRootContext(
+    name
+) {
+    val instance = instanceProvider.invoke()
+    contextBuilderMethods.map { method ->
+        method
+            .call(instance)
+            .withNameUnlessSpecified(method.name)
+            .buildNode()
+    }
+}
+
 
 @Suppress("UNCHECKED_CAST")
-internal fun Any.contextBuilderMethods(
+internal fun <T : Any> KClass<T>.contextBuilderMethods(
     filter: (KFunction<RootContextBuilder>) -> Boolean
 ): List<KFunction<RootContextBuilder>> {
-    return this::class.memberFunctions
+    return memberFunctions
         .filter {
             it.returnType.classifier == RootContextBuilder::class
                 // only `this` receiver as parameters

@@ -113,13 +113,12 @@ private fun rootContextFromStaticMethods(
         staticBuilders.isEmpty() -> null
         else ->
             AmalgamatedRootContext(
-                javaClass.name,
+                javaClass.name
+            ) {
                 staticBuilders
-                    .asSequence()
-                    .constrainOnce()
                     .map { method ->
                         method.invoke().buildNode()
                     }
-            )
+            }
     }
 }
