@@ -55,14 +55,13 @@ internal fun rootContextFromTopLevelFunctions(
     return when {
         staticBuilders.isEmpty() -> null
         else ->
-            lazyRootRootContext(
-                javaClass.name,
-                staticBuilders
-            ) { emptyArray() }
+            lazyRootRootContext(javaClass.name, staticBuilders) {
+                emptyArray()
+            }
     }
 }
 
-private fun lazyRootRootContext(
+internal fun lazyRootRootContext(
     name: String,
     contextBuilderMethods: List<KFunction<RootContextBuilder>>,
     instanceProvider: () -> Array<Any>

@@ -2,9 +2,11 @@ package dev.minutest.junit.engine
 
 import dev.minutest.RootContextBuilder
 import dev.minutest.internal.AmalgamatedRootContext
+import dev.minutest.internal.lazyRootRootContext
 import dev.minutest.internal.rootContextForClass
 import dev.minutest.internal.time
 import io.github.classgraph.*
+import kotlin.reflect.KClass
 import kotlin.reflect.KFunction0
 import kotlin.reflect.KVisibility.PUBLIC
 import kotlin.reflect.jvm.javaMethod
@@ -43,12 +45,8 @@ internal fun scanForRootNodes(
                     .filter { it.visibility == PUBLIC }
                     .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
                     .map { (packageName, functions: List<RootContextFun>) ->
-                        AmalgamatedRootContext(
-                            packageName
-                        ) {
-                            functions
-                                .renamed()
-                                .map { it.buildNode() }
+                        lazyRootRootContext(packageName, functions) {
+                            emptyArray()
                         }
                     }
                 (methodContexts + topLevelContexts)
@@ -69,15 +67,14 @@ private fun MethodInfo.toKotlinFunction(): RootContextFun? =
     loadClassAndGetMethod().kotlinFunction as? RootContextFun
 
 private fun MethodInfo.definesARootContext() =
-    isPublic && parameterInfo.isEmpty() && !isBridge &&
-        typeSignatureOrTypeDescriptor.resultType.name() == RootContextBuilder::class.java.name
+    isPublic && parameterInfo.isEmpty()
+        && !isBridge &&
+        typeSignatureOrTypeDescriptor.resultType.isLike(RootContextBuilder::class)
         && hasAnnotation("org.junit.platform.commons.annotation.Testable")
 
-private fun TypeSignature.name() = (this as? ClassRefTypeSignature)?.baseClassName
+private fun TypeSignature.isLike(kClass: KClass<*>) =
+    name() == kClass.java.name
 
-internal fun List<RootContextFun>.renamed() =
-    this.map { f: RootContextFun ->
-        f().withNameUnlessSpecified(f.name)
-    }
+private fun TypeSignature.name() = (this as? ClassRefTypeSignature)?.baseClassName
 
 private typealias RootContextFun = KFunction0<RootContextBuilder>
