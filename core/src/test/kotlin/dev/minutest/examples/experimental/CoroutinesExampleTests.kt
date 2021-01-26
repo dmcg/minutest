@@ -4,7 +4,7 @@ import dev.minutest.ContextBuilder
 import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -19,7 +19,7 @@ class CoroutinesExampleTests : JUnit5Minutests {
         given { "banana" }
 
         // You can use runBlockingTest in your test
-        test2("use runBlocking") {
+        test("use runBlocking") {
             runBlockingTest {
                 assertEquals("bananarama", it.slowPlus("rama"))
                 advanceUntilIdle()
@@ -46,7 +46,7 @@ private fun <F> ContextBuilder<F>.coTest(
     name: String,
     f: suspend F.(fixture: F, testCoroutineScope: TestCoroutineScope) -> Unit
 ) =
-    test2(name) { fixture ->
+    test(name) { fixture ->
         runBlockingTest {
             (fixture).f(fixture, this)
         }

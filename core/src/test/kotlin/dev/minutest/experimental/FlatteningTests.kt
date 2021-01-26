@@ -24,7 +24,7 @@ class FlatteningTests {
 
                 flatten()
 
-                test2("should not be run") {
+                test("should not be run") {
                     fail("")
                 }
 
@@ -54,7 +54,7 @@ class FlatteningTests {
                     miscLog.add("before $it")
                 }
 
-                test2("is a string") {
+                test("is a string") {
                     miscLog.add("test $it")
                     @Suppress("USELESS_IS_CHECK")
                     assertTrue(it is String)
@@ -97,7 +97,7 @@ class FlatteningTests {
                     miscLog.add("before $it")
                 }
 
-                test2("is two") {
+                test("is two") {
                     miscLog.add("test $it")
                     assertEquals("two", it)
                 }

@@ -3,7 +3,7 @@ package dev.minutest.examples
 import dev.minutest.experimental.willRun
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.assertEquals
 
 class RepeatingExampleTests : JUnit5Minutests {
@@ -13,7 +13,7 @@ class RepeatingExampleTests : JUnit5Minutests {
         // Invoking the test block creates a test to be run later.
         // You can use plain old Kotlin to generate multiple otherwise identical tests.
         (1..3).forEach { count ->
-            test2("check 1 is 1 - run $count") {
+            test("check 1 is 1 - run $count") {
                 assertEquals(1, 1)
             }
         }
@@ -21,10 +21,10 @@ class RepeatingExampleTests : JUnit5Minutests {
         // This works for contexts too.
         (1..3).forEach { count ->
             context("context $count") {
-                test2("check 2 is 2") {
+                test("check 2 is 2") {
                     assertEquals(2, 2)
                 }
-                test2("check 3 is 3") {
+                test("check 3 is 3") {
                     assertEquals(3, 3)
                 }
             }

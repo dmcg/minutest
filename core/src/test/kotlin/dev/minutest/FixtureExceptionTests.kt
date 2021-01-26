@@ -13,7 +13,7 @@ class FixtureExceptionTests  {
             given {
                 throw FileNotFoundException()
             }
-            test2("there needs to be a test to run anything") {}
+            test("there needs to be a test to run anything") {}
 
         }
         runTests(tests).hasExceptionsMatching(

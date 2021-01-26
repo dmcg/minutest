@@ -31,10 +31,10 @@ class JUnitRulesTests : JUnit5Minutests {
             fixture.rule
         }
 
-        test2("test in root") {}
+        test("test in root") {}
 
         context("context") {
-            test2("test in context") {}
+            test("test in context") {}
         }
         afterEach {
             log.add(rule.testDescription.toString())
@@ -52,10 +52,10 @@ class JUnitRulesTests : JUnit5Minutests {
             staticRule
         }
 
-        test2("test in root") {}
+        test("test in root") {}
 
         context("context") {
-            test2("test in context") {}
+            test("test in context") {}
         }
     }
 

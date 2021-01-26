@@ -11,7 +11,7 @@ class VarianceTests : JUnit5Minutests {
 
         given { 42 }
 
-        test2_("test") {
+        test_("test") {
             @Suppress("USELESS_IS_CHECK")
             assertTrue(this is Number)
 

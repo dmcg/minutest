@@ -3,7 +3,7 @@ package dev.minutest.examples.fixtures
 import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.*
 
 class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
@@ -14,10 +14,10 @@ class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
             given {
                 emptyList()
             }
-            test2("is empty") {
+            test("is empty") {
                 assertTrue(it.isEmpty())
             }
-            test2("no head") {
+            test("no head") {
                 assertNull(it.firstOrNull())
             }
         }
@@ -27,10 +27,10 @@ class SubjectUnderTestFixtureExampleTests : JUnit5Minutests {
             given {
                 listOf("item")
             }
-            test2("is not empty") {
+            test("is not empty") {
                 assertFalse(it.isEmpty())
             }
-            test2("has head") {
+            test("has head") {
                 assertEquals("item", it.firstOrNull())
             }
         }

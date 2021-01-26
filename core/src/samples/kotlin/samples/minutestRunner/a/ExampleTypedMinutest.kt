@@ -4,7 +4,7 @@ package samples.minutestRunner.a
 
 import dev.minutest.given
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions
 import org.junit.platform.commons.annotation.Testable
 import java.util.*
@@ -13,7 +13,7 @@ import java.util.*
 fun `example typed context`() = rootContext<Stack<String>> {
     given { Stack() }
     
-    test2("a typed fixture test") {
+    test("a typed fixture test") {
         Assertions.assertTrue(isEmpty())
     }
 }

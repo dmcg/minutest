@@ -3,7 +3,7 @@ package dev.minutest.examples
 import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.assertEquals
 
 // Mix-in JUnit5Minutests to run Minutests with JUnit 5
@@ -18,14 +18,14 @@ class MyFirstMinutests : JUnit5Minutests {
         given { Calculator() }
 
         // define a test with a test block
-        test2("addition") {
+        test("addition") {
             // inside tests, the fixture is `it`
             it.add(2)
             assertEquals(2, it.currentValue)
         }
 
         // each new test gets its own new fixture
-        test2("subtraction") { calculator ->
+        test("subtraction") { calculator ->
             subtract(2)
             assertEquals(-2, calculator.currentValue)
         }

@@ -8,7 +8,7 @@ import dev.minutest.beforeEach
 import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.jmock.Mockery
 import org.jmock.lib.concurrent.Synchroniser
 
@@ -65,7 +65,7 @@ class JMockExampleTests : JUnit5Minutests {
                 }
             }
 
-            test2("cannot launch when pressing button") {
+            test("cannot launch when pressing button") {
                 mockery.expecting {
                     oneOf(beeper).beep()
                     never(rocket).launch()
@@ -81,7 +81,7 @@ class JMockExampleTests : JUnit5Minutests {
                 }
             }
 
-            test2("launches when pressing button") {
+            test("launches when pressing button") {
                 // k-sera has a nice DSL for verify
                 mockery {
                     during {

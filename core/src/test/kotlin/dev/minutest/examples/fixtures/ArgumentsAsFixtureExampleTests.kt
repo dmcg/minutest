@@ -3,7 +3,7 @@ package dev.minutest.examples.fixtures
 import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.assertEquals
 
 class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
@@ -16,10 +16,10 @@ class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
             given {
                 Arguments(l = 3, r = 1)
             }
-            test2("addition") {
+            test("addition") {
                 assertEquals(4, l + r)
             }
-            test2("subtraction") {
+            test("subtraction") {
                 assertEquals(2, l - r)
             }
         }
@@ -28,10 +28,10 @@ class ArgumentsAsFixtureExampleTests : JUnit5Minutests {
             given {
                 Arguments(l = 3, r = -1)
             }
-            test2("addition") {
+            test("addition") {
                 assertEquals(2, l + r)
             }
-            test2("subtraction") {
+            test("subtraction") {
                 assertEquals(4, l - r)
             }
         }

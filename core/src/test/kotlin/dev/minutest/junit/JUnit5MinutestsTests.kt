@@ -2,7 +2,7 @@ package dev.minutest.junit
 
 import dev.minutest.given
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
@@ -14,7 +14,7 @@ class JUnit5MinutestsTests : JUnit5Minutests {
     fun `plain fixture`() = rootContext<String> {
         given { "banana" }
 
-        test2("test") {
+        test("test") {
             assertEquals("banana", this)
         }
     }
@@ -22,7 +22,7 @@ class JUnit5MinutestsTests : JUnit5Minutests {
     fun `generic fixture`() = rootContext<Stack<String>> {
         given { Stack() }
 
-        test2("test") {
+        test("test") {
             assertTrue(this.isEmpty())
         }
     }
@@ -30,7 +30,7 @@ class JUnit5MinutestsTests : JUnit5Minutests {
     fun `nullable fixture`() = rootContext<String?> {
         given { "banana" }
 
-        test2("test") {
+        test("test") {
             assertEquals("banana", this ?: "kumquat")
         }
     }
@@ -38,7 +38,7 @@ class JUnit5MinutestsTests : JUnit5Minutests {
     fun `nullable fixture that is null`() = rootContext<String?> {
         given { null }
 
-        test2("test") {
+        test("test") {
             assertEquals("kumquat", this ?: "kumquat")
         }
     }

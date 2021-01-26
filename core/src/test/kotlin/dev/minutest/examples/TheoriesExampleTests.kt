@@ -3,7 +3,7 @@ package dev.minutest.examples
 import dev.minutest.ContextBuilder
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 
@@ -52,7 +52,7 @@ fun <F> ContextBuilder<*>.theory(fixture: F, name: String, condition: Condition<
         try {
             check(fixture)
         } catch (throwable: Throwable) {
-            test2("$name when ${condition.name} failed for value [$fixture]") {
+            test("$name when ${condition.name} failed for value [$fixture]") {
                 throw throwable
             }
         }

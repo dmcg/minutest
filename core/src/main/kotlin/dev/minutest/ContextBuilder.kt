@@ -77,8 +77,8 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Define a test on the current fixture (accessible as 'this').
      */
-    @Deprecated("use test2_")
-    fun test(
+    @Deprecated("use test")
+    fun old_test(
         name: String,
         f: F.(testDescriptor: TestDescriptor) -> Unit
     ): Annotatable<F> {
@@ -92,8 +92,8 @@ abstract class TestContextBuilder<PF, F> {
      * a new fixture to be processed by 'afters'.
      */
     @Suppress("FunctionName")
-    @Deprecated("use test2_")
-    fun test_(
+    @Deprecated("use test_")
+    fun old_test_(
         name: String,
         f: F.(testDescriptor: TestDescriptor) -> F
     ): Annotatable<F> {

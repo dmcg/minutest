@@ -3,7 +3,7 @@ package dev.minutest.examples.experimental
 import dev.minutest.experimental.autoClose
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import java.io.BufferedWriter
 import java.nio.file.Files
 import kotlin.test.assertEquals
@@ -20,7 +20,7 @@ class AutoCloseExampleTests : JUnit5Minutests {
             tempFile.bufferedWriter()
         }
 
-        test2("test 1") {
+        test("test 1") {
             // sharedResource is created on its first use
             synchronized(sharedResource) {
                 // synchronised because test may be in parallel
@@ -28,7 +28,7 @@ class AutoCloseExampleTests : JUnit5Minutests {
             }
         }
 
-        test2("test 2") {
+        test("test 2") {
             // this is the same instance
             synchronized(sharedResource) {
                 sharedResource.appendLine("in test 2")

@@ -4,7 +4,7 @@ import dev.minutest.beforeEach
 import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
@@ -17,12 +17,12 @@ class ParentFixtureExampleTests : JUnit5Minutests {
             Fixture("banana")
         }
 
-        test2("sees the context's fixture") {
+        test("sees the context's fixture") {
             assertEquals("banana", it.fruit)
         }
 
         context("context inherits fixture") {
-            test2("sees the parent context's fixture") {
+            test("sees the parent context's fixture") {
                 assertEquals("banana", it.fruit)
             }
         }
@@ -31,7 +31,7 @@ class ParentFixtureExampleTests : JUnit5Minutests {
             given {
                 Fixture("kumquat")
             }
-            test2("sees the replaced fixture") {
+            test("sees the replaced fixture") {
                 assertEquals("kumquat", it.fruit)
             }
         }
@@ -40,7 +40,7 @@ class ParentFixtureExampleTests : JUnit5Minutests {
             beforeEach {
                 it.fruit = "apple"
             }
-            test2("sees the modified fixture") {
+            test("sees the modified fixture") {
                 assertEquals("apple", it.fruit)
             }
         }

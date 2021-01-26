@@ -4,7 +4,7 @@ import dev.minutest.beforeEach
 import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
@@ -44,10 +44,10 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
         given { Fixture() }
 
         context("key not turned") {
-            test2("light is off") {
+            test("light is off") {
                 assertFalse(controlPanel.warningLightOn)
             }
-            test2("cannot launch when pressing button") {
+            test("cannot launch when pressing button") {
                 controlPanel.pressButton()
                 assertTrue(beeped)
                 assertFalse(launched)
@@ -58,10 +58,10 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
             beforeEach {
                 controlPanel.turnKey()
             }
-            test2("light is on") {
+            test("light is on") {
                 assertTrue(controlPanel.warningLightOn)
             }
-            test2("launches when pressing button") {
+            test("launches when pressing button") {
                 controlPanel.pressButton()
                 assertFalse(beeped)
                 assertTrue(launched)

@@ -55,7 +55,7 @@ fun <PF, F> TestContextBuilder<PF, F>.given_(
  * Define a test on the current fixture
  * (accessible as 'this' and 'it').
  */
-fun <PF, F> TestContextBuilder<PF, F>.test2(
+fun <PF, F> TestContextBuilder<PF, F>.test(
     name: String,
     f: F.(fixture: F) -> Unit
 ): Annotatable<F> {
@@ -70,7 +70,7 @@ fun <PF, F> TestContextBuilder<PF, F>.test2(
  * returning a new fixture to be processed by afterEach's.
  */
 @Suppress("FunctionName")
-fun <PF, F> TestContextBuilder<PF, F>.test2_(
+fun <PF, F> TestContextBuilder<PF, F>.test_(
     name: String,
     f: F.(fixture: F) -> F
 ): Annotatable<F> {

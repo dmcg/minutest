@@ -24,15 +24,15 @@ class FlatteningExampleTests : JUnit5Minutests {
                 // will be invoked with each item in the sequence
             }
 
-            test2("fixture is each item") {
+            test("fixture is each item") {
                 assertTrue(it is String)
             }
 
-            test2("is not empty") {
+            test("is not empty") {
                 assertTrue(it.isNotEmpty())
             }
 
-            test2("is two") {
+            test("is two") {
                 // would fail for most cases, collected into a MultipleFailuresError
                 // assertEquals("two", this)
             }

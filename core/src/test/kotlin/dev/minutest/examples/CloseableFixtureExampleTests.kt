@@ -4,7 +4,7 @@ import dev.minutest.afterEach
 import dev.minutest.givenClosable
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.assertThrows
 import java.io.Closeable
 import java.io.File
@@ -26,7 +26,7 @@ class CloseableFixtureExampleTests : JUnit5Minutests {
             Fixture(File.createTempFile(testDescriptor.name, ".tmp"))
         }
 
-        test2("can write") {
+        test("can write") {
             writer.write("banana")
         }
 

@@ -4,7 +4,7 @@ import dev.minutest.beforeEach
 import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
@@ -17,7 +17,7 @@ class StackExampleTests : JUnit5Minutests {
 
         context("when new") {
 
-            test2("is empty") {
+            test("is empty") {
                 assertTrue(it.isEmpty())
             }
         }
@@ -28,7 +28,7 @@ class StackExampleTests : JUnit5Minutests {
                 it.push("an element")
             }
 
-            test2("it is no longer empty") {
+            test("it is no longer empty") {
                 assertFalse(it.isEmpty())
             }
         }

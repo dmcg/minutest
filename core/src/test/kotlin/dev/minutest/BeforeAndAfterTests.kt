@@ -36,7 +36,7 @@ class BeforeAndAfterTests {
                     it.add("after 2")
                 }
 
-                test2("test") {
+                test("test") {
                     assertEquals(listOf("before 1", "before 2"), it)
                     add("test")
                 }
@@ -67,7 +67,7 @@ class BeforeAndAfterTests {
                     log.addAll(it)
                 }
 
-                test2_("test") {
+                test_("test") {
                     assertEquals(listOf("before 1", "before 2"), it)
                     it + "test"
                 }
@@ -112,7 +112,7 @@ class BeforeAndAfterTests {
                         it.add("inner after")
                     }
 
-                    test2("test") {
+                    test("test") {
                         assertEquals(listOf("outer before 1", "inner before", "inner fixture"), it)
                         it.add("test")
                     }
@@ -134,7 +134,7 @@ class BeforeAndAfterTests {
                     add("after")
                 }
 
-                test2("test") {
+                test("test") {
                     it.add("test")
                     throw Exception("in test")
                 }
@@ -162,7 +162,7 @@ class BeforeAndAfterTests {
                     add("after")
                 }
 
-                test2("not run") {
+                test("not run") {
                     add("test")
                 }
             }
@@ -196,7 +196,7 @@ class BeforeAndAfterTests {
                             throw Exception("in inner fixture")
                         }
 
-                        test2("wont run") {
+                        test("wont run") {
                             fail("doesn't get here")
                         }
 
@@ -225,7 +225,7 @@ class BeforeAndAfterTests {
         ) { log ->
             rootContext {
 
-                test2("test") {
+                test("test") {
                     log.add("test")
                 }
 
@@ -255,7 +255,7 @@ class BeforeAndAfterTests {
         ) { log ->
             rootContext {
 
-                test2_("test") {
+                test_("test") {
                     log.add("test")
                     throw Exception("in test")
                 }

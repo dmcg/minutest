@@ -14,7 +14,7 @@ class AnnotationPrecedenceTests {
 
         runTests(
             rootContext {
-                transform("1") + transform("2") - test2("test") {}
+                transform("1") + transform("2") - test("test") {}
             }
         )
         assertLogged(log,
@@ -31,7 +31,7 @@ class AnnotationPrecedenceTests {
         runTests(
             rootContext {
                 transform("1") + transform("2") - context("inner") {
-                    test2("test") {}
+                    test("test") {}
                 }
             }
         )
@@ -48,7 +48,7 @@ class AnnotationPrecedenceTests {
 
         runTests(
             transform("1") + transform("2") - rootContext {
-                test2("test") {}
+                test("test") {}
             }
         )
         assertLogged(log,
@@ -66,7 +66,7 @@ class AnnotationPrecedenceTests {
             rootContext {
                 annotateWith(transform("1"))
                 annotateWith(transform("2"))
-                test2("test") {}
+                test("test") {}
             }
         )
         assertLogged(log,
@@ -84,7 +84,7 @@ class AnnotationPrecedenceTests {
             rootContext {
                 transform("1") - context("inner") {
                     annotateWith(transform("2"))
-                    test2("test") {}
+                    test("test") {}
                 }
             }
         )
@@ -102,7 +102,7 @@ class AnnotationPrecedenceTests {
         runTests(
             transform("1") - rootContext {
                 annotateWith(transform("2"))
-                test2("test") {}
+                test("test") {}
             }
         )
         // rootContext is consistent with a nested context

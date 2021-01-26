@@ -3,7 +3,7 @@ package dev.minutest.experimental
 import dev.minutest.RootContextBuilder
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import kotlin.test.fail
 
 
@@ -12,8 +12,8 @@ class SkipAndFocusTests : JUnit5Minutests {
     private val noop: Unit.(Unit) -> Unit = {}
 
     fun noop() = rootContext {
-        test2("t1", noop)
-        test2("t2", noop)
+        test("t1", noop)
+        test("t2", noop)
         willRun(
             "▾ noop",
             "  ✓ t1",
@@ -22,8 +22,8 @@ class SkipAndFocusTests : JUnit5Minutests {
     }
 
     fun `skip test`() = rootContext {
-        SKIP - test2("t1") { fail("t1 wasn't skipped") }
-        test2("t2", noop)
+        SKIP - test("t1") { fail("t1 wasn't skipped") }
+        test("t2", noop)
         willRun(
             "▾ skip test",
             "  - t1",
@@ -33,9 +33,9 @@ class SkipAndFocusTests : JUnit5Minutests {
 
     fun `skip context`() = rootContext {
         SKIP - context("c1") {
-            test2("c1/t1") { fail("c1/t1 wasn't skipped") }
+            test("c1/t1") { fail("c1/t1 wasn't skipped") }
         }
-        test2("t2", noop)
+        test("t2", noop)
         willRun(
             "▾ skip context",
             "  - c1",
@@ -44,8 +44,8 @@ class SkipAndFocusTests : JUnit5Minutests {
     }
 
     fun `focus test skips unfocused`() = rootContext {
-        test2("t1") { fail("t1 wasn't skipped") }
-        FOCUS - test2("t2", noop)
+        test("t1") { fail("t1 wasn't skipped") }
+        FOCUS - test("t2", noop)
         willRun(
             "▾ focus test skips unfocused",
             "  - t1",
@@ -54,9 +54,9 @@ class SkipAndFocusTests : JUnit5Minutests {
     }
 
     fun `focus context skips unfocused`() = rootContext {
-        test2("t1") { fail("t1 wasn't skipped") }
+        test("t1") { fail("t1 wasn't skipped") }
         FOCUS - context("c1") {
-            test2("c1/t1", noop)
+            test("c1/t1", noop)
         }
         willRun(
             "▾ focus context skips unfocused",
@@ -67,9 +67,9 @@ class SkipAndFocusTests : JUnit5Minutests {
     }
 
     fun `focus downtree skips unfocused from root`() = rootContext {
-        test2("t1") { fail("t1 wasn't skipped") }
+        test("t1") { fail("t1 wasn't skipped") }
         context("c1") {
-            FOCUS - test2("c1/t1", noop)
+            FOCUS - test("c1/t1", noop)
         }
         willRun(
             "▾ focus downtree skips unfocused from root",
@@ -81,7 +81,7 @@ class SkipAndFocusTests : JUnit5Minutests {
 
     fun `focus doesn't resurrect a skipped context`() = rootContext {
         SKIP - context("c1") {
-            FOCUS - test2("c1/t1") {
+            FOCUS - test("c1/t1") {
                 fail("was resurrected by focus despite skip")
             }
         }
@@ -92,15 +92,15 @@ class SkipAndFocusTests : JUnit5Minutests {
     }
 
     fun `deep thing`() = rootContext {
-        test2("t1") { fail("t1 wasn't skipped") }
+        test("t1") { fail("t1 wasn't skipped") }
         context("c1") {
-            FOCUS - test2("c1/t1", noop)
+            FOCUS - test("c1/t1", noop)
             context("c1/c1") {
-                test2("c1/c1/t1") { fail("c1/c1/t1 wasn't skipped") }
+                test("c1/c1/t1") { fail("c1/c1/t1 wasn't skipped") }
             }
             FOCUS - context("c1/c2") {
-                test2("c1/c2/t1", noop)
-                SKIP - test2("c1/c2/t2") { fail("c1/c2/t2 wasn't skipped") }
+                test("c1/c2/t1", noop)
+                SKIP - test("c1/c2/t2") { fail("c1/c2/t2 wasn't skipped") }
             }
         }
         willRun(
@@ -116,7 +116,7 @@ class SkipAndFocusTests : JUnit5Minutests {
     }
 
     fun `skip from root`(): RootContextBuilder = SKIP - rootContext {
-        test2("root was skipped") {
+        test("root was skipped") {
             fail("root wasn't skipped")
         }
         willRun(

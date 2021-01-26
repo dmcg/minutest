@@ -4,7 +4,7 @@ import dev.minutest.afterEach
 import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2_
+import dev.minutest.test_
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
@@ -17,7 +17,7 @@ class ImmutableExampleTests : JUnit5Minutests {
         given { emptyList() }
 
         // test_ allows you to return the fixture
-        test2_("add an item and return the fixture") {
+        test_("add an item and return the fixture") {
             val newList = it + "item"
             assertEquals("item", newList.first())
             newList

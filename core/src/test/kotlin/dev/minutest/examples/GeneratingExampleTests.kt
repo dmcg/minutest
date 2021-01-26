@@ -12,7 +12,7 @@ import java.util.*
 private typealias StringStack = Stack<String>
 
 private fun ContextBuilder<StringStack>.isEmpty(isEmpty: Boolean) =
-    test2("is " + (if (isEmpty) "" else "not ") + "empty") {
+    test("is " + (if (isEmpty) "" else "not ") + "empty") {
         assertEquals(it.isEmpty(), size == 0)
         if (isEmpty)
             assertThrows<EmptyStackException> { it.peek() }
@@ -20,7 +20,7 @@ private fun ContextBuilder<StringStack>.isEmpty(isEmpty: Boolean) =
             assertNotNull(it.peek())
     }
 
-private fun ContextBuilder<StringStack>.canPush() = test2("can push") {
+private fun ContextBuilder<StringStack>.canPush() = test("can push") {
     val initialSize = it.size
     val item = "*".repeat(initialSize + 1)
     it.push(item)
@@ -28,7 +28,7 @@ private fun ContextBuilder<StringStack>.canPush() = test2("can push") {
     assertEquals(initialSize + 1, it.size)
 }
 
-private fun ContextBuilder<StringStack>.canPop() = test2("can pop") {
+private fun ContextBuilder<StringStack>.canPop() = test("can pop") {
     val initialSize = it.size
     val top = it.peek()
     assertEquals(top, it.pop())
@@ -37,7 +37,7 @@ private fun ContextBuilder<StringStack>.canPop() = test2("can pop") {
         assertNotEquals(top, peek())
 }
 
-private fun ContextBuilder<StringStack>.cantPop() = test2("cant pop") {
+private fun ContextBuilder<StringStack>.cantPop() = test("cant pop") {
     assertThrows<EmptyStackException> { it.pop() }
 }
 
@@ -61,7 +61,7 @@ class GeneratingExampleTests : JUnit5Minutests {
             canPush()
             canPop()
 
-            test2("has the item on top") {
+            test("has the item on top") {
                 assertEquals("one", peek())
             }
         }

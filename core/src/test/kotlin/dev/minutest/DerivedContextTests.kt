@@ -14,7 +14,7 @@ class DerivedContextTests : JUnit5Minutests {
 
         given { Fixture("banana") }
 
-        test2("takes Fixture") {
+        test("takes Fixture") {
             assertEquals("banana", fruit)
         }
 
@@ -24,7 +24,7 @@ class DerivedContextTests : JUnit5Minutests {
                 DerivedFixture(parentFixture, "smoothie")
             }
 
-            test2("takes DerivedFixture") {
+            test("takes DerivedFixture") {
                 assertEquals(DerivedFixture(Fixture("banana"), "smoothie"), this)
             }
         }

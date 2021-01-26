@@ -4,7 +4,7 @@ import dev.minutest.ContextBuilder
 import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.assertEquals
 
 class SelfDescribingFixtureExampleTests : JUnit5Minutests {
@@ -16,19 +16,19 @@ class SelfDescribingFixtureExampleTests : JUnit5Minutests {
     fun tests() = rootContext<Arguments> {
 
         context(Arguments("positive positive", l = 3, r = 1)) {
-            test2("addition") {
+            test("addition") {
                 assertEquals(4, l + r)
             }
-            test2("subtraction") {
+            test("subtraction") {
                 assertEquals(2, l - r)
             }
         }
 
         context(Arguments("positive negative", l = 3, r = -1)) {
-            test2("addition") {
+            test("addition") {
                 assertEquals(2, l + r)
             }
-            test2("subtraction") {
+            test("subtraction") {
                 assertEquals(4, l - r)
             }
         }

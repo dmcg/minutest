@@ -1,7 +1,7 @@
 package dev.minutest.experimental
 
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -26,10 +26,10 @@ class CheckingTests {
                 checker = ::assertEquals
             )
 
-            test2("top test") {}
+            test("top test") {}
 
             context("inner") {
-                test2("inner test") {}
+                test("inner test") {}
             }
         }
 
@@ -40,7 +40,7 @@ class CheckingTests {
 
         val tests = rootContext {
             checkedAgainst(emptyList(), checker = ::assertEquals)
-            test2("test") {}
+            test("test") {}
         }
 
         assertThrows<AssertionError> {

@@ -4,7 +4,7 @@ import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.junit.experimental.applyRule
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.rules.TemporaryFolder
 
@@ -24,7 +24,7 @@ class JUnitRulesExampleTests : JUnit5Minutests {
         applyRule(this@JUnitRulesExampleTests::class.java.name) { this.testFolder }
 
         // and it will apply in this and sub-contexts
-        test2("test folder is present") {
+        test("test folder is present") {
             assertTrue(testFolder.newFile().isFile)
         }
     }

@@ -53,7 +53,7 @@ private fun <F: TestCoroutineScope> ContextBuilder<F>.coTest(
     name: String,
     f: suspend F.(fixture: F) -> Unit
 ) =
-    test2(name) { fixture ->
+    test(name) { fixture ->
         fixture.runBlockingTest {
             fixture.f(fixture)
         }

@@ -2,7 +2,7 @@
 package samples.runners
 
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.platform.commons.annotation.Testable
 import kotlin.test.fail
 
@@ -15,7 +15,7 @@ class MinutestClassSample {
 
     @Testable
     private fun `not tests as private`() = rootContext {
-        test2("SHOULD NOT BE SEEN") {
+        test("SHOULD NOT BE SEEN") {
             fail("test from private fun discovered")
         }
     }
@@ -23,7 +23,7 @@ class MinutestClassSample {
     @Testable
     @Suppress("UNUSED_PARAMETER")
     fun `not tests as have a parameter`(thing: Int) = rootContext {
-        test2("SHOULD NOT BE SEEN") {
+        test("SHOULD NOT BE SEEN") {
             fail("test from fun with parameter discovered")
         }
     }

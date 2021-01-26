@@ -3,27 +3,27 @@ package dev.minutest.experimental
 import dev.minutest.Annotatable
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 
 class AnnotationTests : JUnit5Minutests {
 
     fun tests() = rootContext {
 
-        isAnnotatable(test2("no annotations") {})
-        isAnnotatable(unitAnnotation - test2("single annotation test") {})
+        isAnnotatable(test("no annotations") {})
+        isAnnotatable(unitAnnotation - test("single annotation test") {})
         isAnnotatable(unitAnnotation - context("single annotation context") {
-            test2("test in single annotation context") {}
+            test("test in single annotation context") {}
         })
 
-        isAnnotatable(unitAnnotation + anyAnnotation - test2("2 annotations") {})
-        isAnnotatable(anyAnnotation + unitAnnotation - test2("2 annotations again") {})
+        isAnnotatable(unitAnnotation + anyAnnotation - test("2 annotations") {})
+        isAnnotatable(anyAnnotation + unitAnnotation - test("2 annotations again") {})
 
-        isAnnotatable(unitAnnotation + anyAnnotation + yetAnotherAnnotation - test2("3 annotations") {})
-        isAnnotatable(listOf(unitAnnotation, anyAnnotation, yetAnotherAnnotation) - test2("3 annotations again") {})
+        isAnnotatable(unitAnnotation + anyAnnotation + yetAnotherAnnotation - test("3 annotations") {})
+        isAnnotatable(listOf(unitAnnotation, anyAnnotation, yetAnotherAnnotation) - test("3 annotations again") {})
 
         context("annotate with") {
             annotateWith(unitAnnotation)
-            test2("in annotate with") {}
+            test("in annotate with") {}
         }
 
         checkedAgainst(

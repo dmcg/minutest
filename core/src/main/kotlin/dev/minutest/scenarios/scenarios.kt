@@ -108,7 +108,7 @@ class ScenarioBuilder<F>(
     }
 
     private fun addTestForStepsTo(contextBuilder: ContextBuilder<F>, testName: String) {
-        contextBuilder.test2(testName) {
+        contextBuilder.test(testName) {
             testSteps.forEach { step ->
                 tryThrowingScenarioFailedException(step) {
                     step.f(this)

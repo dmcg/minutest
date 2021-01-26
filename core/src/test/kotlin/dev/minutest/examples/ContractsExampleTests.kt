@@ -4,7 +4,7 @@ import dev.minutest.ContextBuilder
 import dev.minutest.given
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import dev.minutest.test2
+import dev.minutest.test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.*
@@ -16,11 +16,11 @@ fun ContextBuilder<MutableCollection<String>>.behavesAsMutableCollection() {
 
     context("behaves as MutableCollection") {
 
-        test2("is empty when created") {
+        test("is empty when created") {
             assertTrue(isEmpty())
         }
 
-        test2("can add") {
+        test("can add") {
             add("item")
             assertEquals("item", first())
         }

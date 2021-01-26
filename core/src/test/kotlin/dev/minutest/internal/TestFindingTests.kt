@@ -15,7 +15,7 @@ class TestFindingTests : JUnit5Minutests {
     fun tests() = rootContext<Any> {
 
         context(ClassWithOnlyOneContextMethod::class) {
-            test2("single root context from method") {
+            test("single root context from method") {
                 val root = it.rootContextFromMethods()!!
                 assertAll("root",
                     { assertEquals("dev.minutest.internal.ClassWithOnlyOneContextMethod", root.name) },
@@ -25,7 +25,7 @@ class TestFindingTests : JUnit5Minutests {
         }
 
         context(ClassWithTwoContextMethods::class) {
-            test2("single root context with child context from each method") {
+            test("single root context with child context from each method") {
                 val root = it.rootContextFromMethods()!!
                 assertAll("root",
                     { assertEquals("dev.minutest.internal.ClassWithTwoContextMethods", root.name) },
@@ -35,19 +35,19 @@ class TestFindingTests : JUnit5Minutests {
         }
 
         context(ClassWithNoContextMethods::class) {
-            test2("returns null") {
+            test("returns null") {
                 assertNull(it.rootContextFromMethods())
             }
         }
 
         context(ClassWithNoPublicContextMethods::class) {
-            test2("returns null") {
+            test("returns null") {
                 assertNull(it.rootContextFromMethods())
             }
         }
 
         context(ClassWithNoZeroArgContextMethod::class) {
-            test2("returns null") {
+            test("returns null") {
                 assertNull(it.rootContextFromMethods())
             }
         }
@@ -62,17 +62,17 @@ class TestFindingTests : JUnit5Minutests {
 class ClassWithOnlyOneContextMethod {
     fun `test method`() = rootContext<String> {
         given { "banana" }
-        test2("test in tests") {}
+        test("test in tests") {}
     }
 }
 
 class ClassWithTwoContextMethods {
     fun tests() = rootContext<String> {
         given { "banana" }
-        test2("test in tests") {}
+        test("test in tests") {}
     }
     fun testsToo() = rootContext {
-        test2("test in testsToo") {}
+        test("test in testsToo") {}
     }
 }
 

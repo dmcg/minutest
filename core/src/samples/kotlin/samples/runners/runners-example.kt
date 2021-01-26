@@ -3,32 +3,32 @@ package samples.runners
 import dev.minutest.ContextBuilder
 import dev.minutest.experimental.SKIP
 import dev.minutest.experimental.minus
-import dev.minutest.test2
+import dev.minutest.test
 import kotlin.test.fail
 
 fun ContextBuilder<Unit>.runnersExample() {
 
-    test2("test in root") {}
+    test("test in root") {}
 
-    test2("failing test in root") {
+    test("failing test in root") {
         throw RuntimeException("fail in root")
     }
 
     context("inner") {
-        test2("test in inner") {}
-        test2("failing test in inner") {
+        test("test in inner") {}
+        test("failing test in inner") {
             throw RuntimeException("fail in inner")
         }
     }
 
     SKIP - context("skipped context") {
-        test2("SHOULD NOT BE SEEN") {
+        test("SHOULD NOT BE SEEN") {
             fail("test from fun with parameter discovered")
         }
     }
 
     context("context with skipped test") {
-        SKIP - test2("SHOULD NOT BE SEEN") {
+        SKIP - test("SHOULD NOT BE SEEN") {
             fail("test from fun with parameter discovered")
         }
     }
