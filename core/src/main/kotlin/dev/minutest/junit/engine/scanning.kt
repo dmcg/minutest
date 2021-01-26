@@ -35,7 +35,7 @@ internal fun scanForRootNodes(
                 val methodContexts = methods
                     .mapNotNull { it.toKotlinFunction()?.javaMethod?.declaringClass }
                     .toSet()
-                    .mapNotNull { rootContextForClass(it.kotlin) }
+                    .mapNotNull { rootContextForClass(it.kotlin,) }
 
                 val topLevelContexts = functions
                     .mapNotNull { it.toKotlinFunction() }
@@ -45,7 +45,11 @@ internal fun scanForRootNodes(
                     .map { (packageName, functions: List<RootContextFun>) ->
                         AmalgamatedRootContext(
                             packageName,
-                            functions.asSequence().renamed().map { it.buildNode() }
+                            functions
+                                .asSequence()
+                                .constrainOnce()
+                                .renamed()
+                                .map { it.buildNode() }
                         )
                     }
                 (methodContexts + topLevelContexts)

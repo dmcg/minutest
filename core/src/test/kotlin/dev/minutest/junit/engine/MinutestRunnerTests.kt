@@ -16,7 +16,7 @@ class MinutestRunnerTests {
             runTestsInClass(MinutestTestEngine.engineId, "samples.runners.MinutestSample"),
             substitutions = listOf(
                 "ENGINE_NAME" to "Minutest",
-                "TEST_NAME" to "samples.runners",
+                "TEST_NAME" to "samples.runners.MinutestSample",
                 "CONTEXT_NAME" to "tests"
             ),
             hasExtraRoot = true,

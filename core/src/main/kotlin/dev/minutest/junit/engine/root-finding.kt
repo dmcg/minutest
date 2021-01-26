@@ -81,24 +81,13 @@ private fun selectorsFrom(discoveryRequest: EngineDiscoveryRequest) =
         }
 
 
-private fun amalgamatedRootContext(klass: Class<*>): AmalgamatedRootContext? {
-    if (quickCheckForNotOurs(klass))
+private fun amalgamatedRootContext(javaClass: Class<*>): AmalgamatedRootContext? {
+    if (quickCheckForNotOurs(javaClass))
         return null
-    val staticBuilders = klass.staticMethodsAsContextBuilderBuilders { it.hasTestableAnnotation }
-    return when {
-        staticBuilders.isNotEmpty() ->
-            AmalgamatedRootContext(
-                klass.`package`.name ?: error("Trying find tests in class with no name"),
-                staticBuilders.asSequence().map { method ->
-                    method.invoke().buildNode()
-                }
-            )
-        else -> klass.kotlin.constructors.singleOrNull()?.call()?.let { instance ->
-            instance.rootContextFromMethods() {
-                it.hasTestableAnnotation
-            }
+    return rootContextFromStaticMethods(javaClass)
+        ?: rootContextForClass(javaClass.kotlin) {
+            it.hasTestableAnnotation
         }
-    }
 }
 
 private fun quickCheckForNotOurs(klass: Class<*>) =
@@ -113,3 +102,24 @@ private val KFunction<*>.hasTestableAnnotation
         annotations.any { it is Testable }
 
 private class ClassAndMethodNames(val className: String, val methodName: String?)
+
+private fun rootContextFromStaticMethods(
+    javaClass: Class<*>
+): AmalgamatedRootContext? {
+    val staticBuilders = javaClass.staticMethodsAsContextBuilderBuilders {
+        it.hasTestableAnnotation
+    }
+    return when {
+        staticBuilders.isEmpty() -> null
+        else ->
+            AmalgamatedRootContext(
+                javaClass.name,
+                staticBuilders
+                    .asSequence()
+                    .constrainOnce()
+                    .map { method ->
+                        method.invoke().buildNode()
+                    }
+            )
+    }
+}

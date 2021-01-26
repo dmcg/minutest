@@ -26,19 +26,23 @@ internal fun Any.rootContextFromMethods(
         else ->
             AmalgamatedRootContext(
                 this::class.qualifiedName ?: error("Trying find tests in class with no name"),
-                contextBuilderMethods.asSequence().map { method ->
-                    method.invoke().buildNode()
-                }
+                contextBuilderMethods
+                    .asSequence()
+                    .constrainOnce()
+                    .map { method ->
+                        method.invoke().buildNode()
+                    }
             )
     }
 }
 
 internal fun rootContextForClass(
-    klass: KClass<*>
+    klass: KClass<*>,
+    filter: (KFunction<RootContextBuilder>) -> Boolean = { true }
 ): AmalgamatedRootContext? =
     klass.constructors.singleOrNull()
         ?.call()
-        ?.rootContextFromMethods()
+        ?.rootContextFromMethods(filter)
 
 
 internal fun Any.methodsAsContextBuilderBuilders(

@@ -71,7 +71,7 @@ class MinutestTestEngineTests {
             { selectors(selectClass("samples.minutestRunner.a.ExampleMinutest")) },
             "plan started",
             "started: Minutest",
-            "started: samples.minutestRunner.a",
+            "started: samples.minutestRunner.a.ExampleMinutest",
             "registered: example context",
             "started: example context",
             "registered: a failing test",
@@ -82,7 +82,7 @@ class MinutestTestEngineTests {
             "started: a passing test",
             "successful: a passing test",
             "successful: example context",
-            "successful: samples.minutestRunner.a",
+            "successful: samples.minutestRunner.a.ExampleMinutest",
             "successful: Minutest",
             "plan finished"
         )
