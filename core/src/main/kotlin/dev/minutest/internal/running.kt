@@ -7,7 +7,10 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
 
 private val pool: ForkJoinPool? = when {
-    System.getProperty("dev.minutest.parallel") != null -> ForkJoinPool.commonPool()
+    System.getProperty("dev.minutest.parallel") != null -> {
+        System.err.println("Minutest using parallel execution")
+        ForkJoinPool.commonPool()
+    }
     else -> null
 }
 

@@ -1,6 +1,9 @@
 package dev.minutest.junit.engine
 
-import dev.minutest.internal.*
+import dev.minutest.internal.AmalgamatedRootContext
+import dev.minutest.internal.rootContextForClass
+import dev.minutest.internal.rootContextFromTopLevelFunctions
+import dev.minutest.internal.toRootContext
 import dev.minutest.junit.JUnit5Minutests
 import org.junit.platform.commons.annotation.Testable
 import org.junit.platform.engine.*
@@ -57,11 +60,9 @@ private fun shortcutClassSelection(discoveryRequest: EngineDiscoveryRequest): Li
     return when {
         classSelectors.isEmpty() -> null
         else ->
-            time("Minutest loading single test ") {
-                classSelectors.mapNotNull { classAndMethodName ->
-                    amalgamatedRootContext(Class.forName(classAndMethodName.className))
-                        ?.selectJust(classAndMethodName.methodName)
-                }
+            classSelectors.mapNotNull { classAndMethodName ->
+                amalgamatedRootContext(Class.forName(classAndMethodName.className))
+                    ?.selectJust(classAndMethodName.methodName)
             }
     }
 }

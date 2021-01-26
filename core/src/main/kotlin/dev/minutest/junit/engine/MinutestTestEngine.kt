@@ -21,7 +21,7 @@ class MinutestTestEngine : TestEngine {
         uniqueId: UniqueId
     ): EngineDescriptor =
         MinutestEngineDescriptor(uniqueId, discoveryRequest).apply {
-            time("Minutest scanning ") {
+            time("Minutest discovery took ", System.err::println) {
                 if (discoveryRequest.selectsByUniqueId(uniqueId))
                     findRootNodes(this, discoveryRequest).forEach {
                         addChild(it)

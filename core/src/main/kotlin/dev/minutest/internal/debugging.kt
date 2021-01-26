@@ -5,15 +5,19 @@ package dev.minutest.internal
 import java.time.Duration
 import java.time.Instant
 
-internal inline fun <T> time(prefix: String, f: () -> T): T {
+internal inline fun <T> time(
+    prefix: String,
+    printer: (String) -> Unit = ::println,
+    f: () -> T
+): T {
     val start = Instant.now()
     return try {
         f()
     } finally {
-        println(prefix + Duration.between(start, Instant.now()))
+        printer(prefix + Duration.between(start, Instant.now()))
     }
 }
 
-internal fun <T> T.printed(): T {
-    return this.also(::println)
+internal fun <T> T.printed(printer: (Any?) -> Unit = ::println): T {
+    return this.also { printer(this) }
 }

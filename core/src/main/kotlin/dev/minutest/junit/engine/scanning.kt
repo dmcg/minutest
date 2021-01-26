@@ -4,7 +4,6 @@ import dev.minutest.RootContextBuilder
 import dev.minutest.internal.AmalgamatedRootContext
 import dev.minutest.internal.lazyRootRootContext
 import dev.minutest.internal.rootContextForClass
-import dev.minutest.internal.time
 import io.github.classgraph.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction0
@@ -16,42 +15,40 @@ internal fun scanForRootNodes(
     scannerConfig: ClassGraph.() -> Unit,
     classFilter: (ClassInfo) -> Boolean = { true }
 ): List<AmalgamatedRootContext> =
-    time("ClassGraph scanning ") {
-        classGraphWith(scannerConfig)
-            .scan()
-            .use { scanResult ->
-                val methodInfos: Sequence<MethodInfo> = scanResult
-                    .allClasses
-                    .asSequence()
-                    .filter {
-                        classFilter(it) &&
-                            it.isStandardClass && !it.isAnonymousInnerClass && it.isPublic && !it.isSynthetic &&
-                            it.hasMethodAnnotation("org.junit.platform.commons.annotation.Testable")
+    classGraphWith(scannerConfig)
+        .scan()
+        .use { scanResult ->
+            val methodInfos: Sequence<MethodInfo> = scanResult
+                .allClasses
+                .asSequence()
+                .filter {
+                    classFilter(it) &&
+                        it.isStandardClass && !it.isAnonymousInnerClass && it.isPublic && !it.isSynthetic &&
+                        it.hasMethodAnnotation("org.junit.platform.commons.annotation.Testable")
+                }
+                .flatMap { it.declaredMethodInfo.asSequence() }
+
+            val (methods, functions) = methodInfos
+                .filter { it.definesARootContext() }
+                .partition { !it.isStatic }
+
+            val methodContexts = methods
+                .mapNotNull { it.toKotlinFunction()?.javaMethod?.declaringClass }
+                .toSet()
+                .mapNotNull { rootContextForClass(it.kotlin) }
+
+            val topLevelContexts = functions
+                .mapNotNull { it.toKotlinFunction() }
+                // Check Kotlin visibility because a public static Java method might have internal visibility in Kotlin
+                .filter { it.visibility == PUBLIC }
+                .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
+                .map { (packageName, functions: List<RootContextFun>) ->
+                    lazyRootRootContext(packageName, functions) {
+                        emptyArray()
                     }
-                    .flatMap { it.declaredMethodInfo.asSequence() }
-
-                val (methods, functions) = methodInfos
-                    .filter { it.definesARootContext() }
-                    .partition { !it.isStatic }
-
-                val methodContexts = methods
-                    .mapNotNull { it.toKotlinFunction()?.javaMethod?.declaringClass }
-                    .toSet()
-                    .mapNotNull { rootContextForClass(it.kotlin,) }
-
-                val topLevelContexts = functions
-                    .mapNotNull { it.toKotlinFunction() }
-                    // Check Kotlin visibility because a public static Java method might have internal visibility in Kotlin
-                    .filter { it.visibility == PUBLIC }
-                    .groupBy { it.javaMethod?.declaringClass?.`package`?.name ?: "<tests>" }
-                    .map { (packageName, functions: List<RootContextFun>) ->
-                        lazyRootRootContext(packageName, functions) {
-                            emptyArray()
-                        }
-                    }
-                (methodContexts + topLevelContexts)
-            }
-    }
+                }
+            (methodContexts + topLevelContexts)
+        }
 
 private fun classGraphWith(scannerConfig: ClassGraph.() -> Unit) =
     ClassGraph()
