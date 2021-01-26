@@ -30,7 +30,7 @@ class MinutestRunnerTests {
             runTestsInClass<MinutestClassSample>(MinutestTestEngine.engineId),
             substitutions = listOf(
                 "ENGINE_NAME" to "Minutest",
-                "TEST_NAME" to "samples.runners.MinutestClassSample",
+                "TEST_NAME" to "MinutestClassSample",
                 "CONTEXT_NAME" to "tests"
             ),
             hasExtraRoot = true,
@@ -44,7 +44,7 @@ class MinutestRunnerTests {
             runTestsInClass<MinutestMultiRootClassSample>(MinutestTestEngine.engineId),
             substitutions = listOf(
                 "ENGINE_NAME" to "Minutest",
-                "TEST_NAME" to "samples.runners.MinutestMultiRootClassSample",
+                "TEST_NAME" to "MinutestMultiRootClassSample",
             ),
             hasExtraRoot = true,
             abortRatherThanSkip = true,

@@ -19,7 +19,7 @@ class ScanningTests {
         }
 
         assertLogged(log,
-            "samples.minutestRunner.a.ExampleMinutestInClass",
+            "ExampleMinutestInClass",
             "  example context in class",
             "    a passing test",
             "samples.minutestRunner.a",

@@ -40,7 +40,7 @@ internal fun rootContextForClass(
             null
         else ->
             lazyRootRootContext(
-                klass.qualifiedName ?: "A class with no name",
+                klass.simpleName ?: "A class with no name",
                 contextBuilderMethods
             ) { arrayOf(constructor.call()) }
     }
