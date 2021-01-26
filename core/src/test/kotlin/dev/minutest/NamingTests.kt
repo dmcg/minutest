@@ -1,6 +1,6 @@
 package dev.minutest
 
-import dev.minutest.Instrumented.test2
+import dev.minutest.Instrumented.test
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.junit.experimental.JUnit4Minutests
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -9,7 +9,7 @@ import org.junit.platform.commons.annotation.Testable
 private fun singleRoot() = rootContext {
     context("outer") {
         context("inner") {
-            test2("test") { _, testDescriptor ->
+            test("test") { _, testDescriptor ->
                 assertEquals("tests/outer/inner/test", testDescriptor.pathAsString())
             }
         }
@@ -32,7 +32,7 @@ class SingleRootNamingTestsX {
 private fun overridenName() = rootContext("override name") {
     context("outer") {
         context("inner") {
-            test2("test") { _, testDescriptor ->
+            test("test") { _, testDescriptor ->
                 assertEquals("override name/outer/inner/test", testDescriptor.pathAsString())
             }
         }
@@ -55,7 +55,7 @@ class SingleRootOverrideNamingTestsX {
 private fun root1() = rootContext {
     context("outer") {
         context("inner") {
-            test2("test") { _, testDescriptor ->
+            test("test") { _, testDescriptor ->
                 assertEquals("tests1/outer/inner/test", testDescriptor.pathAsString())
             }
         }
@@ -65,7 +65,7 @@ private fun root1() = rootContext {
 private fun root2() = rootContext("override name") {
     context("outer") {
         context("inner") {
-            test2("test") { _, testDescriptor ->
+            test("test") { _, testDescriptor ->
                 assertEquals("override name/outer/inner/test", testDescriptor.pathAsString())
             }
         }

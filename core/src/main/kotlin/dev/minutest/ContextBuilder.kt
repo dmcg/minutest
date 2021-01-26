@@ -1,7 +1,7 @@
 package dev.minutest
 
-import dev.minutest.Instrumented.test2
-import dev.minutest.Instrumented.test2_
+import dev.minutest.Instrumented.test
+import dev.minutest.Instrumented.test_
 import dev.minutest.internal.FixtureType
 import dev.minutest.internal.askType
 
@@ -66,7 +66,7 @@ abstract class TestContextBuilder<PF, F> {
      * Apply an operation to the current fixture (accessible as the receiver 'this')
      * before running tests or sub-contexts.
      */
-    @Deprecated("Use before to modify the fixture", ReplaceWith("before(operation)"))
+    @Deprecated("Use beforeEach to modify the fixture")
     fun modifyFixture(operation: F.(TestDescriptor) -> Unit) {
         addBefore { fixture, testDescriptor ->
             fixture.operation(testDescriptor)
@@ -77,12 +77,12 @@ abstract class TestContextBuilder<PF, F> {
     /**
      * Define a test on the current fixture (accessible as 'this').
      */
-    @Deprecated("use test2_", ReplaceWith("test2_(name, f)", "dev.minutest.test2_"))
+    @Deprecated("use test2_")
     fun test(
         name: String,
         f: F.(testDescriptor: TestDescriptor) -> Unit
     ): Annotatable<F> {
-        return test2(name) { fixture, testDescriptor ->
+        return test(name) { fixture, testDescriptor ->
             fixture.f(testDescriptor)
         }
     }
@@ -92,12 +92,12 @@ abstract class TestContextBuilder<PF, F> {
      * a new fixture to be processed by 'afters'.
      */
     @Suppress("FunctionName")
-    @Deprecated("use test2_", ReplaceWith("test2_(name, f)", "dev.minutest.test2_"))
+    @Deprecated("use test2_")
     fun test_(
         name: String,
         f: F.(testDescriptor: TestDescriptor) -> F
     ): Annotatable<F> {
-        return test2_(name) { fixture, testDescriptor ->
+        return test_(name) { fixture, testDescriptor ->
             fixture.f(testDescriptor)
         }
     }

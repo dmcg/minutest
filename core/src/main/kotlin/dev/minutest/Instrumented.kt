@@ -1,5 +1,9 @@
 package dev.minutest
 
+/**
+ * A version of the DSL that gives access to a [TestDescriptor]
+ * describing the test being run.
+ */
 object Instrumented {
 
     fun <PF, F> TestContextBuilder<PF, F>.beforeEach(
@@ -37,7 +41,7 @@ object Instrumented {
         }
     }
 
-    fun <PF, F> TestContextBuilder<PF, F>.test2(
+    fun <PF, F> TestContextBuilder<PF, F>.test(
         name: String,
         f: F.(fixture: F, testDescriptor: TestDescriptor) -> Unit
     ): Annotatable<F> {
@@ -48,7 +52,7 @@ object Instrumented {
     }
 
     @Suppress("FunctionName")
-    fun <PF, F> TestContextBuilder<PF, F>.test2_(
+    fun <PF, F> TestContextBuilder<PF, F>.test_(
         name: String,
         f: F.(fixture: F, testDescriptor: TestDescriptor) -> F
     ): Annotatable<F> {

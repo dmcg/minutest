@@ -2,7 +2,9 @@ package dev.minutest
 
 
 /**
- * Apply an operation to the current fixture before running tests or sub-contexts.
+ * Apply an operation to the current fixture
+ * (accessible as 'this' and 'it')
+ * before running tests or sub-contexts.
  */
 fun <PF, F> TestContextBuilder<PF, F>.beforeEach(
     operation: F.(fixture: F) -> Unit
@@ -14,7 +16,9 @@ fun <PF, F> TestContextBuilder<PF, F>.beforeEach(
 }
 
 /**
- * Replace the current fixture before running tests or sub-contexts.
+ * Replace the current fixture
+ * (accessible as 'this' and 'it')
+ * before running tests or sub-contexts.
  */
 @Suppress("FunctionName")
 fun <PF, F> TestContextBuilder<PF, F>.beforeEach_(
@@ -27,9 +31,6 @@ fun <PF, F> TestContextBuilder<PF, F>.beforeEach_(
 
 /**
  * Define the fixture that will be used in this context's tests and sub-contexts.
- *
- * The strange parameter type keeps compatibility with the other fixture methods, that have
- * the parent fixture as the receiver.
  */
 fun <PF, F> TestContextBuilder<PF, F>.given(factory: () -> F) {
     setFixtureFactory {
@@ -38,8 +39,8 @@ fun <PF, F> TestContextBuilder<PF, F>.given(factory: () -> F) {
 }
 
 /**
- * Define the fixture that will be used in this context's tests and sub-contexts by
- * transforming the parent fixture.
+ * Define the fixture that will be used in this context's tests and sub-contexts as
+ * a transform on the parent fixture.
  */
 @Suppress("FunctionName")
 fun <PF, F> TestContextBuilder<PF, F>.given_(
@@ -50,6 +51,10 @@ fun <PF, F> TestContextBuilder<PF, F>.given_(
     }
 }
 
+/**
+ * Define a test on the current fixture
+ * (accessible as 'this' and 'it').
+ */
 fun <PF, F> TestContextBuilder<PF, F>.test2(
     name: String,
     f: F.(fixture: F) -> Unit
@@ -59,7 +64,11 @@ fun <PF, F> TestContextBuilder<PF, F>.test2(
         fixture
     }
 }
-
+/**
+ * Define a test on the current fixture
+ * (accessible as 'this' and 'it'),
+ * returning a new fixture to be processed by afterEach's.
+ */
 @Suppress("FunctionName")
 fun <PF, F> TestContextBuilder<PF, F>.test2_(
     name: String,

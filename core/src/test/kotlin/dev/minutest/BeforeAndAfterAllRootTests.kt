@@ -1,6 +1,6 @@
 package dev.minutest
 
-import dev.minutest.Instrumented.test2
+import dev.minutest.Instrumented.test
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.junit.experimental.JUnit4Minutests
 import org.junit.AfterClass
@@ -30,7 +30,7 @@ private fun contract(log: (s: String) -> Unit) =
         beforeAll { testDescriptor ->
             log(testDescriptor.pathAsString() + " : beforeAll")
         }
-        test2("required for JUnit not to skip") { _, testDescriptor ->
+        test("required for JUnit not to skip") { _, testDescriptor ->
             log(testDescriptor.pathAsString() + " : test")
         }
         afterAll { testDescriptor ->

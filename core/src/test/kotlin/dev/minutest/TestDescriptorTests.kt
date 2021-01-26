@@ -3,7 +3,7 @@ package dev.minutest
 import dev.minutest.Instrumented.afterEach
 import dev.minutest.Instrumented.beforeEach
 import dev.minutest.Instrumented.given
-import dev.minutest.Instrumented.test2
+import dev.minutest.Instrumented.test
 import dev.minutest.testing.runTests
 import org.junit.jupiter.api.Test
 
@@ -30,7 +30,7 @@ class TestDescriptorTests {
                 }
 
                 context("outer") {
-                    test2("outer test") { _, testDescriptor ->
+                    test("outer test") { _, testDescriptor ->
                         log.add(testDescriptor.pathAsString() + " : test")
                     }
 
@@ -38,10 +38,10 @@ class TestDescriptorTests {
                         beforeAll { testDescriptor ->
                             log.add(testDescriptor.pathAsString() + " : beforeAll")
                         }
-                        test2("inner test 1") { _, testDescriptor ->
+                        test("inner test 1") { _, testDescriptor ->
                             log.add(testDescriptor.pathAsString() + " : test")
                         }
-                        test2("inner test 2") { _, testDescriptor ->
+                        test("inner test 2") { _, testDescriptor ->
                             log.add(testDescriptor.pathAsString() + " : test")
                         }
                         afterAll { testDescriptor ->
