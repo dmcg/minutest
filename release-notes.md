@@ -2,6 +2,46 @@
 
 I still have to go through Slack posts to find older details, but in the meantime
 
+## 2.0.0-alpha
+
+### DSL changes (old methods deprecated)
+
+* before -> beforeEach
+* after -> afterEach
+* fixture -> given
+* modifyFixture -> beforeEach
+* deriveFixture -> given_
+
+### DSL changes (old methods renamed)
+
+* test and test_ no longer take a TestDescriptor parameter to their block, but do supply the fixture as both receiver and parameter. The old versions are available as old_test and old_test_.
+
+### Other DSL changes
+
+DSL functions with TestDescriptors are available in an Instrumented object.
+
+### Test Engine
+
+The JUnit 5 (not Jupiter) test engine is now working well.
+It should find methods or top-level functions annotated @Testable, and you can even point to methods in IntelliJ and run them.
+Add this to Gradle to enable
+
+```
+tasks.withType<Test> {
+    useJUnitPlatform {
+        includeEngines(
+            "junit-jupiter", 
+            "minutest" <-- This
+        )
+    }
+```
+
+### Parallel Test Running
+
+Run tests in each root context in parallel by setting a system property dev.minutest.parallel.
+Parallel running isn't on by default yet, but seems solid.
+
+
 ## 1.12.0
 
 This release is preparing for a v2, with some DSL improvements, and 
