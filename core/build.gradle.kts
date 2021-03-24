@@ -1,5 +1,4 @@
 
-import com.jfrog.bintray.gradle.BintrayExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 repositories {
@@ -11,7 +10,6 @@ plugins {
     maven
     `maven-publish`
     signing
-    id("com.jfrog.bintray") version "1.8.4"
 }
 
 val junitVersion = "5.7.0"
@@ -139,19 +137,4 @@ publishing {
 
 signing {
     sign(publishing.publications["mavenJava"])
-}
-
-// use ./gradlew clean publish bintrayUpload
-bintray {
-    user = "dmcg"
-    key = System.getenv("BINTRAY_API_KEY")
-    publish = true
-    setPublications("mavenJava")
-    pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
-        repo = "oneeyedmen-mvn"
-        name = "minutest.dev"
-        version(delegateClosureOf<BintrayExtension.VersionConfig> {
-            name = project.version as String
-        })
-    })
 }
