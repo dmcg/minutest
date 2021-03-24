@@ -10,6 +10,7 @@ plugins {
     kotlin("jvm") // NB version is in parent build
     maven
     `maven-publish`
+    signing
     id("com.jfrog.bintray") version "1.8.4"
 }
 
@@ -60,6 +61,11 @@ tasks {
         from(sourceSets["main"].allSource)
     }
 
+    create<Jar>("javadocJar") {
+        archiveClassifier.set("javadoc")
+        from(javadoc) // empty at the moment!
+    }
+
     withType<Jar> {
         archiveBaseName.set("minutest")
     }
@@ -86,11 +92,16 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             artifact(tasks["sourceJar"])
+            artifact(tasks["javadocJar"])
             groupId = project.group as String
             artifactId = "minutest"
             version = project.version as String
         }
     }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
 }
 
 // use ./gradlew clean publish bintrayUpload
