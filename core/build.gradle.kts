@@ -96,6 +96,26 @@ publishing {
             groupId = project.group as String
             artifactId = "minutest"
             version = project.version as String
+            pom {
+                name.set("minutest")
+                description.set("A testing framework for Kotlin")
+                url.set("https://github.com/dmcg/minutest")
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("dmcg ")
+                        name.set("Duncan McGregor")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/dmcg/minutest")
+                }
+            }
         }
     }
 }
