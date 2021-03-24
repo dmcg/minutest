@@ -69,6 +69,23 @@ tasks {
     withType<Jar> {
         archiveBaseName.set("minutest")
     }
+
+    named<Upload>("uploadArchives") {
+        repositories.withGroovyBuilder {
+            "mavenDeployer" {
+                "repository"(
+                    "url" to "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                ) {
+                    "authentication"("userName" to "dmcg", "password" to System.getenv("OSS_PWD"))
+                }
+                "snapshotRepository"(
+                    "url" to "https://oss.sonatype.org/content/repositories/snapshots/"
+                ) {
+                    "authentication"("userName" to "dmcg", "password" to System.getenv("OSS_PWD"))
+                }
+            }
+        }
+    }
 }
 
 project.sourceSets {
