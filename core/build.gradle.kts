@@ -1,5 +1,6 @@
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
+import java.net.URI
 
 repositories {
     mavenCentral()
@@ -7,7 +8,6 @@ repositories {
 
 plugins {
     kotlin("jvm") // NB version is in parent build
-    maven
     `maven-publish`
     signing
 }
@@ -67,23 +67,6 @@ tasks {
     withType<Jar> {
         archiveBaseName.set("minutest")
     }
-
-    named<Upload>("uploadArchives") {
-        repositories.withGroovyBuilder {
-            "mavenDeployer" {
-                "repository"(
-                    "url" to "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                ) {
-                    "authentication"("userName" to "dmcg", "password" to System.getenv("OSS_PWD"))
-                }
-                "snapshotRepository"(
-                    "url" to "https://oss.sonatype.org/content/repositories/snapshots/"
-                ) {
-                    "authentication"("userName" to "dmcg", "password" to System.getenv("OSS_PWD"))
-                }
-            }
-        }
-    }
 }
 
 project.sourceSets {
@@ -100,6 +83,10 @@ project.sourceSets {
 artifacts {
     add("archives", tasks["jar"])
     add("archives", tasks["sourceJar"])
+}
+
+signing {
+    sign(publishing.publications)
 }
 
 publishing {
@@ -133,8 +120,24 @@ publishing {
             }
         }
     }
+    repositories {
+        maven {
+            name = "SonatypeStaging"
+            url = URI.create("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = "dmcg"
+                password = System.getenv("OSS_PWD")
+            }
+        }
+        maven {
+            name = "SonatypeSnapshot"
+            url = URI.create("https://oss.sonatype.org/content/repositories/snapshots/")
+            credentials {
+                username = "dmcg"
+                password = System.getenv("OSS_PWD")
+            }
+        }
+    }
 }
 
-signing {
-    sign(publishing.publications["mavenJava"])
-}
+
