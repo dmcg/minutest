@@ -56,7 +56,7 @@ class FixtureNotSuppliedTests {
         assertThrows<IllegalStateException> {
             rootContext<CharSequence> {
                 given { "banana" }
-                derivedContext<String>("subcontext") {
+                context_<String>("subcontext") {
                     test("there needs to be a test") {}
                 }
             }.buildNode()
@@ -68,7 +68,7 @@ class FixtureNotSuppliedTests {
         assertThrows<IllegalStateException> {
             rootContext<String?> {
                 given { null }
-                derivedContext<String>("subcontext") {
+                context_<String>("subcontext") {
                     test("there needs to be a test") {
                         @Suppress("SENSELESS_COMPARISON") // except it isn't because it will be
                         if (this != null) fail("")

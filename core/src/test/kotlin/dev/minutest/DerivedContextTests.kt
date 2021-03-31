@@ -18,7 +18,7 @@ class DerivedContextTests : JUnit5Minutests {
             assertEquals("banana", fruit)
         }
 
-        derivedContext<DerivedFixture>("inner converting fixture later") {
+        context_<DerivedFixture>("inner converting fixture later") {
 
             given_ { parentFixture ->
                 DerivedFixture(parentFixture, "smoothie")

@@ -15,7 +15,7 @@ class FlatteningExampleTests : JUnit5Minutests {
         given { listOf("one", "two", "three").asSequence() }
 
         // child requires a single fixture
-        derivedContext<String>("flattened") {
+        context_<String>("flattened") {
 
             // flatten does the magic
             flatten()

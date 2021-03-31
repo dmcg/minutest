@@ -39,7 +39,7 @@ class FixtureSupplyingTests : JUnit5Minutests {
     }
 
     fun `supply fixture in derivedContext`() = rootContext {
-        derivedContext<String>("parent had no fixture") {
+        context_<String>("parent had no fixture") {
             given { "banana" }
             test("test") {
                 assertEquals("banana", it)
@@ -75,17 +75,17 @@ class FixtureSupplyingTests : JUnit5Minutests {
 
     fun `derivedContext doesn't have to specify one if parent fixture will do`() = rootContext<String> {
         given { "banana" }
-        derivedContext<String>("Hasn't actually changed type") {
+        context_<String>("Hasn't actually changed type") {
             test("test") {
                 assertEquals("banana", it)
             }
         }
-        derivedContext<CharSequence>("Has changed to a compatible type") {
+        context_<CharSequence>("Has changed to a compatible type") {
             test("test") {
                 assertEquals("banana", it)
             }
         }
-        derivedContext<String?>("Has changed to the nullable type") {
+        context_<String?>("Has changed to the nullable type") {
             test("test") {
                 assertEquals("banana", it)
             }

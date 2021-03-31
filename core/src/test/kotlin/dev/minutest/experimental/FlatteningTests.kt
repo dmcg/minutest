@@ -20,7 +20,7 @@ class FlatteningTests {
             logTo(testLogger)
 
             given { emptySequence() }
-            derivedContext<String>("flattened") {
+            context_<String>("flattened") {
 
                 flatten()
 
@@ -46,7 +46,7 @@ class FlatteningTests {
             logTo(testLogger)
 
             given { sequenceOf("one", "two", "three") }
-            derivedContext<String>("flattened") {
+            context_<String>("flattened") {
 
                 flatten()
 
@@ -89,7 +89,7 @@ class FlatteningTests {
         val tests = rootContext<Sequence<String>> {
             logTo(testLogger)
             given { sequenceOf("one", "two", "three") }
-            derivedContext<String>("flattened") {
+            context_<String>("flattened") {
 
                 flatten()
 

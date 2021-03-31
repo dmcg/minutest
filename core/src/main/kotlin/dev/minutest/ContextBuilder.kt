@@ -28,12 +28,26 @@ abstract class TestContextBuilder<PF, F> {
     }
 
     /**
+     * @see [context_]
+     */
+    @Deprecated(
+        "use context_ { parentFixture -> .. } to specify a derived context",
+        ReplaceWith("context_")
+    )
+    inline fun <reified G> derivedContext(
+        name: String,
+        noinline block: TestContextBuilder<F, G>.() -> Unit
+    ): Annotatable<F> {
+        return context_(name, block)
+    }
+
+    /**
      * Define a child-context with a different fixture type.
      *
-     * You will have to call [given_] in the sub-context to convert from the parent
-     * to the child fixture type.
+     * You will have to call [given_] (with an underscore) in the sub-context to convert
+     * from the parent to the child fixture type.
      */
-    inline fun <reified G> derivedContext(
+    inline fun <reified G> context_(
         name: String,
         noinline block: TestContextBuilder<F, G>.() -> Unit
     ): Annotatable<F> {

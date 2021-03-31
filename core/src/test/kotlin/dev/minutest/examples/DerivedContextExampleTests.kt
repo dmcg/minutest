@@ -31,8 +31,8 @@ class DerivedContextExampleTests : JUnit5Minutests {
             assertTrue(it is Fruit)
         }
 
-        // To change fixture type use derivedContext
-        derivedContext<FruitDrink>("FruitDrink Context") {
+        // To change fixture type use context_
+        context_<FruitDrink>("FruitDrink Context") {
 
             // deriveFixture specifies how to convert a Fruit to a FruitDrink
             given_ { parentFixture ->
