@@ -2,6 +2,10 @@
 
 I still have to go through Slack posts to find older details, but in the meantime
 
+## 1.13.0
+
+As v.1.12.0 but published to Maven Central (if all goes well)
+
 ## 1.12.0
 
 This release is preparing for a v2, with some DSL improvements, and 
