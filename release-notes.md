@@ -41,6 +41,9 @@ tasks.withType<Test> {
 Run tests in each root context in parallel by setting a system property dev.minutest.parallel.
 Parallel running isn't on by default yet, but seems solid.
 
+## 1.13.0
+
+As v.1.12.0 but published to Maven Central (if all goes well)
 
 ## 1.12.0
 
