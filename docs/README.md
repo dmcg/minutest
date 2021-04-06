@@ -109,23 +109,23 @@ class StackExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<Stack<Any>> {
 
-        fixture { Stack() }
+        given { Stack() }
 
         context("when new") {
 
             test("is empty") {
-                assertTrue(fixture.isEmpty())
+                assertTrue(it.isEmpty())
             }
         }
 
         context("after pushing an element") {
 
-            modifyFixture {
-                parentFixture.push("an element")
+            beforeEach {
+                it.push("an element")
             }
 
             test("it is no longer empty") {
-                assertFalse(fixture.isEmpty())
+                assertFalse(it.isEmpty())
             }
         }
     }
@@ -188,19 +188,19 @@ class MyFirstMinutests : JUnit5Minutests {
     fun tests() = rootContext<Calculator> {
 
         // We need to tell Minutest how to build the fixture
-        fixture { Calculator() }
+        given { Calculator() }
 
         // define a test with a test block
         test("addition") {
-            // inside tests, the fixture is `this`
-            this.add(2)
-            assertEquals(2, currentValue) // you can leave off the `this`
+            // inside tests, the fixture is `it`
+            it.add(2)
+            assertEquals(2, it.currentValue)
         }
 
         // each new test gets its own new fixture
-        test("subtraction") {
+        test("subtraction") { calculator ->
             subtract(2)
-            assertEquals(-2, currentValue)
+            assertEquals(-2, calculator.currentValue)
         }
     }
 }
@@ -239,7 +239,7 @@ class ControlPanel(
 class CompoundFixtureExampleTests : JUnit5Minutests {
 
     // The fixture consists of all the state affected by tests
-    class Fixture() {
+    class Fixture {
         var beeped = false
         var launched = false
 
@@ -250,7 +250,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
     }
 
     fun tests() = rootContext<Fixture> {
-        fixture { Fixture() }
+        given { Fixture() }
 
         context("key not turned") {
             test("light is off") {
@@ -264,7 +264,7 @@ class CompoundFixtureExampleTests : JUnit5Minutests {
         }
 
         context("key turned") {
-            modifyFixture {
+            beforeEach {
                 controlPanel.turnKey()
             }
             test("light is on") {
@@ -368,7 +368,7 @@ fun ContextBuilder<MutableCollection<String>>.behavesAsMutableCollection() {
 class ArrayListTests : JUnit5Minutests {
 
     fun tests() = rootContext<MutableCollection<String>> {
-        fixture {
+        given {
             ArrayList()
         }
 
@@ -380,7 +380,7 @@ class ArrayListTests : JUnit5Minutests {
 class LinkedListTests : JUnit5Minutests {
 
     fun tests() = rootContext<MutableCollection<String>> {
-        fixture {
+        given {
             LinkedList()
         }
 
@@ -426,7 +426,7 @@ class ControlPanel(
 
 class ScenariosExampleTests : JUnit5Minutests {
 
-    class Fixture() {
+    class Fixture {
         var beeped = false
         var launched = false
 

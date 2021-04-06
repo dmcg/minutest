@@ -12,39 +12,39 @@ private typealias StringStack = Stack<String>
 
 private fun ContextBuilder<StringStack>.isEmpty(isEmpty: Boolean) =
     test("is " + (if (isEmpty) "" else "not ") + "empty") {
-        assertEquals(isEmpty, size == 0)
+        assertEquals(it.isEmpty(), size == 0)
         if (isEmpty)
-            assertThrows<EmptyStackException> { peek() }
+            assertThrows<EmptyStackException> { it.peek() }
         else
-            assertNotNull(peek())
+            assertNotNull(it.peek())
     }
 
 private fun ContextBuilder<StringStack>.canPush() = test("can push") {
-    val initialSize = size
+    val initialSize = it.size
     val item = "*".repeat(initialSize + 1)
-    push(item)
-    assertEquals(item, peek())
-    assertEquals(initialSize + 1, size)
+    it.push(item)
+    assertEquals(item, it.peek())
+    assertEquals(initialSize + 1, it.size)
 }
 
 private fun ContextBuilder<StringStack>.canPop() = test("can pop") {
-    val initialSize = size
-    val top = peek()
-    assertEquals(top, pop())
+    val initialSize = it.size
+    val top = it.peek()
+    assertEquals(top, it.pop())
     assertEquals(initialSize - 1, size)
-    if (size > 0)
+    if (it.size > 0)
         assertNotEquals(top, peek())
 }
 
 private fun ContextBuilder<StringStack>.cantPop() = test("cant pop") {
-    assertThrows<EmptyStackException> { pop() }
+    assertThrows<EmptyStackException> { it.pop() }
 }
 
 class GeneratingExampleTests : JUnit5Minutests {
 
     fun tests() = rootContext<StringStack> {
 
-        fixture { StringStack() }
+        given { StringStack() }
 
         context("an empty stack") {
             // invoke the extension functions to create tests
@@ -54,7 +54,7 @@ class GeneratingExampleTests : JUnit5Minutests {
         }
 
         context("a stack with one item") {
-            modifyFixture { push("one") }
+            beforeEach { it.push("one") }
 
             isEmpty(false)
             canPush()

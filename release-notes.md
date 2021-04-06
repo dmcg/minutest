@@ -2,6 +2,20 @@
 
 I still have to go through Slack posts to find older details, but in the meantime
 
+## 2.0.0-rc2
+
+### DSL changes (old methods deprecated)
+
+* derivedContext -> context_
+
+### Other
+
+Experimental support for perturbation testing.
+
+## 2.0.0-rc1
+
+Publishing of v2 to Maven Central
+
 ## 2.0.0-alpha
 
 ### DSL changes (old methods deprecated)
