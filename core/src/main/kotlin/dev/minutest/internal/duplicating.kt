@@ -34,29 +34,3 @@ internal fun <T : Any, V> duplicatorFor(
         )
     }
 }
-
-
-/**
- * Duplicates a data object given a property,
- * and is a lot less fussy about generics than [duplicatorFor].
- */
-@Suppress("UNCHECKED_CAST")
-internal fun <T : Any, V> T.duplicate(
-    property: KProperty1<T, V>,
-    value: V
-): T {
-    val kClass = this::class
-    val copyFunction = kClass.memberFunctions.find {
-        it.name == "copy" && it.returnType == kClass.createType()
-    } as? KFunction<T> ?: error("No copy method")
-    val instanceParameter = copyFunction.instanceParameter
-        ?: error("copy is static")
-    val propertyParameter = copyFunction.parameters.find { it.name == property.name }
-        ?: error("Can't find a copy parameter named ${property.name}")
-    return copyFunction.callBy(
-        mapOf(
-            instanceParameter to this,
-            propertyParameter to value
-        )
-    )
-}

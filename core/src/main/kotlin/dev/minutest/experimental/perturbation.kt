@@ -1,16 +1,13 @@
 package dev.minutest.experimental
 
 import dev.minutest.ContextBuilder
-import dev.minutest.internal.duplicate
 import dev.minutest.test
-import kotlin.reflect.KProperty1
 
 
 interface Scenario<R> {
     val baseResult: R
     fun setUp()
     fun evaluate(): R
-    val asserter: (Scenario<R>) -> Unit
 }
 
 fun <S : Scenario<*>> asserter(name: String, f: (S).() -> Unit) =
@@ -18,94 +15,100 @@ fun <S : Scenario<*>> asserter(name: String, f: (S).() -> Unit) =
         override fun toString() = name
     }
 
-fun <R, S: Scenario<R>> ContextBuilder<*>.baseTest(
-    baseScenarioBuilder: () -> S
+class PerturbationContext<R, S : Scenario<R>>(
+    private val baseScenarioBuilder: () -> S,
+    val baseAsserter: S.() -> Unit
 ) {
-    val scenario = baseScenarioBuilder()
-    val mutant = Mutant("base", scenario)
-        .withAsserter(scenario.asserter)
-    test(mutant)
-}
 
-fun <R, S : Scenario<R>> ContextBuilder<*>.mutantTest(
-    baseScenarioBuilder: () -> S,
-    mutation: Mutation<S>,
-    asserter: S.() -> Unit
-) {
-    val mutant = Mutant(
-        mutation.toString(),
-        mutation(baseScenarioBuilder())
-    ).withAsserter(asserter)
-    test(mutant)
-}
-
-
-fun <R, S : Scenario<R>> ContextBuilder<*>.trials(
-    baseScenarioBuilder: () -> S,
-    mutations: List<Mutation<S>>,
-    asserter: S.() -> Unit
-) {
-    mutations.forEach { mutation ->
-        mutantTest(
+    constructor(
+        baseScenarioBuilder: () -> S,
+        assertEquals: (R, R) -> Unit,
+    ) :
+        this(
             baseScenarioBuilder = baseScenarioBuilder,
-            mutation = mutation,
-            asserter = asserter
+            baseAsserter = asserter("returns baseResult") {
+                assertEquals(this.baseResult, this.evaluate())
+            }
+        )
+
+    fun ContextBuilder<*>.baseTest() {
+        mutationTest(
+            mutation("no mutation") { it },
+            baseAsserter
         )
     }
-}
 
-fun <R, S : Scenario<R>> ContextBuilder<*>.partitionTests(
-    baseScenarioBuilder: () -> S,
-    mutations: List<Mutation<S>>,
-    partition: S.() -> Boolean,
-    asserter: S.() -> Unit
-) {
-    val mutants = mutations.map {
-        Mutant(it.toString(), it(baseScenarioBuilder()))
+    fun ContextBuilder<*>.mutationTest(
+        mutation: Mutation<S>,
+        asserter: S.() -> Unit
+    ) {
+        test(
+            Mutant(
+                mutation.toString(),
+                mutation(baseScenarioBuilder())
+            ),
+            asserter
+        )
     }
-    val (potents, impotents) = mutants
-        .partition { mutant -> partition(mutant.value) }
-        .let { (potents, impotents) ->
-            Pair(
-                potents.map { mutant -> mutant.withAsserter(asserter) },
-                impotents.map { mutant -> mutant.withAsserter(mutant.value.asserter) }
+
+    fun ContextBuilder<*>.mutationTests(
+        mutations: Iterable<Mutation<S>>,
+        asserterMapper: S.() -> S.() -> Unit
+    ) {
+        mutations.forEach { mutation ->
+            val mutant = Mutant(
+                mutation.toString(),
+                mutation(baseScenarioBuilder())
+            )
+            test(
+                mutant,
+                asserterMapper(
+                    mutant.value
+                )
             )
         }
-    contextFor("potents", potents)
-    contextFor("impotents", impotents)
-}
+    }
 
-private fun <R, S : Scenario<R>> ContextBuilder<*>.contextFor(
-    name: String,
-    mutants: Iterable<Mutant<S>>
-) {
-    context(name) {
-        mutants.forEach { mutant ->
-            test(mutant)
+    fun ContextBuilder<*>.partitionTests(
+        mutations: Iterable<Mutation<S>>,
+        partition: S.() -> Boolean,
+        asserter: S.() -> Unit,
+    ) {
+        val mutants = mutations.map {
+            Mutant(it.toString(), it(baseScenarioBuilder()))
+        }
+        val (potents, impotents) = mutants
+            .partition { mutant -> partition(mutant.value) }
+            .let { (potents, impotents) ->
+                Pair(
+                    potents.map { mutant -> mutant to asserter },
+                    impotents.map { mutant -> mutant to baseAsserter }
+                )
+            }
+        contextFor("potents", potents)
+        contextFor("impotents", impotents)
+    }
+
+    private fun ContextBuilder<*>.test(
+        mutant: Mutant<S>,
+        asserter: S.() -> Unit
+    ) {
+        test("${mutant.name} -> $asserter") {
+            with(mutant.value) {
+                setUp()
+                asserter(this)
+            }
         }
     }
-}
 
-@Suppress("UNCHECKED_CAST")
-private fun <R, S : Scenario<R>> Mutant<S>.withAsserter(
-    asserter: S.() -> Unit
-): Mutant<S> {
-    val asserterMutation = mutation<S>(asserter.toString()) { it.withAsserter(asserter) }
-    return Mutant("$name -> $asserterMutation", asserterMutation(value))
-}
-
-@Suppress("UNCHECKED_CAST")
-private fun <S: Scenario<*>> S.withAsserter(value: (S) -> Unit): S =
-    this.duplicate(
-        Scenario<*>::asserter as KProperty1<S, (S) -> Unit>,
-        value
-    )
-
-private fun <R, S : Scenario<R>> ContextBuilder<*>.test(mutant: Mutant<S>) {
-    test(mutant.name) {
-        with(mutant.value) {
-            setUp()
-            asserter(this)
+    private fun ContextBuilder<*>.contextFor(
+        name: String,
+        mutants: Iterable<Pair<Mutant<S>, (S) -> Unit>>
+    ) {
+        context(name) {
+            mutants.forEach { (mutant, asserter) ->
+                test(mutant, asserter)
+            }
         }
     }
 }

@@ -23,12 +23,4 @@ class DuplicatorTests {
             duplicator(thing, "kumquat")
         )
     }
-
-    @Test
-    fun `duplicate can work with an inherited property`() {
-        Assertions.assertEquals(
-            Thing(42, "kumquat"),
-            Thing(42, "banana").duplicate(Base::string, "kumquat")
-        )
-    }
 }
