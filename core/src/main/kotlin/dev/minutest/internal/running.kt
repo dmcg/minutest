@@ -3,6 +3,7 @@ package dev.minutest.internal
 import dev.minutest.Context
 import dev.minutest.Node
 import dev.minutest.Test
+import dev.minutest.experimental.ExecutorMarker
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
 
@@ -31,22 +32,28 @@ internal fun Context<Unit, *>.toRootContext(
 private fun AmalgamatedRootContext.toRunnableContext(
     executorService: ExecutorService?
 ) = RunnableContext(
-    RootExecutor.andThenName(name),
-    Sequence {
+    testDescriptor = RootExecutor.andThenName(name),
+    children = Sequence {
         children.map {
             it.toRunnableNode(RootExecutor, executorService)
-        }.iterator() },
-    this
+        }.iterator()
+    },
+    context = this
 )
 
 private fun <F> Node<F>.toRunnableNode(
     executor: TestExecutor<F>,
     executorService: ExecutorService? = null
-): RunnableNode =
-    when (this) {
-        is Test<F> -> this.toRunnableTest(executor, executorService)
-        is Context<F, *> -> this.toRunnableContext(executor, executorService)
+): RunnableNode {
+    val exectorMarker = markers.filterIsInstance<ExecutorMarker>().lastOrNull()
+    val executorToUse =
+        if (exectorMarker != null) exectorMarker.executorService
+        else executorService
+    return when (this) {
+        is Test<F> -> this.toRunnableTest(executor, executorToUse)
+        is Context<F, *> -> this.toRunnableContext(executor, executorToUse)
     }
+}
 
 private fun <F> Test<F>.toRunnableTest(
     executor: TestExecutor<F>,
