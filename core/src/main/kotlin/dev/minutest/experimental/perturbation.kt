@@ -4,28 +4,28 @@ import dev.minutest.ContextBuilder
 import dev.minutest.test
 
 
-interface Scenario<R> {
+interface TestParameters<R> {
     val baseResult: R
     fun setUp()
     fun evaluate(): R
 }
 
-fun <S : Scenario<*>> asserter(name: String, f: (S).() -> Unit) =
-    object : (S) -> Unit by f {
+fun <T : TestParameters<*>> asserter(name: String, f: (T).() -> Unit) =
+    object : (T) -> Unit by f {
         override fun toString() = name
     }
 
-class PerturbationContext<R, S : Scenario<R>>(
-    private val baseScenarioBuilder: () -> S,
-    val baseAsserter: S.() -> Unit
+class PerturbationContext<R, T : TestParameters<R>>(
+    private val parametersBuilder: () -> T,
+    val baseAsserter: T.() -> Unit
 ) {
 
     constructor(
-        baseScenarioBuilder: () -> S,
+        parametersBuilder: () -> T,
         assertEquals: (R, R) -> Unit,
     ) :
         this(
-            baseScenarioBuilder = baseScenarioBuilder,
+            parametersBuilder = parametersBuilder,
             baseAsserter = asserter("returns baseResult") {
                 assertEquals(this.baseResult, this.evaluate())
             }
@@ -39,26 +39,26 @@ class PerturbationContext<R, S : Scenario<R>>(
     }
 
     fun ContextBuilder<*>.mutationTest(
-        mutation: Mutation<S>,
-        asserter: S.() -> Unit
+        mutation: Mutation<T>,
+        asserter: T.() -> Unit
     ) {
         test(
             Mutant(
                 mutation.toString(),
-                mutation(baseScenarioBuilder())
+                mutation(parametersBuilder())
             ),
             asserter
         )
     }
 
     fun ContextBuilder<*>.mutationTests(
-        mutations: Iterable<Mutation<S>>,
-        asserterMapper: S.() -> S.() -> Unit
+        mutations: Iterable<Mutation<T>>,
+        asserterMapper: T.() -> T.() -> Unit
     ) {
         mutations.forEach { mutation ->
             val mutant = Mutant(
                 mutation.toString(),
-                mutation(baseScenarioBuilder())
+                mutation(parametersBuilder())
             )
             test(
                 mutant,
@@ -70,12 +70,12 @@ class PerturbationContext<R, S : Scenario<R>>(
     }
 
     fun ContextBuilder<*>.partitionTests(
-        mutations: Iterable<Mutation<S>>,
-        partition: S.() -> Boolean,
-        asserter: S.() -> Unit,
+        mutations: Iterable<Mutation<T>>,
+        partition: T.() -> Boolean,
+        asserter: T.() -> Unit,
     ) {
         val mutants = mutations.map {
-            Mutant(it.toString(), it(baseScenarioBuilder()))
+            Mutant(it.toString(), it(parametersBuilder()))
         }
         val (potents, impotents) = mutants
             .partition { mutant -> partition(mutant.value) }
@@ -90,8 +90,8 @@ class PerturbationContext<R, S : Scenario<R>>(
     }
 
     private fun ContextBuilder<*>.test(
-        mutant: Mutant<S>,
-        asserter: S.() -> Unit
+        mutant: Mutant<T>,
+        asserter: T.() -> Unit
     ) {
         test("${mutant.name} -> $asserter") {
             with(mutant.value) {
@@ -103,7 +103,7 @@ class PerturbationContext<R, S : Scenario<R>>(
 
     private fun ContextBuilder<*>.contextFor(
         name: String,
-        mutants: Iterable<Pair<Mutant<S>, (S) -> Unit>>
+        mutants: Iterable<Pair<Mutant<T>, (T) -> Unit>>
     ) {
         context(name) {
             mutants.forEach { (mutant, asserter) ->
