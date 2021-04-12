@@ -2,6 +2,10 @@
 
 I still have to go through Slack posts to find older details, but in the meantime
 
+## 2.0.0-rc3
+
+Speed up test finding in the Minutest engine when running tests from a single class
+
 ## 2.0.0-rc2
 
 ### DSL changes (old methods deprecated)
