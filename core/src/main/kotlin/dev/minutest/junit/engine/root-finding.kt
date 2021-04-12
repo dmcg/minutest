@@ -4,7 +4,6 @@ import dev.minutest.internal.AmalgamatedRootContext
 import dev.minutest.internal.rootContextForClass
 import dev.minutest.internal.rootContextFromTopLevelFunctions
 import dev.minutest.internal.toRootContext
-import dev.minutest.junit.JUnit5Minutests
 import org.junit.platform.commons.annotation.Testable
 import org.junit.platform.engine.*
 import org.junit.platform.engine.discovery.*
@@ -61,7 +60,7 @@ private fun shortcutClassSelection(discoveryRequest: EngineDiscoveryRequest): Li
         classSelectors.isEmpty() -> null
         else ->
             classSelectors.mapNotNull { classAndMethodName ->
-                amalgamatedRootContext(Class.forName(classAndMethodName.className))
+                amalgamatedRootContext(classAndMethodName.justLoadClass())
                     ?.selectJust(classAndMethodName.methodName)
             }
     }
@@ -82,19 +81,18 @@ private fun selectorsFrom(discoveryRequest: EngineDiscoveryRequest) =
         }
 
 
-private fun amalgamatedRootContext(javaClass: Class<*>): AmalgamatedRootContext? {
-    if (quickCheckForNotOurs(javaClass))
-        return null
-    return rootContextFromTopLevelFunctions(javaClass) {
-        it.hasTestableAnnotation
-    } ?: rootContextForClass(javaClass.kotlin) {
-        it.hasTestableAnnotation
-    }
-}
+private fun amalgamatedRootContext(javaClass: Class<*>): AmalgamatedRootContext? =
+    if (quickCheckItMightBeOurs(javaClass))
+        rootContextFromTopLevelFunctions(javaClass) {
+            it.hasTestableAnnotation
+        } ?: rootContextForClass(javaClass.kotlin) {
+            it.hasTestableAnnotation
+        }
+    else
+        null
 
-private fun quickCheckForNotOurs(klass: Class<*>) =
-    JUnit5Minutests::class.java.isAssignableFrom(klass)
-        || klass.methods.none { it.hasTestableAnnotation }
+private fun quickCheckItMightBeOurs(klass: Class<*>) =
+    klass.methods.any { it.hasTestableAnnotation }
 
 private val Method.hasTestableAnnotation: Boolean
     get() = annotations.any { it is Testable }
@@ -103,4 +101,11 @@ private val KFunction<*>.hasTestableAnnotation
     get() =
         annotations.any { it is Testable }
 
-private class ClassAndMethodNames(val className: String, val methodName: String?)
+// Our own class as Pair is a bit slow where we want speed
+private class ClassAndMethodNames(
+    val className: String,
+    val methodName: String?
+) {
+    fun justLoadClass() = Class.forName(className, false, this::class.java.classLoader)
+}
+
