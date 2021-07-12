@@ -40,14 +40,14 @@ fun <PF, F> TestContextBuilder<PF, F>.given(factory: () -> F) {
 
 /**
  * Define the fixture that will be used in this context's tests and sub-contexts as
- * a transform on the parent fixture.
+ * a transform on the parent fixture ((accessible as 'this' and 'it').
  */
 @Suppress("FunctionName")
 fun <PF, F> TestContextBuilder<PF, F>.given_(
-    transform: (parentFixture: PF) -> F
+    transform: PF.(parentFixture: PF) -> F
 ) {
     setDerivedFixtureFactory { parentFixture, _ ->
-        transform(parentFixture)
+        parentFixture.transform(parentFixture)
     }
 }
 
