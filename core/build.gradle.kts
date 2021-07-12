@@ -12,7 +12,7 @@ plugins {
     signing
 }
 
-val junitVersion = "5.7.0"
+val junitVersion = "5.7.2"
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
@@ -28,7 +28,7 @@ dependencies {
     testImplementation("org.junit.vintage:junit-vintage-engine:$junitVersion")
     testImplementation("junit:junit:4.12")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
-    testImplementation("org.junit.platform:junit-platform-launcher:1.7.0") {
+    testImplementation("org.junit.platform:junit-platform-launcher:1.7.2") {
         because("enables running in IntelliJ using JUnit runner")
     }
 

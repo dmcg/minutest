@@ -36,7 +36,7 @@ class ScenarioErrorReportingTests {
                 "✓ Given the string banana",
                 "✓ Then the fixture is banana",
                 "X And it has 999 chars",
-                "Expected <999>, actual <6>.",
+                "expected: <999> but was: <6>",
                 "- And the Pope is Catholic"
             ).joinToString("\n"),
             error.message
