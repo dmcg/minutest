@@ -69,11 +69,12 @@ tasks {
     }
 }
 
+// I can't remember why I did this. The commit says
+// Add a samples sourceSet so that we can keep actual tests in src/test
 project.sourceSets {
     val samples = create("samples") {
         java.srcDir(file("src/samples/kotlin"))
-        compileClasspath += get("main").output
-        compileClasspath += configurations.testRuntimeClasspath
+        compileClasspath += get("main").output + configurations.testRuntimeClasspath.get()
     }
     get("test").apply {
         compileClasspath += samples.output
