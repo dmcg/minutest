@@ -72,7 +72,8 @@ tasks {
 project.sourceSets {
     val samples = create("samples") {
         java.srcDir(file("src/samples/kotlin"))
-        compileClasspath += get("main").output + configurations.testRuntimeClasspath
+        compileClasspath += get("main").output
+        compileClasspath += configurations.testRuntimeClasspath
     }
     get("test").apply {
         compileClasspath += samples.output
