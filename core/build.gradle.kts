@@ -1,5 +1,5 @@
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URI
 
 repositories {
@@ -39,7 +39,7 @@ dependencies {
 }
 
 tasks {
-    withType<KotlinJvmCompile> {
+    withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
         }
